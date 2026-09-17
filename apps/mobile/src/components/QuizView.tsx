@@ -1,6 +1,6 @@
 import { Linking, Text, TouchableOpacity, View } from "react-native";
-import { techLinks } from "@tech-refresh/core/techLinks";
-import { CORRECT_XP } from "@tech-refresh/core/gamification";
+import { techLinks } from "@grip-apps/core/techLinks";
+import { CORRECT_XP } from "@grip-apps/core/gamification";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 

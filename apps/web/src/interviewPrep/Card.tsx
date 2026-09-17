@@ -1,9 +1,9 @@
 import React from "react";
-import { techLinks } from "@tech-refresh/core/techLinks";
-import { CORRECT_XP } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
-import { t } from "@tech-refresh/core/i18n";
-import { colors, layout, tints } from "@tech-refresh/core/tokens";
+import { techLinks } from "@grip-apps/core/techLinks";
+import { CORRECT_XP } from "@grip-apps/core/gamification";
+import { difficultyByKey } from "@grip-apps/core/difficulty";
+import { t } from "@grip-apps/core/i18n";
+import { colors, layout, tints } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ACCURACY_GOOD_PCT, type CardState, type PrepItem, type QuizQuestion, type ScoreEntry } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";

@@ -1,7 +1,7 @@
 import React from "react";
-import { PROFILE_FIELDS } from "@tech-refresh/core/user";
-import { colors, layout, tints } from "@tech-refresh/core/tokens";
-import { t } from "@tech-refresh/core/i18n";
+import { PROFILE_FIELDS } from "@grip-apps/core/user";
+import { colors, layout, tints } from "@grip-apps/core/tokens";
+import { t } from "@grip-apps/core/i18n";
 import { Field } from "./shared";
 import { CvUpload } from "./CvUpload";
 import { inputStyle } from "./styles";

@@ -1,5 +1,5 @@
 import { NativeTabs } from "expo-router/unstable-native-tabs";
-import { t } from "@tech-refresh/core/i18n";
+import { t } from "@grip-apps/core/i18n";
 import { useTabBarHidden } from "@/lib/uiStore";
 import { useLocale } from "@/lib/useLocale";
 import { colors } from "@/theme";

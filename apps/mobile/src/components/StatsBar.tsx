@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
-import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@tech-refresh/core/gamification";
-import { t } from "@tech-refresh/core/i18n";
+import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@grip-apps/core/gamification";
+import { t } from "@grip-apps/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import type { Scores } from "@/lib/useScores";

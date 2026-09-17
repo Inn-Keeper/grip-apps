@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { STATUSES, STATUS_STYLES, isDue } from "@tech-refresh/core/contacts";
-import { t } from "@tech-refresh/core/i18n";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { STATUSES, STATUS_STYLES, isDue } from "@grip-apps/core/contacts";
+import { t } from "@grip-apps/core/i18n";
+import { colors, tints } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ActionButton } from "./shared";
 import type { Contact, Retro, ScoredBoard } from "./types";

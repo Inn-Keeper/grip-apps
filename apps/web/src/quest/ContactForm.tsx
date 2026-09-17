@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@tech-refresh/core/contacts";
-import { extractTechsFromText } from "@tech-refresh/core/cvTechs";
-import { categories } from "@tech-refresh/core/prepData";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip-apps/core/contacts";
+import { extractTechsFromText } from "@grip-apps/core/cvTechs";
+import { categories } from "@grip-apps/core/prepData";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { DateInput, Field } from "./shared";
 import { inputStyle, textareaStyle } from "../components/shared";

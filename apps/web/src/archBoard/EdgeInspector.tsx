@@ -1,6 +1,6 @@
-import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip-apps/core/arch";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import type { BoardEdge, BoardNode } from "./types";
 
 export function EdgeInspector({

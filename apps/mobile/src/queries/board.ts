@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { SavedBoard } from "@tech-refresh/core/api";
+import type { SavedBoard } from "@grip-apps/core/api";
 import { api } from "@/lib/api";
 
 export const boardQueryKeys = {

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { signInWithGitHub } from "@/lib/oauth";
-import { t } from "@tech-refresh/core/i18n";
+import { t } from "@grip-apps/core/i18n";
 import { colors } from "@/theme";
 
 // Email + password with in-app account creation. No email delivery anywhere:

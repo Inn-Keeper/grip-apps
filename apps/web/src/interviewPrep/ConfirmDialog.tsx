@@ -1,4 +1,4 @@
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { colors, tints } from "@grip-apps/core/tokens";
 
 // Lightweight confirmation modal (scrim + centered card).
 export function ConfirmDialog({ title, message, confirmLabel, onConfirm, onCancel }: { title: string; message: string; confirmLabel: string; onConfirm: () => void; onCancel: () => void }) {

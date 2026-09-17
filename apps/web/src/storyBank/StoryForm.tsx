@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { COMPETENCIES, COMPETENCY_COLORS } from "@tech-refresh/core/stories";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { COMPETENCIES, COMPETENCY_COLORS } from "@grip-apps/core/stories";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { Field, inputStyle } from "../components/shared";
 import { textareaStyle } from "./styles";

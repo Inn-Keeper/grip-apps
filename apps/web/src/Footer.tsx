@@ -1,6 +1,6 @@
 import React, { type CSSProperties } from "react";
-import { t } from "@tech-refresh/core/i18n";
-import { brand, colors } from "@tech-refresh/core/tokens";
+import { t } from "@grip-apps/core/i18n";
+import { brand, colors } from "@grip-apps/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 
 type FooterLink = { label: string; action: (() => void) | null; href?: never } | { label: string; href: string; action?: never };

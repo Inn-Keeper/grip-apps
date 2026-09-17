@@ -1,4 +1,4 @@
-import { colors } from "@tech-refresh/core/tokens";
+import { colors } from "@grip-apps/core/tokens";
 
 // Small removable/toggleable tech chip row shared by the posting detector and
 // the retro struggle tagger.

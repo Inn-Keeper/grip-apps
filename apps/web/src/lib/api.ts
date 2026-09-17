@@ -1,6 +1,6 @@
 // Thin binding of the shared data layer to this app's Supabase client.
-import { createApi, dateToUi, dateToDb } from "@tech-refresh/core/api";
-import { createPipelineApi, PipelineApiError } from "@tech-refresh/core/pipeline";
+import { createApi, dateToUi, dateToDb } from "@grip-apps/core/api";
+import { createPipelineApi, PipelineApiError } from "@grip-apps/core/pipeline";
 import { supabase } from "./supabase";
 
 const pipelineUrl = import.meta.env.VITE_PIPELINE_URL ?? "";

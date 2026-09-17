@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { RANKS, rankForXp } from "@tech-refresh/core/gamification";
-import { colors, layout } from "@tech-refresh/core/tokens";
-import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@tech-refresh/core/user";
-import { setLocale, t } from "@tech-refresh/core/i18n";
+import { RANKS, rankForXp } from "@grip-apps/core/gamification";
+import { colors, layout } from "@grip-apps/core/tokens";
+import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@grip-apps/core/user";
+import { setLocale, t } from "@grip-apps/core/i18n";
 import { useLocale } from "../lib/useLocale";
 import { poeVisibleByDefault, setPoeAssistantVisible } from "../components/poe/poeAssistantUtils";
 import { ProfileAside } from "./ProfileAside";

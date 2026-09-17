@@ -1,7 +1,7 @@
 import React from "react";
-import { COMPETENCIES, COMPETENCY_COLORS } from "@tech-refresh/core/stories";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { COMPETENCIES, COMPETENCY_COLORS } from "@grip-apps/core/stories";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Story } from "./types";

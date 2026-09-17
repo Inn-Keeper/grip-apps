@@ -1,7 +1,7 @@
 import * as DocumentPicker from "expo-document-picker";
 import { File } from "expo-file-system";
-import { categories } from "@tech-refresh/core/prepData";
-import { extractTechsFromText } from "@tech-refresh/core/cvTechs";
+import { categories } from "@grip-apps/core/prepData";
+import { extractTechsFromText } from "@grip-apps/core/cvTechs";
 
 const KNOWN_TECHS = categories.flatMap((c) => c.items.map((item) => item.tech));
 

@@ -1,4 +1,4 @@
-import { isGithubProfileUrl } from "@tech-refresh/core/githubUrl";
+import { isGithubProfileUrl } from "@grip-apps/core/githubUrl";
 
 export function githubUrlFromIdentity(identity: { identity_data?: Record<string, unknown> } | undefined) {
   const data = identity?.identity_data ?? {};

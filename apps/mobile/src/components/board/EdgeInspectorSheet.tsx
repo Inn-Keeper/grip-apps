@@ -1,7 +1,7 @@
 import { Modal, Pressable, Text, View } from "react-native";
-import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@tech-refresh/core/arch";
-import type { BoardEdge, BoardNode } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
+import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip-apps/core/arch";
+import type { BoardEdge, BoardNode } from "@grip-apps/core/arch";
+import { t } from "@grip-apps/core/i18n";
 import { colors, tints } from "@/theme";
 import { Button, MiniButton } from "@/components/ui";
 

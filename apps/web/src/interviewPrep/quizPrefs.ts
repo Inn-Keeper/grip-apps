@@ -1,4 +1,4 @@
-import { parseQuizSize, serializeQuizSize, QUIZ_SIZE_STORAGE_KEY } from "@tech-refresh/core/quizPrefs";
+import { parseQuizSize, serializeQuizSize, QUIZ_SIZE_STORAGE_KEY } from "@grip-apps/core/quizPrefs";
 
 /** Returns the stored quiz size, or null meaning "use all available". */
 export function getQuizSize() {

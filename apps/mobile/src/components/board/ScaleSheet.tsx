@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
-import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@tech-refresh/core/estimation";
-import { t } from "@tech-refresh/core/i18n";
+import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@grip-apps/core/estimation";
+import { t } from "@grip-apps/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button } from "@/components/ui";

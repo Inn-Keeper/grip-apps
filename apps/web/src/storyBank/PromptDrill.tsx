@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { PROMPTS } from "@tech-refresh/core/stories";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { PROMPTS } from "@grip-apps/core/stories";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { StoryCard } from "./StoryCard";
