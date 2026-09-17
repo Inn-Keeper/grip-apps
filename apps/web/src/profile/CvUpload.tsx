@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
-import { categories } from "@tech-refresh/core/prepData";
-import { extractTechsFromText } from "@tech-refresh/core/cvTechs";
-import { colors } from "@tech-refresh/core/tokens";
-import { t } from "@tech-refresh/core/i18n";
+import { categories } from "@grip/core/prepData";
+import { extractTechsFromText } from "@grip/core/cvTechs";
+import { colors } from "@grip/core/tokens";
+import { t } from "@grip/core/i18n";
 import { MetaLabel } from "./shared";
 import { readCvText, CvParseError } from "./cvParser";
 

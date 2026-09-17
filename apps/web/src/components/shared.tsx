@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, space, font } from "@tech-refresh/core/tokens";
+import { colors, space, font } from "@grip/core/tokens";
 import { FormInput, FormTextarea } from "./FormInput";
 import { MiniButton } from "./MiniButton";
 

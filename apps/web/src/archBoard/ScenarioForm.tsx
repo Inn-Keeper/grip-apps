@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@grip/core/arch";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";

@@ -1,4 +1,4 @@
-import { colors } from "@tech-refresh/core/tokens";
+import { colors } from "@grip/core/tokens";
 
 // Web port of apps/mobile/src/components/BrandIcon.tsx — keep the icon
 // geometry in sync with the mobile component ("search" is web-only).

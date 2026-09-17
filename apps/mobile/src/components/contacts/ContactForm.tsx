@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { ScrollView, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@tech-refresh/core/contacts";
-import { extractTechsFromText } from "@tech-refresh/core/cvTechs";
-import { categories } from "@tech-refresh/core/prepData";
-import { t } from "@tech-refresh/core/i18n";
+import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip/core/contacts";
+import { extractTechsFromText } from "@grip/core/cvTechs";
+import { categories } from "@grip/core/prepData";
+import { t } from "@grip/core/i18n";
 import { colors, layout } from "@/theme";
 import { Button, Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
 import { Combobox } from "@/components/Combobox";
 import { DateField } from "@/components/DateField";
-import type { Contact } from "@tech-refresh/core/api";
+import type { Contact } from "@grip/core/api";
 
 const ALL_TECHS: string[] = categories.flatMap((c: { items: { tech: string }[] }) =>
   c.items.map((item) => item.tech)

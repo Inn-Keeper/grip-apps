@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { SCENARIOS } from "@tech-refresh/core/arch";
-import { PROMPTS } from "@tech-refresh/core/stories";
-import { COMPETENCY_COLORS } from "@tech-refresh/core/stories";
-import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@tech-refresh/core/mockLoop";
-import { t } from "@tech-refresh/core/i18n";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { SCENARIOS } from "@grip/core/arch";
+import { PROMPTS } from "@grip/core/stories";
+import { COMPETENCY_COLORS } from "@grip/core/stories";
+import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
+import { t } from "@grip/core/i18n";
+import { colors, tints } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { DrillSession } from "./DrillSession";
 import type { DrillState } from "./types";

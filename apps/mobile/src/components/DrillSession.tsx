@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
+import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
+import { difficultyByKey } from "@grip/core/difficulty";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";

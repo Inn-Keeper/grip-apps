@@ -8,7 +8,7 @@ module.exports = {
   moduleNameMapper: {
     ...(expoPreset.moduleNameMapper || {}),
     "^@/(.*)$": "<rootDir>/src/$1",
-    "^@tech-refresh/core/(.*)$": "<rootDir>/../../packages/core/src/$1.js",
+    "^@grip/core/(.*)$": "<rootDir>/../../packages/core/src/$1.js",
   },
   testMatch: ["<rootDir>/src/**/*.test.ts", "<rootDir>/src/**/*.test.tsx"],
   testPathIgnorePatterns: ["/node_modules/", "(^|/)\\._"],

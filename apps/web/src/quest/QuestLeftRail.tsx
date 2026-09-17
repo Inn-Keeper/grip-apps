@@ -1,7 +1,7 @@
 import React from "react";
-import { STATUSES, STATUS_STYLES } from "@tech-refresh/core/contacts";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { STATUSES, STATUS_STYLES } from "@grip/core/contacts";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Contact } from "./types";

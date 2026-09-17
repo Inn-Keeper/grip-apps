@@ -148,7 +148,7 @@ const SHARDING_QPS = 1000;
 const SHARDING_STORAGE_GB = 1000;
 
 // The 100-scenario default library lives in scenarios.js; re-exported here so
-// both apps keep importing everything board-related from "@tech-refresh/core/arch".
+// both apps keep importing everything board-related from "@grip/core/arch".
 export { SCENARIOS, SCENARIO_CATEGORIES } from "./scenarios.js";
 
 /**

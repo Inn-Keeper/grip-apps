@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { colors, tints } from "@grip/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { PromptDrill } from "./PromptDrill";
 import { StoryCard } from "./StoryCard";

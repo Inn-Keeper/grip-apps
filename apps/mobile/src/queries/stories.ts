@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Story } from "@tech-refresh/core/api";
+import type { Story } from "@grip/core/api";
 import { api } from "@/lib/api";
 
 export const storyQueryKeys = {

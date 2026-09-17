@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { normalizeQuizSize, QUIZ_SIZE_OPTIONS } from "@tech-refresh/core/quizPrefs";
+import { normalizeQuizSize, QUIZ_SIZE_OPTIONS } from "@grip/core/quizPrefs";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 

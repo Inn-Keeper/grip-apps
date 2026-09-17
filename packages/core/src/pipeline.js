@@ -22,7 +22,7 @@ export class PipelineApiError extends Error {
  * Binds the grip-pipeline-service velocity endpoint to a token provider.
  *
  * Types are derived from the live OpenAPI spec via `openapi-typescript`.
- * Re-run `pnpm --filter @tech-refresh/core generate:pipeline` whenever the
+ * Re-run `pnpm --filter @grip/core generate:pipeline` whenever the
  * Java service spec changes.
  *
  * `getToken` is called before every request so the token stays fresh (Supabase

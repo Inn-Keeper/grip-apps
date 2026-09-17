@@ -1,6 +1,6 @@
 import { describe, expect, it, jest } from "@jest/globals";
 import { fireEvent, render } from "@testing-library/react-native";
-import { t } from "@tech-refresh/core/i18n";
+import { t } from "@grip/core/i18n";
 import { StatsBar } from "../StatsBar";
 
 const scores = { xp: 35, answers: { React: { correct: 3, wrong: 1 } } };

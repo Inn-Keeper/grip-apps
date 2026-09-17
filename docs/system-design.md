@@ -10,7 +10,7 @@
 graph TD
     ROOT["grip (root)\npnpm workspaces"]
 
-    ROOT --> CORE["📦 packages/core\n@tech-refresh/core\nShared business logic"]
+    ROOT --> CORE["📦 packages/core\n@grip/core\nShared business logic"]
     ROOT --> WEB["🌐 apps/web\nReact 19 + Vite SPA"]
     ROOT --> MOBILE["📱 apps/mobile\nReact Native + Expo"]
     ROOT --> DB["🗄️ supabase/\nPostgreSQL + RLS\nmigrations & schema"]
@@ -52,7 +52,7 @@ sequenceDiagram
 
 ```mermaid
 graph LR
-    subgraph CORE ["@tech-refresh/core  (pure JS, no framework)"]
+    subgraph CORE ["@grip/core  (pure JS, no framework)"]
         API["api.js\nData layer — all Supabase\nCRUD & RPC calls"]
         QUIZ["quiz.js\nshuffle / buildDrill\nselectDrillTechs"]
         DIFF["difficulty.js\n4 tiers: Newbie→Overlord\nXP per tier"]
@@ -395,7 +395,7 @@ graph TB
         MOBILE_APP["📱 Mobile App\nReact Native / Expo\niOS + Android"]
     end
 
-    subgraph CORE_PKG ["@tech-refresh/core (shared)"]
+    subgraph CORE_PKG ["@grip/core (shared)"]
         BUSINESS["Business Logic\nquiz · arch · contacts\ngamification · accuracy"]
         DATA_API["Data API\ncreateApi(supabase)\n23+ methods"]
     end

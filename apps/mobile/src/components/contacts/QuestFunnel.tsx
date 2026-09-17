@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
-import { buildFunnelSummary } from "@tech-refresh/core/funnel";
-import { STATUS_STYLES } from "@tech-refresh/core/contacts";
-import { t } from "@tech-refresh/core/i18n";
+import { buildFunnelSummary } from "@grip/core/funnel";
+import { STATUS_STYLES } from "@grip/core/contacts";
+import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
 import { Badge } from "@/components/ui";
 

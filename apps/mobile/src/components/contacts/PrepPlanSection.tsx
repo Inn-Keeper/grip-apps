@@ -1,11 +1,11 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
-import { buildPrepPlan } from "@tech-refresh/core/prepPlan";
-import { computeReadiness } from "@tech-refresh/core/readiness";
-import { t } from "@tech-refresh/core/i18n";
+import { buildPrepPlan } from "@grip/core/prepPlan";
+import { computeReadiness } from "@grip/core/readiness";
+import { t } from "@grip/core/i18n";
 import { colors, tints } from "@/theme";
 import { setPrepPlan } from "@/lib/uiStore";
-import type { Contact } from "@tech-refresh/core/api";
+import type { Contact } from "@grip/core/api";
 import type { StoryItem } from "./StoryMatchSection";
 
 // How many weakest posting techs the plan surfaces and hands to the Prep drill.

@@ -35,7 +35,7 @@ Target ~20 per level per tech, authored in reviewable per-tech batches. Add
 entries to the matching category file, then:
 
 ```bash
-pnpm --filter @tech-refresh/core test   # validates structure + no duplicates
+pnpm --filter @grip/core test   # validates structure + no duplicates
 SUPABASE_URL=… SUPABASE_SERVICE_ROLE_KEY=… node scripts/seed-questions.mjs
 ```
 

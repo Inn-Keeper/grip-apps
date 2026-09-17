@@ -1,5 +1,5 @@
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import {
   MAINT_LEAN_MAX,

@@ -1,7 +1,7 @@
-import { buildPrepPlan } from "@tech-refresh/core/prepPlan";
-import { computeReadiness } from "@tech-refresh/core/readiness";
-import { t } from "@tech-refresh/core/i18n";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { buildPrepPlan } from "@grip/core/prepPlan";
+import { computeReadiness } from "@grip/core/readiness";
+import { t } from "@grip/core/i18n";
+import { colors, tints } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { writePrepPlan } from "../lib/prepPlanHandoff";
 import type { Contact, ScoredBoard } from "./types";

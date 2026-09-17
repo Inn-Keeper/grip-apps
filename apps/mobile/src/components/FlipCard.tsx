@@ -6,9 +6,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { PERFECT_QUIZ_BONUS } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
-import { shuffle, shuffleOptions } from "@tech-refresh/core/quiz";
+import { PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
+import { difficultyByKey } from "@grip/core/difficulty";
+import { shuffle, shuffleOptions } from "@grip/core/quiz";
 import { colors } from "@/theme";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizView } from "./QuizView";

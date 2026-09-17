@@ -1,6 +1,6 @@
-import { meta, TYPE_COLORS } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { meta, TYPE_COLORS } from "@grip/core/arch";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import type { BoardNode } from "./types";

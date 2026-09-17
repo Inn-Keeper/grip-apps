@@ -1,5 +1,5 @@
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 
 const HEIGHT = 90;
 const WIDTH = 600; // viewBox units; scales to container width

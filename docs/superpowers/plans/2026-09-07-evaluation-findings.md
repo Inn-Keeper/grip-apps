@@ -75,7 +75,7 @@ git commit -m "fix: restore mobile test runtime"
 - Modify: `apps/mobile/src/app/_layout.tsx`
 
 **Interfaces:**
-- Produces: `identityChanged(previousUserId, nextUserId): boolean` from `@tech-refresh/core/authCache`.
+- Produces: `identityChanged(previousUserId, nextUserId): boolean` from `@grip/core/authCache`.
 - Consumes: TanStack `QueryClient.clear()` and mobile persister `removeClient()`.
 
 - [x] **Step 1: Write transition tests**
@@ -91,7 +91,7 @@ expect(identityChanged("user-a", "user-b")).toBe(true);
 
 - [x] **Step 2: Verify RED**
 
-Run: `pnpm --filter @tech-refresh/core test -- authCache`
+Run: `pnpm --filter @grip/core test -- authCache`
 
 Expected: FAIL because `authCache.js` and its export do not exist.
 
@@ -134,7 +134,7 @@ Render `SignIn` without the private provider when signed out.
 Run:
 
 ```bash
-pnpm --filter @tech-refresh/core test -- authCache
+pnpm --filter @grip/core test -- authCache
 pnpm typecheck
 pnpm --filter mobile test --runInBand
 ```
@@ -226,7 +226,7 @@ Create more rows than the fake server cap. Assert `getScores` counts all rows, `
 
 - [x] **Step 3: Verify RED**
 
-Run: `pnpm --filter @tech-refresh/core test -- api`
+Run: `pnpm --filter @grip/core test -- api`
 
 Expected: later rows are missing because each existing method performs one select.
 
@@ -257,7 +257,7 @@ Route the three history consumers through this helper.
 
 - [x] **Step 5: Verify and commit**
 
-Run: `pnpm --filter @tech-refresh/core test -- api accuracy review`
+Run: `pnpm --filter @grip/core test -- api accuracy review`
 
 ```bash
 git add packages/core/src/api.js packages/core/src/__tests__/api.test.js
@@ -289,7 +289,7 @@ Assert `recordAnswer("Kubernetes", true, "drill", "high", "attempt-1")` makes ex
 
 - [x] **Step 3: Verify RED**
 
-Run: `pnpm --filter @tech-refresh/core test -- api`
+Run: `pnpm --filter @grip/core test -- api`
 
 Expected: existing code records separate database calls.
 
@@ -332,7 +332,7 @@ Because React Query retries reuse the mutation variables, every transport retry 
 Run:
 
 ```bash
-pnpm --filter @tech-refresh/core test -- api
+pnpm --filter @grip/core test -- api
 pnpm typecheck
 ```
 
@@ -374,7 +374,7 @@ Assert arbitrary full-length sections produce `completion: 100` but no quality s
 
 - [x] **Step 2: Verify RED**
 
-Run: `pnpm --filter @tech-refresh/core test -- talkTrack boardScore readiness`
+Run: `pnpm --filter @grip/core test -- talkTrack boardScore readiness`
 
 Expected: current self-rating/completion score and 50/50 board averaging violate the new expectations.
 
@@ -395,7 +395,7 @@ Pass `talkGrade` from saved boards through `Quest.tsx`. Replace copy that calls 
 Run:
 
 ```bash
-pnpm --filter @tech-refresh/core test -- talkTrack boardScore readiness api
+pnpm --filter @grip/core test -- talkTrack boardScore readiness api
 pnpm typecheck
 pnpm build
 ```

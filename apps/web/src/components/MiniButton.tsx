@@ -1,5 +1,5 @@
 import React from "react";
-import { space, font } from "@tech-refresh/core/tokens";
+import { space, font } from "@grip/core/tokens";
 
 export interface MiniButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   color: string;

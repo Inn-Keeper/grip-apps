@@ -1,1 +1,1 @@
-export { brand, brandColors, colors, tints, font, layout, space, radius } from "@tech-refresh/core/tokens";
+export { brand, brandColors, colors, tints, font, layout, space, radius } from "@grip/core/tokens";

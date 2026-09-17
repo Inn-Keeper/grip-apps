@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { extractTechsFromText } from "@tech-refresh/core/cvTechs";
-import { categories } from "@tech-refresh/core/prepData";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { extractTechsFromText } from "@grip/core/cvTechs";
+import { categories } from "@grip/core/prepData";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { inputStyle, textareaStyle, Field } from "../components/shared";
 import { TechChips } from "./TechChips";
 import type { Retro } from "./types";

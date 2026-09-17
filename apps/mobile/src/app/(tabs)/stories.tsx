@@ -2,13 +2,13 @@ import { useState } from "react";
 import { Alert, FlatList, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { COMPETENCIES, COMPETENCY_COLORS, PROMPTS } from "@tech-refresh/core/stories";
-import { t } from "@tech-refresh/core/i18n";
+import { COMPETENCIES, COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
+import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
 import { colors, layout } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, Button, Field, HeaderAction, MiniButton, Pill, Screen, ScreenHeader, Section, SegmentedPills, inputStyle, multilineStyle } from "@/components/ui";
-import type { Story } from "@tech-refresh/core/api";
+import type { Story } from "@grip/core/api";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "@/queries/stories";
 
 const EMPTY_FORM: Story = { title: "", competency: "Conflict", situation: "", task: "", action: "", result: "" };
