@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { friendlyAuthError } from "@grip/core/auth";
+import { t } from "@grip/core/i18n";
 import { supabase } from "./lib/supabase";
 import { brand, colors, layout } from "@grip/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
+import { Turnstile } from "./components/Turnstile";
+import { TURNSTILE_SITE_KEY } from "./lib/turnstile";
 
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -11,6 +14,17 @@ export function SignIn() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Bumped after each attempt to remount the widget: Turnstile tokens are single-use.
+  const [captchaKey, setCaptchaKey] = useState(0);
+  const onToken = useCallback((token: string | null) => setCaptchaToken(token), []);
+  const waitingForCaptcha = !!TURNSTILE_SITE_KEY && !captchaToken;
+  const captchaOptions = { captchaToken: captchaToken ?? undefined };
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    setCaptchaKey((k) => k + 1);
+  };
 
   const inputStyle: React.CSSProperties = {
     padding: "11px 14px",
@@ -28,10 +42,10 @@ export function SignIn() {
     setError(null);
     setNotice(null);
     if (mode === "signin") {
-      const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+      const { error: err } = await supabase.auth.signInWithPassword({ email, password, options: captchaOptions });
       if (err) setError(err.message);
     } else {
-      const { data, error: err } = await supabase.auth.signUp({ email, password });
+      const { data, error: err } = await supabase.auth.signUp({ email, password, options: captchaOptions });
       if (err) {
         setError(err.message);
       } else if (!data.session) {
@@ -42,6 +56,18 @@ export function SignIn() {
       }
       // With confirmation disabled, signUp returns a session and the auth listener signs us in.
     }
+    resetCaptcha();
+    setBusy(false);
+  };
+
+  // Guest session; the database seeds sample data for it (migration 0016).
+  const tryDemo = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    const { error: err } = await supabase.auth.signInAnonymously({ options: captchaOptions });
+    if (err) setError(friendlyAuthError(err.message));
+    resetCaptcha();
     setBusy(false);
   };
 
@@ -104,6 +130,27 @@ export function SignIn() {
             <BrandIcon name="code" color={colors.accentBright} size={15} />
             Continue with GitHub
           </button>
+          <button
+            type="button"
+            onClick={tryDemo}
+            disabled={busy || waitingForCaptcha}
+            style={{
+              padding: "11px 14px",
+              background: "transparent",
+              border: `1px dashed ${colors.accent}80`,
+              borderRadius: 10,
+              color: colors.accentBright,
+              fontSize: 14,
+              fontWeight: 700,
+              cursor: busy ? "wait" : "pointer",
+              opacity: busy || waitingForCaptcha ? 0.6 : 1,
+            }}
+          >
+            {t("demo.try")}
+            <span style={{ display: "block", marginTop: 2, fontSize: 11, fontWeight: 500, color: colors.textFaint }}>
+              {t("demo.trySub")}
+            </span>
+          </button>
           <div style={{ display: "flex", alignItems: "center", gap: 10, color: colors.textFaint, fontSize: 11, fontWeight: 700 }}>
             <span style={{ flex: 1, height: 1, background: colors.border }} />
             or
@@ -128,9 +175,10 @@ export function SignIn() {
             autoComplete={mode === "signup" ? "new-password" : "current-password"}
             style={inputStyle}
           />
+          <Turnstile key={captchaKey} onToken={onToken} />
           <button
             type="submit"
-            disabled={busy}
+            disabled={busy || waitingForCaptcha}
             style={{
               padding: "11px 14px",
               background: colors.accent,
@@ -140,7 +188,7 @@ export function SignIn() {
               fontSize: 14,
               fontWeight: 600,
               cursor: busy ? "wait" : "pointer",
-              opacity: busy ? 0.6 : 1,
+              opacity: busy || waitingForCaptcha ? 0.6 : 1,
             }}
           >
             {busy ? "…" : mode === "signin" ? "Sign in" : "Create account"}

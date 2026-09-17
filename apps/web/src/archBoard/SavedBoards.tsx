@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { t } from "@grip/core/i18n";
 import { colors } from "@grip/core/tokens";
+import { useAuthUserQuery } from "../profile/queries";
 import { useShareBoardMutation } from "./queries";
 import type { AugmentedScenario, BoardSummary } from "./types";
 
@@ -22,6 +23,8 @@ export function SavedBoards({
   onLoad: (board: BoardSummary) => void;
 }) {
   const shareMutation = useShareBoardMutation();
+  // Demo (anonymous) users can't create public links; the database rejects it too.
+  const isDemo = !!useAuthUserQuery().data?.is_anonymous;
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [copyErrorId, setCopyErrorId] = useState<string | null>(null);
 
@@ -114,6 +117,8 @@ export function SavedBoards({
                       {t("board.unshare")}
                     </button>
                   </>
+                ) : isDemo ? (
+                  <span style={{ padding: "3px 4px", color: colors.textFaint, fontSize: 11 }}>{t("demo.signInToShare")}</span>
                 ) : (
                   <button
                     onClick={() => board.id && shareMutation.mutate({ id: board.id, enable: true })}

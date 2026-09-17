@@ -2,7 +2,8 @@
 
 /**
  * Turns a Supabase auth error message into actionable guidance for the two
- * misconfigurations users actually hit (provider disabled, manual linking off),
+ * failures users actually hit (provider disabled, manual linking off, demo
+ * disabled, CAPTCHA rejected),
  * passing anything else through unchanged.
  * @param {string} message
  * @returns {string}
@@ -13,6 +14,12 @@ export function friendlyAuthError(message = "") {
   }
   if (message.includes("Manual linking")) {
     return "Identity linking is disabled in Supabase Auth. Enable manual linking, then try again.";
+  }
+  if (message.includes("Anonymous sign-ins are disabled")) {
+    return "The demo is not enabled yet. Enable anonymous sign-ins in Supabase Auth, then try again.";
+  }
+  if (message.toLowerCase().includes("captcha")) {
+    return "Security check failed. Wait for the check to finish, then try again.";
   }
   return message;
 }

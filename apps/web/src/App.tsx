@@ -15,6 +15,7 @@ import Profile from "./profile/Profile";
 import About from "./about/About";
 import { brand, colors, layout } from "@grip/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
+import { DemoBanner } from "./components/DemoBanner";
 import { Footer } from "./Footer";
 import { SignIn } from "./SignIn";
 
@@ -296,6 +297,7 @@ export default function App() {
           )}
         </div>
       </header>
+      {session?.user.is_anonymous && <DemoBanner />}
 
       <div style={{ flex: 1 }}>
         {session === undefined && (
