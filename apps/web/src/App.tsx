@@ -3,6 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { identityChanged } from "@tech-refresh/core/authCache";
 import { setLocale, t } from "@tech-refresh/core/i18n";
+import { guardHistoryNavigation } from "./lib/navigation.js";
 import { supabase } from "./lib/supabase";
 import { useLocale } from "./lib/useLocale";
 import InterviewPrep from "./interviewPrep/InterviewPrep";
@@ -81,16 +82,17 @@ export default function App() {
     window.history.pushState({ page: id }, "", `/${id}`);
   };
 
-  // Sync state with browser back/forward.
+  // Sync state with browser back/forward, behind the same unsaved-changes guard as the tabs.
   useEffect(() => {
     const onPop = () => {
+      if (!guardHistoryNavigation(window, page)) return;
       const fromPath = window.location.pathname.replace(/^\//, "");
       const next = fromPath === "contacts" ? "quest" : fromPath;
       setPage((PAGE_IDS as readonly string[]).includes(next) ? next : DEFAULT_PAGE);
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, []);
+  }, [page]);
 
   // Cross-tab hops from feature components (e.g. Quest's "Drill these in Prep").
   useEffect(() => {

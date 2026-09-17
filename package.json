@@ -17,7 +17,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "typecheck": "pnpm --filter mobile exec tsc --noEmit && pnpm --filter web typecheck",
-    "test": "pnpm --filter @tech-refresh/core test && pnpm --filter mobile test",
+    "test": "pnpm --filter @tech-refresh/core test && pnpm --filter mobile test && pnpm --filter web test",
     "clean:ghosts": "find . -name '._*' -not -path '*/.git/*' -delete",
     "ci": "pnpm lint && pnpm test && pnpm typecheck && pnpm build"
   },

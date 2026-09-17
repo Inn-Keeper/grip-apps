@@ -374,6 +374,12 @@ pnpm --filter mobile test
 ```
 Covers: Prep screen, quiz flow, drill session, stats bar, accuracy chart.
 
+### Web (node:test, 16 tests)
+```bash
+pnpm --filter web test
+```
+Covers: Arch Board history, placement geometry, connection and workflow state; the unsaved-changes guard on browser Back/Forward.
+
 ### E2E (Maestro, smoke tests)
 ```bash
 pnpm exec maestro test apps/mobile/.maestro/smoke.yaml --appId <expo-app-id>
@@ -421,7 +427,7 @@ The repo uses one required GitHub Actions workflow, `CI / Run checks`, to keep p
 
 The consolidated gate runs:
 1. `pnpm lint` — ESLint across the workspace
-2. `pnpm test` — Jest on core + mobile
+2. `pnpm test` — Jest on core + mobile, node:test on web
 3. `pnpm typecheck` — TypeScript checks for mobile + web
 4. `pnpm build` — Web production build
 
