@@ -196,7 +196,8 @@ export default function BoardScreen() {
       {chrome !== "zen" && <DesignTimerBar timer={timer} />}
 
       {chrome !== "zen" && (
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+        // Wraps onto a second line on narrow screens so every action stays reachable.
+        <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", columnGap: 10, rowGap: 6 }}>
           <MiniButton
             label={chrome === "full" ? "Hide" : "Show"}
             color={colors.textDim}
@@ -218,7 +219,7 @@ export default function BoardScreen() {
             <BrandIcon name="maintenance" color={colors.textDim} size={14} />
             <Text style={{ fontSize: 12, fontWeight: "600", color: colors.textDim }}>{liveMaint}</Text>
           </View>
-          <View style={{ flexDirection: "row", gap: 8, marginLeft: "auto", alignItems: "center" }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginLeft: "auto", alignItems: "center" }}>
             <MiniButton
               label={t("scale.check")}
               color={scaleOpen ? colors.accent : colors.textDim}
@@ -296,6 +297,8 @@ export default function BoardScreen() {
             <TouchableOpacity
               onPress={() => setChrome("compact")}
               hitSlop={8}
+              accessibilityRole="button"
+              accessibilityLabel={t("board.exitZen")}
               style={{
                 position: "absolute",
                 top: 8,
@@ -366,6 +369,7 @@ export default function BoardScreen() {
           node={nodes.find((node) => node.id === inspectingId) ?? null}
           onChange={(patch) => inspectingId && patchNode(inspectingId, patch)}
           onClose={() => setInspectingId(null)}
+          onRemove={() => inspectingId && removeNode(inspectingId)}
         />
 
         <ScaleSheet key={scenario.id} visible={scaleOpen} scale={scenario.scale} onClose={() => setScaleOpen(false)} />

@@ -126,10 +126,8 @@ export function NodeView({
 
   return (
     <GestureDetector gesture={body}>
+      {/* Not `accessible` itself: that would swallow the remove and connect buttons on iOS. */}
       <Animated.View
-        accessible
-        accessibilityRole="button"
-        accessibilityLabel={`Board node ${spec.label}`}
         style={[
           {
             position: "absolute",
@@ -151,20 +149,28 @@ export function NodeView({
           animatedStyle,
         ]}
       >
-        <BrandIcon name={nodeIconName(node.type)} color={color} size={18} />
-        <Text style={{ flex: 1, fontSize: 10, fontWeight: "600", color: colors.text, lineHeight: 13 }}>
-          {spec.label}
-        </Text>
+        <View
+          accessible
+          accessibilityRole="button"
+          accessibilityLabel={`Board node ${spec.label}`}
+          style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 6 }}
+        >
+          <BrandIcon name={nodeIconName(node.type)} color={color} size={18} />
+          <Text style={{ flex: 1, fontSize: 10, fontWeight: "600", color: colors.text, lineHeight: 13 }}>
+            {spec.label}
+          </Text>
+        </View>
 
         <TouchableOpacity
           accessibilityRole="button"
           accessibilityLabel={`Remove ${spec.label}`}
           onPress={() => onRemove(node.id)}
           hitSlop={8}
+          // Inside the node's bounds: iOS drops touches on children that overflow their parent.
           style={{
             position: "absolute",
-            top: -8,
-            right: -8,
+            top: 3,
+            right: 3,
             width: 18,
             height: 18,
             borderRadius: 9,
@@ -184,7 +190,8 @@ export function NodeView({
             hitSlop={14}
             style={{
               position: "absolute",
-              right: -HANDLE_SIZE / 2,
+              // Overlaps the edge but keeps its center inside, so the tap lands (see above).
+              right: -HANDLE_SIZE / 4,
               top: NODE_H / 2 - HANDLE_SIZE / 2 - 2,
               width: HANDLE_SIZE,
               height: HANDLE_SIZE,

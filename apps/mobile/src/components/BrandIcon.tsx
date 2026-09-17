@@ -156,7 +156,9 @@ export function BrandIcon({ name, color = colors.textDim, size = 18, muted = fal
           width: Math.max(stroke, piece.w * scale),
           height: Math.max(stroke, piece.h * scale),
           opacity: piece.opacity ?? 1,
-          transform: piece.rotate ? [{ rotate: piece.rotate }] : undefined,
+          // Never undefined: when an icon swaps in place (e.g. the timer's spark → close), React Native
+          // sends null for a removed transform and crashes; an empty array clears it safely.
+          transform: piece.rotate ? [{ rotate: piece.rotate }] : [],
         };
         if (piece.kind === "line") {
           return <View key={index} style={[common, { backgroundColor: color, borderRadius: stroke / 2 }]} />;

@@ -113,7 +113,8 @@ export function useBoardViewport(canvasRef: RefObject<HTMLDivElement | null>, no
       if (!isSurface(event.target) || (event.button !== 0 && event.button !== 1)) return;
       const point = local(event);
       pan = { id: event.pointerId, start: point, last: point, moved: false };
-      el.setPointerCapture(event.pointerId);
+      // Capture keeps the pan going if the pointer leaves the canvas; a pointer that is already gone can't be captured.
+      try { el.setPointerCapture(event.pointerId); } catch { /* ignore */ }
     };
 
     const pointerMove = (event: PointerEvent) => {

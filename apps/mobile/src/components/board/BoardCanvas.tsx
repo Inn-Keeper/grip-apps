@@ -34,6 +34,8 @@ const ZOOM_STEP = 1.25;
 // stay full size on tablets, instead of always starting at 100%.
 const BASE_VISIBLE_WIDTH = 560;
 const MIN_BASE_SCALE = 0.55;
+// The floating palette and zoom controls sit over the canvas bottom; keep fitted nodes clear of them.
+const BOTTOM_OVERLAY = 76;
 const SPRING = { damping: 18 };
 
 /** Lets the screen place new nodes where the user is currently looking. */
@@ -186,13 +188,14 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
     const minY = Math.min(...nodes.map((n) => n.y)) - FIT_PADDING;
     const maxX = Math.max(...nodes.map((n) => n.x + NODE_W)) + FIT_PADDING;
     const maxY = Math.max(...nodes.map((n) => n.y + NODE_H)) + FIT_PADDING;
+    const usableHeight = Math.max(120, boardSize.height - BOTTOM_OVERLAY);
     const fitScale = Math.max(
       MIN_SCALE,
-      Math.min(boardSize.width / (maxX - minX), boardSize.height / (maxY - minY), baseScale)
+      Math.min(boardSize.width / (maxX - minX), usableHeight / (maxY - minY), baseScale)
     );
     scale.value = withSpring(fitScale, SPRING);
     translateX.value = withSpring((boardSize.width - (maxX - minX) * fitScale) / 2 - minX * fitScale, SPRING);
-    translateY.value = withSpring((boardSize.height - (maxY - minY) * fitScale) / 2 - minY * fitScale, SPRING);
+    translateY.value = withSpring((usableHeight - (maxY - minY) * fitScale) / 2 - minY * fitScale, SPRING);
   };
 
   /** Button zoom keeps the screen center fixed. */
@@ -403,7 +406,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
           <TouchableOpacity
             onPress={fitAll}
             accessibilityRole="button"
-            accessibilityLabel={t("board.fitHint")}
+            accessibilityHint={t("board.fitHint")}
             style={{ flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 6 }}
           >
             <BrandIcon name="fit" color={colors.textDim} size={13} />

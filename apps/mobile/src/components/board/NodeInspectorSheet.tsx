@@ -13,9 +13,10 @@ type Props = {
   node: BoardNode | null;
   onChange: (patch: Partial<BoardNode>) => void;
   onClose: () => void;
+  onRemove: () => void;
 };
 
-export function NodeInspectorSheet({ node, onChange, onClose }: Props) {
+export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props) {
   if (!node) return null;
   const spec = meta(node.type);
   const color = TYPE_COLORS[node.type];
@@ -74,7 +75,9 @@ export function NodeInspectorSheet({ node, onChange, onClose }: Props) {
             </View>
           </View>
 
-          <View style={{ alignItems: "flex-end" }}>
+          {/* Removing from here always works; the node's own ✕ gets tiny when zoomed out. */}
+          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+            <MiniButton label={t("board.remove")} color={colors.danger} onPress={onRemove} />
             <Button label={t("common.close")} onPress={onClose} />
           </View>
         </View>

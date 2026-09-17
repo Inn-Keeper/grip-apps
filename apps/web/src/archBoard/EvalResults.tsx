@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
 import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
@@ -26,9 +27,19 @@ export function EvalResults({
   scenario: AugmentedScenario;
   pushback?: string[];
 }) {
+  // Results render below the canvas; bring them into view so "Evaluate design" visibly answers.
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [result]);
+
   return (
     <div
+      ref={ref}
+      aria-live="polite"
       style={{
+        // Clears the sticky app header and design timer.
+        scrollMarginTop: 150,
         marginTop: 16,
         padding: "18px 20px",
         background: colors.well,

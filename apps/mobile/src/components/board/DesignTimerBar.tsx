@@ -66,7 +66,13 @@ export function DesignTimerBar({ timer }: Props) {
 
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-      <TouchableOpacity onPress={toggle} hitSlop={6} style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <TouchableOpacity
+        onPress={toggle}
+        hitSlop={6}
+        accessibilityRole="button"
+        accessibilityLabel={running ? t("timer.pause") : started ? t("timer.resume") : t("timer.start")}
+        style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+      >
         <BrandIcon name={running ? "close" : "spark"} color={running ? colors.textDim : colors.accentBright} size={14} />
         <Text style={{ fontSize: 16, fontWeight: "700", color: clockColor, fontVariant: ["tabular-nums"] }}>{clock}</Text>
       </TouchableOpacity>
@@ -91,6 +97,12 @@ export function DesignTimerBar({ timer }: Props) {
         </View>
       </View>
 
+      {/* A labeled control: the clock is tappable too, but nothing says so. */}
+      <MiniButton
+        label={running ? t("timer.pause") : started ? t("timer.resume") : t("timer.start")}
+        color={running ? colors.textDim : colors.accent}
+        onPress={toggle}
+      />
       {started && <MiniButton label={t("timer.reset")} color={colors.textDim} onPress={reset} />}
     </View>
   );
