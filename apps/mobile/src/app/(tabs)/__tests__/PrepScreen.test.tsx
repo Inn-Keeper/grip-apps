@@ -44,5 +44,8 @@ describe("PrepScreen", () => {
     await waitFor(() => expect(view.getByText("DRILL")).toBeTruthy());
     expect(api.getQuestions).toHaveBeenCalled();
     expect(useScores).toHaveBeenCalled();
-  });
+    // The first render loads React Native and Expo synchronously: 6-28 s on a
+    // slow external drive. The waitFor calls above yield to the event loop, so
+    // an already-expired 5 s default fails the test; allow a minute instead.
+  }, 60_000);
 });
