@@ -1,0 +1,16 @@
+{
+  "assets/brand/mascot/3d/poe-starter.glb": "be3fa15f0ff43573526322d832ff363671d415f3b5ac792da266b674f0e62d1e",
+  "assets/brand/mascot/3d/poe-preview.png": "1afc64c2e9a5ff8eda4846a1bf8ab053a10889205b86885c3272e394d933ec44",
+  "assets/brand/mascot/3d/poe-preview-v1.png": "b0e89db69450547deffd3867b7ecb8bc210b632a18fc6028502ea63a0cbafa72",
+  "assets/brand/mascot/3d/poe-blink.png": "407be6f233bbfe6924909c05d5470dd554749ead98f44bb428d616f9300607f2",
+  "assets/brand/mascot/3d/poe-head-tilt.png": "cb9c85e65c33884cadfa545726c122909446d223eeaacd5c43d1dbc419bf2b2e",
+  "assets/brand/mascot/3d/poe-starter.blend": "4fe34da2eb9a72cec0735f8f87f6f0938c149953de6e4e4ac94b62717c1e8a30",
+  "assets/brand/mascot/3d/verification.json": "d1be643a4cd331faf74614865dae96789de1e0bcf7def174314ce1e9be1a5358",
+  "assets/brand/mascot/3d/poe-idle.mp4": "0912339ddbd5ca45b3380021184e270231b1828ba1eb4fb68e16f6affa308177",
+  "assets/brand/mascot/3d/README.md": "9b330143fe9f61b6b27315beb1882be46ae3bd1f3c7f246629aa04ba38f0cf5a",
+  "assets/brand/mascot/3d/poe-glb-preview.png": "3cc6490b311c7eb5802389e0427eaa25739b6a6afed5990792f21842c9932754",
+  "scripts/generate-poe.py": "082196889b8298cff35c2d898112aca07a57153c07b3cc11c0864da13ec8b1c9",
+  "scripts/verify-poe.py": "5f25fef43aa8960f2508b49e83ab3627e75f9dec2d19ccf2c20f5eb552e44369",
+  "BRAND.md": "72b9ef92e304502a0b62afc13940277fc2db88bc084ebd0ca539cf24dffb2d41",
+  "docs/poe-mascot-spec.md": "fc793a8067f86dfe1071834027854ca0186c42a56f74f80ac4a89850eb4d481d"
+}

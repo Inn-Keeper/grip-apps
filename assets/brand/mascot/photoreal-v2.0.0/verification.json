@@ -1,0 +1,14 @@
+{
+  "blend_reopen": "passed",
+  "renderer": "Cycles",
+  "hair_shape": "THICK",
+  "hair_systems": 4,
+  "curve_count": 142759,
+  "curve_points": 713213,
+  "animation_loop": "passed",
+  "animation_motion": "passed",
+  "iridescence_layer_weight": "passed",
+  "locket_only_light_link": "passed",
+  "old_version_files_verified": 14,
+  "old_version_changed": []
+}

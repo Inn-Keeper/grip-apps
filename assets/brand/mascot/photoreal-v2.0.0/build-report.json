@@ -1,0 +1,20 @@
+{
+  "spec_version": "2.0.0",
+  "renderer": "Cycles",
+  "hair_shape": "THICK",
+  "hair_systems": {
+    "01 Contour body coat": 52380,
+    "02 Head, nape and throat hackles": 45640,
+    "03 Wing coverts": 37290,
+    "04 Flight feather barbs": 7449
+  },
+  "curve_points": 713213,
+  "flight_mesh_instances": 39,
+  "body_albedo_linear": 0.028,
+  "lens_mm": 85,
+  "f_stop": 4,
+  "warm_light_receivers": [
+    "Small oval gold locket"
+  ],
+  "web_export": "Not produced: Cycles hair and angular shaders require a separate real-time treatment."
+}

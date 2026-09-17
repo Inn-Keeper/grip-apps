@@ -1,0 +1,15 @@
+{
+  "blender_version": "4.5.3 LTS",
+  "glb_bytes": 7227796,
+  "triangles": 187440,
+  "materials": 11,
+  "embedded_textures": 2,
+  "bones": 8,
+  "animation": "Poe_Idle",
+  "duration_seconds": 4,
+  "loop_vertex_error": 0.0,
+  "head_tilt_max_vertex_displacement": 0.05947665010912148,
+  "blink_max_vertex_displacement": 0.06214237025066517,
+  "glb_reimport": "passed",
+  "embedded_resources": true
+}

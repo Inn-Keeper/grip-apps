@@ -167,7 +167,11 @@ Once you pick a direction from Midjourney:
 
 ### Phase 3: Mascot (Midjourney + Figma, 2–3 hours)
 
-**Prompt for Midjourney (Raven/Poe):**
+> **Superseded.** Poe's visual spec now lives in
+> [`docs/poe-mascot-spec.md`](docs/poe-mascot-spec.md) (v2.0.0, photoreal).
+> The prompt below is kept for history only — do not generate from it.
+
+**Prompt for Midjourney (Raven/Poe) — v1.0.0, historical:**
 
 ```
 A clever, wise raven or crow in an organic, slightly illustrated style.
