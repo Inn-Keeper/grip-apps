@@ -7,7 +7,7 @@ import { colors, layout } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
-import { CATEGORY_ICONS, CUSTOM_CATEGORY, NODE_H, NODE_W } from "./constants";
+import { CATEGORY_ICONS, CUSTOM_CATEGORY, NODE_H, NODE_W, WORLD } from "./constants";
 import { DesignTimer } from "./DesignTimer";
 import { EdgeInspector } from "./EdgeInspector";
 import { EvalResults } from "./EvalResults";
@@ -18,7 +18,9 @@ import { ScaleBrief } from "./ScaleBrief";
 import { ScenarioForm } from "./ScenarioForm";
 import { TalkTrack } from "./TalkTrack";
 import { activateConnection } from "./connectionState.js";
-import { findPlacement, pointerToBoard } from "./boardGeometry.js";
+import { findPlacement } from "./boardGeometry.js";
+import { useBoardViewport } from "./useBoardViewport";
+import { ViewportControls } from "./ViewportControls";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
 import { workflowStep } from "./workflowState.js";
 import styles from "./ArchBoard.module.css";
@@ -60,6 +62,9 @@ export default function ArchBoard() {
   const savedSnapshotRef = useRef<any>(null);
   const submittedSnapshotRef = useRef<any>(null);
   const [, renderHistory] = useState(0);
+  const nodesRef = useRef<BoardNode[]>([]);
+  nodesRef.current = nodes;
+  const { view, setView, toBoard, zoomStep, resetZoom, fit, consumePan } = useBoardViewport(canvasRef, nodesRef);
 
   const { data: customScenarios = [], error: scenariosError } = useCustomScenariosQuery();
   const allScenarios: AugmentedScenario[] = useMemo(() => [
@@ -168,6 +173,8 @@ export default function ArchBoard() {
     historyRef.current = createHistory(loaded);
     savedSnapshotRef.current = loaded;
     setSavedOpen(false);
+    // Frame the loaded board once the canvas has laid out.
+    window.requestAnimationFrame(() => fit(board.nodes));
   };
   const requestBoard = async (summary: BoardSummary) => {
     if (!mayDiscard()) return;
@@ -180,6 +187,7 @@ export default function ArchBoard() {
   const switchScenario = (id: string) => {
     if (!mayDiscard()) return;
     setScenarioId(id);
+    setView({ scale: 1, x: 0, y: 0 });
     setNodes([]);
     setEdges([]);
     setTalkSections(emptyTalkTrack());
@@ -193,10 +201,13 @@ export default function ArchBoard() {
     historyRef.current = createHistory(next); savedSnapshotRef.current = next;
   };
 
+  // New nodes land in the visible part of the board, wherever the user has panned or zoomed.
   const addNode = (type: string) => {
-    const width = canvasRef.current?.clientWidth ?? 480;
-    const point = findPlacement(nodes, { width, height: canvasRef.current?.clientHeight ?? 560 }, { width: NODE_W, height: NODE_H });
-    commit({ ...snapshot(), nodes: [...nodes, { id: crypto.randomUUID(), type, ...point }] });
+    const origin = { x: Math.max(0, -view.x / view.scale), y: Math.max(0, -view.y / view.scale) };
+    const visible = { width: (canvasRef.current?.clientWidth ?? 480) / view.scale, height: (canvasRef.current?.clientHeight ?? 560) / view.scale };
+    const shifted = nodes.map((n) => ({ ...n, x: n.x - origin.x, y: n.y - origin.y }));
+    const point = findPlacement(shifted, visible, { width: NODE_W, height: NODE_H });
+    commit({ ...snapshot(), nodes: [...nodes, { id: crypto.randomUUID(), type, x: point.x + origin.x, y: point.y + origin.y }] });
   };
 
   const removeNode = (id: string) => {
@@ -225,11 +236,7 @@ export default function ArchBoard() {
     commit({ ...snapshot(), edges: edges.map((e) => (e.id === id ? { ...e, ...patch } : e)) });
   };
 
-  const canvasPoint = (e: React.PointerEvent) => {
-    const rect = canvasRef.current?.getBoundingClientRect();
-    if (!rect) return null;
-    return { ...pointerToBoard({ x: e.clientX, y: e.clientY }, rect, { left: canvasRef.current?.scrollLeft ?? 0, top: canvasRef.current?.scrollTop ?? 0 }), rect };
-  };
+  const canvasPoint = (e: React.PointerEvent) => (canvasRef.current ? toBoard(e.clientX, e.clientY) : null);
 
   const nodeAtPoint = (x: number, y: number, sourceId: string) =>
     nodes.find((node) => {
@@ -299,8 +306,8 @@ export default function ArchBoard() {
     if (!d) return;
     const point = canvasPoint(e);
     if (!point) return;
-    const x = Math.max(0, Math.min(point.rect.width - NODE_W, point.x - d.dx));
-    const y = Math.max(0, Math.min(point.rect.height - NODE_H, point.y - d.dy));
+    const x = Math.max(0, Math.min(WORLD.width - NODE_W, point.x - d.dx));
+    const y = Math.max(0, Math.min(WORLD.height - NODE_H, point.y - d.dy));
     d.moved = true;
     const source = pendingNodesRef.current ?? nodes;
     pendingNodesRef.current = source.map((n) => (n.id === d.id ? { ...n, x, y } : n));
@@ -434,7 +441,6 @@ export default function ArchBoard() {
         <div className={styles.actions}>
           <button className={styles.toolbarButton} onClick={() => applyHistory(undo(historyRef.current))} disabled={!historyRef.current.past.length}>Undo</button>
           <button className={styles.toolbarButton} onClick={() => applyHistory(redo(historyRef.current))} disabled={!historyRef.current.future.length}>Redo</button>
-          <button className={styles.toolbarButton} onClick={() => canvasRef.current?.scrollTo({ left: 0, top: 0, behavior: "smooth" })}>Reset view</button>
           <button
             onClick={() => setTalkOpen((value) => !value)}
             style={{
@@ -551,19 +557,28 @@ export default function ArchBoard() {
         {/* Canvas */}
         <div
           ref={canvasRef}
+          className={styles.canvas}
+          data-board-surface="true"
+          tabIndex={0}
+          aria-label={t("board.canvasLabel")}
           onPointerMove={(e) => { if (connectDragRef.current) updateConnectionDrag(e); }}
           onPointerUp={(e) => { if (connectDragRef.current) finishConnectionDrag(e); }}
           onPointerCancel={() => {
             if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
             dragFrameRef.current = null; pendingNodesRef.current = null; dragRef.current = null; cancelConnection();
           }}
-          onClick={(e) => { if (e.target === canvasRef.current) cancelConnection(); }}
+          onClick={(e) => {
+            if (consumePan()) return;
+            if ((e.target as HTMLElement).dataset.boardSurface === "true") cancelConnection();
+          }}
           style={{
             position: "relative", flex: 1, minWidth: 0, height: "calc(100vh - 360px)", minHeight: 560,
             background: colors.bgDeep,
-            backgroundImage: `radial-gradient(${colors.border} 1px, transparent 1px)`,
-            backgroundSize: "22px 22px",
-            border: `1px solid ${colors.border}`, borderRadius: 14, overflow: "auto",
+            // The dot grid belongs to the board, so it pans and scales with it.
+            backgroundImage: `radial-gradient(${colors.border} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
+            backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
+            backgroundPosition: `${view.x}px ${view.y}px`,
+            border: `1px solid ${colors.border}`, borderRadius: 14, overflow: "hidden", touchAction: "none",
           }}
         >
           {nodes.length === 0 && (
@@ -573,12 +588,20 @@ export default function ArchBoard() {
                 justifyContent: "center", color: colors.textFaint, fontSize: 13, pointerEvents: "none",
               }}
             >
-              Add components from the palette, then click or Shift-drag between node axis handles to wire them up.
+              {t("board.emptyCanvasHint")}
             </div>
           )}
 
+          <div
+            data-board-surface="true"
+            style={{
+              position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height,
+              transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`, transformOrigin: "0 0",
+            }}
+          >
+
           {/* Edges */}
-          <svg style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}>
+          <svg style={{ position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height, pointerEvents: "none" }}>
             <defs>
               <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
                 <path d="M 0 0 L 10 5 L 0 10 z" fill={colors.textDim} />
@@ -779,6 +802,15 @@ export default function ArchBoard() {
               </div>
             );
           })}
+          </div>
+
+          <ViewportControls
+            scale={view.scale}
+            onZoomIn={() => zoomStep(1)}
+            onZoomOut={() => zoomStep(-1)}
+            onReset={resetZoom}
+            onFit={() => fit(nodes)}
+          />
         </div>
       </div>
 

@@ -2,10 +2,6 @@ const PADDING = 30;
 const GAP_X = 23;
 const GAP_Y = 41;
 
-export function pointerToBoard(client, rect, scroll) {
-  return { x: client.x - rect.left + scroll.left, y: client.y - rect.top + scroll.top };
-}
-
 export function findPlacement(nodes, viewport, nodeSize) {
   const stepX = nodeSize.width + GAP_X;
   const stepY = nodeSize.height + GAP_Y;
@@ -15,11 +11,3 @@ export function findPlacement(nodes, viewport, nodeSize) {
     if (!nodes.some((node) => Math.abs(node.x - point.x) < nodeSize.width && Math.abs(node.y - point.y) < nodeSize.height)) return point;
   }
 }
-
-export function contentBounds(nodes, viewport, nodeSize) {
-  return {
-    width: Math.max(viewport.width, ...nodes.map((node) => node.x + nodeSize.width + PADDING)),
-    height: Math.max(viewport.height, ...nodes.map((node) => node.y + nodeSize.height + PADDING)),
-  };
-}
-

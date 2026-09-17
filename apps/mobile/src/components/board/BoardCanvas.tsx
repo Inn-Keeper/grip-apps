@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useImperativeHandle, useState, type Ref } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import { Canvas, DashPathEffect, Group, Path } from "@shopify/react-native-skia";
 import Animated, {
   Easing,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withRepeat,
@@ -12,6 +13,7 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import type { BoardEdge, BoardNode } from "@grip/core/arch";
+import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { NODE_H, NODE_W, NodeView } from "./NodeView";
@@ -27,6 +29,15 @@ export const CANVAS = { width: 1600, height: 1200 };
 const MIN_SCALE = 0.3;
 const MAX_SCALE = 2.5;
 const FIT_PADDING = 48;
+const ZOOM_STEP = 1.25;
+// Canvas width that fills the screen at the base zoom: nodes shrink on phones and
+// stay full size on tablets, instead of always starting at 100%.
+const BASE_VISIBLE_WIDTH = 560;
+const MIN_BASE_SCALE = 0.55;
+const SPRING = { damping: 18 };
+
+/** Lets the screen place new nodes where the user is currently looking. */
+export type BoardCanvasHandle = { visibleOrigin: () => { x: number; y: number } };
 
 type PendingEdge = { fromId: string; x: number; y: number };
 
@@ -38,6 +49,9 @@ type Props = {
   onAddEdge: (fromId: string, toId: string) => void;
   onTapEdge: (id: string) => void;
   onInspectNode: (id: string) => void;
+  /** Changes when a different board or scenario is shown; the view re-fits to it. */
+  fitKey: number;
+  ref?: Ref<BoardCanvasHandle>;
 };
 
 type EdgeGeometry = { sx: number; sy: number; tx: number; ty: number; mx: number };
@@ -75,7 +89,7 @@ function distanceToEdge(geometry: EdgeGeometry, px: number, py: number, samples 
   return min;
 }
 
-export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge, onTapEdge, onInspectNode }: Props) {
+export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge, onTapEdge, onInspectNode, fitKey, ref }: Props) {
   const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
   const [pending, setPending] = useState<PendingEdge | null>(null);
   const [connectFrom, setConnectFrom] = useState<string | null>(null);
@@ -86,6 +100,21 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
   const translateY = useSharedValue(0);
   const pinchStart = useSharedValue({ s: 1, tx: 0, ty: 0, fx: 0, fy: 0 });
   const panStart = useSharedValue({ tx: 0, ty: 0 });
+  const [zoomPercent, setZoomPercent] = useState(100);
+  useAnimatedReaction(
+    () => Math.round(scale.value * 100),
+    (percent, previous) => {
+      if (percent !== previous) runOnJS(setZoomPercent)(percent);
+    }
+  );
+  const baseScale = Math.max(MIN_BASE_SCALE, Math.min(1, boardSize.width / BASE_VISIBLE_WIDTH));
+
+  useImperativeHandle(ref, () => ({
+    visibleOrigin: () => ({
+      x: Math.max(0, -translateX.value / scale.value),
+      y: Math.max(0, -translateY.value / scale.value),
+    }),
+  }));
 
   // Marching-ants phase for the pending connector, looping on the UI thread.
   const dashPhase = useSharedValue(0);
@@ -144,12 +173,13 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
       );
     });
 
-  /** Frames every node in the viewport — the "see everything in one shot" button. */
+  /** Frames every node in the viewport — the "see everything in one shot" button. Never zooms past the base scale. */
   const fitAll = () => {
+    if (boardSize.width === 0) return;
     if (nodes.length === 0) {
-      scale.value = withSpring(1, { damping: 18 });
-      translateX.value = withSpring(0, { damping: 18 });
-      translateY.value = withSpring(0, { damping: 18 });
+      scale.value = withSpring(baseScale, SPRING);
+      translateX.value = withSpring(0, SPRING);
+      translateY.value = withSpring(0, SPRING);
       return;
     }
     const minX = Math.min(...nodes.map((n) => n.x)) - FIT_PADDING;
@@ -158,12 +188,31 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
     const maxY = Math.max(...nodes.map((n) => n.y + NODE_H)) + FIT_PADDING;
     const fitScale = Math.max(
       MIN_SCALE,
-      Math.min(boardSize.width / (maxX - minX), boardSize.height / (maxY - minY), 1.4)
+      Math.min(boardSize.width / (maxX - minX), boardSize.height / (maxY - minY), baseScale)
     );
-    scale.value = withSpring(fitScale, { damping: 18 });
-    translateX.value = withSpring((boardSize.width - (maxX - minX) * fitScale) / 2 - minX * fitScale, { damping: 18 });
-    translateY.value = withSpring((boardSize.height - (maxY - minY) * fitScale) / 2 - minY * fitScale, { damping: 18 });
+    scale.value = withSpring(fitScale, SPRING);
+    translateX.value = withSpring((boardSize.width - (maxX - minX) * fitScale) / 2 - minX * fitScale, SPRING);
+    translateY.value = withSpring((boardSize.height - (maxY - minY) * fitScale) / 2 - minY * fitScale, SPRING);
   };
+
+  /** Button zoom keeps the screen center fixed. */
+  const zoomBy = (factor: number) => {
+    const next = Math.max(MIN_SCALE, Math.min(MAX_SCALE, scale.value * factor));
+    const ratio = next / scale.value;
+    const cx = boardSize.width / 2;
+    const cy = boardSize.height / 2;
+    scale.value = withSpring(next, SPRING);
+    translateX.value = withSpring(
+      clampTranslate(cx - (cx - translateX.value) * ratio, boardSize.width, CANVAS.width, next), SPRING
+    );
+    translateY.value = withSpring(
+      clampTranslate(cy - (cy - translateY.value) * ratio, boardSize.height, CANVAS.height, next), SPRING
+    );
+  };
+
+  // Re-frame when the board or scenario changes, and once the canvas has a size.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(fitAll, [fitKey, boardSize.width, boardSize.height]);
 
   // Magnetic release: the finger usually covers the target, so the nearest
   // node within SNAP_RADIUS wins rather than requiring a drop inside it.
@@ -330,26 +379,52 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
           </View>
         )}
 
-        {nodes.length > 0 && (
+        {/* Always-visible zoom controls: zoom is discoverable without knowing the gestures. */}
+        <View
+          style={{
+            position: "absolute",
+            right: 10,
+            // Clears the floating palette bar docked at the canvas bottom.
+            bottom: 66,
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 3,
+            backgroundColor: colors.surface,
+            borderWidth: 1,
+            borderColor: colors.border,
+            borderRadius: 20,
+          }}
+        >
+          <ZoomButton label="−" accessibilityLabel={t("board.zoomOut")} onPress={() => zoomBy(1 / ZOOM_STEP)} />
+          <Text style={{ minWidth: 44, textAlign: "center", color: colors.textDim, fontSize: 12, fontWeight: "700", fontVariant: ["tabular-nums"] }}>
+            {zoomPercent}%
+          </Text>
+          <ZoomButton label="+" accessibilityLabel={t("board.zoomIn")} onPress={() => zoomBy(ZOOM_STEP)} />
           <TouchableOpacity
             onPress={fitAll}
-            style={{
-              position: "absolute",
-              right: 10,
-              // Clears the floating palette bar docked at the canvas bottom.
-              bottom: 66,
-              paddingHorizontal: 12,
-              paddingVertical: 7,
-              backgroundColor: colors.surface,
-              borderWidth: 1,
-              borderColor: colors.border,
-              borderRadius: 18,
-            }}
+            accessibilityRole="button"
+            accessibilityLabel={t("board.fitHint")}
+            style={{ flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 6 }}
           >
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}><BrandIcon name="fit" color={colors.textDim} size={13} /><Text style={{ color: colors.textDim, fontSize: 12, fontWeight: "600" }}>Fit</Text></View>
+            <BrandIcon name="fit" color={colors.textDim} size={13} />
+            <Text style={{ color: colors.textDim, fontSize: 12, fontWeight: "600" }}>{t("board.fit")}</Text>
           </TouchableOpacity>
-        )}
+        </View>
       </View>
     </GestureDetector>
+  );
+}
+
+function ZoomButton({ label, accessibilityLabel, onPress }: { label: string; accessibilityLabel: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      hitSlop={6}
+      style={{ width: 32, height: 30, alignItems: "center", justifyContent: "center" }}
+    >
+      <Text style={{ color: colors.textBright, fontSize: 18, fontWeight: "600" }}>{label}</Text>
+    </TouchableOpacity>
   );
 }

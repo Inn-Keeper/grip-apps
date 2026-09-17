@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -13,7 +13,7 @@ import type { SavedBoard } from "@grip/core/api";
 import { colors, layout } from "@/theme";
 import { Button, MiniButton, Screen, ScreenHeader, SegmentedPills } from "@/components/ui";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
-import { BoardCanvas } from "@/components/board/BoardCanvas";
+import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
 import { DesignTimerBar, useDesignTimer } from "@/components/board/DesignTimerBar";
 import { ResultSheet } from "@/components/board/ResultSheet";
 import { EdgeInspectorSheet } from "@/components/board/EdgeInspectorSheet";
@@ -26,6 +26,9 @@ export default function BoardScreen() {
   const locale = useLocale();
   const insets = useSafeAreaInsets();
   const [scenarioIndex, setScenarioIndex] = useState(0);
+  const canvasRef = useRef<BoardCanvasHandle>(null);
+  // Bumped when a different board or scenario is shown, so the canvas re-frames (saving doesn't bump it).
+  const [viewKey, setViewKey] = useState(0);
   const [nodes, setNodes] = useState<BoardNode[]>([]);
   const [edges, setEdges] = useState<BoardEdge[]>([]);
   const [result, setResult] = useState<EvalResult | null>(null);
@@ -87,13 +90,16 @@ export default function BoardScreen() {
   const switchScenario = (index: number) => {
     setScenarioIndex(index);
     clearBoard();
+    setViewKey((key) => key + 1);
   };
 
+  // New nodes land in the visible part of the canvas, wherever the user has panned.
   const addNode = (type: string) => {
     const index = nodes.length;
+    const origin = canvasRef.current?.visibleOrigin() ?? { x: 0, y: 0 };
     setNodes((current) => [
       ...current,
-      { id: `${Date.now()}-${index}`, type, x: 20 + (index % 2) * 150, y: 20 + Math.floor(index / 2) * 80 },
+      { id: `${Date.now()}-${index}`, type, x: origin.x + 20 + (index % 2) * 150, y: origin.y + 20 + Math.floor(index / 2) * 80 },
     ]);
     setResult(null);
   };
@@ -120,6 +126,7 @@ export default function BoardScreen() {
       return;
     }
     setScenarioIndex(nextScenarioIndex);
+    setViewKey((key) => key + 1);
     setNodes(board.nodes);
     setEdges(board.edges);
     setTalkSections({ ...emptyTalkTrack(), ...(board.talkTrack?.sections ?? {}) });
@@ -256,6 +263,8 @@ export default function BoardScreen() {
 
       <View style={{ flex: 1 }}>
         <BoardCanvas
+          ref={canvasRef}
+          fitKey={viewKey}
           nodes={nodes}
           edges={edges}
           onMoveNode={moveNode}
