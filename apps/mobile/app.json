@@ -4,30 +4,30 @@
     "slug": "grip",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/brand/icon.png",
+    "icon": "./assets/images/icon.png",
     "scheme": "grip",
     "userInterfaceStyle": "dark",
     "ios": {
-      "icon": "./assets/brand/icon.png",
+      "icon": "./assets/images/icon.png",
       "bundleIdentifier": "com.innkeepers.grip"
     },
     "android": {
       "adaptiveIcon": {
         "backgroundColor": "#10131A",
-        "foregroundImage": "./assets/brand/android-icon-foreground.png",
-        "backgroundImage": "./assets/brand/android-icon-background.png",
-        "monochromeImage": "./assets/brand/android-icon-monochrome.png"
+        "foregroundImage": "./assets/images/android-icon-foreground.png",
+        "backgroundImage": "./assets/images/android-icon-background.png",
+        "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
       "package": "com.innkeepers.grip"
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/brand/favicon.png"
+      "favicon": "./assets/images/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "YOUR_EAS_PROJECT_ID"
+        "projectId": "1fe7bfe8-7e06-4a27-a5ab-b081c7da2861"
       }
     },
     "plugins": [
@@ -37,7 +37,7 @@
         {
           "backgroundColor": "#14171F",
           "android": {
-            "image": "./assets/brand/splash-icon.png",
+            "image": "./assets/images/splash-icon.png",
             "imageWidth": 76
           }
         }
