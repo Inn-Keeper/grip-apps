@@ -4,6 +4,9 @@ import type { BoardSummary, SavedBoard } from "./types";
 
 export const archBoardQueryKeys = {
   boards: ["arch-board-summaries"] as const,
+  // Full boards (nodes + edges) for Quest scoring. Must not share the summaries key:
+  // summaries lack nodes/edges, and a shared cache entry crashed Quest's evaluate().
+  fullBoards: ["arch-boards-full"] as const,
   board: (id: string) => ["arch-board", id] as const,
   customScenarios: ["custom-scenarios"] as const,
 };
@@ -35,6 +38,7 @@ export function useSaveBoardMutation(onSaved: (board: SavedBoard) => void) {
     onSuccess: (board: SavedBoard) => {
       onSaved(board);
       if (board.id) queryClient.setQueryData(archBoardQueryKeys.board(board.id), board);
+      queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.fullBoards });
       queryClient.setQueryData<BoardSummary[]>(archBoardQueryKeys.boards, (current) => {
         if (!current || !board.id) return current;
         const summary: BoardSummary = { id: board.id, title: board.title, scenarioId: board.scenarioId,
@@ -61,6 +65,7 @@ export function useDeleteBoardMutation(onDeleted: (id: string) => void) {
     onSuccess: (_data: unknown, id: string) => {
       onDeleted(id);
       queryClient.removeQueries({ queryKey: archBoardQueryKeys.board(id) });
+      queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.fullBoards });
       queryClient.setQueryData<BoardSummary[]>(archBoardQueryKeys.boards, (current) => current?.filter((item) => item.id !== id));
     },
   });

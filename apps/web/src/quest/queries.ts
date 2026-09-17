@@ -30,7 +30,7 @@ export function useScoresQuery() {
 
 // Shares the Arch Board cache; feeds saved-board scores into readiness.
 export function useBoardsQuery() {
-  return useQuery({ queryKey: archBoardQueryKeys.boards, queryFn: api.listBoards });
+  return useQuery({ queryKey: archBoardQueryKeys.fullBoards, queryFn: api.listBoards });
 }
 
 export function usePipelineVelocityQuery() {
