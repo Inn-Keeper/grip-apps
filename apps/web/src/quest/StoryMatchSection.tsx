@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { groupStoriesByCompetency } from "@tech-refresh/core/stories";
-import { colors } from "@tech-refresh/core/tokens";
+import { groupStoriesByCompetency } from "@grip-apps/core/stories";
+import { colors } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 
 export type Story = { id?: string; title: string; competency: string };

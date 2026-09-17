@@ -65,7 +65,7 @@ importers:
       '@tanstack/react-query-persist-client':
         specifier: ^5.101.0
         version: 5.101.0(@tanstack/react-query@5.101.0(react@19.2.3))(react@19.2.3)
-      '@tech-refresh/core':
+      '@grip-apps/core':
         specifier: workspace:*
         version: link:../../packages/core
       expo:
@@ -156,7 +156,7 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.101.0
         version: 5.101.0(react@19.2.7)
-      '@tech-refresh/core':
+      '@grip-apps/core':
         specifier: workspace:*
         version: link:../../packages/core
       driver.js:

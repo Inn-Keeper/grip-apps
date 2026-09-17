@@ -1,6 +1,6 @@
-import { DIFFICULTIES } from "@tech-refresh/core/difficulty";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { DIFFICULTIES } from "@grip-apps/core/difficulty";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { DifficultyIcon } from "./DifficultyIcon";

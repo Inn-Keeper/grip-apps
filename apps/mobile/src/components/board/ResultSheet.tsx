@@ -1,6 +1,6 @@
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
-import type { EvalResult, Scenario } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
+import type { EvalResult, Scenario } from "@grip-apps/core/arch";
+import { t } from "@grip-apps/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button } from "@/components/ui";

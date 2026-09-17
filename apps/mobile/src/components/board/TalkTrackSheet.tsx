@@ -1,6 +1,6 @@
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
-import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@tech-refresh/core/talkTrack";
-import { t } from "@tech-refresh/core/i18n";
+import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip-apps/core/talkTrack";
+import { t } from "@grip-apps/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button, MiniButton } from "@/components/ui";

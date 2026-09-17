@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { colors, layout } from "@tech-refresh/core/tokens";
+import { colors, layout } from "@grip-apps/core/tokens";
 import styles from "./WorkspaceLayout.module.css";
 
 type WorkspaceLayoutProps = {

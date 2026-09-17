@@ -1,7 +1,7 @@
-import { RANKS, rankForXp } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { RANKS, rankForXp } from "@grip-apps/core/gamification";
+import { difficultyByKey } from "@grip-apps/core/difficulty";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { AccuracyChart } from "./AccuracyChart";

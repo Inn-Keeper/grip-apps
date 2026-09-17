@@ -1,7 +1,7 @@
-import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
-import { t } from "@tech-refresh/core/i18n";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip-apps/core/gamification";
+import { difficultyByKey } from "@grip-apps/core/difficulty";
+import { t } from "@grip-apps/core/i18n";
+import { colors, tints } from "@grip-apps/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { DrillState } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";

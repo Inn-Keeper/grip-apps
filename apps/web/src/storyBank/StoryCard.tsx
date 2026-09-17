@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { COMPETENCY_COLORS } from "@tech-refresh/core/stories";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { COMPETENCY_COLORS } from "@grip-apps/core/stories";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { miniBtn } from "../components/shared";
 import type { Story } from "./types";

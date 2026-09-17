@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { STATUSES, todayDDMMYYYY, isDue } from "@tech-refresh/core/contacts";
-import { SCENARIOS, evaluate } from "@tech-refresh/core/arch";
-import { buildFunnelSummary } from "@tech-refresh/core/funnel";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { STATUSES, todayDDMMYYYY, isDue } from "@grip-apps/core/contacts";
+import { SCENARIOS, evaluate } from "@grip-apps/core/arch";
+import { buildFunnelSummary } from "@grip-apps/core/funnel";
+import { colors, tints } from "@grip-apps/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { ContactCard } from "./ContactCard";
 import { ContactForm } from "./ContactForm";

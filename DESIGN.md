@@ -2,7 +2,7 @@
 
 The single source of truth for the product's visual identity. Token values live in
 [`packages/core/src/tokens.js`](packages/core/src/tokens.js) and are consumed by both apps
-(mobile via `@/theme`, web via `@tech-refresh/core/tokens`). This document explains the
+(mobile via `@/theme`, web via `@grip-apps/core/tokens`). This document explains the
 rules behind them.
 
 ## Identity
@@ -156,7 +156,7 @@ Extract repeated inline style objects to component wrappers or `shared.tsx`:
 - Spacing (gap, padding, margin) — use `space.*` from tokens
 - Border radius — use `radius.*` from tokens
 
-All values from `@tech-refresh/core/tokens`.
+All values from `@grip-apps/core/tokens`.
 
 ## Motion
 

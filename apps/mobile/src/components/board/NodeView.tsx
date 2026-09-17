@@ -8,8 +8,8 @@ import Animated, {
   withSpring,
   type SharedValue,
 } from "react-native-reanimated";
-import { TYPE_COLORS, meta } from "@tech-refresh/core/arch";
-import type { BoardNode } from "@tech-refresh/core/arch";
+import { TYPE_COLORS, meta } from "@grip-apps/core/arch";
+import type { BoardNode } from "@grip-apps/core/arch";
 import { colors } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 

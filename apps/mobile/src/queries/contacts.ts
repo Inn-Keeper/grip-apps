@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { Contact } from "@tech-refresh/core/api";
+import type { Contact } from "@grip-apps/core/api";
 import { api } from "@/lib/api";
 
 export const contactsQueryKeys = {

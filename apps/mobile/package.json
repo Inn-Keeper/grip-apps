@@ -11,7 +11,7 @@
     "@tanstack/query-async-storage-persister": "^5.101.0",
     "@tanstack/react-query": "^5.101.0",
     "@tanstack/react-query-persist-client": "^5.101.0",
-    "@tech-refresh/core": "workspace:*",
+    "@grip-apps/core": "workspace:*",
     "expo": "~56.0.11",
     "expo-constants": "~56.0.18",
     "expo-dev-client": "~56.0.20",

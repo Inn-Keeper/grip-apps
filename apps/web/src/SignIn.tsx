@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { friendlyAuthError } from "@tech-refresh/core/auth";
+import { friendlyAuthError } from "@grip-apps/core/auth";
 import { supabase } from "./lib/supabase";
-import { brand, colors, layout } from "@tech-refresh/core/tokens";
+import { brand, colors, layout } from "@grip-apps/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 
 export function SignIn() {

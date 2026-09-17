@@ -1,6 +1,6 @@
-import { PROFILE_FIELDS } from "@tech-refresh/core/user";
-import { colors, layout } from "@tech-refresh/core/tokens";
-import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@tech-refresh/core/i18n";
+import { PROFILE_FIELDS } from "@grip-apps/core/user";
+import { colors, layout } from "@grip-apps/core/tokens";
+import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip-apps/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
 import { ConnectionBadge, MetaLabel, Panel, Switch } from "./shared";
 import type { ProfileForm, ProfileRecord, Rank } from "./types";

@@ -265,7 +265,7 @@ All visual tokens live in [`packages/core/src/tokens.js`](packages/core/src/toke
 - **Radii**: `sm` (8px), `md` (12px), `lg` (16px), `pill` (999px)
 - **Decorative**: Confetti ramp (6 teal-led colors for celebrations)
 
-Both apps consume tokens identically — web accesses `@tech-refresh/core/tokens`, mobile re-exports via `@/theme`.
+Both apps consume tokens identically — web accesses `@grip-apps/core/tokens`, mobile re-exports via `@/theme`.
 
 See [DESIGN.md](DESIGN.md) for full guidelines (elevation rules, contrast requirements, alpha-concat invariant).
 
@@ -358,7 +358,7 @@ status_events(
 
 ### Core package (Jest, 127 tests)
 ```bash
-pnpm --filter @tech-refresh/core test
+pnpm --filter @grip-apps/core test
 ```
 Tests cover:
 - Quiz mechanics, difficulty tiers, and question-bank invariants

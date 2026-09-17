@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
-import { DESIGN_PHASES, ROUND_MINUTES, ROUND_MS, formatClock, phaseAt, roundProgress } from "@tech-refresh/core/designTimer";
-import { t } from "@tech-refresh/core/i18n";
+import { DESIGN_PHASES, ROUND_MINUTES, ROUND_MS, formatClock, phaseAt, roundProgress } from "@grip-apps/core/designTimer";
+import { t } from "@grip-apps/core/i18n";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { MiniButton } from "@/components/ui";

@@ -22,7 +22,7 @@ warm light is linked only to the locket.
 
 ## Rebuild and verify
 
-From `tech-refresh`, with Blender 4.5.3 LTS:
+From `grip-apps`, with Blender 4.5.3 LTS:
 
 ```sh
 blender --background --factory-startup --python-exit-code 1 --python scripts/generate-poe-photoreal.py

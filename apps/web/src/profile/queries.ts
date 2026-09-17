@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { UserIdentity } from "@supabase/supabase-js";
 import * as api from "../lib/api";
 import { supabase } from "../lib/supabase";
-import { friendlyAuthError } from "@tech-refresh/core/auth";
+import { friendlyAuthError } from "@grip-apps/core/auth";
 
 const GITHUB_LINK_PENDING_KEY = "grip.githubLinkPending";
 

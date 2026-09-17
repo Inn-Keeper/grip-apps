@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { DIFFICULTIES, difficultyByKey } from "@tech-refresh/core/difficulty";
-import { t } from "@tech-refresh/core/i18n";
+import { DIFFICULTIES, difficultyByKey } from "@grip-apps/core/difficulty";
+import { t } from "@grip-apps/core/i18n";
 import { colors } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 

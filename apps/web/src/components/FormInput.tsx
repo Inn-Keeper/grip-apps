@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, space, font } from "@tech-refresh/core/tokens";
+import { colors, space, font } from "@grip-apps/core/tokens";
 
 export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   variant?: "text" | "password" | "email";

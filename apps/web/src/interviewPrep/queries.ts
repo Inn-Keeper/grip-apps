@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchGithubTechSignals } from "@tech-refresh/core/githubTechs";
-import { questionCapForPool } from "@tech-refresh/core/quizPrefs";
-import { shuffle, shuffleOptions } from "@tech-refresh/core/quiz";
+import { fetchGithubTechSignals } from "@grip-apps/core/githubTechs";
+import { questionCapForPool } from "@grip-apps/core/quizPrefs";
+import { shuffle, shuffleOptions } from "@grip-apps/core/quiz";
 import * as api from "../lib/api";
 import type { AccuracyPoint, QuizQuestion } from "./types";
 

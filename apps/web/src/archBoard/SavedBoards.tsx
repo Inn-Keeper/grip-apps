@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { t } from "@grip-apps/core/i18n";
+import { colors } from "@grip-apps/core/tokens";
 import { useShareBoardMutation } from "./queries";
 import type { AugmentedScenario, BoardSummary } from "./types";
 

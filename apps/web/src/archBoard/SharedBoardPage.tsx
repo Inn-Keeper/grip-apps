@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
-import { SCENARIOS, TYPE_COLORS, evaluate, meta } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
-import { brand, colors } from "@tech-refresh/core/tokens";
+import { SCENARIOS, TYPE_COLORS, evaluate, meta } from "@grip-apps/core/arch";
+import { t } from "@grip-apps/core/i18n";
+import { brand, colors } from "@grip-apps/core/tokens";
 import { getSharedBoard } from "../lib/api";
 import { BrandIcon } from "../components/BrandIcon";
 import { EvalResults } from "./EvalResults";

@@ -1,6 +1,6 @@
 import React from "react";
-import { colors, tints } from "@tech-refresh/core/tokens";
-import { t } from "@tech-refresh/core/i18n";
+import { colors, tints } from "@grip-apps/core/tokens";
+import { t } from "@grip-apps/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Story } from "./types";

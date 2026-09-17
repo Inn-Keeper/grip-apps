@@ -1,6 +1,6 @@
-import { STATUS_STYLES } from "@tech-refresh/core/contacts";
-import { t } from "@tech-refresh/core/i18n";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { STATUS_STYLES } from "@grip-apps/core/contacts";
+import { t } from "@grip-apps/core/i18n";
+import { colors, tints } from "@grip-apps/core/tokens";
 
 type FunnelSummary = {
   active: number;
