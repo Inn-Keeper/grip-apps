@@ -90,6 +90,7 @@ jest.mock("react-native-reanimated", () => {
     default: { View },
     FadeInDown: chain,
     FadeIn: chain,
+    FadeInRight: chain,
     ZoomIn: chain,
     ZoomOut: chain,
     interpolate: (value, input, output) => {
@@ -104,9 +105,15 @@ jest.mock("react-native-reanimated", () => {
     useDerivedValue: (worklet) => ({ value: worklet() }),
     withSpring: (value) => value,
     withTiming: (value) => value,
+    withSequence: (...values) => values[values.length - 1],
     Easing: { linear: (value) => value, out: (fn) => fn, cubic: (value) => value },
   };
 });
+
+jest.mock("expo-haptics", () => ({
+  notificationAsync: jest.fn(() => Promise.resolve()),
+  NotificationFeedbackType: { Success: "success", Warning: "warning", Error: "error" },
+}));
 
 jest.mock("react-native-safe-area-context", () => {
   const React = require("react");

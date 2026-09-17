@@ -3,10 +3,10 @@ import { techLinks } from "@grip/core/techLinks";
 import { CORRECT_XP } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, layout, tints } from "@grip/core/tokens";
-import { BrandIcon } from "../components/BrandIcon";
-import { ACCURACY_GOOD_PCT, type CardState, type PrepItem, type QuizQuestion, type ScoreEntry } from "./types";
+import { colors, layout } from "@grip/core/tokens";
+import { ACCURACY_GOOD_PCT, type CardState, type PrepItem, type QuizQuestion as Question, type ScoreEntry } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
+import { QuizQuestion } from "./QuizQuestion";
 import styles from "./InterviewPrep.module.css";
 
 export function Card({ index = 0, item, level, stat, state, onFlip, onBack, onAnswer, onNext }: {
@@ -176,15 +176,13 @@ function QuizFace({ item, level, link, question, questionNumber, total, answered
   item: PrepItem;
   level: string;
   link: string | undefined;
-  question: QuizQuestion;
+  question: Question;
   questionNumber: number;
   total: number;
   answered: number | null;
   onAnswer: (i: number) => void;
   onNext: () => void;
 }) {
-  const isCorrect = answered !== null && answered === question.correct;
-  const isLast = questionNumber === total;
   const perAnswerXp = difficultyByKey(level)?.xp ?? CORRECT_XP;
 
   return (
@@ -206,95 +204,17 @@ function QuizFace({ item, level, link, question, questionNumber, total, answered
         </div>
       </div>
 
-      <p style={{ margin: 0, fontSize: 15, lineHeight: 1.55, color: colors.text, fontWeight: 700 }}>
-        {question.question}
-      </p>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-        {question.options.map((opt, i) => {
-          const isThisCorrect = i === question.correct;
-          const isThisChosen = answered === i;
-
-          let bg = colors.surfaceHi;
-          let border = `1px solid ${colors.border}`;
-          let color = colors.textDim;
-
-          if (answered !== null) {
-            if (isThisCorrect) {
-              bg = tints.successSoft;
-              border = `1px solid ${colors.success}80`;
-              color = colors.successBright;
-            } else if (isThisChosen && !isThisCorrect) {
-              bg = tints.dangerSoft;
-              border = `1px solid ${colors.danger}80`;
-              color = colors.dangerBright;
-            }
-          }
-
-          return (
-            <button
-              key={i}
-              onClick={() => answered === null && onAnswer(i)}
-              style={{
-                textAlign: "left",
-                padding: "9px 12px",
-                background: bg,
-                border,
-                borderRadius: 8,
-                color,
-                fontSize: 12.5,
-                lineHeight: 1.45,
-                cursor: answered === null ? "pointer" : "default",
-                transition: "all 0.15s",
-              }}
-            >
-              <span style={{ opacity: 0.5, marginRight: 6 }}>
-                {String.fromCharCode(65 + i)}.
-              </span>
-              {opt}
-            </button>
-          );
-        })}
-      </div>
-
-      {answered !== null && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 12, color: isCorrect ? colors.success : colors.danger, fontWeight: 600 }}>
-              {isCorrect ? t("prep.correct", { xp: perAnswerXp }) : t("prep.incorrect")}
-            </span>
-            {link && (
-              <a
-                href={link}
-                target="_blank"
-                rel="noreferrer"
-                style={{ fontSize: 12, color: colors.accentBright, textDecoration: "none", fontWeight: 500 }}
-              >
-                {t("prep.docs")}
-              </a>
-            )}
-          </span>
-          <button
-            onClick={onNext}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 5,
-              padding: "7px 14px",
-              background: `${item.color}25`,
-              border: `1px solid ${item.color}60`,
-              borderRadius: 8,
-              color: item.color,
-              fontSize: 12,
-              fontWeight: 600,
-              cursor: "pointer",
-            }}
-          >
-            {isLast ? t("prep.finish") : t("common.next")}
-            <BrandIcon name={isLast ? "check" : "arrowRight"} color={item.color} size={12} />
-          </button>
-        </div>
-      )}
+      <QuizQuestion
+        question={question}
+        questionNumber={questionNumber}
+        total={total}
+        answered={answered}
+        xp={perAnswerXp}
+        color={item.color ?? String(colors.accent)}
+        link={link}
+        onAnswer={onAnswer}
+        onNext={onNext}
+      />
     </div>
   );
 }

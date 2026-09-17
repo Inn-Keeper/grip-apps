@@ -1,10 +1,11 @@
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@grip/core/tokens";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { DrillState } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
+import { QuizQuestion } from "./QuizQuestion";
 
 export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: DrillState; onAnswer: (i: number) => void; onNext: () => void; onExit: () => void }) {
   const { questions, index, answered, correctCount, done } = drill;
@@ -62,8 +63,6 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: Drill
   }
 
   const cur = questions[index]!;
-  const isCorrect = answered !== null && answered === cur.q.correct;
-  const isLast = index === questions.length - 1;
 
   return (
     <div
@@ -100,98 +99,39 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: Drill
         </span>
       </div>
 
-      <p style={{ margin: 0, fontSize: 16, lineHeight: 1.55, color: colors.text, fontWeight: 750 }}>
-        {cur.q.question}
-      </p>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
-        {cur.q.options.map((opt, i) => {
-          const isThisCorrect = i === cur.q.correct;
-          const isThisChosen = answered === i;
-
-          let bg = colors.surfaceHi;
-          let border = `1px solid ${colors.border}`;
-          let color = colors.textDim;
-
-          if (answered !== null) {
-            if (isThisCorrect) {
-              bg = tints.successSoft;
-              border = `1px solid ${colors.success}80`;
-              color = colors.successBright;
-            } else if (isThisChosen && !isThisCorrect) {
-              bg = tints.dangerSoft;
-              border = `1px solid ${colors.danger}80`;
-              color = colors.dangerBright;
-            }
-          }
-
-          return (
-            <button
-              key={i}
-              onClick={() => answered === null && onAnswer(i)}
-              style={{
-                textAlign: "left", padding: "10px 12px", background: bg, border, borderRadius: 8,
-                color, fontSize: 13, lineHeight: 1.45,
-                cursor: answered === null ? "pointer" : "default", transition: "all 0.15s",
-              }}
-            >
-              <span style={{ opacity: 0.5, marginRight: 6 }}>{String.fromCharCode(65 + i)}.</span>
-              {opt}
-            </button>
-          );
-        })}
-      </div>
-
-      {answered !== null && (
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 4 }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 10 }}>
-            <span style={{ fontSize: 12, color: isCorrect ? colors.success : colors.danger, fontWeight: 600 }}>
-              {isCorrect ? t("prep.correct", { xp: perAnswerXp }) : t("prep.incorrect")}
-            </span>
-            {cur.link && (
-              <a
-                href={cur.link}
-                target="_blank"
-                rel="noreferrer"
-                style={{ fontSize: 12, color: colors.accentBright, textDecoration: "none", fontWeight: 500 }}
-              >
-                {t("prep.docs")}
-              </a>
-            )}
-            {!isCorrect && (
-              // ponytail: static placeholder — becomes a real Poe answer-explainer
-              // once a Claude API key is wired up (parked for the next round).
-              <button
-                disabled
-                title={t("prep.poeSoonHint")}
-                style={{
-                  padding: "3px 10px",
-                  background: "transparent",
-                  border: `1px dashed ${colors.border}`,
-                  borderRadius: 999,
-                  color: colors.textFaint,
-                  fontSize: 11,
-                  fontWeight: 600,
-                  cursor: "default",
-                }}
-              >
-                {t("prep.poeSoon")}
-              </button>
-            )}
-          </span>
+      <QuizQuestion
+        question={cur.q}
+        questionNumber={index + 1}
+        total={questions.length}
+        answered={answered}
+        xp={perAnswerXp}
+        color={cur.color}
+        link={cur.link}
+        large
+        keyboard
+        onAnswer={onAnswer}
+        onNext={onNext}
+        wrongExtra={
+          // ponytail: static placeholder — becomes a real Poe answer-explainer
+          // once a Claude API key is wired up (parked for the next round).
           <button
-            onClick={onNext}
+            disabled
+            title={t("prep.poeSoonHint")}
             style={{
-              display: "flex", alignItems: "center", gap: 5,
-              padding: "7px 14px", background: `${cur.color}25`, border: `1px solid ${cur.color}60`,
-              borderRadius: 8, color: cur.color, fontSize: 12, fontWeight: 600, cursor: "pointer",
+              padding: "3px 10px",
+              background: "transparent",
+              border: `1px dashed ${colors.border}`,
+              borderRadius: 999,
+              color: colors.textFaint,
+              fontSize: 11,
+              fontWeight: 600,
+              cursor: "default",
             }}
           >
-            {isLast ? t("prep.finish") : t("common.next")}
-            <BrandIcon name={isLast ? "check" : "arrowRight"} color={cur.color} size={12} />
+            {t("prep.poeSoon")}
           </button>
-        </div>
-      )}
+        }
+      />
     </div>
   );
 }

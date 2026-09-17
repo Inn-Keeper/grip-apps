@@ -74,8 +74,8 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: Props) {
 
   const cur = drill.questions[drill.index];
   return (
+    // Not keyed by question: QuizView animates each question in, the card itself enters once.
     <Animated.View
-      key={drill.index}
       entering={FadeInDown.springify().damping(16)}
       style={{
         backgroundColor: colors.surface,
@@ -108,6 +108,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: Props) {
         questionNumber={drill.index + 1}
         total={drill.questions.length}
         answered={drill.answered}
+        xp={perAnswerXp}
         onAnswer={onAnswer}
         onNext={onNext}
         isLast={drill.index === drill.questions.length - 1}

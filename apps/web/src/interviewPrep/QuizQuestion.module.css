@@ -1,0 +1,170 @@
+.progress {
+  display: flex;
+  gap: 4px;
+}
+
+.segment {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--quiz-track);
+  transition: background 200ms ease;
+}
+
+.segmentDone {
+  background: var(--quiz-color-soft);
+}
+
+.segmentCurrent {
+  background: var(--quiz-color);
+}
+
+/* Remounted per question (keyed), so each question slides in. */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: questionIn 240ms cubic-bezier(0.2, 0.72, 0.26, 1) both;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  border-radius: 9px;
+  cursor: pointer;
+  transition: transform 120ms ease, background 150ms ease, border-color 150ms ease, opacity 150ms ease;
+}
+
+.option:disabled {
+  cursor: default;
+}
+
+.option:not(:disabled):hover {
+  transform: translateX(2px);
+  border-color: var(--quiz-color-soft) !important;
+}
+
+.option:not(:disabled):active {
+  transform: scale(0.98);
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--quiz-color);
+  outline-offset: 2px;
+}
+
+.correct {
+  animation: pop 340ms cubic-bezier(0.2, 0.72, 0.26, 1.4);
+}
+
+.wrong {
+  animation: shake 280ms ease;
+}
+
+.dimmed {
+  opacity: 0.5;
+}
+
+/* Letter badge doubles as the keyboard hint. */
+.badge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.footer {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.feedback {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.xp {
+  position: absolute;
+  top: -14px;
+  right: -6px;
+  font-size: 11px;
+  font-weight: 800;
+  pointer-events: none;
+  animation: xpFloat 900ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .body,
+  .correct,
+  .wrong {
+    animation: none;
+  }
+
+  .xp {
+    display: none;
+  }
+
+  .option,
+  .option:not(:disabled):hover,
+  .option:not(:disabled):active {
+    transition: none;
+    transform: none;
+  }
+}
+
+@keyframes questionIn {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pop {
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+@keyframes shake {
+  20% { transform: translateX(-6px); }
+  45% { transform: translateX(6px); }
+  70% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+@keyframes xpFloat {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  to {
+    opacity: 0;
+    transform: translateY(-18px);
+  }
+}

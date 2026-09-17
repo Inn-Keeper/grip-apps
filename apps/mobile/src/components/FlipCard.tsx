@@ -6,7 +6,7 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
+import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
 import { colors } from "@/theme";
@@ -123,6 +123,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           questionNumber={quiz.index + 1}
           total={quiz.questions.length}
           answered={quiz.answered}
+          xp={tier?.xp ?? CORRECT_XP}
           onAnswer={answer}
           onNext={next}
           isLast={quiz.index === quiz.questions.length - 1}
