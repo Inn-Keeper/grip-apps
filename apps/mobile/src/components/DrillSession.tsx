@@ -2,6 +2,8 @@ import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
+import { t } from "@grip/core/i18n";
+import { useCountUp } from "@/lib/useCountUp";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
@@ -21,11 +23,14 @@ type Props = {
   onAnswer: (i: number) => void;
   onNext: () => void;
   onExit: () => void;
+  /** Repeats the same techs and tier; omitted inside the mock loop. */
+  onRestart?: () => void;
 };
 
-export function DrillSession({ drill, onAnswer, onNext, onExit }: Props) {
+export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Props) {
   const tier = difficultyByKey(drill.difficulty);
   const perAnswerXp = tier?.xp ?? CORRECT_XP;
+  const shownCorrect = useCountUp(drill.done ? drill.correctCount : 0);
 
   if (drill.done) {
     const perfect = drill.correctCount === drill.questions.length;
@@ -57,17 +62,35 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: Props) {
           <BrandIcon name={perfect ? "rank" : drill.correctCount >= drill.questions.length / 2 ? "spark" : "story"} color={perfect ? colors.successBright : colors.accentBright} size={25} />
         </View>
         <Text style={{ fontSize: 22, fontWeight: "700", color: colors.textBright }}>
-          {drill.correctCount} / {drill.questions.length}
+          {shownCorrect} / {drill.questions.length}
         </Text>
         <Text style={{ fontSize: 13, color: colors.textDim, textAlign: "center" }}>
-          +{drill.correctCount * perAnswerXp} XP{perfect ? ` · +${PERFECT_QUIZ_BONUS} perfect bonus` : ""}
+          {t("prep.drillResult", {
+            xp: drill.correctCount * perAnswerXp,
+            bonus: perfect ? t("prep.perfectBonusSuffix", { bonus: PERFECT_QUIZ_BONUS }) : "",
+          })}
         </Text>
-        <TouchableOpacity
-          onPress={onExit}
-          style={{ backgroundColor: colors.accent, borderRadius: 8, paddingHorizontal: 18, paddingVertical: 9, marginTop: 8 }}
-        >
-          <Text style={{ color: colors.onAccent, fontWeight: "600", fontSize: 13 }}>Back to cards</Text>
-        </TouchableOpacity>
+        {drill.correctCount * 2 < drill.questions.length && (
+          <Text style={{ fontSize: 12, color: colors.textFaint, textAlign: "center" }}>{t("prep.drillEncourage")}</Text>
+        )}
+        <View style={{ flexDirection: "row", gap: 8, marginTop: 8 }}>
+          {onRestart && (
+            <TouchableOpacity
+              onPress={onRestart}
+              accessibilityRole="button"
+              style={{ borderWidth: 1, borderColor: `${colors.accent}60`, borderRadius: 8, paddingHorizontal: 16, paddingVertical: 9 }}
+            >
+              <Text style={{ color: colors.accentBright, fontWeight: "600", fontSize: 13 }}>{t("prep.drillAgain")}</Text>
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity
+            onPress={onExit}
+            accessibilityRole="button"
+            style={{ backgroundColor: colors.accent, borderRadius: 8, paddingHorizontal: 18, paddingVertical: 9 }}
+          >
+            <Text style={{ color: colors.onAccent, fontWeight: "600", fontSize: 13 }}>{t("prep.backToCards")}</Text>
+          </TouchableOpacity>
+        </View>
       </Animated.View>
     );
   }

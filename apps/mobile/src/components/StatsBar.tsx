@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
 import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
@@ -19,7 +19,18 @@ export function StatsBar({ scores }: Props) {
   useEffect(() => {
     fill.value = withSpring(progress, { damping: 18, stiffness: 90 });
   }, [progress, fill]);
-  const fillStyle = useAnimatedStyle(() => ({ width: `${fill.value * 100}%` }));
+
+  // Flash the bar when XP lands, so earning it is visible outside the quiz.
+  const flash = useSharedValue(1);
+  const previousXp = useRef(scores.xp);
+  useEffect(() => {
+    if (scores.xp > previousXp.current) {
+      flash.value = withSequence(withTiming(0.45, { duration: 140 }), withTiming(1, { duration: 320 }));
+    }
+    previousXp.current = scores.xp;
+  }, [scores.xp, flash]);
+
+  const fillStyle = useAnimatedStyle(() => ({ width: `${fill.value * 100}%`, opacity: flash.value }));
 
   const totals = Object.values(scores.answers).reduce(
     (acc, s) => ({ correct: acc.correct + s.correct, wrong: acc.wrong + s.wrong }),

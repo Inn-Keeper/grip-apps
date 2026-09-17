@@ -71,6 +71,8 @@ export default function PrepScreen() {
   const [drillError, setDrillError] = useState<string | null>(null);
   const [celebration, setCelebration] = useState<Celebration | null>(null);
   const previousRank = useRef<ReturnType<typeof rankForXp> | null>(null);
+  // What "Drill again" repeats: the same techs and tier as the drill just finished.
+  const lastDrillRef = useRef<{ difficulty: string; techs: string[]; fallbackToAll: boolean } | null>(null);
   const { scores, record, addXp } = useScores();
   const { data: accuracy = [] } = useAccuracyTimelineQuery();
   const { data: reviewQueue = [] } = useReviewQueueQuery();
@@ -131,6 +133,7 @@ export default function PrepScreen() {
   // `fallbackToAll` widens an empty pool to every tech — wanted for the generic
   // weakest-drill, wrong for targeted drills (review queue, prep plan).
   const runDrill = async (difficulty: string, techs: string[], { fallbackToAll = false } = {}) => {
+    lastDrillRef.current = { difficulty, techs, fallbackToAll };
     setDrillLoading(true);
     setDrillError(null);
     try {
@@ -177,6 +180,8 @@ export default function PrepScreen() {
     setDrillError(null);
     try {
       const techs = selectCategoryDrillTechs(category.items, scores.answers, { techCount: category.items.length });
+      // "Drill again" repeats this category, not the last weakest-drill.
+      lastDrillRef.current = { difficulty: level, techs, fallbackToAll: true };
       let questions = await fetchTierQuestions(level, techs);
       if (questions.length === 0) questions = await fetchTierQuestions(level, allTechs);
       if (questions.length === 0) {
@@ -305,14 +310,40 @@ export default function PrepScreen() {
               <Text style={{ fontSize: 11, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
             )}
 
-            {drill && <DrillSession drill={drill} onAnswer={answerDrill} onNext={nextDrill} onExit={() => setDrill(null)} />}
+            {drill && (
+              <DrillSession
+                drill={drill}
+                onAnswer={answerDrill}
+                onNext={nextDrill}
+                onExit={() => setDrill(null)}
+                onRestart={() => {
+                  const last = lastDrillRef.current;
+                  if (last) runDrill(last.difficulty, last.techs, { fallbackToAll: last.fallbackToAll });
+                }}
+              />
+            )}
           </View>
         }
         // Progress history sits below the cards so the cards stay near the top.
         ListFooterComponent={drill ? null : <AccuracyChart points={accuracy} />}
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(Math.min(index * 60, 360)).springify().damping(18)}>
-            <FlipCard item={item} level={level} stat={scores.answers[item.tech]} record={record} addXp={addXp} loadQuiz={loadCardQuiz} onQuizActiveChange={setQuizActive} />
+            <FlipCard
+              item={item}
+              level={level}
+              stat={scores.answers[item.tech]}
+              record={record}
+              addXp={addXp}
+              loadQuiz={loadCardQuiz}
+              onQuizActiveChange={setQuizActive}
+              onPerfect={() =>
+                setCelebration({
+                  title: t("celebration.perfectCardTitle"),
+                  subtitle: t("celebration.perfectSubtitle", { bonus: PERFECT_QUIZ_BONUS }),
+                  accent: colors.success,
+                })
+              }
+            />
           </Animated.View>
         )}
       />

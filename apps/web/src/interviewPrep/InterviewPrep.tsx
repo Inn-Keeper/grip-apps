@@ -43,6 +43,8 @@ import { clearPrepPlan, readPrepPlan, type StoredPrepPlan } from "../lib/prepPla
 import { summarizeScores } from "./summarizeScores";
 
 const DRILL_SIZE = 10;
+// Long enough to read the run summary, short enough not to feel like waiting.
+const CARD_RESULT_MS = 1700;
 
 // Map every tech to its category color so a fetched question can be themed.
 const colorByTech = Object.fromEntries(
@@ -79,6 +81,8 @@ export default function InterviewPrep() {
     setCardState({});
   };
   const previousRank = useRef<{ name: string; min: number } | null>(null);
+  // What "Drill again" repeats: the same techs and tier as the drill just finished.
+  const lastDrillRef = useRef<{ difficulty: string; techs: string[]; fallbackToAll: boolean } | null>(null);
   const { scores, scoresReady, record, addXp } = useScores();
   const { data: accuracy = [] } = useAccuracyTimelineQuery();
   const { data: reviewQueue = [] } = useReviewQueueQuery();
@@ -176,11 +180,29 @@ export default function InterviewPrep() {
     if (!s || !s.shuffled) return;
     const nextIndex = s.quizIndex + 1;
     if (nextIndex >= s.shuffled.length) {
-      if (s.runCorrect === s.shuffled.length) addXp(PERFECT_QUIZ_BONUS);
+      // Show what the run earned before flipping back, so finishing a card lands.
+      const total = s.shuffled.length;
+      const perfect = s.runCorrect === total;
+      const earned = s.runCorrect * (difficultyByKey(level)?.xp ?? 0) + (perfect ? PERFECT_QUIZ_BONUS : 0);
+      if (perfect) {
+        addXp(PERFECT_QUIZ_BONUS);
+        setCelebration({
+          title: t("celebration.perfectCardTitle"),
+          subtitle: t("celebration.perfectSubtitle", { bonus: PERFECT_QUIZ_BONUS }),
+          accent: colors.success ?? "",
+        });
+        setPoeCue({ type: "levelUp", id: Date.now() });
+      }
       setCardState((prev) => ({
         ...prev,
-        [key]: { ...s, phase: "front" as const, quizIndex: 0, answered: null, runCorrect: 0, shuffled: null },
+        [key]: { ...s, phase: "result" as const, resultXp: earned, resultTotal: total, answered: null },
       }));
+      window.setTimeout(() => {
+        setCardState((prev) => ({
+          ...prev,
+          [key]: { ...(prev[key] ?? s), phase: "front" as const, quizIndex: 0, answered: null, runCorrect: 0, shuffled: null },
+        }));
+      }, CARD_RESULT_MS);
     } else {
       setCardState((prev) => ({ ...prev, [key]: { ...s, quizIndex: nextIndex, answered: null } }));
     }
@@ -198,6 +220,7 @@ export default function InterviewPrep() {
   // `fallbackToAll` widens an empty pool to every tech — wanted for the generic
   // weakest-drill, wrong for targeted drills (review queue, prep plan).
   const runDrill = async (difficulty: string, techs: string[], { fallbackToAll = false } = {}) => {
+    lastDrillRef.current = { difficulty, techs, fallbackToAll };
     setDrillLoading(true);
     setDrillError(null);
     try {
@@ -256,6 +279,8 @@ export default function InterviewPrep() {
     setDrillError(null);
     try {
       const techs = selectCategoryDrillTechs(cat.items, scores.answers, { techCount: cat.items.length });
+      // "Drill again" repeats this category, not the last weakest-drill.
+      lastDrillRef.current = { difficulty: level, techs, fallbackToAll: true };
       let questions = await fetchTierQuestions(level, techs);
       if (questions.length === 0) questions = await fetchTierQuestions(level, Object.keys(colorByTech));
       if (questions.length === 0) {
@@ -393,7 +418,16 @@ export default function InterviewPrep() {
           {mockActive ? (
             <MockLoop drill={drill} onAnswer={answerDrill} onNextQuestion={nextDrill} onExit={exitSession} />
           ) : (
-            <DrillSession drill={drill} onAnswer={answerDrill} onNext={nextDrill} onExit={exitSession} />
+            <DrillSession
+              drill={drill}
+              onAnswer={answerDrill}
+              onNext={nextDrill}
+              onExit={exitSession}
+              onRestart={() => {
+                const last = lastDrillRef.current;
+                if (last) runDrill(last.difficulty, last.techs, { fallbackToAll: last.fallbackToAll });
+              }}
+            />
           )}
         </div>
       ) : visibleItems.length === 0 ? (

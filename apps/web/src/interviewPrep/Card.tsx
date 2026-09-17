@@ -5,6 +5,7 @@ import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { colors, layout } from "@grip/core/tokens";
 import { ACCURACY_GOOD_PCT, type CardState, type PrepItem, type QuizQuestion as Question, type ScoreEntry } from "./types";
+import { BrandIcon } from "../components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizQuestion } from "./QuizQuestion";
 import styles from "./InterviewPrep.module.css";
@@ -32,7 +33,11 @@ export function Card({ index = 0, item, level, stat, state, onFlip, onBack, onAn
         "--prep-card-min-height": `${layout.prepCardMinHeight}px`,
       } as React.CSSProperties}
     >
-      {phase === "quiz" && shuffled ? (
+      {phase === "result" ? (
+        <div className={styles.quiz}>
+          <ResultFace item={item} correct={state.runCorrect} total={state.resultTotal ?? 0} xp={state.resultXp ?? 0} />
+        </div>
+      ) : phase === "quiz" && shuffled ? (
         <div className={styles.quiz}>
           <QuizFace
             item={item}
@@ -100,11 +105,19 @@ function FrontFace({ item, level, stat, onFlip }: { item: PrepItem; level: strin
           {item.oneliner}
         </p>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 10.5, color: colors.textFaint, marginTop: 12 }}>
-        <span style={{ color: accuracy === null ? colors.textFaint : accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning }}>
-          {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
-        </span>
-        <span style={{ whiteSpace: "nowrap" }}>{t("prep.prepNotes")}</span>
+      <div style={{ marginTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+        {accuracy !== null && (
+          // A bar reads at a glance; the number stays for the exact value.
+          <div style={{ height: 3, background: colors.well, borderRadius: 2, overflow: "hidden" }}>
+            <div style={{ width: `${accuracy}%`, height: "100%", background: accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning }} />
+          </div>
+        )}
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: 10.5, color: colors.textFaint }}>
+          <span style={{ color: accuracy === null ? colors.textFaint : accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning }}>
+            {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
+          </span>
+          <span style={{ whiteSpace: "nowrap" }}>{t("prep.prepNotes")}</span>
+        </div>
       </div>
     </div>
   );
@@ -215,6 +228,28 @@ function QuizFace({ item, level, link, question, questionNumber, total, answered
         onAnswer={onAnswer}
         onNext={onNext}
       />
+    </div>
+  );
+}
+
+/** The run summary a finished card quiz shows before flipping back. */
+function ResultFace({ item, correct, total, xp }: { item: PrepItem; correct: number; total: number; xp: number }) {
+  const perfect = total > 0 && correct === total;
+  const tone = perfect ? colors.success : correct * 2 >= total ? colors.accent : colors.warning;
+  return (
+    <div
+      role="status"
+      style={{
+        background: colors.well, border: `1px solid ${tone}60`, borderRadius: 10, padding: "15px",
+        minHeight: layout.prepCardMinHeight, display: "flex", flexDirection: "column",
+        alignItems: "center", justifyContent: "center", gap: 6, boxSizing: "border-box",
+      }}
+    >
+      <BrandIcon name={perfect ? "rank" : "spark"} color={tone} size={22} />
+      <span style={{ fontSize: 18, fontWeight: 800, color: colors.textBright }}>
+        {t("prep.cardResult", { correct, total, xp })}
+      </span>
+      <span style={{ fontSize: 11.5, color: colors.textFaint, textAlign: "center" }}>{item.tech}</span>
     </div>
   );
 }

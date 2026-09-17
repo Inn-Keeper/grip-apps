@@ -116,3 +116,18 @@
     transform: translateY(0);
   }
 }
+
+/* The XP bar answers a win: it grows, then flashes once. */
+.xpBar { transition: width 600ms cubic-bezier(0.2, 0.72, 0.26, 1); }
+.xpBarGained { animation: xpFlash 700ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xpBar { transition: none; }
+  .xpBarGained { animation: none; }
+}
+
+@keyframes xpFlash {
+  0% { filter: brightness(1); }
+  35% { filter: brightness(1.75); }
+  100% { filter: brightness(1); }
+}

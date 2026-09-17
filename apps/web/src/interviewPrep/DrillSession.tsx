@@ -6,11 +6,13 @@ import { BrandIcon } from "../components/BrandIcon";
 import type { DrillState } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizQuestion } from "./QuizQuestion";
+import { useCountUp } from "./useCountUp";
 
-export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: DrillState; onAnswer: (i: number) => void; onNext: () => void; onExit: () => void }) {
+export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: { drill: DrillState; onAnswer: (i: number) => void; onNext: () => void; onExit: () => void; onRestart?: () => void }) {
   const { questions, index, answered, correctCount, done } = drill;
   const tier = difficultyByKey(drill.difficulty);
   const perAnswerXp = tier?.xp ?? CORRECT_XP;
+  const shownCorrect = useCountUp(done ? correctCount : 0);
 
   if (done) {
     const perfect = correctCount === questions.length;
@@ -41,7 +43,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: Drill
           />
         </div>
         <div style={{ fontSize: 20, fontWeight: 700, color: colors.textBright, marginBottom: 6 }}>
-          {correctCount} / {questions.length}
+          {shownCorrect} / {questions.length}
         </div>
         <p style={{ margin: "0 0 20px", fontSize: 13, color: colors.textDim }}>
           {t("prep.drillResult", {
@@ -49,6 +51,21 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: Drill
             bonus: perfect ? t("prep.perfectBonusSuffix", { bonus: PERFECT_QUIZ_BONUS }) : "",
           })}
         </p>
+        {correctCount * 2 < questions.length && (
+          <p style={{ margin: "-12px 0 20px", fontSize: 12.5, color: colors.textFaint }}>{t("prep.drillEncourage")}</p>
+        )}
+        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+        {onRestart && (
+          <button
+            onClick={onRestart}
+            style={{
+              padding: "9px 18px", background: "transparent", border: `1px solid ${colors.accent}60`,
+              borderRadius: 8, color: colors.accentBright, fontSize: 13, fontWeight: 600, cursor: "pointer",
+            }}
+          >
+            {t("prep.drillAgain")}
+          </button>
+        )}
         <button
           onClick={onExit}
           style={{
@@ -58,6 +75,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: Drill
         >
           {t("prep.backToCards")}
         </button>
+        </div>
       </div>
     );
   }
@@ -108,7 +126,6 @@ export function DrillSession({ drill, onAnswer, onNext, onExit }: { drill: Drill
         color={cur.color}
         link={cur.link}
         large
-        keyboard
         onAnswer={onAnswer}
         onNext={onNext}
         wrongExtra={

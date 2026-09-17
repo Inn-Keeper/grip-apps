@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { RANKS, rankForXp } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
@@ -9,6 +10,7 @@ import { ACCURACY_GOOD_PCT, type AccuracyPoint, type Scores, type Summary } from
 import { DifficultyIcon } from "./DifficultyIcon";
 import { LevelSelector } from "./LevelSelector";
 import { QuizSizeSelector } from "./QuizSizeSelector";
+import styles from "./InterviewPrep.module.css";
 
 export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError, level, onLevel, onDrill, onMockLoop, reviewDueCount, scores, summary, quizSize, poolSize, onQuizSize }: {
   accuracy: AccuracyPoint[];
@@ -26,6 +28,20 @@ export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError,
   poolSize: number | null;
   onQuizSize: (v: number | null) => void;
 }) {
+  // Flash the bar when XP lands, so earning it is visible outside the quiz.
+  const previousXp = useRef(scores.xp);
+  const [gained, setGained] = useState(false);
+  useEffect(() => {
+    if (scores.xp > previousXp.current) {
+      setGained(true);
+      const done = window.setTimeout(() => setGained(false), 700);
+      previousXp.current = scores.xp;
+      return () => window.clearTimeout(done);
+    }
+    previousXp.current = scores.xp;
+    return undefined;
+  }, [scores.xp]);
+
   const rank = rankForXp(scores.xp) ?? RANKS[0]!;
   const next = RANKS[RANKS.indexOf(rank) + 1];
   const progress = next ? Math.round(((scores.xp - rank.min) / (next.min - rank.min)) * 100) : 100;
@@ -50,7 +66,7 @@ export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError,
           }
         />
         <div style={{ height: 7, background: colors.well, borderRadius: 999, overflow: "hidden", marginTop: 14 }}>
-          <div style={{ width: `${progress}%`, height: "100%", background: colors.accent }} />
+          <div className={`${styles.xpBar}${gained ? ` ${styles.xpBarGained}` : ""}`} style={{ width: `${progress}%`, height: "100%", background: colors.accent }} />
         </div>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginTop: 9, color: colors.textFaint, fontSize: 11 }}>
           <span>{t("prep.answered", { count: summary.attempts })}</span>

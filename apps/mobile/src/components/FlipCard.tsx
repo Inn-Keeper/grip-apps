@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
 import Animated, {
+  FadeIn,
   interpolate,
   useAnimatedStyle,
   useSharedValue,
@@ -36,14 +37,21 @@ type Props = {
   loadQuiz: (tech: string) => Promise<Item["quiz"] | null>;
   // Reports when this card's quiz opens/closes, so the screen can confirm tier changes.
   onQuizActiveChange?: (active: boolean) => void;
+  /** A clean run: the screen celebrates it. */
+  onPerfect?: () => void;
 };
 
 const SPRING = { damping: 16, stiffness: 140 };
+const PRESS_SPRING = { damping: 18, stiffness: 320 };
+// Long enough to read the run summary, short enough not to feel like waiting.
+const RESULT_MS = 1700;
 
 // 3D card flip on the UI thread: front face 0→180°, back face -180→0.
-export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizActiveChange }: Props) {
+export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizActiveChange, onPerfect }: Props) {
   const rotation = useSharedValue(0);
-  const [phase, setPhase] = useState<"front" | "back" | "quiz">("front");
+  const press = useSharedValue(1);
+  const [phase, setPhase] = useState<"front" | "back" | "quiz" | "result">("front");
+  const [result, setResult] = useState<{ correct: number; total: number; xp: number } | null>(null);
   const [quizLoading, setQuizLoading] = useState(false);
   const [quiz, setQuiz] = useState<{ questions: Item["quiz"]; index: number; answered: number | null; runCorrect: number } | null>(null);
 
@@ -55,7 +63,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
   }, [phase, onQuizActiveChange]);
 
   const frontStyle = useAnimatedStyle(() => ({
-    transform: [{ perspective: 1200 }, { rotateY: `${rotation.value}deg` }],
+    transform: [{ perspective: 1200 }, { rotateY: `${rotation.value}deg` }, { scale: press.value }],
     backfaceVisibility: "hidden" as const,
   }));
   const backStyle = useAnimatedStyle(() => ({
@@ -96,8 +104,24 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
     if (!quiz) return;
     const nextIndex = quiz.index + 1;
     if (nextIndex >= quiz.questions.length) {
-      if (quiz.runCorrect === quiz.questions.length) addXp(PERFECT_QUIZ_BONUS);
-      flipToFront();
+      const total = quiz.questions.length;
+      const perfect = quiz.runCorrect === total;
+      if (perfect) {
+        addXp(PERFECT_QUIZ_BONUS);
+        onPerfect?.();
+      }
+      // Show what the run earned before flipping back, so finishing a card lands.
+      setResult({
+        correct: quiz.runCorrect,
+        total,
+        xp: quiz.runCorrect * (tier?.xp ?? CORRECT_XP) + (perfect ? PERFECT_QUIZ_BONUS : 0),
+      });
+      setPhase("result");
+      setQuiz(null);
+      setTimeout(() => {
+        setResult(null);
+        flipToFront();
+      }, RESULT_MS);
     } else {
       setQuiz({ ...quiz, index: nextIndex, answered: null });
     }
@@ -107,9 +131,38 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
   const accuracy = attempts ? Math.round(((stat?.correct ?? 0) / attempts) * 100) : null;
   const tier = difficultyByKey(level);
 
+  if (phase === "result" && result) {
+    const perfect = result.correct === result.total;
+    const tone = perfect ? colors.success : result.correct * 2 >= result.total ? item.color : colors.warning;
+    return (
+      <Animated.View
+        entering={FadeIn.duration(160)}
+        accessibilityRole="summary"
+        style={{
+          minHeight: 185,
+          backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: `${tone}60`,
+          borderRadius: 14,
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 6,
+          padding: 16,
+        }}
+      >
+        <BrandIcon name={perfect ? "rank" : "spark"} color={tone} size={24} />
+        <Text style={{ fontSize: 18, fontWeight: "800", color: colors.textBright }}>
+          {t("prep.cardResult", { correct: result.correct, total: result.total, xp: result.xp })}
+        </Text>
+        <Text style={{ fontSize: 11.5, color: colors.textFaint }}>{item.tech}</Text>
+      </Animated.View>
+    );
+  }
+
   if (phase === "quiz" && quiz) {
     return (
-      <View
+      <Animated.View
+        entering={FadeIn.duration(160)}
         style={{
           backgroundColor: colors.surface,
           borderWidth: 1,
@@ -130,7 +183,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           onNext={next}
           isLast={quiz.index === quiz.questions.length - 1}
         />
-      </View>
+      </Animated.View>
     );
   }
 
@@ -140,6 +193,8 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
       <Animated.View style={[{ borderRadius: 14 }, frontStyle, phase !== "front" && { position: "absolute", inset: 0 }]}>
         <Pressable
           onPress={flipToBack}
+          onPressIn={() => (press.value = withSpring(0.98, PRESS_SPRING))}
+          onPressOut={() => (press.value = withSpring(1, PRESS_SPRING))}
           style={{
             backgroundColor: colors.surface,
             borderWidth: 1,
@@ -173,9 +228,15 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
             </View>
             <Text style={{ fontSize: 14, lineHeight: 21, color: colors.text }}>{item.oneliner}</Text>
           </View>
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 12 }}>
+          {accuracy !== null && (
+            // A bar reads at a glance; the number stays for the exact value.
+            <View style={{ height: 3, backgroundColor: colors.well, borderRadius: 2, overflow: "hidden", marginTop: 12 }}>
+              <View style={{ width: `${accuracy}%`, height: "100%", backgroundColor: accuracy >= 70 ? colors.success : colors.warning }} />
+            </View>
+          )}
+          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
             <Text style={{ fontSize: 11, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
-              {accuracy === null ? "" : `✓ ${accuracy}% · ${attempts} answered`}
+              {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
             </Text>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
               <Text style={{ fontSize: 11, fontWeight: "600", color: item.color }}>{t("prep.prepNotes")}</Text>
