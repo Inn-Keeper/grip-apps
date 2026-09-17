@@ -10,7 +10,7 @@ import { DifficultyIcon } from "./DifficultyIcon";
 import { LevelSelector } from "./LevelSelector";
 import { QuizSizeSelector } from "./QuizSizeSelector";
 
-export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError, level, onLevel, onDrill, onMockLoop, onReviewDrill, reviewDueCount, scores, summary, quizSize, poolSize, onQuizSize }: {
+export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError, level, onLevel, onDrill, onMockLoop, reviewDueCount, scores, summary, quizSize, poolSize, onQuizSize }: {
   accuracy: AccuracyPoint[];
   drillActive: boolean;
   drillLoading: boolean;
@@ -19,7 +19,6 @@ export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError,
   onLevel: (key: string) => void;
   onDrill: () => void;
   onMockLoop: () => void;
-  onReviewDrill: () => void;
   reviewDueCount: number;
   scores: Scores;
   summary: Summary;
@@ -121,32 +120,6 @@ export function PrepRightRail({ accuracy, drillActive, drillLoading, drillError,
             ) : undefined
           }
         />
-        {reviewDueCount > 0 && (
-          <button
-            onClick={onReviewDrill}
-            disabled={drillActive || drillLoading}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 7,
-              marginTop: 12,
-              padding: "9px 12px",
-              background: `${colors.warning}1F`,
-              border: `1px solid ${colors.warning}60`,
-              borderRadius: 8,
-              color: colors.warningBright,
-              fontSize: 12,
-              fontWeight: 800,
-              cursor: drillActive || drillLoading ? "default" : "pointer",
-              opacity: drillActive || drillLoading ? 0.55 : 1,
-            }}
-          >
-            <BrandIcon name="drill" color={colors.warningBright} size={14} />
-            {t("prep.reviewNow")}
-          </button>
-        )}
       </WorkspacePanel>
 
       <AccuracyChart points={accuracy} compact />

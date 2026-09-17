@@ -10,6 +10,8 @@ import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
 import { colors } from "@/theme";
+import { t } from "@grip/core/i18n";
+import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizView } from "./QuizView";
 
@@ -175,7 +177,10 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
             <Text style={{ fontSize: 11, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
               {accuracy === null ? "" : `✓ ${accuracy}% · ${attempts} answered`}
             </Text>
-            <Text style={{ fontSize: 11, color: colors.textFaint }}>tap for prep notes →</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Text style={{ fontSize: 11, fontWeight: "600", color: item.color }}>{t("prep.prepNotes")}</Text>
+              <BrandIcon name="arrowRight" color={item.color} size={11} />
+            </View>
           </View>
         </Pressable>
       </Animated.View>

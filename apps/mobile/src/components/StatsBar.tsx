@@ -1,15 +1,16 @@
 import { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import type { Scores } from "@/lib/useScores";
 
-type Props = { scores: Scores; onDrill: () => void; drillActive: boolean };
+// Progress only; the drill actions live in NextUpCard.
+type Props = { scores: Scores };
 
-export function StatsBar({ scores, onDrill, drillActive }: Props) {
+export function StatsBar({ scores }: Props) {
   const rank = rankForXp(scores.xp);
   const next = RANKS[RANKS.indexOf(rank) + 1];
   const progress = next ? (scores.xp - rank.min) / (next.min - rank.min) : 1;
@@ -46,22 +47,6 @@ export function StatsBar({ scores, onDrill, drillActive }: Props) {
             {t("prep.accuracySummary", { pct: accuracy, count: attempts })}
           </Text>
         )}
-        <TouchableOpacity
-          onPress={onDrill}
-          disabled={drillActive}
-          style={{
-            marginLeft: "auto",
-            paddingHorizontal: 12,
-            paddingVertical: 5,
-            backgroundColor: tints.accentSoft,
-            borderWidth: 1,
-            borderColor: `${colors.accent}60`,
-            borderRadius: 8,
-            opacity: drillActive ? 0.5 : 1,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}><BrandIcon name="drill" color={colors.accentBright} size={13} /><Text style={{ fontSize: 11, fontWeight: "600", color: colors.accentBright }}>{t("prep.drillWeakest")}</Text></View>
-        </TouchableOpacity>
       </View>
 
       <View style={{ height: 6, backgroundColor: colors.well, borderRadius: 3, overflow: "hidden" }}>

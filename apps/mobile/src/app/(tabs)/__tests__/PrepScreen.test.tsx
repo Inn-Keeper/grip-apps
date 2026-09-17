@@ -31,16 +31,18 @@ describe("PrepScreen", () => {
     expect(view.getByText(/Intern/)).toBeTruthy();
     expect(view.getByText("Accuracy over time")).toBeTruthy();
 
-    // The persistent difficulty selector is always visible.
-    expect(view.getByText("DIFFICULTY")).toBeTruthy();
+    // Settings sit behind one summary row; opening it shows both pickers.
+    fireEvent.press(view.getByText(/questions per card/));
+    await waitFor(() => expect(view.getByText("DIFFICULTY")).toBeTruthy());
     expect(view.getByText("Overlord")).toBeTruthy();
     expect(view.getByText("QUESTIONS")).toBeTruthy();
     expect(view.getByText("All")).toBeTruthy();
 
     await waitFor(() => expect(api.getAccuracyTimeline).toHaveBeenCalled());
 
-    // Drilling uses the selected level directly and fetches that level's questions.
-    fireEvent.press(view.getByText(/Drill weakest/));
+    // The Next up card starts a drill at the selected level and fetches that level's questions.
+    expect(view.getByText("NEXT UP")).toBeTruthy();
+    fireEvent.press(view.getByText(/Drill weakest|Start warm-up/));
     await waitFor(() => expect(view.getByText("DRILL")).toBeTruthy());
     expect(api.getQuestions).toHaveBeenCalled();
     expect(useScores).toHaveBeenCalled();

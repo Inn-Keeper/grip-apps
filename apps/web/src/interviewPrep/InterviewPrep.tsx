@@ -8,6 +8,7 @@ import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { buildDrillFromQuestions, selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
+import type { NextUpKind } from "@grip/core/nextUp";
 import { useScores } from "./useScores";
 import { CelebrationOverlay } from "../components/CelebrationOverlay";
 import { colors } from "@grip/core/tokens";
@@ -27,6 +28,7 @@ import { Card } from "./Card";
 import { ConfirmDialog } from "./ConfirmDialog";
 import { DrillSession } from "./DrillSession";
 import { MockLoop } from "./MockLoop";
+import { NextUpCard } from "./NextUpCard";
 import { PrepLeftRail } from "./PrepLeftRail";
 import { PrepRightRail } from "./PrepRightRail";
 import {
@@ -227,6 +229,12 @@ export default function InterviewPrep() {
 
   const startPlanDrill = () => prepPlan && runDrill(level, prepPlan.techs);
 
+  const startNextUp = (kind: NextUpKind) => {
+    if (kind === "review") startReviewDrill();
+    else if (kind === "plan") startPlanDrill();
+    else startDrill(level);
+  };
+
   const dismissPlan = () => {
     clearPrepPlan();
     setPrepPlan(null);
@@ -346,7 +354,6 @@ export default function InterviewPrep() {
           onLevel={requestLevel}
           onDrill={() => startDrill(level)}
           onMockLoop={startMockLoop}
-          onReviewDrill={startReviewDrill}
           reviewDueCount={reviewDueTechs.length}
           scores={scores}
           summary={summary}
@@ -365,51 +372,20 @@ export default function InterviewPrep() {
             {activeTitle}
           </h1>
         </div>
-        <p style={{ margin: 0, color: colors.textFaint, fontSize: 12, lineHeight: 1.5, textAlign: "right", maxWidth: 360 }}>
-          Tap a card for prep notes, then quiz. The workspace keeps cards compact so scanning stays fast.
+        <p style={{ margin: 0, color: colors.textDim, fontSize: 12.5, fontWeight: 600, textAlign: "right", maxWidth: 360 }}>
+          {t("prep.steps")}
         </p>
       </div>
 
-      {prepPlan && !drill && (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            flexWrap: "wrap",
-            marginBottom: 16,
-            padding: "12px 16px",
-            background: colors.surface,
-            border: `1px solid ${colors.accent}60`,
-            borderRadius: 12,
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: colors.textBright }}>
-              {t("prep.planBanner", { name: prepPlan.name })}
-            </span>
-            <span style={{ fontSize: 11.5, color: colors.textDim }}>
-              {prepPlan.deadline ? t("prep.planDeadline", { date: prepPlan.deadline }) : t("prep.planDeadlineNone")}
-              {" · "}
-              {prepPlan.techs.join(", ")}
-            </span>
-          </div>
-          <div style={{ marginLeft: "auto", display: "flex", gap: 8 }}>
-            <button
-              onClick={dismissPlan}
-              style={{ padding: "6px 12px", background: "transparent", border: `1px solid ${colors.border}`, borderRadius: 8, color: colors.textDim, fontSize: 12, fontWeight: 600, cursor: "pointer" }}
-            >
-              {t("prep.planDismiss")}
-            </button>
-            <button
-              onClick={startPlanDrill}
-              disabled={drillLoading}
-              style={{ padding: "6px 14px", background: colors.accent, border: "none", borderRadius: 8, color: colors.onAccent, fontSize: 12, fontWeight: 700, cursor: drillLoading ? "default" : "pointer", opacity: drillLoading ? 0.55 : 1 }}
-            >
-              {t("prep.planStart")}
-            </button>
-          </div>
-        </div>
+      {!drill && (
+        <NextUpCard
+          reviewDueCount={reviewDueTechs.length}
+          plan={prepPlan}
+          attempts={summary.attempts}
+          busy={drillLoading}
+          onStart={startNextUp}
+          onDismissPlan={dismissPlan}
+        />
       )}
 
       {drill ? (

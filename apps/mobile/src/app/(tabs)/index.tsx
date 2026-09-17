@@ -9,17 +9,18 @@ import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
+import type { NextUpKind } from "@grip/core/nextUp";
 import { useLocale } from "@/lib/useLocale";
 import { DEFAULT_QUIZ_SIZE } from "@grip/core/quizPrefs";
 import { buildDrillFromQuestions, selectCategoryDrillTechs, selectDrillTechs } from "@grip/core/quiz";
 import { getQuizSize, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
-import { colors, layout, tints } from "@/theme";
+import { colors, layout } from "@/theme";
 import { FlipCard } from "@/components/FlipCard";
 import { StatsBar } from "@/components/StatsBar";
-import { DifficultyPicker } from "@/components/DifficultyPicker";
-import { QuizSizePicker } from "@/components/QuizSizePicker";
+import { NextUpCard } from "@/components/NextUpCard";
+import { PrepSettings } from "@/components/PrepSettings";
 import { DrillSession, type Drill } from "@/components/DrillSession";
 import { AccuracyChart } from "@/components/AccuracyChart";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
@@ -75,6 +76,7 @@ export default function PrepScreen() {
   const { data: reviewQueue = [] } = useReviewQueueQuery();
   const { data: prepContacts = [] } = usePrepContactsQuery();
   const prepPlan = usePrepPlan();
+  const attempts = Object.values(scores.answers).reduce((sum, s) => sum + s.correct + s.wrong, 0);
   const reviewDueTechs = reviewQueue.filter((entry) => entry.due).map((entry) => entry.tech);
   const struggleBoost = recentStruggledTechs(prepContacts);
   const { data: profile = null } = usePrepProfileQuery();
@@ -163,6 +165,12 @@ export default function PrepScreen() {
   const startReviewDrill = () => runDrill(level, reviewDueTechs);
 
   const startPlanDrill = () => prepPlan && runDrill(level, prepPlan.techs);
+
+  const startNextUp = (kind: NextUpKind) => {
+    if (kind === "review") startReviewDrill();
+    else if (kind === "plan") startPlanDrill();
+    else startDrill(level);
+  };
 
   const startCategoryDrill = async () => {
     setDrillLoading(true);
@@ -260,67 +268,17 @@ export default function PrepScreen() {
         contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: insets.bottom + layout.tabBarClearance }}
         ListHeaderComponent={
           <View style={{ gap: 14 }}>
-            {prepPlan && !drill && (
-              <View
-                style={{
-                  padding: 12,
-                  backgroundColor: colors.surface,
-                  borderWidth: 1,
-                  borderColor: `${colors.accent}60`,
-                  borderRadius: 12,
-                  gap: 6,
-                }}
-              >
-                <Text style={{ fontSize: 13, fontWeight: "800", color: colors.textBright }}>
-                  {t("prep.planBanner", { name: prepPlan.name })}
-                </Text>
-                <Text style={{ fontSize: 11.5, color: colors.textDim }}>
-                  {prepPlan.deadline ? t("prep.planDeadline", { date: prepPlan.deadline }) : t("prep.planDeadlineNone")}
-                  {" · "}
-                  {prepPlan.techs.join(", ")}
-                </Text>
-                <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>
-                  <TouchableOpacity
-                    onPress={() => setPrepPlan(null)}
-                    style={{ paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: colors.border }}
-                  >
-                    <Text style={{ fontSize: 12, fontWeight: "600", color: colors.textDim }}>{t("prep.planDismiss")}</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity
-                    onPress={startPlanDrill}
-                    disabled={drillLoading}
-                    style={{ paddingHorizontal: 14, paddingVertical: 6, borderRadius: 8, backgroundColor: colors.accent, opacity: drillLoading ? 0.5 : 1 }}
-                  >
-                    <Text style={{ fontSize: 12, fontWeight: "700", color: colors.onAccent }}>{t("prep.planStart")}</Text>
-                  </TouchableOpacity>
-                </View>
-              </View>
+            {!drill && (
+              <NextUpCard
+                reviewDueCount={reviewDueTechs.length}
+                plan={prepPlan}
+                attempts={attempts}
+                busy={drillLoading}
+                onStart={startNextUp}
+                onDismissPlan={() => setPrepPlan(null)}
+              />
             )}
-            {reviewDueTechs.length > 0 && !drill && (
-              <TouchableOpacity
-                onPress={startReviewDrill}
-                disabled={drillLoading}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 8,
-                  padding: 12,
-                  backgroundColor: tints.warningSoft,
-                  borderWidth: 1,
-                  borderColor: `${colors.warning}60`,
-                  borderRadius: 10,
-                  opacity: drillLoading ? 0.5 : 1,
-                }}
-              >
-                <Text style={{ flex: 1, fontSize: 12.5, fontWeight: "600", color: colors.warningBright }}>
-                  {t("prep.reviewDueSubtitle", { count: reviewDueTechs.length })}
-                </Text>
-                <Text style={{ fontSize: 12, fontWeight: "800", color: colors.warningBright }}>
-                  {t("prep.reviewNow")} →
-                </Text>
-              </TouchableOpacity>
-            )}
-            <StatsBar scores={scores} onDrill={() => startDrill(level)} drillActive={!!drill || drillLoading} />
+            <StatsBar scores={scores} />
             {!drill && (
               <TouchableOpacity
                 onPress={startCategoryDrill}
@@ -340,16 +298,18 @@ export default function PrepScreen() {
                 </Text>
               </TouchableOpacity>
             )}
-            {!drill && <DifficultyPicker level={level} onLevel={requestLevel} />}
-            {!drill && <QuizSizePicker quizSize={quizSize} poolSize={poolSize} onQuizSize={updateQuizSize} />}
+            {!drill && (
+              <PrepSettings level={level} onLevel={requestLevel} quizSize={quizSize} poolSize={poolSize} onQuizSize={updateQuizSize} />
+            )}
             {drillError && !drill && (
               <Text style={{ fontSize: 11, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
             )}
-            {!drill && <AccuracyChart points={accuracy} />}
 
             {drill && <DrillSession drill={drill} onAnswer={answerDrill} onNext={nextDrill} onExit={() => setDrill(null)} />}
           </View>
         }
+        // Progress history sits below the cards so the cards stay near the top.
+        ListFooterComponent={drill ? null : <AccuracyChart points={accuracy} />}
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(Math.min(index * 60, 360)).springify().damping(18)}>
             <FlipCard item={item} level={level} stat={scores.answers[item.tech]} record={record} addXp={addXp} loadQuiz={loadCardQuiz} onQuizActiveChange={setQuizActive} />
