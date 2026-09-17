@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CORRECT_XP } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
+import { CORRECT_XP } from "@grip/core/gamification";
+import { difficultyByKey } from "@grip/core/difficulty";
 import { addXp as addXpApi, getScores, recordAnswer } from "../lib/api";
 
 type ScoreState = { 

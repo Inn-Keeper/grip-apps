@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { brand, colors } from "@tech-refresh/core/tokens";
+import { brand, colors } from "@grip/core/tokens";
 import {
   POE_ASSISTANT_PREF_EVENT,
   POE_ASSISTANT_VISIBLE_KEY,

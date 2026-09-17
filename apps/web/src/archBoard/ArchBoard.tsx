@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, evaluate } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
-import { buildPushback } from "@tech-refresh/core/pushback";
-import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@tech-refresh/core/talkTrack";
-import { colors, layout } from "@tech-refresh/core/tokens";
+import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, evaluate } from "@grip/core/arch";
+import { t } from "@grip/core/i18n";
+import { buildPushback } from "@grip/core/pushback";
+import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
+import { colors, layout } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";

@@ -5,10 +5,10 @@ import {
   formatClock,
   phaseAt,
   roundProgress,
-} from "@tech-refresh/core/designTimer";
-import { t } from "@tech-refresh/core/i18n";
-import { TALK_TRACK_SECTIONS } from "@tech-refresh/core/talkTrack";
-import { colors, layout } from "@tech-refresh/core/tokens";
+} from "@grip/core/designTimer";
+import { t } from "@grip/core/i18n";
+import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
+import { colors, layout } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { PAGE_PADDING_X } from "./constants";
 import styles from "./DesignTimer.module.css";

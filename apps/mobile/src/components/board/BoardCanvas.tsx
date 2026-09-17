@@ -11,7 +11,7 @@ import Animated, {
   withSpring,
   withTiming,
 } from "react-native-reanimated";
-import type { BoardEdge, BoardNode } from "@tech-refresh/core/arch";
+import type { BoardEdge, BoardNode } from "@grip/core/arch";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { NODE_H, NODE_W, NodeView } from "./NodeView";

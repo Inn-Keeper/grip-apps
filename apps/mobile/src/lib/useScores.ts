@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CORRECT_XP } from "@tech-refresh/core/gamification";
-import { difficultyByKey } from "@tech-refresh/core/difficulty";
-import type { Scores } from "@tech-refresh/core/api";
+import { CORRECT_XP } from "@grip/core/gamification";
+import { difficultyByKey } from "@grip/core/difficulty";
+import type { Scores } from "@grip/core/api";
 import { api } from "./api";
 
 export type { Scores };

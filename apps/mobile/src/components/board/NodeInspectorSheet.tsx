@@ -1,7 +1,7 @@
 import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
-import { meta, TYPE_COLORS } from "@tech-refresh/core/arch";
-import type { BoardNode } from "@tech-refresh/core/arch";
-import { t } from "@tech-refresh/core/i18n";
+import { meta, TYPE_COLORS } from "@grip/core/arch";
+import type { BoardNode } from "@grip/core/arch";
+import { t } from "@grip/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 import { Button, MiniButton } from "@/components/ui";

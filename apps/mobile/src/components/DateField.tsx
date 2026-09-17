@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Modal, Platform, Pressable, Text, TouchableOpacity, View } from "react-native";
 import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
-import { formatDDMMYYYY, parseDDMMYYYY, todayDDMMYYYY } from "@tech-refresh/core/contacts";
-import { t } from "@tech-refresh/core/i18n";
+import { formatDDMMYYYY, parseDDMMYYYY, todayDDMMYYYY } from "@grip/core/contacts";
+import { t } from "@grip/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Field, MiniButton, inputStyle } from "@/components/ui";

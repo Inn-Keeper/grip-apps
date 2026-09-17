@@ -4,7 +4,7 @@
 **Status:** Active — supersedes the mascot prompt in `BRAND.md` Phase 3.
 **Reference art:** `assets/brand/source/poe_the_guide_to_perseverance.png`
 
-Poe is Tech-Refresh's guide through the job hunt. This document is the single
+Poe is Grip's guide through the job hunt. This document is the single
 source of truth for how he looks. Tone and voice stay in `BRAND.md`.
 
 ---

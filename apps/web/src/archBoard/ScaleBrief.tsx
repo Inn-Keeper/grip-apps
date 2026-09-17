@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@tech-refresh/core/estimation";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@grip/core/estimation";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { AugmentedScenario } from "./types";
 

@@ -8,7 +8,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import type { Session } from "@supabase/supabase-js";
-import { identityChanged } from "@tech-refresh/core/authCache";
+import { identityChanged } from "@grip/core/authCache";
 import { supabase } from "@/lib/supabase";
 import { restoreLocale } from "@/lib/useLocale";
 import { SignIn } from "@/components/SignIn";

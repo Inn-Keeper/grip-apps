@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { extractTechsFromText } from "@tech-refresh/core/cvTechs";
-import { categories } from "@tech-refresh/core/prepData";
-import { t } from "@tech-refresh/core/i18n";
+import { extractTechsFromText } from "@grip/core/cvTechs";
+import { categories } from "@grip/core/prepData";
+import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
 import { Button, Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
 

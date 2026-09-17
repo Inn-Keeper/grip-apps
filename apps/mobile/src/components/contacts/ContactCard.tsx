@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
-import { STATUSES, STATUS_STYLES, isDue } from "@tech-refresh/core/contacts";
-import { t } from "@tech-refresh/core/i18n";
+import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
+import { t } from "@grip/core/i18n";
 import { colors, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, MiniButton, Section } from "@/components/ui";
-import type { Contact } from "@tech-refresh/core/api";
+import type { Contact } from "@grip/core/api";
 import { RetroForm, EMPTY_RETRO } from "./RetroForm";
 import { StoryMatchSection, type StoryItem } from "./StoryMatchSection";
 import { PrepPlanSection } from "./PrepPlanSection";

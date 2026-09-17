@@ -13,12 +13,12 @@
 ## Constraints and evidence
 
 - Follow `AGENTS.md`, `BRAND.md`, `DESIGN.md` where present, and shared tokens/i18n. Preserve Grip naming and the existing visual identity.
-- Prefix shell commands with `rtk`. Paths below are relative to `tech-refresh/`.
+- Prefix shell commands with `rtk`. Paths below are relative to `grip-apps/`.
 - No new production dependencies, diagram framework, global state library, or speculative graph engine.
 - Scope: web editor and necessary shared API additions. Preserve mobile behavior, persisted node/edge formats, sharing permissions, and existing scoring semantics.
 - Source review confirmed fixed five-column placement, hidden canvas overflow, destructive replacement without dirty protection, inconsistent target-handle clicks, pointer-only graph operations, page-level drag state, and eager full-board fetching.
 - Performance impact and rendered layout have not been measured. Treat performance improvements as hypotheses until profiled.
-- Baseline: 26 evaluator tests passed using `rtk pnpm --filter @tech-refresh/core exec jest --runInBand --no-watchman arch.test.js`. This does not verify the browser or live database.
+- Baseline: 26 evaluator tests passed using `rtk pnpm --filter @grip/core exec jest --runInBand --no-watchman arch.test.js`. This does not verify the browser or live database.
 - No commits or deployment are part of writing this plan. During implementation, keep each task independently reviewable and follow the user's commit instructions.
 
 ## Coverage and sequence
@@ -189,7 +189,7 @@ expect(result.score).toBe(100);
 expect(result.warnings.some(w => w.startsWith('Over budget:'))).toBe(true);
 ```
 
-- [ ] Verify the UI displays both 100% checklist coverage and the over-budget warning. Run `rtk pnpm --filter @tech-refresh/core exec jest --runInBand --no-watchman arch.test.js i18n.test.js`.
+- [ ] Verify the UI displays both 100% checklist coverage and the over-budget warning. Run `rtk pnpm --filter @grip/core exec jest --runInBand --no-watchman arch.test.js i18n.test.js`.
 
 ## Task 8: Profile and isolate drag rendering
 
@@ -227,14 +227,14 @@ getBoard(id: string): Promise<SavedBoard>;
 - [ ] On save success write the returned full board into its detail cache and insert/replace its summary in an already loaded summary cache, preserving updated-at ordering. On deletion remove both entries; on share/unshare update only the token after success. Do not synthesize a complete summary list from a single saved item when none was fetched.
 - [ ] Include both new key families in the existing auth-cache reset boundary. Inspect `packages/core/src/authCache.js` and web auth wiring; test sign-out/account switching so cached summaries/details never survive into another user's session. Retain normal freshness/refetch behavior when reopening a stale list.
 - [ ] Seed a test account with many boards and inspect the network: no board list on opening the editor, metadata-only list on opening Saved boards, one detail read on Load, no full-list refetch after each successful mutation. Compare bytes transferred against baseline. If the metadata list itself becomes measurably large, propose pagination separately rather than adding it without evidence.
-- [ ] Run `rtk pnpm --filter @tech-refresh/core exec jest --runInBand --no-watchman api.test.js authCache.test.js` and the relevant mobile board checks after the additive shared API change.
+- [ ] Run `rtk pnpm --filter @grip/core exec jest --runInBand --no-watchman api.test.js authCache.test.js` and the relevant mobile board checks after the additive shared API change.
 
 ## Task 10: Integrated verification and delivery
 
 **Files:** `docs/archboard-verification.md` and regression checks associated with changed behavior.
 
 - [ ] Run all new native checks: `rtk node --test apps/web/src/archBoard/editorState.test.js apps/web/src/archBoard/boardGeometry.test.js apps/web/src/archBoard/connectionState.test.js`.
-- [ ] Run `rtk pnpm --filter @tech-refresh/core exec jest --runInBand --no-watchman`, `rtk pnpm --filter web typecheck`, `rtk pnpm lint`, and `rtk pnpm --filter web build`. Run mobile typechecking/tests appropriate to any shared changes. Separate pre-existing/environment failures from introduced failures.
+- [ ] Run `rtk pnpm --filter @grip/core exec jest --runInBand --no-watchman`, `rtk pnpm --filter web typecheck`, `rtk pnpm lint`, and `rtk pnpm --filter web build`. Run mobile typechecking/tests appropriate to any shared changes. Separate pre-existing/environment failures from introduced failures.
 - [ ] Use the available browser automation tooling for repeatable interaction checks. There is no confirmed web E2E harness in the inspected files; do not invent a passing E2E command or add a framework solely for this plan. Keep exact manual steps and evidence where automation is unavailable.
 - [ ] Exercise a complete flow: pick scenario → add/move/connect → inspect → undo/redo → evaluate → save → share/copy → reload → unshare. Repeat core editing by keyboard and on a narrow touch viewport.
 - [ ] Exercise loss prevention: dirty scenario switch canceled/confirmed, dirty navigation, clear→undo, node removal→undo, save failure, edits during save, rejected/slow load, custom scenario read failure and browser refresh warning.

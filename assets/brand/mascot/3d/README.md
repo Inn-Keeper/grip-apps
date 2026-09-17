@@ -29,7 +29,7 @@ The eye bones flatten the visible iris and pupil into a slit for a stylized blin
 
 ## Regenerate
 
-From `tech-refresh`, using Blender 4.5.3 LTS:
+From `grip-apps`, using Blender 4.5.3 LTS:
 
 ```sh
 blender --background --factory-startup --python-exit-code 1 --python scripts/generate-poe.py

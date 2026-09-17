@@ -1,5 +1,5 @@
-import { NODE_TYPES, TYPE_COLORS } from "@tech-refresh/core/arch";
-import { colors } from "@tech-refresh/core/tokens";
+import { NODE_TYPES, TYPE_COLORS } from "@grip/core/arch";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 

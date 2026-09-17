@@ -1,7 +1,7 @@
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { t } from "@tech-refresh/core/i18n";
+import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
 import { colors, font, radius, space } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";

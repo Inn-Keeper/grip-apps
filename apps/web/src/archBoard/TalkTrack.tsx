@@ -1,6 +1,6 @@
-import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@tech-refresh/core/talkTrack";
-import { t } from "@tech-refresh/core/i18n";
-import { colors } from "@tech-refresh/core/tokens";
+import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
+import { t } from "@grip/core/i18n";
+import { colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 

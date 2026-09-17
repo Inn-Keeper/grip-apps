@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { colors } from "@tech-refresh/core/tokens";
+import { colors } from "@grip/core/tokens";
 
 const DISMISS_MS = 2100;
 

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { useId, useState } from "react";
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { colors, tints } from "@grip/core/tokens";
 import { BrandIcon } from "./BrandIcon";
 
 const DEFAULT_MAX_HEIGHT = 178;

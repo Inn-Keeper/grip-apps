@@ -1,6 +1,6 @@
 import { useSyncExternalStore } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { getLocale, setLocale, subscribeLocale } from "@tech-refresh/core/i18n";
+import { getLocale, setLocale, subscribeLocale } from "@grip/core/i18n";
 
 export const LOCALE_STORAGE_KEY = "grip.locale";
 

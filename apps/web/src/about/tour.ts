@@ -1,7 +1,7 @@
 import "driver.js/dist/driver.css";
 import "./tour.css";
 import { driver, type PopoverDOM } from "driver.js";
-import { t } from "@tech-refresh/core/i18n";
+import { t } from "@grip/core/i18n";
 
 const poeReactions = [
   { mood: "welcome", pose: "/mascot/poe-idle.png" },

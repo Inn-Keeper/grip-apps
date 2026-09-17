@@ -85,7 +85,7 @@ export function MyComponent() {
 **Inline with tokens:**
 
 ```tsx
-import { colors, space, font } from "@tech-refresh/core/tokens";
+import { colors, space, font } from "@grip/core/tokens";
 
 export function Header() {
   return (
@@ -139,12 +139,12 @@ import { inputStyle, miniBtn } from "./shared.tsx";
 
 ## Design Tokens
 
-**Never hardcode values.** Always use tokens from `@tech-refresh/core/tokens`:
+**Never hardcode values.** Always use tokens from `@grip/core/tokens`:
 
 ### Colors
 
 ```tsx
-import { colors, tints } from "@tech-refresh/core/tokens";
+import { colors, tints } from "@grip/core/tokens";
 
 // Correct
 <div style={{ color: colors.text }}>Text</div>
@@ -162,7 +162,7 @@ import { colors, tints } from "@tech-refresh/core/tokens";
 ### Spacing
 
 ```tsx
-import { space } from "@tech-refresh/core/tokens";
+import { space } from "@grip/core/tokens";
 
 // Correct
 <div style={{ gap: space.md, padding: `${space.lg}px` }}>Content</div>
@@ -176,7 +176,7 @@ import { space } from "@tech-refresh/core/tokens";
 ### Typography
 
 ```tsx
-import { font } from "@tech-refresh/core/tokens";
+import { font } from "@grip/core/tokens";
 
 // Correct
 <h1 style={{ fontSize: font.size.heading, fontWeight: "700" }}>Title</h1>
@@ -191,7 +191,7 @@ import { font } from "@tech-refresh/core/tokens";
 ### Radius
 
 ```tsx
-import { radius } from "@tech-refresh/core/tokens";
+import { radius } from "@grip/core/tokens";
 
 // Correct
 <div style={{ borderRadius: radius.md }}>Card</div>

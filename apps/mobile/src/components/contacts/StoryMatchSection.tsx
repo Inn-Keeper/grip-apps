@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
-import { groupStoriesByCompetency } from "@tech-refresh/core/stories";
+import { groupStoriesByCompetency } from "@grip/core/stories";
 import { colors } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
