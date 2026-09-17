@@ -110,6 +110,10 @@ jest.mock("react-native-reanimated", () => {
   };
 });
 
+// Native OAuth + live Supabase session: screens only need a signed-in, non-demo user.
+jest.mock("@/lib/oauth", () => ({ signInWithGitHub: jest.fn(), linkGitHubIdentity: jest.fn() }));
+jest.mock("@/lib/useIsDemo", () => ({ useIsDemo: () => false }));
+
 jest.mock("expo-haptics", () => ({
   notificationAsync: jest.fn(() => Promise.resolve()),
   NotificationFeedbackType: { Success: "success", Warning: "warning", Error: "error" },

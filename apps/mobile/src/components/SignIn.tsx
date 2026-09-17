@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { supabase } from "@/lib/supabase";
 import { signInWithGitHub } from "@/lib/oauth";
+import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
+import { Turnstile } from "@/components/Turnstile";
+import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
 
@@ -15,6 +18,17 @@ export function SignIn() {
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  // Bumped after each attempt to remount the widget: Turnstile tokens are single-use.
+  const [captchaKey, setCaptchaKey] = useState(0);
+  const onToken = useCallback((token: string | null) => setCaptchaToken(token), []);
+  const waitingForCaptcha = !!TURNSTILE_SITE_KEY && !captchaToken;
+  const captchaOptions = { captchaToken: captchaToken ?? undefined };
+
+  const resetCaptcha = () => {
+    setCaptchaToken(null);
+    setCaptchaKey((k) => k + 1);
+  };
 
   const submit = async () => {
     setBusy(true);
@@ -24,21 +38,35 @@ export function SignIn() {
       const { error: err } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password,
+        options: captchaOptions,
       });
-      if (err) setError(err.message);
+      if (err) setError(friendlyAuthError(err.message));
     } else {
       const { data, error: err } = await supabase.auth.signUp({
         email: email.trim(),
         password,
+        options: captchaOptions,
       });
       if (err) {
-        setError(err.message);
+        setError(friendlyAuthError(err.message));
       } else if (!data.session) {
         setNotice(
           t("auth.confirmEmailNotice")
         );
       }
     }
+    resetCaptcha();
+    setBusy(false);
+  };
+
+  // Guest session; the database seeds sample data for it (migration 0016).
+  const tryDemo = async () => {
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    const { error: err } = await supabase.auth.signInAnonymously({ options: captchaOptions });
+    if (err) setError(friendlyAuthError(err.message));
+    resetCaptcha();
     setBusy(false);
   };
 
@@ -86,6 +114,26 @@ export function SignIn() {
         </Text>
       </TouchableOpacity>
 
+      <TouchableOpacity
+        onPress={tryDemo}
+        disabled={busy || waitingForCaptcha}
+        accessibilityRole="button"
+        style={{
+          marginTop: 10,
+          borderWidth: 1,
+          borderStyle: "dashed",
+          borderColor: `${colors.accent}80`,
+          borderRadius: 12,
+          padding: 12,
+          opacity: busy || waitingForCaptcha ? 0.6 : 1,
+        }}
+      >
+        <Text style={{ color: colors.accentBright, fontWeight: "700", textAlign: "center", fontSize: 15 }}>
+          {t("demo.try")}
+        </Text>
+        <Text style={{ color: colors.textFaint, textAlign: "center", fontSize: 11, marginTop: 2 }}>{t("demo.trySub")}</Text>
+      </TouchableOpacity>
+
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 14 }}>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
         <Text style={{ color: colors.textFaint, fontSize: 11, fontWeight: "700" }}>or</Text>
@@ -112,15 +160,17 @@ export function SignIn() {
         style={[inputStyle, { marginTop: 10 }]}
       />
 
+      <Turnstile key={captchaKey} onToken={onToken} />
+
       <TouchableOpacity
         onPress={submit}
-        disabled={busy || !canSubmit}
+        disabled={busy || !canSubmit || waitingForCaptcha}
         style={{
           backgroundColor: colors.accent,
           borderRadius: 12,
           padding: 14,
           marginTop: 12,
-          opacity: busy || !canSubmit ? 0.6 : 1,
+          opacity: busy || !canSubmit || waitingForCaptcha ? 0.6 : 1,
         }}
       >
         <Text style={{ color: colors.onAccent, fontWeight: "600", textAlign: "center", fontSize: 15 }}>

@@ -3,6 +3,8 @@ import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { colors, font, radius, space, tints } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
+import { DemoBanner } from "@/components/DemoBanner";
+import { useIsDemo } from "@/lib/useIsDemo";
 
 /**
  * Tab screen root: app background + safe-area insets (native tabs render no
@@ -11,6 +13,7 @@ import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
  */
 export function Screen({ children }: { children: ReactNode }) {
   const insets = useSafeAreaInsets();
+  const isDemo = useIsDemo();
   return (
     <View
       style={{
@@ -21,6 +24,7 @@ export function Screen({ children }: { children: ReactNode }) {
         paddingRight: insets.right,
       }}
     >
+      {isDemo && <DemoBanner />}
       {children}
     </View>
   );
