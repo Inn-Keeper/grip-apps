@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { colors, layout } from "@grip/core/tokens";
+import { colors, layout, shadow } from "@grip/core/tokens";
 import styles from "./WorkspaceLayout.module.css";
 
 type WorkspaceLayoutProps = {
@@ -8,9 +8,11 @@ type WorkspaceLayoutProps = {
   right: ReactNode;
   mainLabel?: string;
   density?: "normal" | "compact";
+  // Space to keep clear under the left rail, e.g. for Poe fixed at the bottom-left.
+  leftRailBottomInset?: number;
 };
 
-export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace", density = "normal" }: WorkspaceLayoutProps) {
+export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace", density = "normal", leftRailBottomInset }: WorkspaceLayoutProps) {
   const compact = density === "compact";
 
   return (
@@ -21,6 +23,7 @@ export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace"
         "--app-header-height": `${layout.webHeaderHeight}px`,
         "--workspace-top": `${layout.workspaceTop}px`,
         "--workspace-bottom-inset": `${layout.workspaceBottomInset}px`,
+        "--workspace-left-bottom-inset": `${leftRailBottomInset ?? layout.workspaceBottomInset}px`,
         "--workspace-gap": compact ? "18px" : "22px",
         "--workspace-padding": compact ? "18px 24px 40px" : "22px 24px 44px",
         "--workspace-rail-min": `${layout.workspaceRailMin}px`,
@@ -49,8 +52,9 @@ export function WorkspacePanel({ children, tone = "default", style }: WorkspaceP
     <div
       style={{
         background: tone === "sunken" ? colors.well : colors.surface,
-        border: `1px solid ${colors.border}`,
+        border: `1px solid ${colors.borderSoft}`,
         borderRadius: 8,
+        boxShadow: tone === "sunken" ? undefined : shadow.card,
         padding: 14,
         ...style,
       }}

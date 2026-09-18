@@ -29,7 +29,7 @@ export function SignIn() {
   const inputStyle: React.CSSProperties = {
     padding: "11px 14px",
     background: colors.surface,
-    border: `1px solid ${colors.border}`,
+    border: `1px solid ${colors.borderSoft}`,
     borderRadius: 10,
     color: colors.text,
     fontSize: 14,
@@ -118,7 +118,7 @@ export function SignIn() {
               gap: 8,
               padding: "11px 14px",
               background: colors.surface,
-              border: `1px solid ${colors.border}`,
+              border: `1px solid ${colors.borderSoft}`,
               borderRadius: 10,
               color: colors.textBright,
               fontSize: 14,
@@ -152,9 +152,9 @@ export function SignIn() {
             </span>
           </button>
           <div style={{ display: "flex", alignItems: "center", gap: 10, color: colors.textFaint, fontSize: 11, fontWeight: 700 }}>
-            <span style={{ flex: 1, height: 1, background: colors.border }} />
+            <span style={{ flex: 1, height: 1, background: colors.borderSoft }} />
             or
-            <span style={{ flex: 1, height: 1, background: colors.border }} />
+            <span style={{ flex: 1, height: 1, background: colors.borderSoft }} />
           </div>
           <input
             type="email"

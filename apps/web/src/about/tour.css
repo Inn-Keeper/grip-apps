@@ -3,10 +3,10 @@
 
 .grip-tour.driver-popover {
   background: #1E222D;
-  border: 1px solid #353C4D;
+  border: 1px solid #262A36;
   border-radius: 14px;
   box-shadow:
-    0 0 0 1px #353C4D40,
+    0 0 0 1px #262A3640,
     0 8px 32px #00000066,
     0 24px 64px #00000044;
   padding: 28px 30px 22px;
@@ -46,7 +46,7 @@
   min-height: 104px;
   margin-top: 20px;
   padding: 12px 14px 10px 8px;
-  border: 1px solid #353C4D;
+  border: 1px solid #262A36;
   border-radius: 12px;
   background:
     radial-gradient(circle at 18% 24%, #2DD4BF18, transparent 28%),
@@ -88,7 +88,7 @@
   min-width: 0;
   border-radius: 10px;
   background: #10131A;
-  border: 1px solid #353C4D;
+  border: 1px solid #262A36;
   box-shadow: inset 0 1px 0 #FFFFFF08;
   overflow: hidden;
 }
@@ -167,7 +167,7 @@
   right: 14%;
   height: 8px;
   border-radius: 999px;
-  background: #353C4D;
+  background: #262A36;
 }
 
 .grip-tour .grip-tour-poe-prep .grip-tour-poe-mark:nth-child(2) {
@@ -204,7 +204,7 @@
   height: 50px;
   border-radius: 8px;
   background: #1E222D;
-  border: 1px solid #353C4D;
+  border: 1px solid #262A36;
 }
 
 .grip-tour .grip-tour-poe-stories .grip-tour-poe-stage::after {
@@ -216,7 +216,7 @@
   background: #2DD4BF;
   box-shadow:
     0 14px 0 #D4A574,
-    0 28px 0 #353C4D;
+    0 28px 0 #262A36;
   animation: gripTourWrite 2.6s ease-in-out infinite;
 }
 
@@ -294,14 +294,14 @@
   top: 37px;
   height: 2px;
   border-radius: 999px;
-  background: #353C4D;
+  background: #262A36;
 }
 
 .grip-tour .grip-tour-poe-quest .grip-tour-poe-mark {
   top: 29px;
   width: 18px;
   height: 18px;
-  border: 2px solid #353C4D;
+  border: 2px solid #262A36;
   border-radius: 999px;
   background: #10131A;
   animation: gripTourPipeline 2.7s ease-in-out infinite;
@@ -338,7 +338,7 @@
   width: 42px;
   height: 42px;
   border-radius: 999px;
-  border: 7px solid #353C4D;
+  border: 7px solid #262A36;
   border-top-color: #14B8A6;
   border-right-color: #D4A574;
   animation: gripTourRing 3s ease-in-out infinite;
@@ -348,7 +348,7 @@
   right: 16%;
   height: 8px;
   border-radius: 999px;
-  background: #353C4D;
+  background: #262A36;
 }
 
 .grip-tour .grip-tour-poe-profile .grip-tour-poe-mark:nth-child(1) {
@@ -410,7 +410,7 @@
 .grip-tour .driver-popover-footer {
   margin-top: 22px;
   padding-top: 16px;
-  border-top: 1px solid #353C4D;
+  border-top: 1px solid #262A36;
 }
 
 .grip-tour .driver-popover-progress-text {
@@ -423,7 +423,7 @@
 /* Navigation buttons */
 .grip-tour .driver-popover-footer button {
   background: #272C3A;
-  border: 1px solid #353C4D;
+  border: 1px solid #262A36;
   border-radius: 8px;
   color: #9AA5BC;
   font-size: 13px;
@@ -437,7 +437,7 @@
 
 .grip-tour .driver-popover-footer button:hover,
 .grip-tour .driver-popover-footer button:focus {
-  background: #353C4D;
+  background: #262A36;
   border-color: #4A5268;
   color: #F4F7FC;
 }
@@ -636,7 +636,7 @@
   0%,
   100% {
     background: #10131A;
-    border-color: #353C4D;
+    border-color: #262A36;
   }
 
   45%,

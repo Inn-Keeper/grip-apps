@@ -55,7 +55,7 @@ graph LR
     subgraph CORE ["@grip/core  (pure JS, no framework)"]
         API["api.js\nData layer — all Supabase\nCRUD & RPC calls"]
         QUIZ["quiz.js\nshuffle / buildDrill\nselectDrillTechs"]
-        DIFF["difficulty.js\n4 tiers: Newbie→Overlord\nXP per tier"]
+        DIFF["difficulty.js\n4 tiers: Clear Skies→Thunderstorm\nXP per tier"]
         GAME["gamification.js\nXP rules, RANKS ladder\nrankForXp()"]
         ACC["accuracy.js\ndaily accuracy\ntimeline builder"]
         ARCH["arch.js\n13 node types\nevaluate() scoring"]

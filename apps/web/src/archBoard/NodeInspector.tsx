@@ -48,7 +48,7 @@ export function NodeInspector({
           style={{
             padding: "7px 10px",
             background: colors.bgDeep,
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.text,
             fontSize: 12.5,
@@ -70,7 +70,7 @@ export function NodeInspector({
                   width: 34,
                   height: 30,
                   background: active ? colors.accent : "transparent",
-                  border: `1px solid ${active ? colors.accent : colors.border}`,
+                  border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
                   borderRadius: 8,
                   color: active ? colors.onAccent : colors.textDim,
                   fontSize: 12,
@@ -90,7 +90,7 @@ export function NodeInspector({
         style={{
           padding: "7px 14px",
           background: "transparent",
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSoft}`,
           borderRadius: 8,
           color: colors.textDim,
           fontSize: 12,

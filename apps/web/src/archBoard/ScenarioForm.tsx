@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
@@ -53,7 +53,8 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
         marginBottom: 14,
         padding: "16px 18px",
         background: colors.surface,
-        border: `1px solid ${colors.accent}60`,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 12,
         display: "flex",
         flexDirection: "column",
@@ -108,7 +109,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
                   padding: "5px 10px",
                   borderRadius: 16,
                   cursor: "pointer",
-                  border: `1px solid ${active ? TYPE_COLORS[spec.type] : colors.border}`,
+                  border: `1px solid ${active ? TYPE_COLORS[spec.type] : colors.borderSoft}`,
                   background: active ? `${TYPE_COLORS[spec.type]}25` : "transparent",
                   color: active ? colors.text : colors.textDim,
                   fontSize: 11,
@@ -156,7 +157,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
               alignSelf: "flex-start",
               padding: "5px 12px",
               background: "transparent",
-              border: `1px solid ${colors.border}`,
+              border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,
               color: colors.textDim,
               fontSize: 11,
@@ -177,7 +178,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
           style={{
             padding: "7px 14px",
             background: "transparent",
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
             fontSize: 12,

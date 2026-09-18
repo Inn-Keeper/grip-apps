@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@grip/core/estimation";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { AugmentedScenario } from "./types";
 
@@ -40,8 +40,9 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
       style={{
         padding: "14px 16px",
         marginBottom: 14,
-        background: colors.well,
-        border: `1px solid ${colors.border}`,
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 10,
       }}
     >
@@ -91,7 +92,7 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
                 style={{
                   padding: "7px 10px",
                   background: colors.bgDeep,
-                  border: `1px solid ${band ? band.color() : colors.border}`,
+                  border: `1px solid ${band ? band.color() : colors.borderSoft}`,
                   borderRadius: 8,
                   color: colors.text,
                   fontSize: 13,

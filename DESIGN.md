@@ -28,11 +28,16 @@ Five greys, each a visible step up. Pick by *structural role*, not by taste:
 | `well` | `#191D27` | Inset elements **on a surface**: inputs, progress tracks, nested sub-cards |
 | `surface` | `#1E222D` | Cards, sheets, pills at rest |
 | `surfaceHi` | `#272C3A` | Raised interactive elements: quiz options, pressed/hover states |
-| `border` | `#353C4D` | All hairlines |
+| `border` | `#353C4D` | Mobile hairlines (web moved to `borderSoft`) |
+| `borderSoft` | `#262A36` | Every web edge: cards, panels, inputs, buttons. Sits close to the page so things read as planes, not boxes |
 
 Nesting rule: a panel inside a card is a `well` (it reads as carved in); an interactive
-element that invites a tap is `surfaceHi` (it reads as raised). Borders define edges;
-shadows are reserved for board nodes (colored glow = node identity).
+element that invites a tap is `surfaceHi` (it reads as raised). Borders define edges.
+Cards and panels get the neutral `shadow.card` lift (a top-edge highlight plus a soft drop shadow).
+Cards that hold actions add `HoverCard.module.css`: they rise 2px to `shadow.cardHover` on hover or
+keyboard focus. Light, colored edges are only for containers that inform or point somewhere (Next Up,
+due follow-ups, errors, the prep plan, the active workflow step); everything else uses `borderSoft`.
+Colored glows stay reserved for board nodes (glow = node identity).
 
 ### Text
 
@@ -49,6 +54,7 @@ shadows are reserved for board nodes (colored glow = node identity).
 | --- | --- | --- |
 | `accent` | `#14B8A6` | Focus teal: primary actions, fills, active states, the XP bar |
 | `accentBright` | `#2DD4BF` | Links, glow, active accents on dark planes |
+| `accentDeep` | `#0F766E` | Deep end of teal gradients (progress fills) |
 | `onAccent` | `#0F141C` | Text/icons **on** accent or category-color fills. Never use white on teal — it fails contrast (~2.5:1); `onAccent` clears 7:1. |
 
 Canonical product constants live in `brand` / `brandColors`: Grip, Poe, "Get a grip. Buckle up.", and the job-hunt confidence promise from [BRAND.md](BRAND.md).
@@ -97,7 +103,8 @@ Sizes come from `font.size`:
 | `bodyLg` | 15 | Card titles, primary buttons |
 | `title` | 17 | Screen sub-headings |
 | `heading` | 20 | Screen headings |
-| `display` | 28 | Hero numbers (scores, celebrations) |
+| `display` | 28 | Large numbers (scores, celebrations) |
+| `hero` | 40 | Headline metrics (readiness, mock score) |
 
 Weights stay as string literals in code (`"600"` etc. — RN's `fontWeight` type only accepts
 literals): `400` body · `600` buttons/labels · `700` headings · `800` hero numbers.
@@ -165,7 +172,8 @@ Animations are a first-class feature (see PLAN.md's showcase). Principles:
 - **Springs over tweens**: `withSpring`, `FadeInDown.springify().damping(16–18)`.
 - **Staggered entrances** on lists: per-index delay, capped (`Math.min(i * 50, 250)`).
 - **Celebrate sparingly**: confetti and rank-glow only for perfect drills and rank-ups.
-- Web approximates with ~150ms ease transitions; no parallax, no idle animation.
+- Web approximates with ~150ms ease transitions; no parallax, no idle animation — except the
+  active category's Drill button on Prep, which gets a shine sweep every 10s to point at the next step.
 
 ## Components (mobile primitives in `ui.tsx`)
 

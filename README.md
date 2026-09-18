@@ -17,7 +17,7 @@ A full-stack interview prep and hiring pipeline manager - **web + React Native m
 - Quiz cards for 50+ technologies across languages, frontend/mobile, backend, cloud, monitoring, AI, testing, mobile delivery, and databases/CRM
 - Difficulty-aware drills targeting your weakest techs
 - Personalized to your stack: techs detected from your CV and/or GitHub surface as a dedicated prep category
-- Gamified XP and ranks (Intern → Principal)
+- Gamified XP and ranks (Hatchling → Nevermore)
 - Accuracy timeline: track your growth over time
 
 ### **Arch Board** tab
@@ -300,7 +300,7 @@ Data layer: wraps Supabase, handles snake_case ↔ camelCase mapping, date trans
 export function rankForXp(xp)
 export const CORRECT_XP = 10, PERFECT_QUIZ_BONUS = 30
 ```
-Rank ladder (Intern at 0 XP → Principal at 1500 XP) and scoring rules.
+Rank ladder (Hatchling at 0 XP → Nevermore at 1500 XP) and scoring rules.
 
 ## Database Schema
 

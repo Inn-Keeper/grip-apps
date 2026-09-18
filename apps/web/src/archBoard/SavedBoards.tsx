@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { useAuthUserQuery } from "../profile/queries";
 import { useShareBoardMutation } from "./queries";
 import type { AugmentedScenario, BoardSummary } from "./types";
@@ -54,8 +54,9 @@ export function SavedBoards({
               style={{
                 minWidth: 220,
                 padding: "10px 12px",
-                background: colors.well,
-                border: `1px solid ${active ? colors.accent : colors.border}`,
+                background: colors.surface,
+                border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
+                boxShadow: shadow.card,
                 borderRadius: 10,
                 display: "flex",
                 flexDirection: "column",
@@ -106,7 +107,7 @@ export function SavedBoards({
                       style={{
                         padding: "3px 10px",
                         background: "transparent",
-                        border: `1px solid ${colors.border}`,
+                        border: `1px solid ${colors.borderSoft}`,
                         borderRadius: 6,
                         color: colors.textDim,
                         fontSize: 11,
@@ -126,7 +127,7 @@ export function SavedBoards({
                     style={{
                       padding: "3px 10px",
                       background: "transparent",
-                      border: `1px solid ${colors.border}`,
+                      border: `1px solid ${colors.borderSoft}`,
                       borderRadius: 6,
                       color: colors.textDim,
                       fontSize: 11,

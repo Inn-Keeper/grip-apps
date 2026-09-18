@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import {
   MAINT_LEAN_MAX,
@@ -42,8 +42,9 @@ export function EvalResults({
         scrollMarginTop: 150,
         marginTop: 16,
         padding: "18px 20px",
-        background: colors.well,
-        border: `1px solid ${colors.border}`,
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 14,
       }}
     >
@@ -139,7 +140,7 @@ export function EvalResults({
       </div>
 
       {pushback.length > 0 && (
-        <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${colors.border}` }}>
+        <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${colors.borderSoft}` }}>
           <div style={{ fontSize: 11, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
             {t("board.pushback").toUpperCase()}
           </div>

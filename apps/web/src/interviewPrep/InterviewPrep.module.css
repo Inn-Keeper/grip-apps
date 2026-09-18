@@ -11,12 +11,14 @@
   min-height: var(--prep-card-min-height);
   perspective: 1200px;
   animation: cardIn 420ms cubic-bezier(0.2, 0.72, 0.26, 1) both;
-  transition: transform 180ms ease, filter 180ms ease;
+  box-shadow: var(--card-shadow);
+  transition: transform 180ms ease, filter 180ms ease, box-shadow 180ms ease;
 }
 
 .card:hover {
   transform: translateY(-2px);
   filter: brightness(1.04);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .cardInner {
@@ -55,10 +57,6 @@
   visibility: visible;
 }
 
-.quiz {
-  animation: quizIn 260ms ease both;
-}
-
 @media (min-width: 1680px) {
   .cardGrid {
     grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
@@ -66,8 +64,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .card,
-  .quiz {
+  .card {
     animation: none;
   }
 
@@ -105,24 +102,10 @@
   }
 }
 
-@keyframes quizIn {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* The XP bar answers a win: it grows, then flashes once. */
-.xpBar { transition: width 600ms cubic-bezier(0.2, 0.72, 0.26, 1); }
+/* The XP bar answers a win: its track flashes once. */
 .xpBarGained { animation: xpFlash 700ms ease-out; }
 
 @media (prefers-reduced-motion: reduce) {
-  .xpBar { transition: none; }
   .xpBarGained { animation: none; }
 }
 
@@ -130,4 +113,183 @@
   0% { filter: brightness(1); }
   35% { filter: brightness(1.75); }
   100% { filter: brightness(1); }
+}
+
+/* Category drills are a secondary way in: shown on the active row, on hover and on
+   keyboard focus, so nine buttons don't compete with Next Up. Touch has no hover. */
+.catDrill { position: relative; overflow: hidden; opacity: 0; transition: opacity 150ms ease; }
+.catRow:hover .catDrill,
+.catRow:has(:focus-visible) .catDrill,
+.catDrill[data-active="true"] { opacity: 1; }
+
+/* Selecting a category points at its drill: two pulses in the category color, then still. */
+.catDrill[data-active="true"] { animation: drillPulse 900ms ease-out 2; }
+
+/* Then a shine sweeps across it every 10s: first sweep right after the pulses (2 × 900ms). */
+.catDrill[data-active="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 25%, var(--cat-shine) 50%, transparent 75%);
+  transform: translateX(-100%);
+  animation: drillShine 10s ease-in-out 1.8s infinite;
+  pointer-events: none;
+}
+
+/* No pulse or shine while a quiz or drill runs (the rail is inert then). */
+:global([inert]) .catDrill,
+:global([inert]) .catDrill::after { animation: none; }
+
+@keyframes drillShine {
+  0% { transform: translateX(-100%); }
+  8%, 100% { transform: translateX(100%); }
+}
+
+@keyframes drillPulse {
+  0% { box-shadow: 0 0 0 0 var(--cat-color); transform: scale(1); }
+  30% { transform: scale(1.08); }
+  100% { box-shadow: 0 0 0 7px transparent; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catDrill[data-active="true"],
+  .catDrill[data-active="true"]::after { animation: none; }
+}
+
+@media (hover: none) {
+  .catDrill { opacity: 1; }
+}
+
+/* Practice settings: a native <details> dressed as a rail panel. */
+.settings { display: flex; flex-direction: column; }
+.settingsSummary {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px;
+  list-style: none;
+  cursor: pointer;
+  border-radius: 8px;
+}
+.settingsSummary::-webkit-details-marker { display: none; }
+.settingsSummary:focus-visible { outline: 2px solid var(--settings-focus); outline-offset: 2px; }
+.settingsChevron { display: flex; transition: transform 200ms ease; }
+.settings[open] .settingsChevron { transform: rotate(180deg); }
+.settingsBody { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .settingsChevron { transition: none; }
+}
+
+/* Setting-change confirmation in the header: slides in, then the hint returns. */
+.notice { animation: noticeIn 260ms cubic-bezier(0.2, 0.72, 0.26, 1) both; }
+
+@keyframes noticeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notice { animation: none; }
+}
+
+/* Session XP chip in the drill header: bumps each time the run earns XP. */
+.sessionXp {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-weight: 800;
+  animation: xpBump 420ms cubic-bezier(0.2, 0.72, 0.26, 1.4);
+}
+
+@keyframes xpBump {
+  0% { transform: scale(0.8); }
+  45% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sessionXp { animation: none; }
+}
+
+/* Glow bars (readiness, XP): grow from 0 on open; when it lands it double-blinks with a glow and a shine
+   sweeps across it once. Later values ease in via the width transition. */
+.glowFill {
+  position: relative;
+  overflow: hidden;
+  animation:
+    fillIn 1100ms cubic-bezier(0.2, 0.72, 0.26, 1) both,
+    landFlicker 700ms ease-out 1100ms;
+  transition: width 600ms cubic-bezier(0.2, 0.72, 0.26, 1);
+}
+
+.glowFill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, #FFFFFF59 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: landShine 700ms ease-out 1100ms;
+  pointer-events: none;
+}
+
+/* The number lands with the bar: the same double blink plus a small pop. */
+.readinessNumber {
+  display: inline-block;
+  animation: numberLand 700ms ease-out 1100ms;
+}
+
+@keyframes landFlicker {
+  0%, 100% { filter: brightness(1); }
+  20% { filter: brightness(1.8) drop-shadow(0 0 6px var(--land-glow)); }
+  40% { filter: brightness(1.1); }
+  60% { filter: brightness(1.55) drop-shadow(0 0 4px var(--land-glow)); }
+}
+
+@keyframes landShine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes numberLand {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  20% { transform: scale(1.08); filter: brightness(1.5) drop-shadow(0 0 3px var(--land-glow)); }
+  40% { transform: scale(1.03); filter: brightness(1.05); }
+  60% { transform: scale(1.05); filter: brightness(1.35) drop-shadow(0 0 2px var(--land-glow)); }
+}
+
+@keyframes fillIn {
+  from { width: 0; }
+}
+
+/* Accuracy chart: the line draws in, dots pop as it reaches them, the latest dot blinks on landing. */
+.chartLine {
+  stroke-dasharray: 1;
+  animation: drawLine 1100ms cubic-bezier(0.2, 0.72, 0.26, 1) both;
+}
+
+.chartDot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dotIn 300ms cubic-bezier(0.2, 0.72, 0.26, 1.4) both;
+}
+
+.chartDotLast { animation: dotIn 300ms cubic-bezier(0.2, 0.72, 0.26, 1.4) both, landFlicker 700ms ease-out; }
+
+@keyframes drawLine {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes dotIn {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chartLine,
+  .chartDot,
+  .chartDotLast,
+  .glowFill,
+  .glowFill::after,
+  .readinessNumber { animation: none; transition: none; }
 }

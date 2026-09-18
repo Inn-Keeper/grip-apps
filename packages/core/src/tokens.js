@@ -12,7 +12,8 @@ export const colors = {
   well: "#191D27", // inset: inputs, tracks, nested sub-cards
   surface: "#1E222D", // cards, sheets, pills at rest
   surfaceHi: "#272C3A", // raised interactive: quiz options, pressed states
-  border: "#353C4D",
+  border: "#353C4D", // hairlines on controls: inputs, buttons, options
+  borderSoft: "#262A36", // card and panel edges: one step above surface, close to the page
 
   // Text
   textBright: "#F4F7FC", // headings, emphasized values
@@ -23,6 +24,7 @@ export const colors = {
   // Brand
   accent: "#14B8A6", // focus teal — fills, lines, active states
   accentBright: "#2DD4BF", // glow, active accents, links
+  accentDeep: "#0F766E", // deep end of teal gradients (progress fills)
   onAccent: "#0F141C", // text/icons on accent or category fills
 
   // Status
@@ -74,10 +76,10 @@ export const brand = {
 /**
  * Font sizes — use these for fontSize in inline styles.
  * Example: fontSize: font.size.body
- * @type {Record<string, Record<string, number>>}
+ * No loose @type here: the inferred shape keeps `font.size.body` a plain number.
  */
 export const font = {
-  size: { caption: 10, label: 11, small: 12, body: 13, bodyLg: 15, title: 17, heading: 20, display: 28 },
+  size: { caption: 10, label: 11, small: 12, body: 13, bodyLg: 15, title: 17, heading: 20, display: 28, hero: 40 },
 };
 
 /**
@@ -89,10 +91,17 @@ export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 28 };
 
 export const radius = { sm: 8, md: 12, lg: 16, pill: 999 };
 
+// Card lift: a faint top-edge highlight plus a soft drop shadow (hover goes one step deeper).
+export const shadow = {
+  card: "inset 0 1px 0 #FFFFFF0A, 0 8px 20px -12px #000000B3",
+  cardHover: "inset 0 1px 0 #FFFFFF10, 0 14px 28px -14px #000000D9",
+};
+
 export const layout = {
   webHeaderHeight: 72,
   workspaceTop: 96,
   workspaceBottomInset: 22,
+  poeClearance: 224, // Poe perch (max 190) + its 22px offset + a gap; rails end above it
   workspaceRailMin: 230,
   workspaceLeftRailMax: 290,
   workspaceRightRailMin: 260,

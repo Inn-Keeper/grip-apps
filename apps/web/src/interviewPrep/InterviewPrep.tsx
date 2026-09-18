@@ -7,17 +7,17 @@ import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { buildDrillFromQuestions, selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
 import { difficultyByKey } from "@grip/core/difficulty";
+import { computeReadiness } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
 import { useScores } from "./useScores";
 import { CelebrationOverlay } from "../components/CelebrationOverlay";
-import { colors } from "@grip/core/tokens";
+import { colors, font, layout } from "@grip/core/tokens";
 import { WorkspaceLayout, WorkspacePanel } from "../components/WorkspaceLayout";
 import { PoeAssistant } from "../components/poe/PoeAssistant";
 import { getQuizSize, setQuizSize } from "./quizPrefs";
 import styles from "./InterviewPrep.module.css";
 import type {
-  CardState,
   CelebrationState,
   DrillState,
   PoeCue,
@@ -25,7 +25,6 @@ import type {
   QuizQuestion,
 } from "./types";
 import { Card } from "./Card";
-import { ConfirmDialog } from "./ConfirmDialog";
 import { DrillSession } from "./DrillSession";
 import { MockLoop } from "./MockLoop";
 import { NextUpCard } from "./NextUpCard";
@@ -43,8 +42,6 @@ import { clearPrepPlan, readPrepPlan, type StoredPrepPlan } from "../lib/prepPla
 import { summarizeScores } from "./summarizeScores";
 
 const DRILL_SIZE = 10;
-// Long enough to read the run summary, short enough not to feel like waiting.
-const CARD_RESULT_MS = 1700;
 
 // Map every tech to its category color so a fetched question can be themed.
 const colorByTech = Object.fromEntries(
@@ -56,14 +53,17 @@ export default function InterviewPrep() {
   // Track the selected category by name, not list index: the "From GitHub techs"
   // category is prepended once it loads, which would shift every index underneath it.
   const [activeCategoryName, setActiveCategoryName] = useState(categories[0]?.name ?? "");
-  const [cardState, setCardState] = useState<Record<string, CardState>>({});
+  // Which cards show their notes side, by card key.
+  const [flipped, setFlipped] = useState<Record<string, boolean>>({});
   const [search, setSearch] = useState("");
   const [drill, setDrill] = useState<DrillState | null>(null);
   // Global difficulty, chosen in the right rail — drives both the quiz cards and drills.
   const [level, setLevel] = useState("mid");
-  const [pendingLevel, setPendingLevel] = useState<string | null>(null);
-  const [drillLoading, setDrillLoading] = useState(false);
-  const [drillError, setDrillError] = useState<string | null>(null);
+  // Where the loading session was started ("nextup", "cat:<name>", "card:<tech>"), so the
+  // spinner and any error show on the control that was clicked.
+  const [pending, setPending] = useState<string | null>(null);
+  const drillLoading = pending !== null;
+  const [drillError, setDrillError] = useState<{ source: string; message: string } | null>(null);
   const [celebration, setCelebration] = useState<CelebrationState | null>(null);
   const [poeCue, setPoeCue] = useState<PoeCue | null>(null);
   // A drill can run standalone or as round 1 of a mock loop.
@@ -75,14 +75,26 @@ export default function InterviewPrep() {
   // tracks the DB pool size for the most-recently-fetched tech+level combo
   const [poolSize, setPoolSize] = useState<number | null>(null);
 
+  // A short confirmation after changing a setting; `deal` remounts the card grid so the cards re-deal.
+  const [notice, setNotice] = useState<{ id: number; text: string } | null>(null);
+  const [deal, setDeal] = useState(0);
+  useEffect(() => {
+    if (!notice) return;
+    const timer = window.setTimeout(() => setNotice(null), 2600);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+
+  // The slider fires on every step while dragging, so size changes only update the notice (no re-deal).
   const updateQuizSize = (value: number | null) => {
     setQuizSize(value);
     setQuizSizeState(value);
-    setCardState({});
+    setNotice({ id: Date.now(), text: value === null ? t("prep.sizeNoticeAll") : t("prep.sizeNotice", { size: value }) });
   };
   const previousRank = useRef<{ name: string; min: number } | null>(null);
-  // What "Drill again" repeats: the same techs and tier as the drill just finished.
-  const lastDrillRef = useRef<{ difficulty: string; techs: string[]; fallbackToAll: boolean } | null>(null);
+  // What "Drill again" repeats: whatever started the session that just finished.
+  const restartRef = useRef<(() => void) | null>(null);
+  // A session replaces the card grid; bring it into view even if it was started from far down.
+  const sessionRef = useRef<HTMLDivElement>(null);
   const { scores, scoresReady, record, addXp } = useScores();
   const { data: accuracy = [] } = useAccuracyTimelineQuery();
   const { data: reviewQueue = [] } = useReviewQueueQuery();
@@ -109,6 +121,10 @@ export default function InterviewPrep() {
     }
     previousRank.current = current ?? null;
   }, [scores.xp, scoresReady]);
+
+  useEffect(() => {
+    sessionRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [drill?.questions]);
 
   const allItems = categories.flatMap((c) =>
     c.items.map((item) => ({ ...item, category: c.name, color: c.color, emoji: c.emoji }))
@@ -139,95 +155,63 @@ export default function InterviewPrep() {
       )
     : null;
 
+  // Readiness scope: the prep plan's techs, else the profile stack, else what's been practiced.
+  // Only techs Prep can drill count, so the number can always be moved.
+  const practicable = (techs: string[]) => techs.filter((tech) => colorByTech[tech]);
+  const planTechs = practicable(prepPlan?.techs ?? []);
+  const stackTechs = practicable(combinedSignals.map((s) => s.tech));
+  const practicedTechs = practicable(Object.keys(scores.answers));
+  const [readinessTechs, readinessLabel] = planTechs.length
+    ? [planTechs, t("prep.readinessPlan", { name: prepPlan?.name ?? "" })]
+    : stackTechs.length
+      ? [stackTechs, t("prep.readinessStack")]
+      : [practicedTechs, t("prep.readinessPracticed")];
+  const readinessPct = computeReadiness({ postingTechs: readinessTechs, answers: scores.answers }).prep;
+  const readiness = readinessPct === null ? null : { pct: readinessPct, label: readinessLabel, count: readinessTechs.length };
+
   const displayCategory = displayCategories.find((c) => c.name === activeCategoryName) ?? displayCategories[0]!;
   const summary = summarizeScores(scores);
   const visibleItems: PrepItem[] = filtered ?? (displayCategory.items as PrepItem[]).map((item: PrepItem) => ({ ...item, color: item.color ?? displayCategory.color, emoji: displayCategory.emoji }));
   const activeTitle = filtered ? t("prep.searchResults") : displayCategory.name;
 
-  const getState = (key: string): CardState =>
-    cardState[key] ?? { phase: "front", quizIndex: 0, answered: null, runCorrect: 0, shuffled: null };
+  const setFlip = (key: string, value: boolean) => setFlipped((prev) => ({ ...prev, [key]: value }));
 
-  const handleFlip = async (key: string, item: PrepItem) => {
-    const s = cardState[key] ?? { phase: "front" as const };
-    if (s.phase === "front") {
-      setCardState((prev) => ({ ...prev, [key]: { ...(prev[key] ?? {}), phase: "back" as const, quizIndex: 0, answered: null, runCorrect: 0, shuffled: null } }));
-      return;
+  // One session at a time: a running (unfinished) or loading session ignores new starts,
+  // so a stray click can't throw away progress. "Drill again" runs from the done screen.
+  const sessionBusy = drillLoading || (!!drill && !drill.done);
+
+  // One tech's quiz, opened from its card as a focused session (the same UI as drills).
+  const startCardQuiz = async (item: PrepItem) => {
+    if (sessionBusy) return;
+    restartRef.current = () => startCardQuiz(item);
+    setPending(`card:${item.tech}`);
+    setDrillError(null);
+    try {
+      const questions = (await fetchCardQuestions(item.tech))
+        ?? (shuffle(item.quiz) as QuizQuestion[]).map(shuffleOptions as (q: QuizQuestion) => QuizQuestion);
+      const color = item.color ?? colors.accent ?? "";
+      setDrill({
+        questions: questions.map((q) => ({ tech: item.tech, color, link: techLinks[item.tech], q })),
+        index: 0, answered: null, correctCount: 0, done: false, difficulty: level, source: "card",
+      });
+    } finally {
+      setPending(null);
     }
-    if (s.phase === "back") {
-      const fetched = await fetchCardQuestions(item.tech);
-      const shuffled = fetched ?? (shuffle(item.quiz) as QuizQuestion[]).map(shuffleOptions as (q: QuizQuestion) => QuizQuestion);
-      setCardState((prev) => ({
-        ...prev,
-        [key]: { ...(prev[key] ?? {}), phase: "quiz" as const, quizIndex: 0, answered: null, runCorrect: 0, shuffled },
-      }));
-    }
-  };
-
-  const handleAnswer = (key: string, tech: string, optionIndex: number) => {
-    const s = cardState[key];
-    if (!s || s.answered !== null) return;
-    const isCorrect = optionIndex === s.shuffled![s.quizIndex]!.correct;
-    setCardState((prev) => ({
-      ...prev,
-      [key]: { ...s, answered: optionIndex, runCorrect: s.runCorrect + (isCorrect ? 1 : 0) },
-    }));
-    setPoeCue({ type: isCorrect ? "correct" : "wrong", id: Date.now() });
-    record(tech, isCorrect, "card", level);
-  };
-
-  const handleNextQuestion = (key: string) => {
-    const s = cardState[key];
-    if (!s || !s.shuffled) return;
-    const nextIndex = s.quizIndex + 1;
-    if (nextIndex >= s.shuffled.length) {
-      // Show what the run earned before flipping back, so finishing a card lands.
-      const total = s.shuffled.length;
-      const perfect = s.runCorrect === total;
-      const earned = s.runCorrect * (difficultyByKey(level)?.xp ?? 0) + (perfect ? PERFECT_QUIZ_BONUS : 0);
-      if (perfect) {
-        addXp(PERFECT_QUIZ_BONUS);
-        setCelebration({
-          title: t("celebration.perfectCardTitle"),
-          subtitle: t("celebration.perfectSubtitle", { bonus: PERFECT_QUIZ_BONUS }),
-          accent: colors.success ?? "",
-        });
-        setPoeCue({ type: "levelUp", id: Date.now() });
-      }
-      setCardState((prev) => ({
-        ...prev,
-        [key]: { ...s, phase: "result" as const, resultXp: earned, resultTotal: total, answered: null },
-      }));
-      window.setTimeout(() => {
-        setCardState((prev) => ({
-          ...prev,
-          [key]: { ...(prev[key] ?? s), phase: "front" as const, quizIndex: 0, answered: null, runCorrect: 0, shuffled: null },
-        }));
-      }, CARD_RESULT_MS);
-    } else {
-      setCardState((prev) => ({ ...prev, [key]: { ...s, quizIndex: nextIndex, answered: null } }));
-    }
-  };
-
-  const handleFlipBack = (key: string) => {
-    setCardState((prev) => {
-      const s = prev[key];
-      if (!s) return prev;
-      return { ...prev, [key]: { ...s, phase: "front" as const } };
-    });
   };
 
   // Fetches questions for the given techs and opens the drill UI.
   // `fallbackToAll` widens an empty pool to every tech — wanted for the generic
   // weakest-drill, wrong for targeted drills (review queue, prep plan).
-  const runDrill = async (difficulty: string, techs: string[], { fallbackToAll = false } = {}) => {
-    lastDrillRef.current = { difficulty, techs, fallbackToAll };
-    setDrillLoading(true);
+  const runDrill = async (difficulty: string, techs: string[], { fallbackToAll = false, source = "nextup" } = {}) => {
+    if (sessionBusy) return false;
+    restartRef.current = () => runDrill(difficulty, techs, { fallbackToAll, source });
+    setPending(source);
     setDrillError(null);
     try {
       let questions = await fetchTierQuestions(difficulty, techs);
       if (questions.length === 0 && fallbackToAll) questions = await fetchTierQuestions(difficulty, allTechs);
       if (questions.length === 0) {
-        setDrillError(t("prep.noQuestionsYet", { tier: difficultyByKey(difficulty)?.label ?? difficulty }));
+        setDrillError({ source, message: t("prep.noQuestionsYet", { tier: difficultyByKey(difficulty)?.label ?? difficulty }) });
         return false;
       }
       const entries = buildDrillFromQuestions(questions, { colorByTech, fallbackColor: colors.accent, size: DRILL_SIZE }).map(
@@ -236,10 +220,10 @@ export default function InterviewPrep() {
       setDrill({ questions: entries, index: 0, answered: null, correctCount: 0, done: false, difficulty });
       return true;
     } catch {
-      setDrillError(t("prep.drillLoadError"));
+      setDrillError({ source, message: t("prep.drillLoadError") });
       return false;
     } finally {
-      setDrillLoading(false);
+      setPending(null);
     }
   };
 
@@ -273,18 +257,20 @@ export default function InterviewPrep() {
   };
 
   const startCategoryDrill = async (categoryName: string) => {
+    if (sessionBusy) return;
     const cat = displayCategories.find((c) => c.name === categoryName);
     if (!cat) return;
-    setDrillLoading(true);
+    const source = `cat:${categoryName}`;
+    setPending(source);
     setDrillError(null);
     try {
       const techs = selectCategoryDrillTechs(cat.items, scores.answers, { techCount: cat.items.length });
       // "Drill again" repeats this category, not the last weakest-drill.
-      lastDrillRef.current = { difficulty: level, techs, fallbackToAll: true };
+      restartRef.current = () => startCategoryDrill(categoryName);
       let questions = await fetchTierQuestions(level, techs);
       if (questions.length === 0) questions = await fetchTierQuestions(level, Object.keys(colorByTech));
       if (questions.length === 0) {
-        setDrillError(t("prep.noQuestionsYet", { tier: difficultyByKey(level)?.label ?? level }));
+        setDrillError({ source, message: t("prep.noQuestionsYet", { tier: difficultyByKey(level)?.label ?? level }) });
         return;
       }
       const entries = buildDrillFromQuestions(questions, { colorByTech, fallbackColor: colors.accent, size: DRILL_SIZE }).map(
@@ -293,25 +279,20 @@ export default function InterviewPrep() {
       setActiveCategoryName(categoryName);
       setDrill({ questions: entries, index: 0, answered: null, correctCount: 0, done: false, difficulty: level });
     } catch {
-      setDrillError(t("prep.drillLoadError"));
+      setDrillError({ source, message: t("prep.drillLoadError") });
     } finally {
-      setDrillLoading(false);
+      setPending(null);
     }
   };
 
-  const applyLevel = (key: string) => {
-    setLevel(key);
-    setCardState({});
-    setPoolSize(null); // pool size is tier-specific; reset so the slider re-calibrates
-    setPendingLevel(null);
-  };
-
-  // Switch tier instantly, but confirm first if a quiz is mid-flight (would be discarded).
-  const requestLevel = (key: string) => {
+  // A running session keeps its own tier, so switching never discards anything.
+  const changeLevel = (key: string) => {
     if (key === level) return;
-    const quizOpen = Object.values(cardState).some((s) => s?.phase === "quiz");
-    if (quizOpen) setPendingLevel(key);
-    else applyLevel(key);
+    setLevel(key);
+    setPoolSize(null); // pool size is tier-specific; reset so the slider re-calibrates
+    setDeal((n) => n + 1);
+    const tier = difficultyByKey(key);
+    setNotice({ id: Date.now(), text: t("prep.levelNotice", { tier: tier?.label ?? key, xp: tier?.xp ?? 0 }) });
   };
 
   const answerDrill = (optionIndex: number) => {
@@ -321,7 +302,7 @@ export default function InterviewPrep() {
     const isCorrect = optionIndex === cur.q.correct;
     setDrill({ ...drill, answered: optionIndex, correctCount: drill.correctCount + (isCorrect ? 1 : 0) });
     setPoeCue({ type: isCorrect ? "correct" : "wrong", id: Date.now() });
-    record(cur.tech, isCorrect, "drill", drill.difficulty);
+    record(cur.tech, isCorrect, drill.source ?? "drill", drill.difficulty);
   };
 
   const nextDrill = () => {
@@ -331,7 +312,7 @@ export default function InterviewPrep() {
       if (drill.correctCount === drill.questions.length) {
         addXp(PERFECT_QUIZ_BONUS);
         setCelebration({
-          title: t("celebration.perfectTitle"),
+          title: t(drill.source === "card" ? "celebration.perfectCardTitle" : "celebration.perfectTitle"),
           subtitle: t("celebration.perfectSubtitle", { bonus: PERFECT_QUIZ_BONUS }),
           accent: colors.success ?? "",
         });
@@ -346,6 +327,7 @@ export default function InterviewPrep() {
   return (
     <WorkspaceLayout
       mainLabel="Interview prep"
+      leftRailBottomInset={layout.poeClearance}
       left={
         <PrepLeftRail
           activeCategoryName={activeCategoryName}
@@ -364,22 +346,20 @@ export default function InterviewPrep() {
           onCategory={(name) => {
             setActiveCategoryName(name);
             setSearch("");
-            setCardState({});
+            setFlipped({});
           }}
           onCategoryDrill={startCategoryDrill}
+          pendingCategory={pending?.startsWith("cat:") ? pending.slice(4) : null}
+          categoryError={drillError?.source.startsWith("cat:") ? { name: drillError.source.slice(4), message: drillError.message } : null}
+          locked={sessionBusy}
         />
       }
       right={
         <PrepRightRail
           accuracy={accuracy}
-          drillActive={!!drill}
-          drillLoading={drillLoading}
-          drillError={drillError}
           level={level}
-          onLevel={requestLevel}
-          onDrill={() => startDrill(level)}
-          onMockLoop={startMockLoop}
-          reviewDueCount={reviewDueTechs.length}
+          onLevel={changeLevel}
+          readiness={readiness}
           scores={scores}
           summary={summary}
           quizSize={quizSize}
@@ -388,33 +368,45 @@ export default function InterviewPrep() {
         />
       }
     >
-      <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 18, marginBottom: 16 }}>
-        <div>
-          <p style={{ margin: "0 0 6px", color: colors.textFaint, fontSize: 12, fontWeight: 700 }}>
-            {filtered ? `${filtered.length} of ${allItems.length} technologies` : `${displayCategory.items.length} technologies`}
-          </p>
-          <h1 style={{ margin: 0, color: colors.textBright, fontSize: 26, lineHeight: 1.12, fontWeight: 850 }}>
-            {activeTitle}
-          </h1>
-        </div>
-        <p style={{ margin: 0, color: colors.textDim, fontSize: 12.5, fontWeight: 600, textAlign: "right", maxWidth: 360 }}>
-          {t("prep.steps")}
-        </p>
-      </div>
-
       {!drill && (
         <NextUpCard
           reviewDueCount={reviewDueTechs.length}
           plan={prepPlan}
           attempts={summary.attempts}
-          busy={drillLoading}
+          busy={pending === "nextup"}
+          disabled={drillLoading}
+          error={drillError?.source === "nextup" ? drillError.message : null}
           onStart={startNextUp}
+          onMock={startMockLoop}
           onDismissPlan={dismissPlan}
         />
       )}
 
+      {/* The header describes the card grid; a session labels itself, so it hides during one. */}
+      {!drill && (
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 18, marginBottom: 16 }}>
+          <div>
+            <p style={{ margin: "0 0 6px", color: colors.textFaint, fontSize: font.size.small, fontWeight: 700 }}>
+              {filtered ? `${filtered.length} of ${allItems.length} technologies` : `${displayCategory.items.length} technologies`}
+            </p>
+            <h1 style={{ margin: 0, color: colors.textBright, fontSize: font.size.heading, lineHeight: 1.12, fontWeight: 800 }}>
+              {activeTitle}
+            </h1>
+          </div>
+          {notice ? (
+            <p key={notice.id} role="status" className={styles.notice} style={{ margin: 0, color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, textAlign: "right", maxWidth: 360 }}>
+              {notice.text}
+            </p>
+          ) : (
+            <p style={{ margin: 0, color: colors.textDim, fontSize: font.size.body, fontWeight: 600, textAlign: "right", maxWidth: 360 }}>
+              {t("prep.steps")}
+            </p>
+          )}
+        </div>
+      )}
+
       {drill ? (
-        <div style={{ width: "min(100%, 860px)", paddingBottom: 48 }}>
+        <div ref={sessionRef} style={{ width: "min(100%, 860px)", paddingBottom: 48, scrollMarginTop: 16 }}>
           {mockActive ? (
             <MockLoop drill={drill} onAnswer={answerDrill} onNextQuestion={nextDrill} onExit={exitSession} />
           ) : (
@@ -423,10 +415,7 @@ export default function InterviewPrep() {
               onAnswer={answerDrill}
               onNext={nextDrill}
               onExit={exitSession}
-              onRestart={() => {
-                const last = lastDrillRef.current;
-                if (last) runDrill(last.difficulty, last.techs, { fallbackToAll: last.fallbackToAll });
-              }}
+              onRestart={() => restartRef.current?.()}
             />
           )}
         </div>
@@ -435,9 +424,7 @@ export default function InterviewPrep() {
           No matches found.
         </WorkspacePanel>
       ) : (
-        <div
-          className={styles.cardGrid}
-        >
+        <div key={deal} className={styles.cardGrid}>
           {visibleItems.map((item, index) => {
             const key = filtered ? `search-${item.tech}` : `${activeCategoryName}-${item.tech}`;
             return (
@@ -447,25 +434,15 @@ export default function InterviewPrep() {
                 item={item}
                 level={level}
                 stat={scores.answers[item.tech]}
-                state={getState(key)}
-                onFlip={() => handleFlip(key, item)}
-                onBack={() => handleFlipBack(key)}
-                onAnswer={(i) => handleAnswer(key, item.tech, i)}
-                onNext={() => handleNextQuestion(key)}
+                flipped={!!flipped[key]}
+                onFlip={() => setFlip(key, true)}
+                onBack={() => setFlip(key, false)}
+                onQuiz={() => startCardQuiz(item)}
+                loading={pending === `card:${item.tech}`}
               />
             );
           })}
         </div>
-      )}
-
-      {pendingLevel && (
-        <ConfirmDialog
-          title={t("prep.switchDifficulty")}
-          message={t("prep.switchDifficultyMessage", { level: difficultyByKey(pendingLevel)?.label ?? pendingLevel })}
-          confirmLabel={t("prep.switchReload")}
-          onConfirm={() => applyLevel(pendingLevel)}
-          onCancel={() => setPendingLevel(null)}
-        />
       )}
 
       {celebration && (

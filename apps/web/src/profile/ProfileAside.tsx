@@ -49,7 +49,7 @@ export function ProfileAside({
   return (
     <aside
       style={{
-        borderRight: `1px solid ${colors.border}`,
+        borderRight: `1px solid ${colors.borderSoft}`,
         background: colors.bgDeep,
         flex: "0 0 340px",
         minHeight: `calc(100vh - ${layout.webHeaderHeight}px)`,
@@ -180,7 +180,7 @@ export function ProfileAside({
             marginTop: 14,
             padding: "9px 12px",
             background: githubConnected ? "transparent" : colors.surfaceHi,
-            border: `1px solid ${githubConnected ? colors.success : colors.border}`,
+            border: `1px solid ${githubConnected ? colors.success : colors.borderSoft}`,
             borderRadius: 8,
             color: githubConnected ? colors.successBright : colors.textBright,
             fontSize: 12,
@@ -199,7 +199,7 @@ export function ProfileAside({
             gap: 12,
             marginTop: 14,
             paddingTop: 14,
-            borderTop: `1px solid ${colors.border}`,
+            borderTop: `1px solid ${colors.borderSoft}`,
             color: githubConnected && form.githubUrl ? colors.text : colors.textFaint,
             fontSize: 12,
             lineHeight: 1.45,
@@ -234,7 +234,7 @@ export function ProfileAside({
             onChange={onPoeVisibilityChange}
           />
         </div>
-        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${colors.border}` }}>
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${colors.borderSoft}` }}>
           <div style={{ fontSize: 12, fontWeight: 800, color: colors.textBright, marginBottom: 10 }}>
             {t("profile.language")}
           </div>
@@ -251,7 +251,7 @@ export function ProfileAside({
                     alignItems: "center",
                     padding: "5px 8px",
                     background: active ? colors.accent : "transparent",
-                    border: `1px solid ${active ? colors.accent : colors.border}`,
+                    border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
                     borderRadius: 8,
                     cursor: "pointer",
                     opacity: active ? 1 : 0.7,
@@ -277,7 +277,7 @@ export function ProfileAside({
               width: "100%",
               padding: "9px 12px",
               background: "transparent",
-              border: `1px solid ${colors.border}`,
+              border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,
               color: colors.textFaint,
               fontSize: 12,

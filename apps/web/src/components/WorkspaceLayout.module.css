@@ -22,6 +22,10 @@
   gap: 14px;
 }
 
+.leftRail {
+  max-height: calc(100vh - var(--workspace-top) - var(--workspace-left-bottom-inset));
+}
+
 .main {
   min-width: 0;
 }

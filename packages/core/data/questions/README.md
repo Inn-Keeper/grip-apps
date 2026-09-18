@@ -21,8 +21,8 @@ category; each entry is one question:
   authored at index `0`; options are shuffled at runtime by `shuffleOptions()`
   in `packages/core/src/quiz.js`, so order on screen is randomized.
 - **Exactly 4 options**, all non-empty.
-- **`difficulty`** ∈ `easy` (🐣 Newbie) · `mid` (😎 Can-Do) · `high` (🔥 Full
-  Speed) · `ultra` (💀 Overlord). See `packages/core/src/difficulty.js`.
+- **`difficulty`** ∈ `easy` (☀️ Clear Skies) · `mid` (🍃 Tailwind) · `high` (🌬️
+  Headwind) · `ultra` (⛈️ Thunderstorm). See `packages/core/src/difficulty.js`.
 - **No duplicate prompt** within the same `(tech, difficulty)` bucket.
 
 Everything above is enforced by `validateQuestionSet()`

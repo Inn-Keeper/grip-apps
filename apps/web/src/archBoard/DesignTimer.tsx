@@ -78,7 +78,7 @@ export function DesignTimer() {
   const started = elapsedMs > 0 || running;
   const clockColor = overrun ? colors.danger : phaseRemainingMs <= 60_000 && started ? colors.warning : colors.textBright;
 
-  const borderColor = overrun ? `${colors.danger}55` : colors.border;
+  const borderColor = overrun ? `${colors.danger}55` : colors.borderSoft;
   // Pinned, the bar is the live element on screen, so it gets a warm edge.
   // Overrun still escalates to red — amber marks "active", red marks "late".
   const pinnedBorder = overrun ? `${colors.danger}B3` : `${colors.warning}80`;
@@ -158,7 +158,7 @@ export function DesignTimer() {
             style={{
               flex: p.minutes,
               borderRadius: 3,
-              background: i < index ? colors.accent : i === index && started ? colors.accentBright : colors.border,
+              background: i < index ? colors.accent : i === index && started ? colors.accentBright : colors.borderSoft,
               opacity: i === index && started ? 1 : i < index ? 0.55 : 1,
             }}
           />
@@ -171,7 +171,7 @@ export function DesignTimer() {
           style={{
             display: "flex", alignItems: "center", gap: 5,
             padding: "7px 14px", background: running ? "transparent" : colors.accent,
-            border: `1px solid ${running ? colors.border : colors.accent}`, borderRadius: 8,
+            border: `1px solid ${running ? colors.borderSoft : colors.accent}`, borderRadius: 8,
             color: running ? colors.textDim : colors.onAccent, fontSize: 12, fontWeight: 600, cursor: "pointer",
           }}
         >
@@ -182,7 +182,7 @@ export function DesignTimer() {
           <button
             onClick={reset}
             style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.border}`,
+              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8, color: colors.textDim, fontSize: 12, fontWeight: 600, cursor: "pointer",
             }}
           >

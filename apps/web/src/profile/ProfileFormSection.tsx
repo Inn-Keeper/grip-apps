@@ -100,8 +100,8 @@ export function ProfileFormSection({
         <form
           onSubmit={onSave}
           style={{
-            borderTop: `1px solid ${colors.border}`,
-            borderBottom: `1px solid ${colors.border}`,
+            borderTop: `1px solid ${colors.borderSoft}`,
+            borderBottom: `1px solid ${colors.borderSoft}`,
             padding: "24px 0",
             display: "grid",
             gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",

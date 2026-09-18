@@ -1,6 +1,6 @@
 import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import type { BoardEdge, BoardNode } from "./types";
 
 export function EdgeInspector({
@@ -21,7 +21,7 @@ export function EdgeInspector({
   const chip = (active: boolean) => ({
     padding: "6px 12px",
     background: active ? colors.accent : "transparent",
-    border: `1px solid ${active ? colors.accent : colors.border}`,
+    border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
     borderRadius: 8,
     color: active ? colors.onAccent : colors.textDim,
     fontSize: 12,
@@ -34,8 +34,9 @@ export function EdgeInspector({
       style={{
         marginTop: 12,
         padding: "14px 16px",
-        background: colors.well,
-        border: `1px solid ${colors.border}`,
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 10,
         display: "flex",
         flexWrap: "wrap",
@@ -103,7 +104,7 @@ export function EdgeInspector({
           style={{
             padding: "7px 14px",
             background: "transparent",
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
             fontSize: 12,

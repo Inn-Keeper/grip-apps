@@ -29,11 +29,11 @@ export function StoryCoverage({ stories }: { stories: Story[] }) {
                   width: 8,
                   height: 8,
                   borderRadius: 4,
-                  background: counts[competency] ? color : colors.border,
+                  background: counts[competency] ? color : colors.borderSoft,
                 }}
               />
               <span style={{ flex: 1, color: counts[competency] ? colors.text : colors.textFaint }}>{t(`enum.competency.${competency}` as Parameters<typeof t>[0])}</span>
-              <span style={{ color: counts[competency] ? color : colors.textFaint, fontWeight: 850 }}>
+              <span style={{ color: counts[competency] ? color : colors.textFaint, fontWeight: 800 }}>
                 {counts[competency]}
               </span>
             </div>

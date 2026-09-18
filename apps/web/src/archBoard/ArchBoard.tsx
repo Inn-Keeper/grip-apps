@@ -3,7 +3,7 @@ import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, eval
 import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, layout } from "@grip/core/tokens";
+import { colors, layout, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
@@ -348,7 +348,7 @@ export default function ArchBoard() {
   return (
     <main className={styles.page} style={{
       minHeight: `calc(100vh - ${layout.webHeaderHeight}px)`,
-      ["--arch-border" as string]: colors.border,
+      ["--arch-border" as string]: colors.borderSoft,
       ["--arch-text-dim" as string]: colors.textDim,
       ["--arch-surface" as string]: colors.surface,
       ["--arch-canvas" as string]: colors.bgDeep,
@@ -413,7 +413,7 @@ export default function ArchBoard() {
       {scenario.brief && (
         <div
           style={{
-            padding: "12px 16px", background: colors.well, border: `1px solid ${colors.border}`,
+            padding: "12px 16px", background: colors.surface, border: `1px solid ${colors.borderSoft}`, boxShadow: shadow.card,
             borderRadius: 10, marginBottom: 14, fontSize: 13, lineHeight: 1.6, color: colors.textDim,
           }}
         >
@@ -446,7 +446,7 @@ export default function ArchBoard() {
             style={{
               display: "flex", alignItems: "center", gap: 5,
               padding: "7px 14px", background: "transparent",
-              border: `1px solid ${talkOpen ? colors.accent : colors.border}`,
+              border: `1px solid ${talkOpen ? colors.accent : colors.borderSoft}`,
               borderRadius: 8, color: talkOpen ? colors.accentBright : colors.textDim,
               fontSize: 12, fontWeight: 600, cursor: "pointer",
             }}
@@ -457,7 +457,7 @@ export default function ArchBoard() {
           <button
             onClick={() => setSavedOpen((value) => !value)}
             style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${savedOpen ? colors.accent : colors.border}`,
+              padding: "7px 14px", background: "transparent", border: `1px solid ${savedOpen ? colors.accent : colors.borderSoft}`,
               borderRadius: 8, color: savedOpen ? colors.accentBright : colors.textDim, fontSize: 12, fontWeight: 600, cursor: "pointer",
             }}
           >
@@ -487,7 +487,7 @@ export default function ArchBoard() {
           <button
             onClick={() => commit({ ...snapshot(), nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null })}
             style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.border}`,
+              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8, color: colors.textDim, fontSize: 12, fontWeight: 600, cursor: "pointer",
             }}
           >
@@ -575,10 +575,10 @@ export default function ArchBoard() {
             position: "relative", flex: 1, minWidth: 0, height: "calc(100vh - 360px)", minHeight: 560,
             background: colors.bgDeep,
             // The dot grid belongs to the board, so it pans and scales with it.
-            backgroundImage: `radial-gradient(${colors.border} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
+            backgroundImage: `radial-gradient(${colors.borderSoft} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
             backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
             backgroundPosition: `${view.x}px ${view.y}px`,
-            border: `1px solid ${colors.border}`, borderRadius: 14, overflow: "hidden", touchAction: "none",
+            border: `1px solid ${colors.borderSoft}`, borderRadius: 14, overflow: "hidden", touchAction: "none",
           }}
         >
           {nodes.length === 0 && (
@@ -772,7 +772,7 @@ export default function ArchBoard() {
                     style={{
                       position: "absolute", bottom: -16, right: -16, width: 32, height: 32,
                       borderRadius: "50%", border: "none",
-                      background: inspectingId === n.id ? colors.accent : colors.border,
+                      background: inspectingId === n.id ? colors.accent : colors.borderSoft,
                       cursor: "pointer", padding: 0,
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}
@@ -790,7 +790,7 @@ export default function ArchBoard() {
                   title={t("board.remove")}
                   style={{
                     position: "absolute", top: -16, right: -16, width: 32, height: 32,
-                    borderRadius: "50%", border: "none", background: colors.border,
+                    borderRadius: "50%", border: "none", background: colors.borderSoft,
                     cursor: "pointer", padding: 0,
                     display: "flex", alignItems: "center", justifyContent: "center",
                   }}

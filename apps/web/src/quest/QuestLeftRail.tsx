@@ -41,7 +41,7 @@ export function QuestLeftRail({
               borderRadius: 8,
               color: colors.onAccent,
               fontSize: 12,
-              fontWeight: 850,
+              fontWeight: 800,
               cursor: "pointer",
             }}
           >
@@ -71,7 +71,7 @@ export function QuestLeftRail({
                     width: 8,
                     height: 8,
                     borderRadius: 4,
-                    background: counts[status] ? style.color : colors.border,
+                    background: counts[status] ? style.color : colors.borderSoft,
                   }}
                 />
                 <span
@@ -79,12 +79,12 @@ export function QuestLeftRail({
                     flex: 1,
                     color: counts[status] ? colors.text : colors.textFaint,
                     fontSize: 12.5,
-                    fontWeight: 750,
+                    fontWeight: 700,
                   }}
                 >
                   {t(`enum.status.${status}` as Parameters<typeof t>[0])}
                 </span>
-                <span style={{ color: counts[status] ? style.color : colors.textFaint, fontSize: 12, fontWeight: 850 }}>
+                <span style={{ color: counts[status] ? style.color : colors.textFaint, fontSize: 12, fontWeight: 800 }}>
                   {counts[status]}
                 </span>
               </div>

@@ -9,7 +9,7 @@ export const inputStyle: React.CSSProperties = {
   boxSizing: "border-box",
   padding: `${space.xs}px ${space.sm! + 2}px`,
   background: colors.bgDeep,
-  border: `1px solid ${colors.border}`,
+  border: `1px solid ${colors.borderSoft}`,
   borderRadius: space.md,
   color: colors.text,
   fontSize: font.size!.body,

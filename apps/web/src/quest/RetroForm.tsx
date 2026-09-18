@@ -53,7 +53,7 @@ export function RetroForm({
         marginTop: 10,
         padding: "12px 14px",
         background: colors.well,
-        border: `1px solid ${colors.accent}60`,
+        border: `1px solid ${colors.borderSoft}`,
         borderRadius: 10,
         display: "flex",
         flexDirection: "column",
@@ -92,7 +92,7 @@ export function RetroForm({
           style={{
             padding: "6px 14px",
             background: "transparent",
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
             fontSize: 12,

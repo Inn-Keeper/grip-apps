@@ -34,7 +34,7 @@ export function TechChips({
                 gap: 5,
                 padding: "3px 10px",
                 borderRadius: 999,
-                border: `1px solid ${off ? colors.border : `${colors.accent}60`}`,
+                border: `1px solid ${off ? colors.borderSoft : `${colors.accent}60`}`,
                 background: off ? "transparent" : `${colors.accent}1A`,
                 color: off ? colors.textFaint : colors.accentBright,
                 fontSize: 11,

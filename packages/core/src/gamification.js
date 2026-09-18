@@ -1,4 +1,5 @@
 // XP rules and rank ladder. Shared by web and mobile.
+// Names are stable i18n keys; players see the raven ladder (Hatchling → Nevermore) from `enum.rank.*`.
 
 export const CORRECT_XP = 10;
 export const PERFECT_QUIZ_BONUS = 30;

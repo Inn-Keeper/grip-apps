@@ -28,7 +28,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
       <div
         style={{
           background: colors.well,
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSoft}`,
           borderRadius: 14,
           padding: "24px",
           textAlign: "center",
@@ -66,7 +66,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
             style={{
               padding: "9px 18px",
               background: "transparent",
-              border: `1px solid ${colors.border}`,
+              border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,
               color: colors.textDim,
               fontSize: 13,

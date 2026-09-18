@@ -1,6 +1,6 @@
 import { STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, shadow } from "@grip/core/tokens";
 
 type FunnelSummary = {
   active: number;
@@ -20,7 +20,8 @@ export function FunnelDashboard({ summary, compact = false }: { summary: FunnelS
     <div
       style={{
         background: colors.surface,
-        border: `1px solid ${colors.border}`,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: compact ? 8 : 12,
         padding: compact ? 14 : "16px 18px",
         marginBottom: compact ? 0 : 16,
@@ -110,7 +111,7 @@ function Metric({ label, value, color }: { label: string; value: number; color: 
       style={{
         padding: "10px 12px",
         background: colors.well,
-        border: `1px solid ${color}40`,
+        border: `1px solid ${colors.borderSoft}`,
         borderRadius: 8,
       }}
     >

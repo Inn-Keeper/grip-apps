@@ -124,7 +124,7 @@ export default function Quest() {
       }
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 850, color: colors.textBright }}>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: colors.textBright }}>
           Quest
         </h1>
         <span style={{ marginLeft: "auto", fontSize: 12, color: colors.textFaint, fontWeight: 500 }}>

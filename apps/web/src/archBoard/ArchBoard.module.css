@@ -26,7 +26,7 @@
 }
 .connectionRow { display: block; min-height: 32px; margin-bottom: 10px; font-size: 12px; }
 .workflow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 10px; }
-.workflowStep { min-height: 54px; padding: 8px 10px; border: 1px solid var(--arch-border); border-radius: 8px; color: var(--arch-text-dim); }
+.workflowStep { min-height: 54px; padding: 8px 10px; border: 1px solid var(--arch-border); border-radius: 8px; background: var(--arch-surface); box-shadow: var(--shadow-card); color: var(--arch-text-dim); }
 .workflowStep strong { display: block; margin-bottom: 2px; color: var(--arch-text); font-size: 12px; }
 .workflowStep span { font-size: 11px; line-height: 1.35; }
 .workflowActive { border-color: var(--arch-accent); background: color-mix(in srgb, var(--arch-accent) 8%, transparent); }

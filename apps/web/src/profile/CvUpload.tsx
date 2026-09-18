@@ -78,7 +78,7 @@ export function CvUpload({
           gap: 10,
           padding: "44px 32px",
           background: dragging ? `${colors.accent}10` : colors.surface,
-          border: `2px dashed ${dragging ? colors.accent : colors.border}`,
+          border: `2px dashed ${dragging ? colors.accent : colors.borderSoft}`,
           borderRadius: 14,
           color: colors.textDim,
           cursor: disabled || busy ? "default" : "pointer",

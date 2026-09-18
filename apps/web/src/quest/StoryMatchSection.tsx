@@ -18,7 +18,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
         style={{
           padding: "4px 10px",
           background: "transparent",
-          border: `1px solid ${colors.border}`,
+          border: `1px solid ${colors.borderSoft}`,
           borderRadius: 8,
           color: colors.textDim,
           fontSize: 11,
@@ -40,7 +40,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
             marginTop: 8,
             padding: "10px 12px",
             background: colors.well,
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             display: "flex",
             flexDirection: "column",

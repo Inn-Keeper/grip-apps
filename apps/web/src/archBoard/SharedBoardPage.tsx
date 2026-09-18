@@ -22,7 +22,7 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
   return (
     <svg
       viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`}
-      style={{ width: "100%", maxHeight: 520, background: colors.bgDeep, borderRadius: 14, border: `1px solid ${colors.border}` }}
+      style={{ width: "100%", maxHeight: 520, background: colors.bgDeep, borderRadius: 14, border: `1px solid ${colors.borderSoft}` }}
     >
       <defs>
         <marker id="share-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -126,7 +126,7 @@ export function SharedBoardPage({ token }: { token: string }) {
         {board && (
           <>
             <div>
-              <h1 style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 850, color: colors.textBright }}>
+              <h1 style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 800, color: colors.textBright }}>
                 {board.title}
               </h1>
               <p style={{ margin: 0, fontSize: 12.5, color: colors.textFaint }}>

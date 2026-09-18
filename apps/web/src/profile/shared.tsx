@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, shadow } from "@grip/core/tokens";
 import { t } from "@grip/core/i18n";
 
 export function ConnectionBadge({ connected }: { connected: boolean }) {
@@ -12,10 +12,10 @@ export function ConnectionBadge({ connected }: { connected: boolean }) {
         padding: "4px 8px",
         borderRadius: 999,
         background: connected ? tints.successSoft : colors.surfaceHi,
-        border: `1px solid ${connected ? colors.success : colors.border}`,
+        border: `1px solid ${connected ? colors.success : colors.borderSoft}`,
         color: connected ? colors.successBright : colors.textFaint,
         fontSize: 11,
-        fontWeight: 850,
+        fontWeight: 800,
         lineHeight: 1,
       }}
     >
@@ -58,7 +58,7 @@ export function Switch({
         padding: 3,
         flex: "0 0 auto",
         borderRadius: 999,
-        border: `1px solid ${checked ? colors.accent : colors.border}`,
+        border: `1px solid ${checked ? colors.accent : colors.borderSoft}`,
         background: checked ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentBright})` : colors.bgDeep,
         boxShadow: checked
           ? `0 0 0 3px ${colors.accent}1F, 0 8px 18px ${colors.accent}22`
@@ -90,7 +90,8 @@ export function Panel({ children }: { children: React.ReactNode }) {
     <div
       style={{
         background: colors.surface,
-        border: `1px solid ${colors.border}`,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 8,
         padding: 16,
       }}

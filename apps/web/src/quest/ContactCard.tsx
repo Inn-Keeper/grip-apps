@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ActionButton } from "./shared";
 import type { Contact, Retro, ScoredBoard } from "./types";
@@ -9,6 +9,7 @@ import { RetroForm, RetroLine } from "./RetroForm";
 import { StoryMatchSection } from "./StoryMatchSection";
 import type { Story } from "./StoryMatchSection";
 import { PrepPlanSection } from "./PrepPlanSection";
+import hover from "../components/HoverCard.module.css";
 
 type ContactCardProps = {
   contact: Contact;
@@ -47,9 +48,11 @@ export function ContactCard({
 
   return (
     <div
+      className={hover.hoverCard}
       style={{
         background: colors.surface,
-        border: `1px solid ${due ? `${colors.danger}80` : `${status.color}30`}`,
+        border: `1px solid ${due ? `${colors.danger}80` : colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 14,
         padding: "18px 20px",
       }}
@@ -161,7 +164,7 @@ export function ContactCard({
             marginTop: 10,
             padding: "4px 10px",
             background: "transparent",
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
             fontSize: 11,
@@ -186,7 +189,7 @@ export function ContactCard({
               marginTop: 8,
               padding: "10px 12px",
               background: colors.well,
-              border: `1px solid ${colors.border}`,
+              border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,
             }}
           >

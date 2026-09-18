@@ -1,6 +1,6 @@
 import { effectiveQuizSize, normalizeQuizSize, quizSizeMax, QUIZ_SIZE_MIN } from "@grip/core/quizPrefs";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 
@@ -26,7 +26,7 @@ export function QuizSizeSelector({ quizSize, poolSize, onQuizSize }: { quizSize:
       />
       <div style={{ marginTop: 14 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-          <span style={{ fontSize: 22, fontWeight: 800, color: colors.textBright }}>{isAll ? t("prep.all") : effective}</span>
+          <span style={{ fontSize: font.size.heading, fontWeight: 800, color: colors.textBright }}>{isAll ? t("prep.all") : effective}</span>
           <button
             type="button"
             onClick={() => onQuizSize(null)}
@@ -34,10 +34,10 @@ export function QuizSizeSelector({ quizSize, poolSize, onQuizSize }: { quizSize:
             style={{
               padding: "3px 9px",
               background: "transparent",
-              border: `1px solid ${isAll ? colors.accent : colors.border}`,
+              border: `1px solid ${isAll ? colors.accent : colors.borderSoft}`,
               borderRadius: 6,
               color: isAll ? colors.accent : colors.textFaint,
-              fontSize: 11,
+              fontSize: font.size.label,
               fontWeight: 800,
               cursor: isAll ? "default" : "pointer",
             }}
@@ -57,7 +57,7 @@ export function QuizSizeSelector({ quizSize, poolSize, onQuizSize }: { quizSize:
           }}
           style={{ width: "100%", accentColor: colors.accent }}
         />
-        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, color: colors.textFaint, fontSize: 10.5, fontWeight: 700 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, color: colors.textFaint, fontSize: font.size.label, fontWeight: 700 }}>
           <span>{QUIZ_SIZE_MIN}</span>
           <span>{max > QUIZ_SIZE_MIN ? max : "—"}</span>
         </div>

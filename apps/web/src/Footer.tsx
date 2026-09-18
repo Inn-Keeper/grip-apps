@@ -14,7 +14,7 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
   return (
     <footer
       style={{
-        borderTop: `1px solid ${colors.border}`,
+        borderTop: `1px solid ${colors.borderSoft}`,
         background: colors.bgDeep,
         padding: "24px 24px 22px",
       }}

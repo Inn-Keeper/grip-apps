@@ -9,7 +9,7 @@ describe("StatsBar", () => {
   it("renders rank, xp and accuracy", async () => {
     const view = await render(<StatsBar scores={scores} />);
 
-    expect(view.getByText(/Intern/)).toBeTruthy();
+    expect(view.getByText(/Hatchling/)).toBeTruthy();
     expect(view.getByText("35 XP")).toBeTruthy();
     expect(view.getByText(t("prep.accuracySummary", { pct: 75, count: 4 }))).toBeTruthy();
   });

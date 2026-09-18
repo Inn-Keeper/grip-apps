@@ -1,19 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-/** Counts from 0 to `value` so a drill score lands as an event, not a static number. */
+const reduceMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/**
+ * Counts up to `value` (ease-out) so a score lands as an event, not a static number.
+ * Starts at 0 on mount and continues from the current number when `value` changes.
+ */
 export function useCountUp(value: number, durationMs = 650) {
-  const [shown, setShown] = useState(value);
+  const [shown, setShown] = useState(() => (reduceMotion() ? value : 0));
+  const shownRef = useRef(shown);
+  shownRef.current = shown;
 
   useEffect(() => {
-    if (value <= 0 || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const from = shownRef.current;
+    if (from === value || reduceMotion()) {
       setShown(value);
       return undefined;
     }
     let frame = 0;
     const startedAt = performance.now();
     const tick = (now: number) => {
-      const progress = Math.min(1, (now - startedAt) / durationMs);
-      setShown(Math.round(value * progress));
+      // rAF timestamps can precede `startedAt`; clamp so ease-out never undershoots below `from`.
+      const progress = Math.min(1, Math.max(0, (now - startedAt) / durationMs));
+      const eased = 1 - (1 - progress) ** 3;
+      setShown(Math.round(from + (value - from) * eased));
       if (progress < 1) frame = requestAnimationFrame(tick);
     };
     frame = requestAnimationFrame(tick);

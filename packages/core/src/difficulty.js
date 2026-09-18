@@ -1,5 +1,6 @@
 // Quiz difficulty tiers — single source of truth for both apps.
-// Sassy, player-facing names; each tier carries its own XP reward so harder
+// Player-facing names are the weather the raven flies in (ranks are how grown it is);
+// each tier carries its own XP reward so harder
 // questions are worth more. Colors reuse existing design tokens (no new ones).
 //
 // XP note: tiered questions award `tier.xp`; the flat CORRECT_XP in
@@ -18,10 +19,10 @@ import { colors } from "./tokens.js";
 
 /** @type {Difficulty[]} Ordered easy → hardest. */
 export const DIFFICULTIES = [
-  { key: "easy", label: "Newbie", emoji: "🐣", color: colors.success, blurbKey: "enum.difficulty.easyBlurb", xp: 5 },
-  { key: "mid", label: "Can-Do", emoji: "😎", color: colors.accent, blurbKey: "enum.difficulty.midBlurb", xp: 10 },
-  { key: "high", label: "Full Speed", emoji: "🔥", color: colors.warning, blurbKey: "enum.difficulty.highBlurb", xp: 20 },
-  { key: "ultra", label: "Overlord", emoji: "💀", color: colors.deco6, blurbKey: "enum.difficulty.ultraBlurb", xp: 40 },
+  { key: "easy", label: "Clear Skies", emoji: "☀️", color: colors.success, blurbKey: "enum.difficulty.easyBlurb", xp: 5 },
+  { key: "mid", label: "Tailwind", emoji: "🍃", color: colors.accent, blurbKey: "enum.difficulty.midBlurb", xp: 10 },
+  { key: "high", label: "Headwind", emoji: "🌬️", color: colors.warning, blurbKey: "enum.difficulty.highBlurb", xp: 20 },
+  { key: "ultra", label: "Thunderstorm", emoji: "⛈️", color: colors.deco6, blurbKey: "enum.difficulty.ultraBlurb", xp: 40 },
 ];
 
 /** @type {("easy"|"mid"|"high"|"ultra")[]} */

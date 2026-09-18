@@ -4,6 +4,39 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-09-18
+
+### Added
+
+- Tokens: `borderSoft`, `shadow.card` / `shadow.cardHover`, `accentDeep` and `font.size.hero`.
+- Prep (web): selecting a category pulses its Drill button, then a shine sweeps across it every 10s.
+- Prep (web): a readiness score for your prep plan, stack or practiced techs heads the right rail. It counts up on open over a deep-teal gradient bar, then blinks when it lands.
+- Prep (web): the XP bar matches the readiness bar. The accuracy chart draws in, and Signal percentages count up.
+- Prep (web): changing difficulty re-deals the cards, and difficulty or quiz-size changes show a short confirmation.
+- Prep (web): correct answers pop a +XP pill off the chosen option, and sessions show a running XP total.
+
+### Changed
+
+- Prep (web): a card's quiz opens as a focused session, so cards no longer grow.
+- Prep (web): Next Up is the one place to start sessions, and Mock loop moved into it. Rail drill buttons are removed, and category Drill buttons show on the active row or on hover.
+- Web: every screen uses dark soft borders and lifted cards. Light edges are kept only for informative containers, and cards with actions lift on hover.
+- Web + mobile: ranks are now a raven ladder (Hatchling → Nevermore) and difficulty tiers are weather (Clear Skies → Thunderstorm).
+- Web: the header swaps its diagonal-line texture for a teal glow and bottom line. The menu uses the card border and shadow, and the active tab slides between items.
+- Prep (web): all font sizes come from the `font.size` tokens.
+- Prep (web): category percentages show mastery (average accuracy, untested techs count as 0) instead of techs touched.
+- Prep (web): the right rail shows progress first and signal next, with practice settings folded at the bottom. The duplicate Review due panel is removed.
+
+### Fixed
+
+- Web: Inter weight 800 now loads (heavy weights were rendering at 700).
+- Icons (web + mobile): 12 icons that drew filled boxes instead of strokes (×, ✦ logo, arrows, check, `</>` and more).
+- Prep: 6 of 9 categories showed the fallback icon because of a name mismatch.
+- Web + mobile: the Quest tab showed the fallback ✦; it now has a flag icon.
+- Prep (web): the category Drill pill no longer animates during a quiz or drill.
+- Prep (web): Poe no longer covers the last category; the left rail ends above it.
+- Prep (web): a running session can no longer be replaced by a stray click. The left rail locks until you finish or exit.
+- Prep (web): loading and errors show on the button you clicked, not in a distant panel.
+
 ## 2026-09-17
 
 Commits `9144050`…`5474c93` · 171 files changed (+2891 / −908)

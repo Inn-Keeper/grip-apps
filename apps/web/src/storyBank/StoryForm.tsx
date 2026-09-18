@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { COMPETENCIES, COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { Field, inputStyle } from "../components/shared";
 import { textareaStyle } from "./styles";
@@ -25,7 +25,8 @@ export function StoryForm({
     <div
       style={{
         background: colors.surface,
-        border: `1px solid ${colors.accent}60`,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 14,
         padding: "18px 20px",
         display: "flex",
@@ -73,7 +74,7 @@ export function StoryForm({
           style={{
             padding: "8px 16px",
             background: "transparent",
-            border: `1px solid ${colors.border}`,
+            border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
             fontSize: 13,

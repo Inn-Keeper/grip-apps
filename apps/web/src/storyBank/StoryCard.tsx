@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { miniBtn } from "../components/shared";
 import type { Story } from "./types";
+import hover from "../components/HoverCard.module.css";
 
 function StarSection({ label, text }: { label: string; text: string }) {
   if (!text) return null;
@@ -30,10 +30,9 @@ export function StoryCard({
   readOnly?: boolean;
 }) {
   const [expanded, setExpanded] = useState(false);
-  const color = COMPETENCY_COLORS[s.competency] || colors.textFaint;
 
   return (
-    <div style={{ background: colors.surface, border: `1px solid ${color}30`, borderRadius: 14, padding: "16px 20px" }}>
+    <div className={hover.hoverCard} style={{ background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 14, boxShadow: shadow.card, padding: "16px 20px" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <CompetencyBadge competency={s.competency} />
         <span

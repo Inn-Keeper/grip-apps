@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { identityChanged } from "@grip/core/authCache";
@@ -13,7 +13,7 @@ import { SharedBoardPage } from "./archBoard/SharedBoardPage";
 import StoryBank from "./storyBank/StoryBank";
 import Profile from "./profile/Profile";
 import About from "./about/About";
-import { brand, colors, layout } from "@grip/core/tokens";
+import { brand, colors, layout, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { DemoBanner } from "./components/DemoBanner";
 import { Footer } from "./Footer";
@@ -56,6 +56,8 @@ const initialPage = () => {
   return saved && (PAGE_IDS as readonly string[]).includes(saved) ? saved : DEFAULT_PAGE;
 };
 
+const reduceMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+
 export default function App() {
   const queryClient = useQueryClient();
   const [page, setPage] = useState(initialPage);
@@ -68,6 +70,8 @@ export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const previousUserId = useRef<string | null | undefined>(undefined);
   const navRef = useRef<HTMLElement | null>(null);
+  // The active tab's box; one teal pill slides between tabs instead of each tab painting its own.
+  const [navPill, setNavPill] = useState<{ left: number; width: number } | null>(null);
 
   const pages = PAGE_DEFS.map((p) => ({ ...p, label: t(p.labelKey as Parameters<typeof t>[0]) }));
 
@@ -123,6 +127,20 @@ export default function App() {
     navRef.current?.querySelector<HTMLElement>("[aria-current='page']")?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [locale, page, session]);
 
+  useLayoutEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const measure = () => {
+      const active = nav.querySelector<HTMLElement>("[aria-current='page']");
+      if (active) setNavPill({ left: active.offsetLeft, width: active.offsetWidth });
+    };
+    measure();
+    // Labels change width with the locale and the font loading in; re-measure on resize.
+    const observer = new ResizeObserver(measure);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  }, [locale, page, session]);
+
   useEffect(() => {
     const activeLabel = pages.find((p) => p.id === page)?.label ?? brand.productName;
     document.title = `${activeLabel} - ${brand.productName}`;
@@ -158,12 +176,15 @@ export default function App() {
       style={{
         fontFamily: "'Inter', system-ui, sans-serif",
         minHeight: "100vh",
+        // Card lift for stylesheets (CSS modules can't import tokens).
+        "--shadow-card": shadow.card,
+        "--shadow-card-hover": shadow.cardHover,
         background: colors.bg,
         color: colors.text,
         display: "flex",
         flexDirection: "column",
         position: "relative",
-      }}
+      } as React.CSSProperties}
     >
       {/* Noise texture overlay — low-opacity, pointer-events-none so it never blocks interaction */}
       <div
@@ -182,7 +203,7 @@ export default function App() {
       <header
         style={{
           minHeight: layout.webHeaderHeight,
-          borderBottom: `1px solid ${colors.border}`,
+          borderBottom: `1px solid ${colors.borderSoft}`,
           background: `linear-gradient(180deg, ${colors.bgDeep}, ${colors.bg}F2)`,
           position: "sticky",
           top: 0,
@@ -198,10 +219,15 @@ export default function App() {
             position: "absolute",
             inset: 0,
             pointerEvents: "none",
-            opacity: 0.04,
-            backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M0 8L8 0M-1 1L1-1M7 9L9 7' stroke='%23ffffff' stroke-width='0.8'/%3E%3C/svg%3E")`,
-            backgroundRepeat: "repeat",
-            backgroundSize: "8px 8px",
+            // Teal hairline along the bottom edge, a glow behind the logo, a faint wash top-right.
+            backgroundImage: [
+              `linear-gradient(90deg, transparent 5%, ${colors.accentBright}66 30%, transparent 70%)`,
+              `radial-gradient(420px 120px at 60px 50%, ${colors.accent}24, transparent 70%)`,
+              `radial-gradient(600px 160px at 85% -40%, ${colors.accentBright}10, transparent 70%)`,
+            ].join(", "),
+            backgroundSize: "100% 1px, auto, auto",
+            backgroundPosition: "bottom, 0 0, 0 0",
+            backgroundRepeat: "no-repeat",
           }}
         />
         <div
@@ -224,7 +250,7 @@ export default function App() {
                 display: "grid",
                 placeItems: "center",
                 background: `linear-gradient(145deg, ${colors.surfaceHi}, ${colors.bgDeep})`,
-                border: `1px solid ${colors.border}`,
+                border: `1px solid ${colors.borderSoft}`,
                 boxShadow: `0 0 0 1px ${colors.accent}18, 0 10px 24px rgba(0, 0, 0, 0.22)`,
               }}
             >
@@ -251,9 +277,10 @@ export default function App() {
                   gap: 4,
                   padding: 5,
                   borderRadius: 16,
+                  position: "relative",
                   background: `${colors.well}C7`,
-                  border: `1px solid ${colors.border}`,
-                  boxShadow: "inset 0 1px 0 rgba(255, 255, 255, 0.03)",
+                  border: `1px solid ${colors.borderSoft}`,
+                  boxShadow: shadow.card,
                   minWidth: 0,
                   overflowX: "auto",
                   overflowY: "hidden",
@@ -261,6 +288,22 @@ export default function App() {
                   justifyContent: "flex-end",
                 }}
               >
+                {navPill && (
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      position: "absolute",
+                      top: 5,
+                      bottom: 5,
+                      left: navPill.left,
+                      width: navPill.width,
+                      borderRadius: 11,
+                      background: colors.accent,
+                      boxShadow: `0 8px 22px ${colors.accent}22`,
+                      transition: reduceMotion ? "none" : "left 320ms cubic-bezier(0.2, 0.72, 0.26, 1), width 320ms cubic-bezier(0.2, 0.72, 0.26, 1)",
+                    }}
+                  />
+                )}
                 {pages.map((p) => (
                   <button
                     key={p.id}
@@ -282,10 +325,10 @@ export default function App() {
                       fontWeight: 800,
                       letterSpacing: "0px",
                       whiteSpace: "nowrap",
-                      background: page === p.id ? colors.accent : "transparent",
-                      boxShadow: page === p.id ? `0 8px 22px ${colors.accent}22` : "none",
+                      position: "relative",
+                      background: "transparent",
                       color: page === p.id ? colors.onAccent : colors.textDim,
-                      transition: "background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease",
+                      transition: "color 0.2s ease",
                     }}
                   >
                     <BrandIcon name={p.icon} color={page === p.id ? colors.onAccent : colors.textDim} size={16} />

@@ -1,6 +1,6 @@
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 
@@ -24,8 +24,9 @@ export function TalkTrack({
       style={{
         marginTop: 14,
         padding: "18px 20px",
-        background: colors.well,
-        border: `1px solid ${colors.border}`,
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        boxShadow: shadow.card,
         borderRadius: 14,
       }}
     >
@@ -37,7 +38,7 @@ export function TalkTrack({
         </span>
         <div
           aria-hidden
-          style={{ flex: 1, minWidth: 80, height: 4, borderRadius: 2, background: colors.border, overflow: "hidden" }}
+          style={{ flex: 1, minWidth: 80, height: 4, borderRadius: 2, background: colors.borderSoft, overflow: "hidden" }}
         >
           <div style={{ width: `${completion}%`, height: "100%", background: meterColor }} />
         </div>
@@ -67,7 +68,7 @@ export function TalkTrack({
                   resize: "vertical",
                   padding: "8px 10px",
                   background: colors.bgDeep,
-                  border: `1px solid ${covered ? `${colors.success}55` : colors.border}`,
+                  border: `1px solid ${covered ? `${colors.success}55` : colors.borderSoft}`,
                   borderRadius: 8,
                   color: colors.text,
                   fontSize: 12.5,
@@ -95,7 +96,7 @@ export function TalkTrack({
                   width: 30,
                   height: 30,
                   background: active ? colors.accent : "transparent",
-                  border: `1px solid ${active ? colors.accent : colors.border}`,
+                  border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
                   borderRadius: 8,
                   color: active ? colors.onAccent : colors.textDim,
                   fontSize: 12,

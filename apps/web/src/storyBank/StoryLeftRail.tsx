@@ -76,7 +76,7 @@ export function StoryLeftRail({
               borderRadius: 8,
               color: colors.onAccent,
               fontSize: 12,
-              fontWeight: 850,
+              fontWeight: 800,
               cursor: "pointer",
             }}
           >

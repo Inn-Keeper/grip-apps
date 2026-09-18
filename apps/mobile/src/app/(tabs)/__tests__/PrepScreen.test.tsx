@@ -28,13 +28,13 @@ describe("PrepScreen", () => {
   it("renders the prep dashboard with a level selector and starts a drill at the active level", async () => {
     const view = await renderWithClient(<PrepScreen />);
 
-    expect(view.getByText(/Intern/)).toBeTruthy();
+    expect(view.getByText(/Hatchling/)).toBeTruthy();
     expect(view.getByText("Accuracy over time")).toBeTruthy();
 
     // Settings sit behind one summary row; opening it shows both pickers.
     fireEvent.press(view.getByText(/questions per card/));
     await waitFor(() => expect(view.getByText("DIFFICULTY")).toBeTruthy());
-    expect(view.getByText("Overlord")).toBeTruthy();
+    expect(view.getByText("Thunderstorm")).toBeTruthy();
     expect(view.getByText("QUESTIONS")).toBeTruthy();
     expect(view.getByText("All")).toBeTruthy();
 

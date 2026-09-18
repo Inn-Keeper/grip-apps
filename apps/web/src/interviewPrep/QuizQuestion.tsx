@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, font } from "@grip/core/tokens";
 import type { QuizQuestion as Question } from "./types";
 import styles from "./QuizQuestion.module.css";
 
@@ -16,8 +16,8 @@ function optionState(i: number, answered: number | null, correct: number): Optio
 
 // Token values are typed as possibly undefined (noUncheckedIndexedAccess); CSS tolerates that.
 const LOOK: Record<OptionState, { bg?: string; border?: string; text?: string }> = {
-  idle: { bg: colors.surfaceHi, border: colors.border, text: colors.text },
-  dimmed: { bg: colors.surfaceHi, border: colors.border, text: colors.textDim },
+  idle: { bg: colors.surfaceHi, border: colors.borderSoft, text: colors.text },
+  dimmed: { bg: colors.surfaceHi, border: colors.borderSoft, text: colors.textDim },
   correct: { bg: tints.successSoft, border: `${colors.success}80`, text: colors.successBright },
   wrong: { bg: tints.dangerSoft, border: `${colors.danger}80`, text: colors.dangerBright },
 };
@@ -89,7 +89,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
       </div>
 
       <div key={questionNumber} className={styles.body}>
-        <p style={{ margin: 0, fontSize: large ? 16 : 15, lineHeight: 1.55, color: colors.text, fontWeight: large ? 750 : 700 }}>
+        <p style={{ margin: 0, fontSize: large ? font.size.title : font.size.bodyLg, lineHeight: 1.55, color: colors.text, fontWeight: large ? 700 : 600 }}>
           {question.question}
         </p>
         <div className={styles.options}>
@@ -104,7 +104,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
                 disabled={answered !== null}
                 onClick={() => onAnswer(i)}
                 className={`${styles.option}${state !== "idle" ? ` ${styles[state]}` : ""}`}
-                style={{ padding: large ? "10px 12px" : "9px 12px", background: look.bg, border: `1px solid ${look.border}`, color: look.text, fontSize: large ? 13 : 12.5, lineHeight: 1.45 }}
+                style={{ padding: large ? "10px 12px" : "9px 12px", background: look.bg, border: `1px solid ${look.border}`, color: look.text, fontSize: font.size.body, lineHeight: 1.45 }}
               >
                 <span
                   className={styles.badge}
@@ -121,6 +121,12 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
                   <span style={srOnly}>{letterFor(i)}. </span>
                   {opt}
                 </span>
+                {/* The win lands where you clicked: +XP rises off the right answer. */}
+                {isCorrect && state === "correct" && (
+                  <span className={styles.xp} aria-hidden="true" style={{ background: tints.successSoft, border: `1px solid ${colors.success}80`, color: colors.successBright }}>
+                    +{xp} XP
+                  </span>
+                )}
               </button>
             );
           })}
@@ -133,22 +139,17 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
       {/* Fixed-height footer: a hint before answering, feedback + next step after — no layout jump. */}
       <div className={styles.footer}>
         {answered === null ? (
-          <span style={{ fontSize: 11.5, color: colors.textFaint }}>
+          <span style={{ fontSize: font.size.small, color: colors.textFaint }}>
             {t("prep.pickAnswerKeys", { last: letterFor(optionCount - 1) })}
           </span>
         ) : (
           <>
             <span className={styles.feedback}>
-              <span aria-hidden="true" style={{ fontSize: 12, fontWeight: 600, color: isCorrect ? colors.success : colors.danger }}>
+              <span aria-hidden="true" style={{ fontSize: font.size.small, fontWeight: 600, color: isCorrect ? colors.success : colors.danger }}>
                 {feedback}
               </span>
-              {isCorrect && (
-                <span key={questionNumber} className={styles.xp} aria-hidden="true" style={{ color: colors.successBright }}>
-                  +{xp}
-                </span>
-              )}
               {link && (
-                <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: 12, color: colors.accentBright, textDecoration: "none", fontWeight: 500 }}>
+                <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: font.size.small, color: colors.accentBright, textDecoration: "none", fontWeight: 500 }}>
                   {t("prep.docs")}
                 </a>
               )}
@@ -166,7 +167,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
                 border: `1px solid ${color}60`,
                 borderRadius: 8,
                 color,
-                fontSize: 12,
+                fontSize: font.size.small,
                 fontWeight: 600,
                 whiteSpace: "nowrap",
               }}

@@ -102,7 +102,7 @@ export function PrepPlanSection({
               gap: 5,
               padding: "2px 9px",
               borderRadius: 999,
-              border: `1px solid ${colors.border}`,
+              border: `1px solid ${colors.borderSoft}`,
               background: colors.well,
               fontSize: 11,
               color: colors.text,

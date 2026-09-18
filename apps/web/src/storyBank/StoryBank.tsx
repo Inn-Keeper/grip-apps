@@ -52,7 +52,7 @@ export default function StoryBank() {
       right={<StoryCoverage stories={storyList} />}
     >
       <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 850, color: colors.textBright }}>
+        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: colors.textBright }}>
           {mode === "drill" ? "Drill prompts" : "Story Bank"}
         </h1>
         <span style={{ marginLeft: "auto", fontSize: 12, color: colors.textFaint, fontWeight: 500 }}>
