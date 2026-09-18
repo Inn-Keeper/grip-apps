@@ -6,7 +6,7 @@ import { BrandIcon } from "../components/BrandIcon";
 import type { DrillState } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizQuestion } from "./QuizQuestion";
-import { useCountUp } from "./useCountUp";
+import { useCountUp } from "../lib/useCountUp";
 import styles from "./InterviewPrep.module.css";
 
 export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: { drill: DrillState; onAnswer: (i: number) => void; onNext: () => void; onExit: () => void; onRestart?: () => void }) {

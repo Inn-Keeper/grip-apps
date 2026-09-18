@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { STATUSES, todayDDMMYYYY, isDue } from "@grip/core/contacts";
 import { SCENARIOS, evaluate } from "@grip/core/arch";
 import { buildFunnelSummary } from "@grip/core/funnel";
-import { colors, tints } from "@grip/core/tokens";
+import { t } from "@grip/core/i18n";
+import { colors, font, tints } from "@grip/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { ContactCard } from "./ContactCard";
+import { ContactDetail } from "./ContactDetail";
 import { ContactForm } from "./ContactForm";
 import { QuestLeftRail } from "./QuestLeftRail";
+import { QuestNextUp } from "./QuestNextUp";
 import { QuestRightRail } from "./QuestRightRail";
+import { RetroForm } from "./RetroForm";
 import { EMPTY_FORM } from "./types";
 import {
   useAddRetroMutation,
@@ -23,9 +27,15 @@ import {
 } from "./queries";
 import type { Contact, Retro, ScoredBoard } from "./types";
 
+// The focused view (rule 8): a contact's detail, a form, or a retro, in place of the list.
+type Focus = { mode: "detail" | "edit" | "retro"; id: string } | { mode: "new" } | null;
+
 export default function Quest() {
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [retroFor, setRetroFor] = useState<string | null>(null);
+  const [focus, setFocus] = useState<Focus>(null);
+  const [filter, setFilter] = useState<string | null>(null);
+  // Confirmation after a change (rule 14); the contact a failed save belongs to (rule 13).
+  const [notice, setNotice] = useState<{ id: number; text: string } | null>(null);
+  const [touched, setTouched] = useState<string | null>(null);
 
   const { data: contacts = null, error: loadError } = useContactsQuery();
   const { data: stories = [] } = useContactStoriesQuery();
@@ -43,10 +53,7 @@ export default function Quest() {
     .map((board) => {
       const scenario = SCENARIOS.find((s: { id: string }) => s.id === board.scenarioId);
       if (!scenario) return null;
-      return {
-        topology: evaluate(scenario, board.nodes, board.edges).score,
-        talkGrade: board.talkGrade ?? null,
-      };
+      return { topology: evaluate(scenario, board.nodes, board.edges).score, talkGrade: board.talkGrade ?? null };
     })
     .filter((entry): entry is ScoredBoard => entry !== null);
 
@@ -54,136 +61,169 @@ export default function Quest() {
   const deleteMutation = useDeleteContactMutation();
   const retroAddMutation = useAddRetroMutation();
   const retroDeleteMutation = useDeleteRetroMutation();
+  const mutationError = saveMutation.error || deleteMutation.error || retroAddMutation.error || retroDeleteMutation.error;
+  const errorFor = (id: string | undefined) =>
+    mutationError && touched === id ? t("quest.saveError", { message: mutationError.message }) : null;
 
-  const mutationError =
-    saveMutation.error || deleteMutation.error || retroAddMutation.error || retroDeleteMutation.error;
-  const error = loadError
-    ? `Couldn't load contacts: ${loadError.message}`
-    : mutationError
-      ? `Save failed: ${mutationError.message}`
-      : null;
+  useEffect(() => {
+    if (!notice) return;
+    const timer = window.setTimeout(() => setNotice(null), 2600);
+    return () => window.clearTimeout(timer);
+  }, [notice]);
+
+  // Opening or leaving a focused view starts at the top of the page.
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [focus]);
+
+  const announce = (text: string) => setNotice({ id: Date.now(), text });
 
   const handleSave = (form: Omit<Contact, "id" | "retros">) => {
     if (!form.name.trim()) return;
-    saveMutation.mutate({
-      ...form,
-      id: editingId === "new" ? undefined : editingId ?? undefined,
-      date: form.date || todayDDMMYYYY(),
-    });
-    setEditingId(null);
+    const id = focus?.mode === "edit" ? focus.id : undefined;
+    setTouched(id ?? "new");
+    saveMutation.mutate(
+      { ...form, id, date: form.date || todayDDMMYYYY() },
+      { onSuccess: () => announce(t("quest.saved", { name: form.name })) }
+    );
+    setFocus(id ? { mode: "detail", id } : null);
   };
 
   const handleDelete = (contact: Contact) => {
-    if (window.confirm(`Delete "${contact.name}"?`)) {
-      deleteMutation.mutate(contact.id);
-    }
+    if (!window.confirm(t("contacts.deleteMessage", { name: contact.name }))) return;
+    setTouched(contact.id ?? null);
+    deleteMutation.mutate(contact.id, { onSuccess: () => announce(t("quest.deleted", { name: contact.name })) });
+    setFocus(null);
   };
 
   const handleAdvance = (contact: Contact) => {
     const next = STATUSES[STATUSES.indexOf(contact.status) + 1];
     if (!next) return;
-    saveMutation.mutate({ ...contact, status: next, date: todayDDMMYYYY() });
+    setTouched(contact.id ?? null);
+    saveMutation.mutate(
+      { ...contact, status: next, date: todayDDMMYYYY() },
+      { onSuccess: () => announce(t("quest.movedTo", { name: contact.name, status: t(`enum.status.${next}` as Parameters<typeof t>[0]) })) }
+    );
   };
 
   const handleClearAction = (contact: Contact) => {
-    saveMutation.mutate({ ...contact, nextAction: "", nextActionDate: "" });
+    setTouched(contact.id ?? null);
+    saveMutation.mutate(
+      { ...contact, nextAction: "", nextActionDate: "" },
+      { onSuccess: () => announce(t("quest.actionDone", { name: contact.name })) }
+    );
   };
 
-  const handleAddRetro = (contactId: string, retro: Omit<Retro, "id" | "date">) => {
-    retroAddMutation.mutate({ contactId, retro });
-    setRetroFor(null);
+  const handleAddRetro = (contact: Contact, retro: Omit<Retro, "id" | "date">) => {
+    if (!contact.id) return;
+    setTouched(contact.id);
+    retroAddMutation.mutate(
+      { contactId: contact.id, retro },
+      { onSuccess: () => announce(t("quest.retroSaved", { name: contact.name })) }
+    );
+    setFocus({ mode: "detail", id: contact.id });
   };
 
-  const handleDeleteRetro = (_contactId: string, retroId: string) => {
+  const handleDeleteRetro = (contact: Contact, retroId: string) => {
+    setTouched(contact.id ?? null);
     retroDeleteMutation.mutate(retroId);
   };
 
-  const sorted = contacts ? [...contacts].sort((a: Contact, b: Contact) => (isDue(b) ? 1 : 0) - (isDue(a) ? 1 : 0)) : null;
-  const dueCount = contacts ? contacts.filter(isDue).length : 0;
-  const dueContacts = contacts ? contacts.filter(isDue) : [];
+  const actionsFor = (contact: Contact) => ({
+    onAdvance: () => handleAdvance(contact),
+    onRetro: () => contact.id && setFocus({ mode: "retro", id: contact.id }),
+    onEdit: () => contact.id && setFocus({ mode: "edit", id: contact.id }),
+    onDelete: () => handleDelete(contact),
+    onClearAction: () => handleClearAction(contact),
+  });
+
+  // Due follow-ups first, then the stage filter from the left rail.
+  const sorted = contacts ? [...contacts].sort((a, b) => (isDue(b) ? 1 : 0) - (isDue(a) ? 1 : 0)) : null;
+  const visible = sorted?.filter((c) => !filter || c.status === filter) ?? null;
+  const focused = focus && focus.mode !== "new" ? contacts?.find((c) => c.id === focus.id) ?? null : null;
+
+  const noticeLine = notice && (
+    <p key={notice.id} role="status" style={{ margin: "0 0 16px", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700 }}>
+      {notice.text}
+    </p>
+  );
 
   return (
     <WorkspaceLayout
-      mainLabel="Quest"
-      left={
-        <QuestLeftRail
-          canAdd={!!contacts && editingId !== "new"}
-          contacts={contacts ?? []}
-          dueCount={dueCount}
-          onAdd={() => setEditingId("new")}
-        />
-      }
-      right={
-        <QuestRightRail
-          dueContacts={dueContacts}
-          funnel={funnel}
-          velocity={velocity}
-          velocityError={velocityError}
-          velocityLoading={velocityLoading}
-        />
-      }
+      mainLabel={t("quest.title")}
+      lockedHint={focus ? t("quest.lockedHint") : null}
+      left={<QuestLeftRail contacts={contacts ?? []} filter={filter} onFilter={setFilter} />}
+      right={<QuestRightRail funnel={funnel} velocity={velocity} velocityError={velocityError} velocityLoading={velocityLoading} />}
     >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
-        <h1 style={{ margin: 0, fontSize: 26, fontWeight: 800, color: colors.textBright }}>
-          Quest
-        </h1>
-        <span style={{ marginLeft: "auto", fontSize: 12, color: colors.textFaint, fontWeight: 500 }}>
-          {contacts ? `${contacts.length} in pipeline` : "loading..."}
-        </span>
-      </div>
-      <p style={{ margin: "0 0 20px", color: colors.textFaint, fontSize: 13, maxWidth: 760, lineHeight: 1.6 }}>
-        Track contacts, applications, follow-ups, and interview retros. Synced to Supabase.
-      </p>
-
-      {error && (
-        <div
-          style={{
-            marginBottom: 16,
-            padding: "10px 14px",
-            background: tints.dangerSoft,
-            border: `1px solid ${colors.danger}60`,
-            borderRadius: 10,
-            color: colors.dangerBright,
-            fontSize: 13,
-          }}
-        >
-          {error}
+      {loadError && (
+        <div role="alert" style={{ marginBottom: 16, padding: "10px 14px", background: tints.dangerSoft, border: `1px solid ${colors.danger}60`, borderRadius: 8, color: colors.dangerBright, fontSize: font.size.body }}>
+          {t("contacts.loadError", { message: loadError.message })}
         </div>
       )}
 
-      {editingId === "new" && (
-        <div style={{ marginBottom: 16 }}>
-          <ContactForm
-            initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }}
-            onSave={handleSave}
-            onCancel={() => setEditingId(null)}
-          />
-        </div>
-      )}
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {sorted?.map((contact) =>
-          editingId === contact.id ? (
-            <ContactForm key={contact.id} initial={contact} onSave={handleSave} onCancel={() => setEditingId(null)} />
-          ) : (
-            <ContactCard
-              key={contact.id}
-              contact={contact}
+      {focus ? (
+        <div style={{ width: "min(100%, 860px)", paddingBottom: 48 }}>
+          <button
+            type="button"
+            onClick={() => setFocus(null)}
+            style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}
+          >
+            {t("quest.back")}
+          </button>
+          {noticeLine}
+          {focus.mode === "new" && (
+            <>
+              <ContactForm initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }} onSave={handleSave} onCancel={() => setFocus(null)} />
+              {errorFor("new") && <p role="alert" style={{ color: colors.dangerBright, fontSize: font.size.small }}>{errorFor("new")}</p>}
+            </>
+          )}
+          {focused && focus.mode === "edit" && (
+            <ContactForm initial={focused} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
+          )}
+          {focused && focus.mode === "retro" && (
+            <RetroForm onSave={(retro) => handleAddRetro(focused, retro)} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
+          )}
+          {focused && focus.mode === "detail" && (
+            <ContactDetail
+              contact={focused}
               stories={stories}
               answers={scores?.answers ?? {}}
               boards={scoredBoards}
-              retroOpen={retroFor === contact.id}
-              onEdit={() => setEditingId(contact.id ?? null)}
-              onDelete={() => handleDelete(contact)}
-              onAdvance={() => handleAdvance(contact)}
-              onClearAction={() => handleClearAction(contact)}
-              onOpenRetro={() => setRetroFor(retroFor === contact.id ? null : contact.id ?? null)}
-              onAddRetro={(retro) => contact.id && handleAddRetro(contact.id, retro)}
-              onDeleteRetro={(retroId) => contact.id && handleDeleteRetro(contact.id, retroId)}
+              error={errorFor(focused.id)}
+              onDeleteRetro={(retroId) => handleDeleteRetro(focused, retroId)}
+              {...actionsFor(focused)}
             />
-          )
-        )}
-      </div>
+          )}
+        </div>
+      ) : (
+        <>
+          {contacts && <QuestNextUp contacts={contacts} onOpen={(id) => setFocus({ mode: "detail", id })} onAdd={() => setFocus({ mode: "new" })} />}
+
+          <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
+            <h1 style={{ margin: 0, fontSize: font.size.heading, fontWeight: 800, color: colors.textBright }}>
+              {filter ? t(`enum.status.${filter}` as Parameters<typeof t>[0]) : t("quest.title")}
+            </h1>
+            <span style={{ marginLeft: "auto", fontSize: font.size.small, color: colors.textFaint, fontWeight: 600 }}>
+              {visible ? t("quest.inPipeline", { count: visible.length }) : t("common.loading")}
+            </span>
+          </div>
+          {noticeLine ?? (
+            <p style={{ margin: "0 0 16px", color: colors.textFaint, fontSize: font.size.body, lineHeight: 1.6 }}>{t("quest.subtitle")}</p>
+          )}
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {visible?.map((contact) => (
+              <ContactCard
+                key={contact.id}
+                contact={contact}
+                error={errorFor(contact.id)}
+                onOpen={() => contact.id && setFocus({ mode: "detail", id: contact.id })}
+                {...actionsFor(contact)}
+              />
+            ))}
+          </div>
+        </>
+      )}
     </WorkspaceLayout>
   );
 }

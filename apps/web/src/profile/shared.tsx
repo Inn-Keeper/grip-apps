@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, tints, shadow } from "@grip/core/tokens";
+import { colors, tints } from "@grip/core/tokens";
 import { t } from "@grip/core/i18n";
 
 export function ConnectionBadge({ connected }: { connected: boolean }) {
@@ -85,28 +85,6 @@ export function Switch({
   );
 }
 
-export function Panel({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      style={{
-        background: colors.surface,
-        border: `1px solid ${colors.borderSoft}`,
-        boxShadow: shadow.card,
-        borderRadius: 8,
-        padding: 16,
-      }}
-    >
-      {children}
-    </div>
-  );
-}
 
-export function MetaLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p style={{ margin: "0 0 6px", color: colors.textFaint, fontSize: 11, fontWeight: 800, textTransform: "uppercase" }}>
-      {children}
-    </p>
-  );
-}
 
 export { Field } from "../components/shared";

@@ -9,7 +9,8 @@ import { AccuracyChart } from "./AccuracyChart";
 import type { AccuracyPoint, Readiness, Scores, Summary } from "./types";
 import { LevelSelector } from "./LevelSelector";
 import { QuizSizeSelector } from "./QuizSizeSelector";
-import { useCountUp } from "./useCountUp";
+import { CountUp, GlowBar } from "../components/GlowBar";
+import { HeadlineMetric } from "../components/HeadlineMetric";
 import styles from "./InterviewPrep.module.css";
 
 // Status first (readiness, rank), then signal, then the practice settings folded away.
@@ -47,13 +48,16 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
   return (
     <>
       <WorkspacePanel>
-        {readiness && <ReadinessBlock readiness={readiness} />}
+        {readiness && (
+          // The screen's headline: how ready the chosen set of techs is. Untested techs count as 0.
+          <HeadlineMetric label={readiness.label} value={readiness.pct} unit="%" pct={readiness.pct} hint={t("prep.readinessHint", { count: readiness.count })} />
+        )}
         <WorkspaceTitle
           icon={<BrandIcon name="rank" color={colors.accentBright} size={17} />}
           title={t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}
           subtitle={t("prep.xpEarned", { xp: scores.xp })}
         />
-        <GlowBar pct={progress} gained={gained} marginTop={14} />
+        <GlowBar pct={progress} flash={gained} marginTop={14} />
         <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginTop: 9, color: colors.textFaint, fontSize: font.size.label }}>
           <span>{t("prep.answered", { count: summary.attempts })}</span>
           <span>{next ? t("prep.xpToNext", { xp: next.min - scores.xp, rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) }) : t("prep.topRank")}</span>
@@ -98,61 +102,6 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
   );
 }
 
-// The headline number: how ready the chosen set of techs is. Untested techs count as 0.
-function ReadinessBlock({ readiness }: { readiness: Readiness }) {
-  // Number and bar fill together on open (same 1.1s ease-out), then follow changes.
-  const shown = useCountUp(readiness.pct, 1100);
-  return (
-    <div style={{ marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${colors.borderSoft}` }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
-        <span style={{ color: colors.textDim, fontSize: font.size.small, fontWeight: 700 }}>{readiness.label}</span>
-        <span
-          className={styles.readinessNumber}
-          style={{
-            // Teal gradient text; the deep end stops short so the bottom edge keeps contrast.
-            background: `linear-gradient(180deg, ${colors.accent} 35%, ${colors.accentDeep} 140%)`,
-            WebkitBackgroundClip: "text",
-            backgroundClip: "text",
-            color: "transparent",
-            fontSize: font.size.hero,
-            fontWeight: 800,
-            lineHeight: 1,
-            fontVariantNumeric: "tabular-nums",
-            "--land-glow": `${colors.accentBright}99`,
-          } as React.CSSProperties}
-        >
-          {shown}%
-        </span>
-      </div>
-      <GlowBar pct={readiness.pct} marginTop={12} />
-      <p style={{ margin: "8px 0 0", color: colors.textFaint, fontSize: font.size.label }}>
-        {t("prep.readinessHint", { count: readiness.count })}
-      </p>
-    </div>
-  );
-}
-
-// Deep-teal gradient bar that lifts off its track: grows on open, blinks when it lands.
-// `gained` flashes the whole track (not the fill, so the grow-in never restarts).
-function GlowBar({ pct, gained = false, marginTop }: { pct: number; gained?: boolean; marginTop: number }) {
-  return (
-    // No overflow clip on the track, so the fill's glow can lift off it.
-    <div className={gained ? styles.xpBarGained : undefined} style={{ height: 10, background: colors.well, borderRadius: 999, marginTop }}>
-      <div
-        className={styles.glowFill}
-        style={{
-          "--land-glow": `${colors.accentBright}99`,
-          width: `${pct}%`,
-          height: "100%",
-          borderRadius: 999,
-          background: `linear-gradient(90deg, ${colors.accentDeep}, ${colors.accent})`,
-          boxShadow: `inset 0 1px 0 #FFFFFF26, 0 4px 12px -2px ${colors.accent}66`,
-        } as React.CSSProperties}
-      />
-    </div>
-  );
-}
-
 function RailList({ color, icon, items, title }: { color: string; icon: string; items: { tech: string; acc: number; n: number }[]; title: string }) {
   return (
     <div style={{ marginTop: 14 }}>
@@ -176,8 +125,3 @@ function RailList({ color, icon, items, title }: { color: string; icon: string; 
   );
 }
 
-// A number that counts up from 0 on open (for list rows, where the hook can't be called per item).
-// Signal rows get longer durations down the list, so they settle one after another.
-function CountUp({ value, durationMs }: { value: number; durationMs: number }) {
-  return <>{useCountUp(value, durationMs)}</>;
-}

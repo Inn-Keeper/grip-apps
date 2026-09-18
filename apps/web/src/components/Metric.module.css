@@ -1,0 +1,98 @@
+/* Shared metric motion: glow bars, headline numbers and charts. See SCREEN-GUIDELINES.md (Motion).
+   One file so the keyframes (scoped per CSS module) can be shared. */
+
+/* A bar's track flashes once when its value grows (e.g. XP landing). */
+.trackFlash { animation: xpFlash 700ms ease-out; }
+
+@media (prefers-reduced-motion: reduce) {
+  .trackFlash { animation: none; }
+}
+
+@keyframes xpFlash {
+  0% { filter: brightness(1); }
+  35% { filter: brightness(1.75); }
+  100% { filter: brightness(1); }
+}
+
+/* Glow bars: grow from 0 on open; when it lands it double-blinks with a glow and a shine
+   sweeps across it once. Later values ease in via the width transition. */
+.glowFill {
+  position: relative;
+  overflow: hidden;
+  animation:
+    fillIn 1100ms cubic-bezier(0.2, 0.72, 0.26, 1) both,
+    landFlicker 700ms ease-out 1100ms;
+  transition: width 600ms cubic-bezier(0.2, 0.72, 0.26, 1);
+}
+
+.glowFill::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 30%, #FFFFFF59 50%, transparent 70%);
+  transform: translateX(-100%);
+  animation: landShine 700ms ease-out 1100ms;
+  pointer-events: none;
+}
+
+/* The number lands with the bar: the same double blink plus a small pop. */
+.landNumber {
+  display: inline-block;
+  animation: numberLand 700ms ease-out 1100ms;
+}
+
+@keyframes landFlicker {
+  0%, 100% { filter: brightness(1); }
+  20% { filter: brightness(1.8) drop-shadow(0 0 6px var(--land-glow)); }
+  40% { filter: brightness(1.1); }
+  60% { filter: brightness(1.55) drop-shadow(0 0 4px var(--land-glow)); }
+}
+
+@keyframes landShine {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
+}
+
+@keyframes numberLand {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  20% { transform: scale(1.08); filter: brightness(1.5) drop-shadow(0 0 3px var(--land-glow)); }
+  40% { transform: scale(1.03); filter: brightness(1.05); }
+  60% { transform: scale(1.05); filter: brightness(1.35) drop-shadow(0 0 2px var(--land-glow)); }
+}
+
+@keyframes fillIn {
+  from { width: 0; }
+}
+
+/* Accuracy chart: the line draws in, dots pop as it reaches them, the latest dot blinks on landing. */
+.chartLine {
+  stroke-dasharray: 1;
+  animation: drawLine 1100ms cubic-bezier(0.2, 0.72, 0.26, 1) both;
+}
+
+.chartDot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: dotIn 300ms cubic-bezier(0.2, 0.72, 0.26, 1.4) both;
+}
+
+.chartDotLast { animation: dotIn 300ms cubic-bezier(0.2, 0.72, 0.26, 1.4) both, landFlicker 700ms ease-out; }
+
+@keyframes drawLine {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+
+@keyframes dotIn {
+  from { opacity: 0; transform: scale(0); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chartLine,
+  .chartDot,
+  .chartDotLast,
+  .glowFill,
+  .glowFill::after,
+  .landNumber { animation: none; transition: none; }
+}

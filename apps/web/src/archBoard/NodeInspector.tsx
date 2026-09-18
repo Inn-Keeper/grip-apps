@@ -1,6 +1,6 @@
 import { meta, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import type { BoardNode } from "./types";
@@ -36,28 +36,29 @@ export function NodeInspector({
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 150 }}>
         <BrandIcon name={nodeIconName(node.type)} color={color} size={16} />
-        <span style={{ fontSize: 13, fontWeight: 700, color: colors.textBright }}>{spec.label}</span>
+        <span style={{ fontSize: font.size.body, fontWeight: 700, color: colors.textBright }}>{spec.label}</span>
       </div>
 
       <label style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1, minWidth: 220 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: colors.textDim }}>{t("node.partitionKey")}</span>
+        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("node.partitionKey")}</span>
         <input
           value={node.partitionKey ?? ""}
           onChange={(e) => onChange({ partitionKey: e.target.value })}
           placeholder={t("node.partitionKeyPlaceholder")}
           style={{
-            padding: "7px 10px",
+            minHeight: 40,
+            padding: "10px 12px",
             background: colors.bgDeep,
             border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.text,
-            fontSize: 12.5,
+            fontSize: font.size.body,
           }}
         />
       </label>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: colors.textDim }}>{t("node.replicas")}</span>
+        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("node.replicas")}</span>
         <div style={{ display: "flex", gap: 6 }}>
           {REPLICA_CHOICES.map((count) => {
             const active = node.replicas === count;
@@ -73,7 +74,7 @@ export function NodeInspector({
                   border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
                   borderRadius: 8,
                   color: active ? colors.onAccent : colors.textDim,
-                  fontSize: 12,
+                  fontSize: font.size.small,
                   fontWeight: 700,
                   cursor: "pointer",
                 }}
@@ -93,7 +94,7 @@ export function NodeInspector({
           border: `1px solid ${colors.borderSoft}`,
           borderRadius: 8,
           color: colors.textDim,
-          fontSize: 12,
+          fontSize: font.size.small,
           fontWeight: 600,
           cursor: "pointer",
         }}

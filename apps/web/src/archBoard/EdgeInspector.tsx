@@ -1,6 +1,6 @@
 import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import type { BoardEdge, BoardNode } from "./types";
 
 export function EdgeInspector({
@@ -24,7 +24,7 @@ export function EdgeInspector({
     border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
     borderRadius: 8,
     color: active ? colors.onAccent : colors.textDim,
-    fontSize: 12,
+    fontSize: font.size.small,
     fontWeight: 600,
     cursor: "pointer",
   });
@@ -45,14 +45,14 @@ export function EdgeInspector({
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 160 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: colors.textDim }}>{t("edge.title")}</span>
-        <span style={{ fontSize: 13, fontWeight: 700, color: colors.textBright }}>
+        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("edge.title")}</span>
+        <span style={{ fontSize: font.size.body, fontWeight: 700, color: colors.textBright }}>
           {from ? meta(from.type).label : "?"} → {to ? meta(to.type).label : "?"}
         </span>
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: colors.textDim }}>{t("edge.mode")}</span>
+        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("edge.mode")}</span>
         <div style={{ display: "flex", gap: 6 }}>
           {EDGE_MODES.map((mode: string) => (
             <button
@@ -68,7 +68,7 @@ export function EdgeInspector({
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 5, flex: 1, minWidth: 240 }}>
-        <span style={{ fontSize: 11, fontWeight: 700, color: colors.textDim }}>{t("edge.protocol")}</span>
+        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("edge.protocol")}</span>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
           {EDGE_PROTOCOLS.map((protocol: string) => (
             <button
@@ -92,7 +92,7 @@ export function EdgeInspector({
             border: `1px solid ${colors.danger}50`,
             borderRadius: 8,
             color: colors.dangerBright,
-            fontSize: 12,
+            fontSize: font.size.small,
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -107,7 +107,7 @@ export function EdgeInspector({
             border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
-            fontSize: 12,
+            fontSize: font.size.small,
             fontWeight: 600,
             cursor: "pointer",
           }}

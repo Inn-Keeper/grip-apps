@@ -8,7 +8,9 @@ import { STATUSES, isDue, parseDDMMYYYY } from "./contacts.js";
 
 const ACTIVE_STATUSES = STATUSES.filter((status) => status !== "Rejected");
 const STATUS_INDEX = Object.fromEntries(STATUSES.map((status, index) => [status, index]));
-const PACE_WINDOW_DAYS = 28;
+export const PACE_WINDOW_DAYS = 28;
+// Below this many applications a week, pace is the likely bottleneck (the Quest headline goal).
+export const PACE_GOAL_PER_WEEK = 3;
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 const round1 = (value) => Math.round(value * 10) / 10;
@@ -102,7 +104,7 @@ export function buildFunnelSummary(contacts = [], events = [], now = new Date())
 
   const signals = [];
   if (active.length < 8) signals.push("Top of funnel is thin: add more contacts before judging conversion.");
-  if (applicationsPerWeek < 3) signals.push("Application pace is low: volume is probably the first bottleneck.");
+  if (applicationsPerWeek < PACE_GOAL_PER_WEEK) signals.push("Application pace is low: volume is probably the first bottleneck.");
   if (reached.Applied >= 5 && rates.appliedToInterviewing < 0.25) {
     signals.push("Applications are not turning into interviews yet: tune targeting, CV, and referrals.");
   }

@@ -1,8 +1,8 @@
 import { t } from "@grip/core/i18n";
 import type { CSSProperties } from "react";
 import { colors, font, shadow } from "@grip/core/tokens";
-import { useCountUp } from "./useCountUp";
-import styles from "./InterviewPrep.module.css";
+import { useCountUp } from "../lib/useCountUp";
+import styles from "../components/Metric.module.css";
 
 // Same rhythm as the glow bars: the line draws in over this long, then the latest point blinks.
 const DRAW_MS = 1100;
@@ -46,7 +46,7 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
           <div style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("accuracy.subtitle")}</div>
         </div>
         <span
-          className={latest ? styles.readinessNumber : undefined}
+          className={latest ? styles.landNumber : undefined}
           style={{
             fontSize: font.size.body,
             fontWeight: 800,

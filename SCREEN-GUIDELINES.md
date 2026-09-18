@@ -41,32 +41,40 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 
 21. Borders are dark and quiet everywhere.
 22. Coloured or bright borders are **only** for boxes that warn or point somewhere: the "Next up" suggestion, overdue items, errors, the current step and selected items.
-23. Cards sit slightly raised off the page with a soft shadow. Cards with buttons lift **2px** more on hover or keyboard focus.
+23. Cards sit slightly raised off the page with a soft shadow. Cards with buttons rise a gentle **1px** on hover or keyboard focus, easing in over about a quarter of a second, never with a jump.
 24. A recessed, darker look is **only** for areas inside a card, like a progress track, or for canvases. Boxes placed directly on the page are cards.
 25. Progress bars use the dark-to-bright teal gradient. Big headline numbers are teal.
 26. Text uses **only** the sizes and weights defined in DESIGN.md. Nothing people need to read is smaller than **11px**.
 
+## Forms
+
+27. Fields are at least **40px** tall with comfortable padding inside. Multi-line fields start at about four lines.
+28. Fields use the same **8px** corners as panels. They are **never** pill-shaped or more rounded than the card they sit in.
+29. Every field has a visible label above it. Placeholder text is only an example, **never** the label.
+30. Fields sit in a grid with columns at least **260px** wide and **16px** between fields.
+31. A focused field always shows a clear teal focus ring.
+
 ## Motion
 
-27. Motion explains a change. **Never** add it only for decoration.
-28. Each effect plays **once** when the screen opens. Numbers count up, bars grow and then blink, and charts draw in, all in about **1 second**.
-29. Only one thing may animate on its own: a shine every **10 seconds** on the single active main button.
-30. When the person has turned animations off in their system settings, **every** effect is skipped.
+32. Motion explains a change. **Never** add it only for decoration.
+33. Each effect plays **once** when the screen opens. Numbers count up, bars grow and then blink, and charts draw in, all in about **1 second**.
+34. Only one thing may animate on its own: a shine every **10 seconds** on the single active main button.
+35. When the person has turned animations off in their system settings, **every** effect is skipped.
 
 ## Words and icons
 
-31. Ranks describe the raven growing up: Hatchling → Fledgling → Night Flyer → Sky Raven → Elder Raven → Nevermore.
-32. Difficulty levels describe the weather: Clear Skies → Tailwind → Headwind → Thunderstorm. The two sets of words are **never** mixed.
-33. Text is short and says what happens ("Drill weakest", not "Get started").
-34. Every piece of text exists in English, Portuguese and Swedish.
-35. Icons are thin line drawings, look the same on web and mobile, and are **never** shown as a fallback shape.
+36. Ranks describe the raven growing up: Hatchling → Fledgling → Night Flyer → Sky Raven → Elder Raven → Nevermore.
+37. Difficulty levels describe the weather: Clear Skies → Tailwind → Headwind → Thunderstorm. The two sets of words are **never** mixed.
+38. Text is short and says what happens ("Drill weakest", not "Get started").
+39. Every piece of text exists in English, Portuguese and Swedish.
+40. Icons are thin line drawings, look the same on web and mobile, and are **never** shown as a fallback shape.
 
 ## Accessibility
 
-36. Everything that works with a mouse also works with a keyboard, including hover effects.
-37. Locked areas cannot be reached by keyboard or screen reader.
-38. Screen readers announce confirmations, errors and loading states.
-39. Text keeps readable contrast on the dark background.
+41. Everything that works with a mouse also works with a keyboard, including hover effects.
+42. Locked areas cannot be reached by keyboard or screen reader.
+43. Screen readers announce confirmations, errors and loading states.
+44. Text keeps readable contrast on the dark background.
 
 ## Before calling a screen done
 

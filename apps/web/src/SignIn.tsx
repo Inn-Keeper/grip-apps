@@ -6,6 +6,7 @@ import { brand, colors, layout } from "@grip/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { Turnstile } from "./components/Turnstile";
 import { TURNSTILE_SITE_KEY } from "./lib/turnstile";
+import { fieldStyle } from "./components/fieldStyles";
 
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -26,15 +27,8 @@ export function SignIn() {
     setCaptchaKey((k) => k + 1);
   };
 
-  const inputStyle: React.CSSProperties = {
-    padding: "11px 14px",
-    background: colors.surface,
-    border: `1px solid ${colors.borderSoft}`,
-    borderRadius: 10,
-    color: colors.text,
-    fontSize: 14,
-    outline: "none",
-  };
+  // The field standard, a touch taller on the sign-in card.
+  const inputStyle: React.CSSProperties = { ...fieldStyle, minHeight: 44 };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();

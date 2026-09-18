@@ -99,18 +99,18 @@ export function startTour(onNavigate: (page: string) => void) {
         },
       },
       {
-        element: "[data-tour='nav-profile']",
-        popover: {
-          title: t("tour.profileTitle"),
-          description: t("tour.profileBody"),
-          side: "bottom",
-        },
-      },
-      {
         element: "[data-tour='nav-about']",
         popover: {
           title: t("tour.aboutTitle"),
           description: t("tour.aboutBody"),
+          side: "bottom",
+        },
+      },
+      {
+        element: "[data-tour='nav-profile']",
+        popover: {
+          title: t("tour.profileTitle"),
+          description: t("tour.profileBody"),
           side: "bottom",
           onNextClick: () => {
             d.destroy();

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
@@ -22,7 +22,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
   const [requiredEdges, setRequiredEdges] = useState<{ from: string; to: string }[]>([]);
 
   const labelStyle: React.CSSProperties = {
-    fontSize: 11,
+    fontSize: font.size.label,
     fontWeight: 600,
     color: colors.textFaint,
     letterSpacing: "0.03em",
@@ -112,7 +112,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
                   border: `1px solid ${active ? TYPE_COLORS[spec.type] : colors.borderSoft}`,
                   background: active ? `${TYPE_COLORS[spec.type]}25` : "transparent",
                   color: active ? colors.text : colors.textDim,
-                  fontSize: 11,
+                  fontSize: font.size.label,
                   fontWeight: 600,
                 }}
               >
@@ -160,7 +160,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
               border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,
               color: colors.textDim,
-              fontSize: 11,
+              fontSize: font.size.label,
               fontWeight: 600,
               cursor: "pointer",
             }}
@@ -170,7 +170,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
         </div>
       </div>
 
-      {error && <p style={{ margin: 0, fontSize: 12, color: colors.dangerBright }}>Save failed: {error.message}</p>}
+      {error && <p style={{ margin: 0, fontSize: font.size.small, color: colors.dangerBright }}>Save failed: {error.message}</p>}
 
       <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
         <button
@@ -181,7 +181,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
             border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
-            fontSize: 12,
+            fontSize: font.size.small,
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -197,7 +197,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
             border: "none",
             borderRadius: 8,
             color: colors.onAccent,
-            fontSize: 12,
+            fontSize: font.size.small,
             fontWeight: 600,
             cursor: canSave && !saving ? "pointer" : "not-allowed",
             opacity: canSave && !saving ? 1 : 0.5,

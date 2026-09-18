@@ -3,7 +3,6 @@ import { categories } from "@grip/core/prepData";
 import { extractTechsFromText } from "@grip/core/cvTechs";
 import { colors } from "@grip/core/tokens";
 import { t } from "@grip/core/i18n";
-import { MetaLabel } from "./shared";
 import { readCvText, CvParseError } from "./cvParser";
 
 const KNOWN_TECHS = categories.flatMap((c) => c.items.map((item) => item.tech));
@@ -55,11 +54,8 @@ export function CvUpload({
   const busy = parsing || pending;
 
   return (
-    <section style={{ marginTop: 48 }}>
-      <MetaLabel>{t("profile.cvSection")}</MetaLabel>
-      <p style={{ margin: "0 0 20px", color: colors.textDim, fontSize: 14, lineHeight: 1.7, maxWidth: 620 }}>
-        {t("profile.cvSubtitle")}
-      </p>
+    // The section header (title and intro) comes from the Profile screen.
+    <section>
 
       <div
         role="button"

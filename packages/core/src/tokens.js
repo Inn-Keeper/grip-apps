@@ -85,7 +85,7 @@ export const font = {
 /**
  * Spacing scale — use these values for gap, padding, margin.
  * Examples: gap: space.sm, padding: `${space.md}px ${space.lg}px`
- * @type {Record<string, number>}
+ * No loose @type here: the inferred shape keeps `space.sm` a plain number.
  */
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 28 };
 
@@ -94,7 +94,7 @@ export const radius = { sm: 8, md: 12, lg: 16, pill: 999 };
 // Card lift: a faint top-edge highlight plus a soft drop shadow (hover goes one step deeper).
 export const shadow = {
   card: "inset 0 1px 0 #FFFFFF0A, 0 8px 20px -12px #000000B3",
-  cardHover: "inset 0 1px 0 #FFFFFF10, 0 14px 28px -14px #000000D9",
+  cardHover: "inset 0 1px 0 #FFFFFF0D, 0 10px 24px -12px #000000C2",
 };
 
 export const layout = {

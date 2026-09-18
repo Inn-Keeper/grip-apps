@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@grip/core/estimation";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { AugmentedScenario } from "./types";
 
@@ -38,47 +38,43 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
   return (
     <details open
       style={{
-        padding: "14px 16px",
-        marginBottom: 14,
+        padding: 14,
         background: colors.surface,
         border: `1px solid ${colors.borderSoft}`,
         boxShadow: shadow.card,
-        borderRadius: 10,
+        borderRadius: 8,
       }}
     >
-      <summary style={{ cursor: "pointer", fontSize: 13, fontWeight: 700, color: colors.textBright, marginBottom: 10 }}>
+      <summary style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: font.size.body, fontWeight: 800, color: colors.textBright }}>
+        <BrandIcon name="accuracy" color={colors.accentBright} size={15} />
         {t("scale.title")}
       </summary>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
-        <BrandIcon name="accuracy" color={colors.accentBright} size={15} />
-        <h2 style={{ margin: 0, fontSize: 13, fontWeight: 700, color: colors.textBright }}>{t("scale.title")}</h2>
-        <span style={{ fontSize: 11, color: colors.textFaint }}>{t("scale.subtitle")}</span>
-      </div>
+      <p style={{ margin: "6px 0 12px", fontSize: font.size.label, color: colors.textFaint }}>{t("scale.subtitle")}</p>
 
       <div style={{ display: "flex", gap: 18, flexWrap: "wrap", marginBottom: 14 }}>
         {givens.map((given) => (
           <div key={given.label} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <span style={{ fontSize: 10.5, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.03em" }}>
+            <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.03em" }}>
               {given.label.toUpperCase()}
             </span>
-            <span style={{ fontSize: 15, fontWeight: 700, color: colors.text, fontVariantNumeric: "tabular-nums" }}>
+            <span style={{ fontSize: font.size.bodyLg, fontWeight: 700, color: colors.text, fontVariantNumeric: "tabular-nums" }}>
               {given.value}
             </span>
           </div>
         ))}
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: 12 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
         {ESTIMATE_TARGETS.map((target) => {
           const actual = target.valueOf(derived);
           const grade = checked ? gradeEstimate(actual, guesses[target.id]) : null;
           const band = grade?.band ? BAND_STYLE[grade.band] : null;
           return (
             <div key={target.id} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: colors.text }}>
+              <label style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>
                 {target.label} <span style={{ color: colors.textFaint, fontWeight: 600 }}>({target.unit})</span>
               </label>
-              <span style={{ fontSize: 11, color: colors.textFaint }}>{target.hint}</span>
+              <span style={{ fontSize: font.size.label, color: colors.textFaint }}>{target.hint}</span>
               <input
                 type="number"
                 inputMode="decimal"
@@ -90,17 +86,18 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
                   setChecked(false);
                 }}
                 style={{
-                  padding: "7px 10px",
+                  minHeight: 40,
+                  padding: "10px 12px",
                   background: colors.bgDeep,
                   border: `1px solid ${band ? band.color() : colors.borderSoft}`,
                   borderRadius: 8,
                   color: colors.text,
-                  fontSize: 13,
+                  fontSize: font.size.body,
                   fontVariantNumeric: "tabular-nums",
                 }}
               />
               {band && grade?.ratio !== null && grade !== null && (
-                <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11.5, color: band.color() }}>
+                <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.small, color: band.color() }}>
                   <BrandIcon name={band.icon} color={band.color()} size={13} />
                   {t(band.label)} — {t("scale.actual", { value: formatCompact(Math.round(actual)) })}{" "}
                   <span style={{ color: colors.textFaint }}>
@@ -124,7 +121,7 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
           border: `1px solid ${colors.accent}`,
           borderRadius: 8,
           color: colors.accentBright,
-          fontSize: 12,
+          fontSize: font.size.small,
           fontWeight: 600,
           cursor: "pointer",
         }}

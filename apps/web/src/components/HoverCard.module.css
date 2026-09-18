@@ -1,11 +1,12 @@
 /* Cards that hold actions lift on hover and keyboard focus. Inline card shadows need !important to yield. */
 .hoverCard {
-  transition: transform 180ms ease, box-shadow 180ms ease;
+  transition: transform 260ms cubic-bezier(0.2, 0.72, 0.26, 1), box-shadow 260ms cubic-bezier(0.2, 0.72, 0.26, 1);
 }
 
+/* A gentle 1px rise: felt more than seen. */
 .hoverCard:hover,
 .hoverCard:has(:focus-visible) {
-  transform: translateY(-2px);
+  transform: translateY(-1px);
   box-shadow: var(--shadow-card-hover) !important;
 }
 

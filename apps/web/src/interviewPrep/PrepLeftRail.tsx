@@ -53,13 +53,13 @@ export function PrepLeftRail({ locked, pendingCategory, categoryError, activeCat
               style={{
                 width: "100%",
                 boxSizing: "border-box",
-                padding: "9px 10px 9px 32px",
+                minHeight: 40,
+                padding: "10px 12px 10px 32px",
                 background: colors.bgDeep,
                 border: `1px solid ${colors.borderSoft}`,
                 borderRadius: 8,
                 color: colors.text,
                 fontSize: font.size.body,
-                outline: "none",
               }}
             />
           </div>

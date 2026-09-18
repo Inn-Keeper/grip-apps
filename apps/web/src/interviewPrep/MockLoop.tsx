@@ -120,7 +120,8 @@ export function MockLoop({
             onChange={(e) => setArchScore(e.target.value)}
             style={{
               width: 90,
-              padding: "6px 10px",
+              minHeight: 40,
+              padding: "10px 12px",
               background: colors.bgDeep,
               border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,

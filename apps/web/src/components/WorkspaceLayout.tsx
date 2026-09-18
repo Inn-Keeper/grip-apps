@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { colors, layout, shadow } from "@grip/core/tokens";
+import { colors, font, layout, shadow } from "@grip/core/tokens";
 import styles from "./WorkspaceLayout.module.css";
 
 type WorkspaceLayoutProps = {
@@ -10,9 +10,11 @@ type WorkspaceLayoutProps = {
   density?: "normal" | "compact";
   // Space to keep clear under the left rail, e.g. for Poe fixed at the bottom-left.
   leftRailBottomInset?: number;
+  // While a focused task runs, both rails lock (rule 10) and this hint says why.
+  lockedHint?: string | null;
 };
 
-export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace", density = "normal", leftRailBottomInset }: WorkspaceLayoutProps) {
+export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace", density = "normal", leftRailBottomInset, lockedHint }: WorkspaceLayoutProps) {
   const compact = density === "compact";
 
   return (
@@ -33,13 +35,18 @@ export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace"
       } as CSSProperties}
     >
       <aside className={`${styles.rail} ${styles.leftRail}`}>
-        {left}
+        {lockedHint && (
+          <p role="status" style={{ margin: 0, padding: "0 4px", color: colors.textDim, fontSize: font.size.small, fontWeight: 600 }}>
+            {lockedHint}
+          </p>
+        )}
+        <RailContent locked={!!lockedHint}>{left}</RailContent>
       </aside>
       <section aria-label={mainLabel} className={styles.main}>
         {children}
       </section>
       <aside className={`${styles.rail} ${styles.rightRail}`}>
-        {right}
+        <RailContent locked={!!lockedHint}>{right}</RailContent>
       </aside>
     </main>
   );
@@ -75,6 +82,15 @@ export function WorkspaceTitle({ icon, title, subtitle, right }: WorkspaceTitleP
         {subtitle && <p style={{ margin: "4px 0 0", color: colors.textFaint, fontSize: 11, lineHeight: 1.45 }}>{subtitle}</p>}
       </div>
       {right}
+    </div>
+  );
+}
+
+// Keeps the rail's column gap; when locked, the rail can't be reached by mouse, keyboard or screen reader.
+function RailContent({ locked, children }: { locked: boolean; children: ReactNode }) {
+  return (
+    <div inert={locked} style={{ display: "flex", flexDirection: "column", gap: 14, opacity: locked ? 0.45 : 1, transition: "opacity 200ms ease" }}>
+      {children}
     </div>
   );
 }

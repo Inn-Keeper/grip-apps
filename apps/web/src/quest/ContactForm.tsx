@@ -3,7 +3,7 @@ import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { extractTechsFromText } from "@grip/core/cvTechs";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { DateInput, Field } from "./shared";
 import { inputStyle, textareaStyle } from "../components/shared";
@@ -132,7 +132,7 @@ export function ContactForm({
             border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
-            fontSize: 13,
+            fontSize: font.size.body,
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -148,7 +148,7 @@ export function ContactForm({
             border: "none",
             borderRadius: 8,
             color: colors.onAccent,
-            fontSize: 13,
+            fontSize: font.size.body,
             fontWeight: 600,
             cursor: form.name.trim() ? "pointer" : "not-allowed",
             opacity: form.name.trim() ? 1 : 0.5,

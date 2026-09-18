@@ -2,6 +2,7 @@ import type { CSSProperties } from "react";
 import { useId, useState } from "react";
 import { colors, tints } from "@grip/core/tokens";
 import { BrandIcon } from "./BrandIcon";
+import { fieldStyle } from "./fieldStyles";
 
 const DEFAULT_MAX_HEIGHT = 178;
 
@@ -12,18 +13,8 @@ const labelStyle: CSSProperties = {
   letterSpacing: "0.03em",
 };
 
-const controlStyle: CSSProperties = {
-  width: "100%",
-  boxSizing: "border-box",
-  padding: "8px 10px",
-  background: colors.bgDeep,
-  border: `1px solid ${colors.borderSoft}`,
-  borderRadius: 8,
-  color: colors.text,
-  fontSize: 13,
-  outline: "none",
-  fontFamily: "inherit",
-};
+// The shared field standard (40px, 8px corners); focus rings come from index.html.
+const controlStyle: CSSProperties = fieldStyle;
 
 type Option = { label: string; value: string; color?: string };
 type OptionGroup = { label: string | null; options: Option[] };

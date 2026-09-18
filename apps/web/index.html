@@ -17,6 +17,10 @@
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       body { background: #14171F; } /* keep in sync with tokens.colors.bg */
+      /* Field focus ring (accentBright); fields set no outline of their own. */
+      input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 1px; }
+      /* Placeholders use textDim: readable (AA) but clearly dimmer than typed text. */
+      ::placeholder { color: #9AA5BC; opacity: 1; }
 
       /* Scrollbars — matched to the dark theme on both axes. Hex values mirror
          tokens.colors (border / textFaint / bg); keep them in sync. */

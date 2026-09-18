@@ -3,10 +3,13 @@ import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, eval
 import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, layout, shadow } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
+import { HeadlineMetric } from "../components/HeadlineMetric";
+import { NextUpLink, NextUpShell } from "../components/NextUpShell";
+import { WorkspaceLayout, WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { CATEGORY_ICONS, CUSTOM_CATEGORY, NODE_H, NODE_W, WORLD } from "./constants";
 import { DesignTimer } from "./DesignTimer";
 import { EdgeInspector } from "./EdgeInspector";
@@ -92,7 +95,7 @@ export default function ArchBoard() {
   useEffect(() => {
     if (!isDirty) return;
     const warn = (event: BeforeUnloadEvent) => event.preventDefault();
-    const guardNavigation = (event: Event) => { if (!window.confirm("Discard unsaved changes?")) event.preventDefault(); };
+    const guardNavigation = (event: Event) => { if (!window.confirm(t("board.discardConfirm"))) event.preventDefault(); };
     window.addEventListener("beforeunload", warn);
     window.addEventListener("grip:navigate", guardNavigation);
     return () => { window.removeEventListener("beforeunload", warn); window.removeEventListener("grip:navigate", guardNavigation); };
@@ -112,7 +115,8 @@ export default function ArchBoard() {
     return () => window.removeEventListener("keydown", onKeyDown);
   });
 
-  const { data: savedBoards = [], error: boardsError, isLoading: boardsLoading, refetch: retryBoards } = useSavedBoardsQuery(savedOpen);
+  // Fetched up front: Next Up offers to continue the latest saved board (e.g. the demo sample).
+  const { data: savedBoards = [], error: boardsError, isLoading: boardsLoading, refetch: retryBoards } = useSavedBoardsQuery();
   const fetchBoard = useLoadBoard();
   const saveBoardMutation = useSaveBoardMutation((board) => {
     setActiveBoardId(board.id ?? null);
@@ -149,7 +153,7 @@ export default function ArchBoard() {
     historyRef.current = history; applySnapshot(history.present); renderHistory((value) => value + 1);
   };
   const commit = (next: any) => applyHistory(commitSnapshot({ ...historyRef.current, present: snapshot() }, next));
-  const mayDiscard = () => !isDirty || window.confirm("Discard unsaved changes?");
+  const mayDiscard = () => !isDirty || window.confirm(t("board.discardConfirm"));
 
   const loadBoard = (board: SavedBoard, discardConfirmed = false) => {
     if (!discardConfirmed && !mayDiscard()) return;
@@ -345,511 +349,517 @@ export default function ArchBoard() {
     setConnectFrom(next.sourceId);
   };
 
+  const saveBoard = () => {
+    submittedSnapshotRef.current = snapshot();
+    saveBoardMutation.mutate({
+      id: activeBoardId ?? undefined,
+      title: activeBoardTitle ?? t("board.draftTitle", { scenario: scenario.name }),
+      scenarioId: scenario.id,
+      nodes,
+      edges,
+      talkTrack: { sections: talkSections, rating: talkRating },
+      talkGrade,
+    });
+  };
+  const evaluateDesign = () => setResult(evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges));
+  const nodeName = (id: string | null) => meta(nodeById[id ?? ""]?.type ?? "client").label;
+
+  // On an empty, unsaved canvas, the one main action is picking up where you left off.
+  const latestBoard = nodes.length === 0 && !activeBoardId && !isDirty ? savedBoards[0] : undefined;
+  // Next Up coaches the current workflow step; evaluating is the one main action (rule 1).
+  const stepCopy =
+    activeWorkflowStep === 1
+      ? { title: t("board.stepAddTitle"), sub: t("board.stepAddSub") }
+      : activeWorkflowStep === 2
+        ? { title: t("board.stepConnectTitle"), sub: connectFrom ? t("board.stepConnectTarget", { name: nodeName(connectFrom) }) : t("board.stepConnectSub") }
+        : { title: t("board.stepDescribeTitle"), sub: t("board.stepDescribeSub") };
+  const statusText = saveBoardMutation.isPending ? t("board.statusSaving") : isDirty ? t("board.statusDirty") : activeBoardId ? t("board.saved") : t("board.statusNew");
+  const cssVars = {
+    ["--arch-border" as string]: colors.borderSoft,
+    ["--arch-text-dim" as string]: colors.textDim,
+    ["--arch-surface" as string]: colors.surface,
+    ["--arch-canvas" as string]: colors.bgDeep,
+    ["--arch-text" as string]: colors.text,
+    ["--arch-accent" as string]: colors.accentBright,
+  } as React.CSSProperties;
+  const overBudget = liveCost > scenario.budget;
+
   return (
-    <main className={styles.page} style={{
-      minHeight: `calc(100vh - ${layout.webHeaderHeight}px)`,
-      ["--arch-border" as string]: colors.borderSoft,
-      ["--arch-text-dim" as string]: colors.textDim,
-      ["--arch-surface" as string]: colors.surface,
-      ["--arch-canvas" as string]: colors.bgDeep,
-      ["--arch-text" as string]: colors.text,
-      ["--arch-accent" as string]: colors.accentBright,
-    }}>
-      <h1 style={{ margin: "0 0 6px", fontSize: 22, fontWeight: 700, letterSpacing: "-0.5px", color: colors.textBright }}>
-        Arch Board
-      </h1>
-      <p style={{ margin: "0 0 16px", color: colors.textFaint, fontSize: 13 }}>
-        Pick a scenario, click components to add them, then move and connect them on the canvas. Select a node handle
-        and a target, or hold Shift and drag between handles.
-      </p>
-
-      {/* Scenario picker */}
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" }}>
-        <BrandIcon name={CATEGORY_ICONS[scenario.category ?? ""] ?? "board"} color={colors.accentBright} size={16} />
-        <Combobox
-          value={scenario.id}
-          options={scenarioOptions}
-          onChange={switchScenario}
-          style={{ flex: 1, minWidth: 260 }}
-          triggerStyle={{ padding: "9px 12px", fontWeight: 600 }}
-        />
-        <span style={{ fontSize: 11, color: colors.textFaint, fontWeight: 600 }}>
-          {allScenarios.length} scenarios
-        </span>
-        {scenario.custom && (
-          <button
-            onClick={() => window.confirm(`Delete scenario "${scenario.name}"?`) && deleteScenarioMutation.mutate(scenario.id)}
-            style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.danger}50`,
-              borderRadius: 8, color: colors.dangerBright, fontSize: 12, fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            {t("common.delete")}
-          </button>
-        )}
-        <button
-          onClick={() => setCreatorOpen((value) => !value)}
-          style={{
-            display: "flex", alignItems: "center", gap: 5,
-            padding: "7px 14px", background: "transparent",
-            border: `1px solid ${creatorOpen ? colors.accent : `${colors.accent}60`}`,
-            borderRadius: 8, color: colors.accentBright, fontSize: 12, fontWeight: 600, cursor: "pointer",
-          }}
-        >
-          <BrandIcon name="board" color={colors.accentBright} size={13} />
-          New scenario
-        </button>
-      </div>
-
-      {creatorOpen && (
-        <ScenarioForm
-          onSave={(form) => saveScenarioMutation.mutate(form)}
-          onCancel={() => setCreatorOpen(false)}
-          saving={saveScenarioMutation.isPending}
-          error={saveScenarioMutation.error}
-        />
-      )}
-
-      {scenario.brief && (
-        <div
-          style={{
-            padding: "12px 16px", background: colors.surface, border: `1px solid ${colors.borderSoft}`, boxShadow: shadow.card,
-            borderRadius: 10, marginBottom: 14, fontSize: 13, lineHeight: 1.6, color: colors.textDim,
-          }}
-        >
-          {scenario.brief}
-        </div>
-      )}
-
-      <ScaleBrief key={scenario.id} scenario={scenario} />
-
-      <DesignTimer />
-
-      {/* Live cost ticker + actions */}
-      <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 10, flexWrap: "wrap" }}>
-        <span aria-live="polite" style={{ fontSize: 12, color: isDirty ? colors.warningBright : colors.successBright }}>
-          {saveBoardMutation.isPending ? "Saving…" : isDirty ? "Unsaved changes" : activeBoardId ? "Saved" : "New board"}
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: liveCost > scenario.budget ? colors.danger : colors.textDim }}>
-          <BrandIcon name="cost" color={liveCost > scenario.budget ? colors.danger : colors.textDim} size={14} />
-          Cost {liveCost} / budget {scenario.budget}
-        </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: colors.textDim }}>
-          <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-          Maintenance load {liveMaint}
-        </span>
-        <div className={styles.actions}>
-          <button className={styles.toolbarButton} onClick={() => applyHistory(undo(historyRef.current))} disabled={!historyRef.current.past.length}>Undo</button>
-          <button className={styles.toolbarButton} onClick={() => applyHistory(redo(historyRef.current))} disabled={!historyRef.current.future.length}>Redo</button>
-          <button
-            onClick={() => setTalkOpen((value) => !value)}
-            style={{
-              display: "flex", alignItems: "center", gap: 5,
-              padding: "7px 14px", background: "transparent",
-              border: `1px solid ${talkOpen ? colors.accent : colors.borderSoft}`,
-              borderRadius: 8, color: talkOpen ? colors.accentBright : colors.textDim,
-              fontSize: 12, fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            <BrandIcon name="spark" color={talkOpen ? colors.accentBright : colors.textDim} size={13} />
-            {t("talk.title")} ({talkAnswered}/{TALK_TRACK_SECTIONS.length})
-          </button>
-          <button
-            onClick={() => setSavedOpen((value) => !value)}
-            style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${savedOpen ? colors.accent : colors.borderSoft}`,
-              borderRadius: 8, color: savedOpen ? colors.accentBright : colors.textDim, fontSize: 12, fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            {t("board.saved")}{savedOpen && !boardsLoading ? ` (${savedBoards.length})` : ""}
-          </button>
-          <button
-            onClick={() => {
-              submittedSnapshotRef.current = snapshot();
-              saveBoardMutation.mutate({
-                id: activeBoardId ?? undefined,
-                title: activeBoardTitle ?? t("board.draftTitle", { scenario: scenario.name }),
-                scenarioId: scenario.id,
-                nodes,
-                edges,
-                talkTrack: { sections: talkSections, rating: talkRating },
-                talkGrade,
-              });
-            }}
-            disabled={saveBoardMutation.isPending}
-            style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.success}60`,
-              borderRadius: 8, color: colors.successBright, fontSize: 12, fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            {saveBoardMutation.isPending ? t("common.saving") : t("common.save")}
-          </button>
-          <button
-            onClick={() => commit({ ...snapshot(), nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null })}
-            style={{
-              padding: "7px 14px", background: "transparent", border: `1px solid ${colors.borderSoft}`,
-              borderRadius: 8, color: colors.textDim, fontSize: 12, fontWeight: 600, cursor: "pointer",
-            }}
-          >
-            Clear board
-          </button>
-          <button
-            onClick={() => setResult(evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges))}
-            disabled={nodes.length === 0}
-            style={{
-              padding: "7px 16px", background: colors.accent, border: "none", borderRadius: 8,
-              color: colors.onAccent, fontSize: 12, fontWeight: 600,
-              cursor: nodes.length ? "pointer" : "not-allowed", opacity: nodes.length ? 1 : 0.5,
-            }}
-          >
-            Evaluate design
-          </button>
-        </div>
-      </div>
-
-
-      {(saveBoardMutation.error || deleteBoardMutation.error || deleteScenarioMutation.error || boardsError) && (
-        <p style={{ margin: "0 0 10px", fontSize: 12, color: colors.dangerBright }}>
-          {saveBoardMutation.error
-            ? `${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`
-            : deleteBoardMutation.error
-              ? `Delete failed: ${deleteBoardMutation.error.message}`
-              : deleteScenarioMutation.error
-                ? `Delete failed: ${deleteScenarioMutation.error.message}`
-                : t("board.boardsError", { message: (boardsError as Error).message })}
-        </p>
-      )}
-
-      {savedOpen && (
-        boardsLoading ? <p style={{ color: colors.textFaint }}>Loading saved boards…</p> : boardsError ?
-        <p role="alert" style={{ color: colors.dangerBright }}>Could not load saved boards. <button onClick={() => retryBoards()}>Retry</button></p> : <SavedBoards
-          activeBoardId={activeBoardId}
-          allScenarios={allScenarios}
-          boards={savedBoards}
-          onDelete={(id) => deleteBoardMutation.mutate(id)}
-          onLoad={requestBoard}
-        />
-      )}
-
-      <div className={styles.workflow} aria-label="Design workflow">
-        <div className={`${styles.workflowStep} ${activeWorkflowStep === 1 ? styles.workflowActive : ""}`}>
-          <strong>1. Add components</strong><span>Choose the building blocks from the palette.</span>
-        </div>
-        <div className={`${styles.workflowStep} ${activeWorkflowStep === 2 ? styles.workflowActive : ""}`}>
-          <strong>2. Connect nodes</strong>
-          <span aria-live="polite">{connectFrom ? `Now choose a target for ${meta(nodeById[connectFrom]?.type ?? "client").label}, or press Escape.` : "Select a node handle, then choose another node."}</span>
-        </div>
-        <div className={`${styles.workflowStep} ${activeWorkflowStep === 3 ? styles.workflowActive : ""}`}>
-          <strong>3. Describe the arrow</strong><span>Click an arrow or use “Edit arrow” to set its mode and protocol.</span>
-        </div>
-      </div>
-      {scenariosError && <p role="alert" style={{ color: colors.dangerBright }}>Custom scenarios could not be loaded.</p>}
-        <label className={styles.connectionRow} style={{ color: colors.textDim }}>
-          Edit arrow{" "}
-          <select className={styles.connectionSelect} disabled={edges.length === 0} value={inspectingEdgeId ?? ""} onChange={(event) => setInspectingEdgeId(event.target.value || null)}>
-            <option value="">{edges.length === 0 ? "Connect two nodes first" : "Select an arrow to edit"}</option>
-            {edges.map((edge) => <option key={edge.id} value={edge.id}>{meta(nodeById[edge.from]?.type ?? "client").label} → {meta(nodeById[edge.to]?.type ?? "client").label}{edge.protocol ? ` · ${edge.protocol}` : ""}</option>)}
-          </select>
-        </label>
-      <div className={styles.editor}>
-        <NodePalette onAddNode={addNode} />
-
-        {/* Canvas */}
-        <div
-          ref={canvasRef}
-          className={styles.canvas}
-          data-board-surface="true"
-          tabIndex={0}
-          aria-label={t("board.canvasLabel")}
-          onPointerMove={(e) => { if (connectDragRef.current) updateConnectionDrag(e); }}
-          onPointerUp={(e) => { if (connectDragRef.current) finishConnectionDrag(e); }}
-          onPointerCancel={() => {
-            if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
-            dragFrameRef.current = null; pendingNodesRef.current = null; dragRef.current = null; cancelConnection();
-          }}
-          onClick={(e) => {
-            if (consumePan()) return;
-            if ((e.target as HTMLElement).dataset.boardSurface === "true") cancelConnection();
-          }}
-          style={{
-            position: "relative", flex: 1, minWidth: 0, height: "calc(100vh - 360px)", minHeight: 560,
-            background: colors.bgDeep,
-            // The dot grid belongs to the board, so it pans and scales with it.
-            backgroundImage: `radial-gradient(${colors.borderSoft} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
-            backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
-            backgroundPosition: `${view.x}px ${view.y}px`,
-            border: `1px solid ${colors.borderSoft}`, borderRadius: 14, overflow: "hidden", touchAction: "none",
-          }}
-        >
-          {nodes.length === 0 && (
-            <div
-              style={{
-                position: "absolute", inset: 0, display: "flex", alignItems: "center",
-                justifyContent: "center", color: colors.textFaint, fontSize: 13, pointerEvents: "none",
-              }}
-            >
-              {t("board.emptyCanvasHint")}
+    <WorkspaceLayout
+      mainLabel={t("board.title")}
+      lockedHint={creatorOpen ? t("board.lockedHint") : null}
+      left={
+        <>
+          {/* Left rail: the scenario you are designing for, and your saved boards (rule 4). */}
+          <WorkspacePanel>
+            <WorkspaceTitle
+              icon={<BrandIcon name={CATEGORY_ICONS[scenario.category ?? ""] ?? "board"} color={colors.accentBright} size={17} />}
+              title={t("board.context")}
+              subtitle={t("board.scenarioCount", { count: allScenarios.length })}
+            />
+            <div style={{ marginTop: 12 }}>
+              <Combobox value={scenario.id} options={scenarioOptions} onChange={switchScenario} style={{ width: "100%" }} triggerStyle={{ fontWeight: 600 }} />
             </div>
+            <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
+              <button type="button" className={styles.toolbarButton} onClick={() => setCreatorOpen(true)} style={{ display: "flex", alignItems: "center", gap: 5, color: colors.accentBright }}>
+                <BrandIcon name="board" color={colors.accentBright} size={13} />
+                {t("board.newScenario")}
+              </button>
+              {scenario.custom && (
+                <button
+                  type="button"
+                  className={styles.toolbarButton}
+                  onClick={() => window.confirm(t("board.deleteScenarioConfirm", { name: scenario.name })) && deleteScenarioMutation.mutate(scenario.id)}
+                  style={{ color: colors.dangerBright }}
+                >
+                  {t("common.delete")}
+                </button>
+              )}
+            </div>
+            {deleteScenarioMutation.error && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{t("board.deleteFailed", { message: deleteScenarioMutation.error.message })}</p>}
+            {scenariosError && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{t("board.scenariosError")}</p>}
+          </WorkspacePanel>
+
+          {scenario.brief && (
+            <WorkspacePanel>
+              <p style={{ margin: 0, fontSize: font.size.body, lineHeight: 1.6, color: colors.textDim }}>{scenario.brief}</p>
+            </WorkspacePanel>
           )}
 
-          <div
-            data-board-surface="true"
-            style={{
-              position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height,
-              transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`, transformOrigin: "0 0",
-            }}
-          >
+          <ScaleBrief key={scenario.id} scenario={scenario} />
 
-          {/* Edges */}
-          <svg style={{ position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height, pointerEvents: "none" }}>
-            <defs>
-              <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill={colors.textDim} />
-              </marker>
-            </defs>
-            {edges.map((e) => {
-              const a = nodeById[e.from];
-              const b = nodeById[e.to];
-              if (!a || !b) return null;
-              const sx = a.x + (b.x >= a.x ? NODE_W : 0);
-              const sy = a.y + NODE_H / 2;
-              const tx = b.x + (b.x >= a.x ? 0 : NODE_W);
-              const ty = b.y + NODE_H / 2;
-              const mx = (sx + tx) / 2;
-              const d = `M ${sx} ${sy} C ${mx} ${sy}, ${mx} ${ty}, ${tx} ${ty}`;
-              const selected = inspectingEdgeId === e.id;
-              const modeLabel = e.mode === "sync" ? t("edge.sync") : e.mode === "async" ? t("edge.async") : null;
-              const label = [e.protocol, modeLabel].filter(Boolean).join(" · ");
-              return (
-                <g key={e.id}>
-                  <path
-                    d={d}
-                    fill="none"
-                    stroke={selected ? colors.accentBright : colors.textDim}
-                    strokeWidth={selected ? 3 : 2}
-                    // Async hops are dashed — the same visual language a
-                    // whiteboard uses for "this one doesn't block".
-                    strokeDasharray={e.mode === "async" ? "6 4" : undefined}
-                    markerEnd="url(#arrow)"
-                  />
-                  {label && (
-                    <text
-                      x={mx}
-                      y={(sy + ty) / 2 - 6}
-                      textAnchor="middle"
-                      style={{ fontSize: 10, fontWeight: 600, fill: colors.textFaint, pointerEvents: "none" }}
-                    >
-                      {label}
-                    </text>
-                  )}
-                  <path
-                    d={d}
-                    fill="none"
-                    stroke="transparent"
-                    strokeWidth="14"
-                    style={{ pointerEvents: "stroke", cursor: "pointer" }}
-                    onClick={() => setInspectingEdgeId((current) => (current === e.id ? null : e.id))}
-                  >
-                    <title>{t("edge.clickHint")}</title>
-                  </path>
-                </g>
-              );
-            })}
-            {connectDrag && (() => {
-              const fromNode = nodeById[connectDrag.from];
-              if (!fromNode) return null;
-              const start = nodeAxisPoint(fromNode, connectDrag);
-              const mx = (start.x + connectDrag.x) / 2;
-              const d = `M ${start.x} ${start.y} C ${mx} ${start.y}, ${mx} ${connectDrag.y}, ${connectDrag.x} ${connectDrag.y}`;
-              return <path d={d} fill="none" stroke={colors.accentBright} strokeWidth="2" strokeDasharray="5 5" markerEnd="url(#arrow)" />;
-            })()}
-          </svg>
+          {/* Saved boards load only once this is opened. */}
+          <details className={styles.savedBoards} open={savedOpen} onToggle={(event) => setSavedOpen(event.currentTarget.open)}>
+            <summary className={styles.savedSummary}>
+              <BrandIcon name="story" color={colors.accentBright} size={16} />
+              <span style={{ flex: 1 }}>{t("board.savedBoards")}</span>
+              {!boardsLoading && <span style={{ color: colors.textFaint, fontSize: font.size.small }}>{savedBoards.length}</span>}
+            </summary>
+            <div style={{ padding: "0 14px 14px" }}>
+              {boardsLoading ? (
+                <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.small }}>{t("board.boardsLoading")}</p>
+              ) : boardsError ? (
+                <p role="alert" style={{ margin: 0, color: colors.dangerBright, fontSize: font.size.small }}>
+                  {t("board.boardsError", { message: (boardsError as Error).message })}{" "}
+                  <button type="button" className={styles.toolbarButton} onClick={() => retryBoards()}>{t("board.retry")}</button>
+                </p>
+              ) : (
+                <SavedBoards activeBoardId={activeBoardId} allScenarios={allScenarios} boards={savedBoards} onDelete={(id) => deleteBoardMutation.mutate(id)} onLoad={requestBoard} />
+              )}
+              {deleteBoardMutation.error && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{t("board.deleteFailed", { message: deleteBoardMutation.error.message })}</p>}
+            </div>
+          </details>
+        </>
+      }
+      right={
+        <>
+          {/* Right rail: the score first, then the round and the budget; inspectors sit beside the canvas (rule 13). */}
+          <WorkspacePanel>
+            {result ? (
+              <HeadlineMetric label={t("board.scoreLabel")} value={result.score} unit="%" pct={result.score} hint={t("board.scoreHint", { earned: result.earned, total: result.totalPts })} />
+            ) : (
+              <div style={{ marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${colors.borderSoft}` }}>
+                <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
+                  <span style={{ color: colors.textDim, fontSize: font.size.small, fontWeight: 700 }}>{t("board.scoreLabel")}</span>
+                  <span style={{ color: colors.textFaint, fontSize: font.size.hero, fontWeight: 800, lineHeight: 1 }}>—</span>
+                </div>
+                <p style={{ margin: "8px 0 0", color: colors.textFaint, fontSize: font.size.label }}>{t("board.scoreEmpty")}</p>
+              </div>
+            )}
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, fontSize: font.size.small, fontWeight: 600 }}>
+              <span style={{ display: "flex", alignItems: "center", gap: 6, color: overBudget ? colors.dangerBright : colors.textDim }}>
+                <BrandIcon name="cost" color={overBudget ? colors.dangerBright : colors.textDim} size={14} />
+                {t("board.costLine", { cost: liveCost, budget: scenario.budget })}
+              </span>
+              <span style={{ display: "flex", alignItems: "center", gap: 6, color: colors.textDim }}>
+                <BrandIcon name="maintenance" color={colors.textDim} size={14} />
+                {t("board.maintLine", { value: liveMaint })}
+              </span>
+            </div>
+          </WorkspacePanel>
 
-          {/* Nodes */}
-          {nodes.map((n) => {
-            const spec = meta(n.type);
-            const color = TYPE_COLORS[n.type];
-            const isSource = connectFrom === n.id;
-            const axisHandle = (side: string) => (
-              <button
-                className={styles.handle}
-                onPointerDown={(ev) => {
-                  ev.stopPropagation();
-                  if (ev.shiftKey) startConnectionDrag(ev, n);
-                }}
-                onPointerMove={(ev) => {
-                  ev.stopPropagation();
-                  if (connectDragRef.current) updateConnectionDrag(ev);
-                }}
-                onPointerUp={(ev) => {
-                  ev.stopPropagation();
-                  if (connectDragRef.current) finishConnectionDrag(ev);
-                }}
-                onClick={(ev) => {
-                  ev.stopPropagation();
-                  if (suppressClickRef.current) {
-                    suppressClickRef.current = false;
-                    return;
-                  }
-                  const next = activateConnection(connectFrom, n.id);
-                  if (next.edge) addEdge(next.edge.from, next.edge.to);
-                  setConnectFrom(next.sourceId);
-                }}
-                aria-label={isSource ? `Cancel connection from ${spec.label}` : `Connect ${spec.label}`}
-                title={isSource ? "Cancel connection" : "Connect from here, or hold Shift and drag to another node axis"}
-                style={{
-                  position: "absolute",
-                  [side]: -16,
-                  top: NODE_H / 2 - 16,
-                  width: 32,
-                  height: 32,
-                  borderRadius: "50%",
-                  border: "none",
-                  background: "transparent",
-                  ["--node-color" as string]: color,
-                  cursor: "crosshair",
-                  padding: 0,
-                }}
+          <DesignTimer />
+
+          {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
+            const edge = edges.find((e) => e.id === inspectingEdgeId)!;
+            return (
+              <EdgeInspector
+                edge={edge}
+                from={nodeById[edge.from]}
+                to={nodeById[edge.to]}
+                onChange={(patch) => patchEdge(edge.id, patch)}
+                onRemove={() => removeEdge(edge.id)}
+                onClose={() => setInspectingEdgeId(null)}
               />
             );
-            return (
+          })()}
+
+          {inspectingId && nodeById[inspectingId] && (
+            <NodeInspector node={nodeById[inspectingId]} onChange={(patch) => patchNode(inspectingId, patch)} onClose={() => setInspectingId(null)} />
+          )}
+
+          {talkOpen && (
+            <TalkTrack
+              sections={talkSections}
+              rating={talkRating}
+              onChangeSection={(id, value) => {
+                commit({ ...snapshot(), talkSections: { ...talkSections, [id]: value }, talkGrade: null });
+              }}
+              onChangeRating={(value) => {
+                commit({ ...snapshot(), talkRating: value, talkGrade: null });
+              }}
+            />
+          )}
+        </>
+      }
+    >
+      <div style={cssVars}>
+        {creatorOpen ? (
+          // Creating a scenario is a task: it takes the main column and locks the rails (rules 8, 10).
+          <div style={{ width: "min(100%, 860px)", paddingBottom: 48 }}>
+            <button type="button" onClick={() => setCreatorOpen(false)} style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}>
+              {t("board.back")}
+            </button>
+            <ScenarioForm
+              onSave={(form) => saveScenarioMutation.mutate(form)}
+              onCancel={() => setCreatorOpen(false)}
+              saving={saveScenarioMutation.isPending}
+              error={saveScenarioMutation.error}
+            />
+          </div>
+        ) : (
+          <>
+            {latestBoard ? (
+              <NextUpShell
+                title={t("board.continueTitle", { title: latestBoard.title })}
+                sub={t("board.continueSub", {
+                  scenario: allScenarios.find((item) => item.id === latestBoard.scenarioId)?.name ?? latestBoard.scenarioId,
+                  date: new Date(latestBoard.updatedAt).toLocaleDateString(),
+                })}
+                tone={colors.accent ?? ""}
+                actionLabel={t("board.continueAction")}
+                actionIcon="story"
+                onAction={() => requestBoard(latestBoard)}
+              />
+            ) : (
+            <NextUpShell
+              title={stepCopy.title}
+              sub={stepCopy.sub}
+              tone={colors.accent ?? ""}
+              actionLabel={t("board.evaluateDesign")}
+              actionIcon="evaluate"
+              onAction={evaluateDesign}
+              disabled={nodes.length === 0}
+              links={
+                <>
+                  <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} />
+                  <NextUpLink label={t("board.orTalk")} onClick={() => setTalkOpen(true)} />
+                </>
+              }
+            />
+            )}
+
+            {/* Slim toolbar: editing controls for the canvas right under it. */}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
+              <span aria-live="polite" style={{ fontSize: font.size.small, fontWeight: 600, color: isDirty ? colors.warningBright : colors.successBright, marginRight: 4 }}>
+                {statusText}
+              </span>
+              <button type="button" className={styles.toolbarButton} onClick={() => applyHistory(undo(historyRef.current))} disabled={!historyRef.current.past.length}>{t("board.undo")}</button>
+              <button type="button" className={styles.toolbarButton} onClick={() => applyHistory(redo(historyRef.current))} disabled={!historyRef.current.future.length}>{t("board.redo")}</button>
+              <button
+                type="button"
+                className={styles.toolbarButton}
+                aria-pressed={talkOpen}
+                onClick={() => setTalkOpen((value) => !value)}
+                style={{ display: "flex", alignItems: "center", gap: 5, color: talkOpen ? colors.accentBright : undefined, borderColor: talkOpen ? colors.accent : undefined }}
+              >
+                <BrandIcon name="spark" color={talkOpen ? colors.accentBright : colors.textDim} size={13} />
+                {t("talk.title")} ({talkAnswered}/{TALK_TRACK_SECTIONS.length})
+              </button>
+              <button type="button" className={styles.toolbarButton} onClick={saveBoard} disabled={saveBoardMutation.isPending} aria-busy={saveBoardMutation.isPending} style={{ color: colors.successBright }}>
+                {saveBoardMutation.isPending ? t("common.saving") : t("common.save")}
+              </button>
+              <button type="button" className={styles.toolbarButton} onClick={() => commit({ ...snapshot(), nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null })}>
+                {t("board.clear")}
+              </button>
+              <label className={styles.connectionRow} style={{ marginLeft: "auto", marginBottom: 0, color: colors.textDim }}>
+                {t("board.editArrow")}{" "}
+                <select className={styles.connectionSelect} disabled={edges.length === 0} value={inspectingEdgeId ?? ""} onChange={(event) => setInspectingEdgeId(event.target.value || null)}>
+                  <option value="">{edges.length === 0 ? t("board.edgeNone") : t("board.edgeSelect")}</option>
+                  {edges.map((edge) => <option key={edge.id} value={edge.id}>{nodeName(edge.from)} → {nodeName(edge.to)}{edge.protocol ? ` · ${edge.protocol}` : ""}</option>)}
+                </select>
+              </label>
+            </div>
+            {saveBoardMutation.error && (
+              <p role="alert" style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.dangerBright }}>{`${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</p>
+            )}
+
+            <div className={styles.editor}>
+              <NodePalette onAddNode={addNode} />
+          {/* Canvas */}
+          <div
+            ref={canvasRef}
+            className={styles.canvas}
+            data-board-surface="true"
+            tabIndex={0}
+            aria-label={t("board.canvasLabel")}
+            onPointerMove={(e) => { if (connectDragRef.current) updateConnectionDrag(e); }}
+            onPointerUp={(e) => { if (connectDragRef.current) finishConnectionDrag(e); }}
+            onPointerCancel={() => {
+              if (dragFrameRef.current !== null) window.cancelAnimationFrame(dragFrameRef.current);
+              dragFrameRef.current = null; pendingNodesRef.current = null; dragRef.current = null; cancelConnection();
+            }}
+            onClick={(e) => {
+              if (consumePan()) return;
+              if ((e.target as HTMLElement).dataset.boardSurface === "true") cancelConnection();
+            }}
+            style={{
+              position: "relative", minWidth: 0, height: "calc(100vh - 430px)", minHeight: 420,
+              background: colors.bgDeep,
+              // The dot grid belongs to the board, so it pans and scales with it.
+              backgroundImage: `radial-gradient(${colors.borderSoft} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
+              backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
+              backgroundPosition: `${view.x}px ${view.y}px`,
+              border: `1px solid ${colors.borderSoft}`, borderRadius: 14, overflow: "hidden", touchAction: "none",
+            }}
+          >
+            {nodes.length === 0 && (
               <div
-                key={n.id}
-                className={styles.node}
-                onPointerDown={(e) => onNodePointerDown(e, n)}
-                onPointerMove={onNodePointerMove}
-                onPointerUp={onNodePointerUp}
-                onClick={() => onNodeClick(n)}
-                tabIndex={0}
-                role="group"
-                aria-label={`${spec.label} node`}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter") { event.preventDefault(); onNodeClick(n); }
-                  if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
-                    event.preventDefault();
-                    const step = event.shiftKey ? 1 : 10;
-                    const dx = event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0;
-                    const dy = event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0;
-                    commit({ ...snapshot(), nodes: nodes.map((node) => node.id === n.id ? { ...node, x: Math.max(0, node.x + dx), y: Math.max(0, node.y + dy) } : node) });
-                  }
-                  if (event.key === "Delete" || event.key === "Backspace") { event.preventDefault(); removeNode(n.id); }
-                }}
                 style={{
-                  position: "absolute", left: n.x, top: n.y, width: NODE_W, height: NODE_H,
-                  boxSizing: "border-box",
-                  background: colors.surface,
-                  border: `2px solid ${isSource ? colors.textBright : `${color}60`}`,
-                  borderRadius: 10, cursor: "grab", touchAction: "none", userSelect: "none",
-                  display: "flex", alignItems: "center", gap: 8, padding: "0 10px",
-                  boxShadow: isSource ? `0 0 0 3px ${color}30` : "none",
+                  position: "absolute", inset: 0, display: "flex", alignItems: "center",
+                  justifyContent: "center", color: colors.textFaint, fontSize: font.size.body, pointerEvents: "none", padding: "0 24px", textAlign: "center",
                 }}
               >
-                <BrandIcon name={nodeIconName(n.type)} color={color} size={18} />
-                <span style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-                  <span style={{ fontSize: 11, fontWeight: 600, color: colors.text, lineHeight: 1.2 }}>{spec.label}</span>
-                  {(n.partitionKey?.trim() || n.replicas) && (
-                    <span
+                {t("board.emptyCanvasHint")}
+              </div>
+            )}
+
+            <div
+              data-board-surface="true"
+              style={{
+                position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height,
+                transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`, transformOrigin: "0 0",
+              }}
+            >
+
+            {/* Edges */}
+            <svg style={{ position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height, pointerEvents: "none" }}>
+              <defs>
+                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                  <path d="M 0 0 L 10 5 L 0 10 z" fill={colors.textDim} />
+                </marker>
+              </defs>
+              {edges.map((e) => {
+                const a = nodeById[e.from];
+                const b = nodeById[e.to];
+                if (!a || !b) return null;
+                const sx = a.x + (b.x >= a.x ? NODE_W : 0);
+                const sy = a.y + NODE_H / 2;
+                const tx = b.x + (b.x >= a.x ? 0 : NODE_W);
+                const ty = b.y + NODE_H / 2;
+                const mx = (sx + tx) / 2;
+                const d = `M ${sx} ${sy} C ${mx} ${sy}, ${mx} ${ty}, ${tx} ${ty}`;
+                const selected = inspectingEdgeId === e.id;
+                const modeLabel = e.mode === "sync" ? t("edge.sync") : e.mode === "async" ? t("edge.async") : null;
+                const label = [e.protocol, modeLabel].filter(Boolean).join(" · ");
+                return (
+                  <g key={e.id}>
+                    <path
+                      d={d}
+                      fill="none"
+                      stroke={selected ? colors.accentBright : colors.textDim}
+                      strokeWidth={selected ? 3 : 2}
+                      // Async hops are dashed — the same visual language a
+                      // whiteboard uses for "this one doesn't block".
+                      strokeDasharray={e.mode === "async" ? "6 4" : undefined}
+                      markerEnd="url(#arrow)"
+                    />
+                    {label && (
+                      <text
+                        x={mx}
+                        y={(sy + ty) / 2 - 6}
+                        textAnchor="middle"
+                        style={{ fontSize: font.size.caption, fontWeight: 600, fill: colors.textFaint, pointerEvents: "none" }}
+                      >
+                        {label}
+                      </text>
+                    )}
+                    <path
+                      d={d}
+                      fill="none"
+                      stroke="transparent"
+                      strokeWidth="14"
+                      style={{ pointerEvents: "stroke", cursor: "pointer" }}
+                      onClick={() => setInspectingEdgeId((current) => (current === e.id ? null : e.id))}
+                    >
+                      <title>{t("edge.clickHint")}</title>
+                    </path>
+                  </g>
+                );
+              })}
+              {connectDrag && (() => {
+                const fromNode = nodeById[connectDrag.from];
+                if (!fromNode) return null;
+                const start = nodeAxisPoint(fromNode, connectDrag);
+                const mx = (start.x + connectDrag.x) / 2;
+                const d = `M ${start.x} ${start.y} C ${mx} ${start.y}, ${mx} ${connectDrag.y}, ${connectDrag.x} ${connectDrag.y}`;
+                return <path d={d} fill="none" stroke={colors.accentBright} strokeWidth="2" strokeDasharray="5 5" markerEnd="url(#arrow)" />;
+              })()}
+            </svg>
+
+            {/* Nodes */}
+            {nodes.map((n) => {
+              const spec = meta(n.type);
+              const color = TYPE_COLORS[n.type];
+              const isSource = connectFrom === n.id;
+              const axisHandle = (side: string) => (
+                <button
+                  className={styles.handle}
+                  onPointerDown={(ev) => {
+                    ev.stopPropagation();
+                    if (ev.shiftKey) startConnectionDrag(ev, n);
+                  }}
+                  onPointerMove={(ev) => {
+                    ev.stopPropagation();
+                    if (connectDragRef.current) updateConnectionDrag(ev);
+                  }}
+                  onPointerUp={(ev) => {
+                    ev.stopPropagation();
+                    if (connectDragRef.current) finishConnectionDrag(ev);
+                  }}
+                  onClick={(ev) => {
+                    ev.stopPropagation();
+                    if (suppressClickRef.current) {
+                      suppressClickRef.current = false;
+                      return;
+                    }
+                    const next = activateConnection(connectFrom, n.id);
+                    if (next.edge) addEdge(next.edge.from, next.edge.to);
+                    setConnectFrom(next.sourceId);
+                  }}
+                  aria-label={isSource ? t("board.cancelConnectFrom", { name: spec.label }) : t("board.connectFrom", { name: spec.label })}
+                  title={isSource ? t("board.cancelConnect") : t("board.connectTitle")}
+                  style={{
+                    position: "absolute",
+                    [side]: -16,
+                    top: NODE_H / 2 - 16,
+                    width: 32,
+                    height: 32,
+                    borderRadius: "50%",
+                    border: "none",
+                    background: "transparent",
+                    ["--node-color" as string]: color,
+                    cursor: "crosshair",
+                    padding: 0,
+                  }}
+                />
+              );
+              return (
+                <div
+                  key={n.id}
+                  className={styles.node}
+                  onPointerDown={(e) => onNodePointerDown(e, n)}
+                  onPointerMove={onNodePointerMove}
+                  onPointerUp={onNodePointerUp}
+                  onClick={() => onNodeClick(n)}
+                  tabIndex={0}
+                  role="group"
+                  aria-label={t("board.nodeLabel", { name: spec.label })}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") { event.preventDefault(); onNodeClick(n); }
+                    if (["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].includes(event.key)) {
+                      event.preventDefault();
+                      const step = event.shiftKey ? 1 : 10;
+                      const dx = event.key === "ArrowLeft" ? -step : event.key === "ArrowRight" ? step : 0;
+                      const dy = event.key === "ArrowUp" ? -step : event.key === "ArrowDown" ? step : 0;
+                      commit({ ...snapshot(), nodes: nodes.map((node) => node.id === n.id ? { ...node, x: Math.max(0, node.x + dx), y: Math.max(0, node.y + dy) } : node) });
+                    }
+                    if (event.key === "Delete" || event.key === "Backspace") { event.preventDefault(); removeNode(n.id); }
+                  }}
+                  style={{
+                    position: "absolute", left: n.x, top: n.y, width: NODE_W, height: NODE_H,
+                    boxSizing: "border-box",
+                    background: colors.surface,
+                    border: `2px solid ${isSource ? colors.textBright : `${color}60`}`,
+                    borderRadius: 10, cursor: "grab", touchAction: "none", userSelect: "none",
+                    display: "flex", alignItems: "center", gap: 8, padding: "0 10px",
+                    boxShadow: isSource ? `0 0 0 3px ${color}30` : "none",
+                  }}
+                >
+                  <BrandIcon name={nodeIconName(n.type)} color={color} size={18} />
+                  <span style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
+                    <span style={{ fontSize: font.size.label, fontWeight: 600, color: colors.text, lineHeight: 1.2 }}>{spec.label}</span>
+                    {(n.partitionKey?.trim() || n.replicas) && (
+                      <span
+                        style={{
+                          fontSize: font.size.caption,
+                          color: colors.textFaint,
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {[n.partitionKey?.trim(), n.replicas ? `×${n.replicas}` : null].filter(Boolean).join(" · ")}
+                      </span>
+                    )}
+                  </span>
+                  {STATEFUL_TYPES.includes(n.type) && (
+                    <button
+                      onPointerDown={(ev) => ev.stopPropagation()}
+                      onClick={(ev) => {
+                        ev.stopPropagation();
+                        setInspectingId((current) => (current === n.id ? null : n.id));
+                      }}
+                      title={t("node.inspect")}
                       style={{
-                        fontSize: 9.5,
-                        color: colors.textFaint,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
+                        position: "absolute", bottom: -16, right: -16, width: 32, height: 32,
+                        borderRadius: "50%", border: "none",
+                        background: inspectingId === n.id ? colors.accent : colors.borderSoft,
+                        cursor: "pointer", padding: 0,
+                        display: "flex", alignItems: "center", justifyContent: "center",
                       }}
                     >
-                      {[n.partitionKey?.trim(), n.replicas ? `×${n.replicas}` : null].filter(Boolean).join(" · ")}
-                    </span>
+                      <BrandIcon
+                        name="maintenance"
+                        color={inspectingId === n.id ? colors.onAccent : colors.textDim}
+                        size={10}
+                      />
+                    </button>
                   )}
-                </span>
-                {STATEFUL_TYPES.includes(n.type) && (
                   <button
                     onPointerDown={(ev) => ev.stopPropagation()}
-                    onClick={(ev) => {
-                      ev.stopPropagation();
-                      setInspectingId((current) => (current === n.id ? null : n.id));
-                    }}
-                    title={t("node.inspect")}
+                    onClick={(ev) => { ev.stopPropagation(); removeNode(n.id); }}
+                    title={t("board.remove")}
                     style={{
-                      position: "absolute", bottom: -16, right: -16, width: 32, height: 32,
-                      borderRadius: "50%", border: "none",
-                      background: inspectingId === n.id ? colors.accent : colors.borderSoft,
+                      position: "absolute", top: -16, right: -16, width: 32, height: 32,
+                      borderRadius: "50%", border: "none", background: colors.borderSoft,
                       cursor: "pointer", padding: 0,
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}
                   >
-                    <BrandIcon
-                      name="maintenance"
-                      color={inspectingId === n.id ? colors.onAccent : colors.textDim}
-                      size={10}
-                    />
+                    <BrandIcon name="close" color={colors.textDim} size={10} />
                   </button>
-                )}
-                <button
-                  onPointerDown={(ev) => ev.stopPropagation()}
-                  onClick={(ev) => { ev.stopPropagation(); removeNode(n.id); }}
-                  title={t("board.remove")}
-                  style={{
-                    position: "absolute", top: -16, right: -16, width: 32, height: 32,
-                    borderRadius: "50%", border: "none", background: colors.borderSoft,
-                    cursor: "pointer", padding: 0,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                  }}
-                >
-                  <BrandIcon name="close" color={colors.textDim} size={10} />
-                </button>
-                {axisHandle("left")}
-                {axisHandle("right")}
-              </div>
-            );
-          })}
+                  {axisHandle("left")}
+                  {axisHandle("right")}
+                </div>
+              );
+            })}
+            </div>
+
+            <ViewportControls
+              scale={view.scale}
+              onZoomIn={() => zoomStep(1)}
+              onZoomOut={() => zoomStep(-1)}
+              onReset={resetZoom}
+              onFit={() => fit(nodes)}
+            />
           </div>
+            </div>
 
-          <ViewportControls
-            scale={view.scale}
-            onZoomIn={() => zoomStep(1)}
-            onZoomOut={() => zoomStep(-1)}
-            onReset={resetZoom}
-            onFit={() => fit(nodes)}
-          />
-        </div>
+            {result && <EvalResults result={result} scenario={scenario} pushback={buildPushback(scenario, nodes)} showScore={false} />}
+          </>
+        )}
       </div>
-
-      {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
-        const edge = edges.find((e) => e.id === inspectingEdgeId)!;
-        return (
-          <EdgeInspector
-            edge={edge}
-            from={nodeById[edge.from]}
-            to={nodeById[edge.to]}
-            onChange={(patch) => patchEdge(edge.id, patch)}
-            onRemove={() => removeEdge(edge.id)}
-            onClose={() => setInspectingEdgeId(null)}
-          />
-        );
-      })()}
-
-      {inspectingId && nodeById[inspectingId] && (
-        <NodeInspector
-          node={nodeById[inspectingId]}
-          onChange={(patch) => patchNode(inspectingId, patch)}
-          onClose={() => setInspectingId(null)}
-        />
-      )}
-
-      {talkOpen && (
-        <TalkTrack
-          sections={talkSections}
-          rating={talkRating}
-          onChangeSection={(id, value) => {
-            commit({ ...snapshot(), talkSections: { ...talkSections, [id]: value }, talkGrade: null });
-          }}
-          onChangeRating={(value) => {
-            commit({ ...snapshot(), talkRating: value, talkGrade: null });
-          }}
-        />
-      )}
-
-      {result && <EvalResults result={result} scenario={scenario} pushback={buildPushback(scenario, nodes)} />}
-    </main>
+    </WorkspaceLayout>
   );
 }

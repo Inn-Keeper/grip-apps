@@ -1,6 +1,6 @@
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 
@@ -32,8 +32,8 @@ export function TalkTrack({
     >
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
         <BrandIcon name="spark" color={colors.accentBright} size={16} />
-        <h2 style={{ margin: 0, fontSize: 14, fontWeight: 700, color: colors.textBright }}>{t("talk.title")}</h2>
-        <span style={{ fontSize: 11, fontWeight: 600, color: colors.textFaint }}>
+        <h2 style={{ margin: 0, fontSize: font.size.body, fontWeight: 700, color: colors.textBright }}>{t("talk.title")}</h2>
+        <span style={{ fontSize: font.size.label, fontWeight: 600, color: colors.textFaint }}>
           {t("talk.covered", { answered: answered.length, total: TALK_TRACK_SECTIONS.length })}
         </span>
         <div
@@ -43,7 +43,7 @@ export function TalkTrack({
           <div style={{ width: `${completion}%`, height: "100%", background: meterColor }} />
         </div>
       </div>
-      <p style={{ margin: "0 0 14px", fontSize: 12, lineHeight: 1.55, color: colors.textFaint }}>{t("talk.intro")}</p>
+      <p style={{ margin: "0 0 14px", fontSize: font.size.small, lineHeight: 1.55, color: colors.textFaint }}>{t("talk.intro")}</p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
         {TALK_TRACK_SECTIONS.map((section) => {
@@ -57,21 +57,22 @@ export function TalkTrack({
                   color={covered ? colors.successBright : colors.textFaint}
                   size={13}
                 />
-                <span style={{ fontSize: 12, fontWeight: 700, color: colors.text }}>{section.label}</span>
+                <span style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>{section.label}</span>
               </span>
-              <span style={{ fontSize: 11, lineHeight: 1.5, color: colors.textFaint }}>{section.hint}</span>
+              <span style={{ fontSize: font.size.label, lineHeight: 1.5, color: colors.textFaint }}>{section.hint}</span>
               <textarea
                 value={value}
                 onChange={(e) => onChangeSection(section.id, e.target.value)}
                 rows={4}
                 style={{
                   resize: "vertical",
-                  padding: "8px 10px",
+                  minHeight: 96,
+                  padding: "10px 12px",
                   background: colors.bgDeep,
                   border: `1px solid ${covered ? `${colors.success}55` : colors.borderSoft}`,
                   borderRadius: 8,
                   color: colors.text,
-                  fontSize: 12.5,
+                  fontSize: font.size.body,
                   lineHeight: 1.55,
                   fontFamily: "inherit",
                 }}
@@ -82,8 +83,8 @@ export function TalkTrack({
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, flexWrap: "wrap" }}>
-        <span style={{ fontSize: 12, fontWeight: 700, color: colors.text }}>{t("talk.ratingLabel")}</span>
-        <span style={{ fontSize: 11, color: colors.textFaint }}>{t("talk.ratingHint")}</span>
+        <span style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>{t("talk.ratingLabel")}</span>
+        <span style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("talk.ratingHint")}</span>
         <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
           {Array.from({ length: SELF_RATING_MAX }, (_, i) => i + 1).map((value) => {
             const active = rating === value;
@@ -99,7 +100,7 @@ export function TalkTrack({
                   border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
                   borderRadius: 8,
                   color: active ? colors.onAccent : colors.textDim,
-                  fontSize: 12,
+                  fontSize: font.size.small,
                   fontWeight: 700,
                   cursor: "pointer",
                 }}

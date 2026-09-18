@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { useAuthUserQuery } from "../profile/queries";
 import { useShareBoardMutation } from "./queries";
 import type { AugmentedScenario, BoardSummary } from "./types";
@@ -43,7 +43,7 @@ export function SavedBoards({
   return (
     <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 12 }}>
       {boards.length === 0 ? (
-        <p style={{ margin: 0, fontSize: 12, color: colors.textFaint }}>{t("board.savedEmpty")}</p>
+        <p style={{ margin: 0, fontSize: font.size.small, color: colors.textFaint }}>{t("board.savedEmpty")}</p>
       ) : (
         boards.map((board) => {
           const boardScenario = allScenarios.find((item) => item.id === board.scenarioId);
@@ -65,7 +65,7 @@ export function SavedBoards({
             >
               <span
                 style={{
-                  fontSize: 12,
+                  fontSize: font.size.small,
                   fontWeight: 700,
                   color: colors.textBright,
                   whiteSpace: "nowrap",
@@ -75,15 +75,15 @@ export function SavedBoards({
               >
                 {board.title}
               </span>
-              <span style={{ fontSize: 10.5, color: colors.textFaint }}>
+              <span style={{ fontSize: font.size.label, color: colors.textFaint }}>
                 {boardScenario?.name ?? board.scenarioId} · updated {new Date(board.updatedAt).toLocaleDateString()}
               </span>
               {copyErrorId === board.id && board.shareToken && (
-                <p role="alert" style={{ margin: 0, fontSize: 11, color: colors.dangerBright }}>
+                <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>
                   Copy failed. Copy this link: <span style={{ userSelect: "all" }}>{shareUrl(board.shareToken)}</span>
                 </p>
               )}
-              {shareMutation.error && shareMutation.variables?.id === board.id && <p role="alert" style={{ margin: 0, fontSize: 11, color: colors.dangerBright }}>{shareMutation.error.message}</p>}
+              {shareMutation.error && shareMutation.variables?.id === board.id && <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>{shareMutation.error.message}</p>}
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
                 {board.shareToken ? (
                   <>
@@ -95,7 +95,7 @@ export function SavedBoards({
                         border: `1px solid ${colors.success}60`,
                         borderRadius: 6,
                         color: colors.successBright,
-                        fontSize: 11,
+                        fontSize: font.size.label,
                         fontWeight: 600,
                         cursor: "pointer",
                       }}
@@ -110,7 +110,7 @@ export function SavedBoards({
                         border: `1px solid ${colors.borderSoft}`,
                         borderRadius: 6,
                         color: colors.textDim,
-                        fontSize: 11,
+                        fontSize: font.size.label,
                         fontWeight: 600,
                         cursor: "pointer",
                       }}
@@ -119,7 +119,7 @@ export function SavedBoards({
                     </button>
                   </>
                 ) : isDemo ? (
-                  <span style={{ padding: "3px 4px", color: colors.textFaint, fontSize: 11 }}>{t("demo.signInToShare")}</span>
+                  <span style={{ padding: "3px 4px", color: colors.textFaint, fontSize: font.size.label }}>{t("demo.signInToShare")}</span>
                 ) : (
                   <button
                     onClick={() => board.id && shareMutation.mutate({ id: board.id, enable: true })}
@@ -130,7 +130,7 @@ export function SavedBoards({
                       border: `1px solid ${colors.borderSoft}`,
                       borderRadius: 6,
                       color: colors.textDim,
-                      fontSize: 11,
+                      fontSize: font.size.label,
                       fontWeight: 600,
                       cursor: "pointer",
                     }}
@@ -146,7 +146,7 @@ export function SavedBoards({
                     border: `1px solid ${colors.accent}60`,
                     borderRadius: 6,
                     color: colors.accentBright,
-                    fontSize: 11,
+                    fontSize: font.size.label,
                     fontWeight: 600,
                     cursor: "pointer",
                   }}
@@ -161,7 +161,7 @@ export function SavedBoards({
                     border: `1px solid ${colors.danger}50`,
                     borderRadius: 6,
                     color: colors.dangerBright,
-                    fontSize: 11,
+                    fontSize: font.size.label,
                     fontWeight: 600,
                     cursor: "pointer",
                   }}

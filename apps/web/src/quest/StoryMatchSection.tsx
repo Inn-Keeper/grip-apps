@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { groupStoriesByCompetency } from "@grip/core/stories";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 
 export type Story = { id?: string; title: string; competency: string };
@@ -21,7 +21,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
           border: `1px solid ${colors.borderSoft}`,
           borderRadius: 8,
           color: colors.textDim,
-          fontSize: 11,
+          fontSize: font.size.label,
           fontWeight: 600,
           cursor: "pointer",
           display: "inline-flex",
@@ -56,7 +56,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
                   background: `${g.color}20`,
                   borderRadius: 12,
                   color: g.color,
-                  fontSize: 10,
+                  fontSize: font.size.caption,
                   fontWeight: 700,
                   letterSpacing: "0.05em",
                   marginBottom: 4,
@@ -66,7 +66,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
               </span>
               <div style={{ display: "flex", flexDirection: "column", gap: 2, paddingLeft: 4 }}>
                 {g.stories.map((s) => (
-                  <span key={s.id ?? s.title} style={{ fontSize: 12, color: colors.text }}>
+                  <span key={s.id ?? s.title} style={{ fontSize: font.size.small, color: colors.text }}>
                     · {s.title}
                   </span>
                 ))}
@@ -83,7 +83,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
                     background: `${colors.textFaint}15`,
                     borderRadius: 12,
                     color: colors.textFaint,
-                    fontSize: 10,
+                    fontSize: font.size.caption,
                     fontWeight: 600,
                   }}
                 >

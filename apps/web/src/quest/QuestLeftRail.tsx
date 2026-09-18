@@ -1,25 +1,26 @@
-import React from "react";
 import { STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Contact } from "./types";
 
-export function QuestLeftRail({
-  canAdd,
-  contacts,
-  dueCount,
-  onAdd,
-}: {
-  canAdd: boolean;
+// Left rail = navigate and filter (rule 4): each stage filters the pipeline list.
+export function QuestLeftRail({ contacts, filter, onFilter }: {
   contacts: Contact[];
-  dueCount: number;
-  onAdd: () => void;
+  filter: string | null;
+  onFilter: (status: string | null) => void;
 }) {
-  const counts = Object.fromEntries(
-    STATUSES.map((status) => [status, contacts.filter((c) => c.status === status).length])
-  );
+  const counts = Object.fromEntries(STATUSES.map((status) => [status, contacts.filter((c) => c.status === status).length]));
+  const rows: { key: string | null; label: string; count: number; color: string }[] = [
+    { key: null, label: t("quest.filterAll"), count: contacts.length, color: colors.accentBright ?? "" },
+    ...STATUSES.map((status) => ({
+      key: status,
+      label: t(`enum.status.${status}` as Parameters<typeof t>[0]),
+      count: counts[status] ?? 0,
+      color: STATUS_STYLES[status]?.color ?? "",
+    })),
+  ];
 
   return (
     <>
@@ -27,81 +28,42 @@ export function QuestLeftRail({
         <WorkspaceTitle
           icon={<BrandIcon name="contact" color={colors.accentBright} size={17} />}
           title={t("contacts.pipeline")}
-          subtitle={t("contacts.peopleTracked", { count: contacts.length })}
+          subtitle={t("quest.filterHint")}
         />
-        {canAdd && (
-          <button
-            onClick={onAdd}
-            style={{
-              width: "100%",
-              marginTop: 14,
-              padding: "9px 12px",
-              background: colors.accent,
-              border: "none",
-              borderRadius: 8,
-              color: colors.onAccent,
-              fontSize: 12,
-              fontWeight: 800,
-              cursor: "pointer",
-            }}
-          >
-            {t("contacts.addContactPlain")}
-          </button>
-        )}
       </WorkspacePanel>
 
       <WorkspacePanel style={{ padding: 8 }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          {STATUSES.map((status) => {
-            const style = STATUS_STYLES[status] ?? { color: "", bg: "" };
+          {rows.map((row) => {
+            const active = filter === row.key;
             return (
-              <div
-                key={status}
+              <button
+                key={row.label}
+                type="button"
+                aria-pressed={active}
+                onClick={() => onFilter(row.key)}
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  padding: "8px 10px",
+                  gap: 9,
+                  padding: "9px 10px",
+                  border: "none",
                   borderRadius: 7,
-                  background: counts[status] ? `${style.color}14` : "transparent",
+                  background: active ? `${row.color}24` : "transparent",
+                  cursor: "pointer",
+                  textAlign: "left",
                 }}
               >
-                <span
-                  style={{
-                    width: 8,
-                    height: 8,
-                    borderRadius: 4,
-                    background: counts[status] ? style.color : colors.borderSoft,
-                  }}
-                />
-                <span
-                  style={{
-                    flex: 1,
-                    color: counts[status] ? colors.text : colors.textFaint,
-                    fontSize: 12.5,
-                    fontWeight: 700,
-                  }}
-                >
-                  {t(`enum.status.${status}` as Parameters<typeof t>[0])}
+                <span style={{ width: 8, height: 8, borderRadius: 4, background: row.count ? row.color : colors.borderSoft }} />
+                <span style={{ flex: 1, color: active ? colors.textBright : row.count ? colors.text : colors.textFaint, fontSize: font.size.body, fontWeight: 700 }}>
+                  {row.label}
                 </span>
-                <span style={{ color: counts[status] ? style.color : colors.textFaint, fontSize: 12, fontWeight: 800 }}>
-                  {counts[status]}
-                </span>
-              </div>
+                <span style={{ color: row.count ? row.color : colors.textFaint, fontSize: font.size.small, fontWeight: 800 }}>{row.count}</span>
+              </button>
             );
           })}
         </div>
       </WorkspacePanel>
-
-      {dueCount > 0 && (
-        <WorkspacePanel tone="sunken" style={{ borderColor: `${colors.danger}70` }}>
-          <WorkspaceTitle
-            icon={<BrandIcon name="warning" color={colors.dangerBright} size={17} />}
-            title={t("contacts.dueTitle", { count: dueCount, plural: dueCount > 1 ? "s" : "" })}
-            subtitle={t("contacts.dueSubtitle")}
-          />
-        </WorkspacePanel>
-      )}
     </>
   );
 }

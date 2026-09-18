@@ -29,6 +29,7 @@ export type BrandIconName =
   | "monitor"
   | "payment"
   | "prompt"
+  | "fly"
   | "quest"
   | "queue"
   | "rank"
@@ -97,6 +98,8 @@ const ICONS: Record<BrandIconName, Piece[]> = {
   payment: [{ x: 4, y: 7, w: 16, h: 11, r: 2 }, { kind: "line", x: 4, y: 10, w: 16, h: 0 }, { kind: "line", x: 7, y: 15, w: 5, h: 0 }],
   prompt: [{ x: 6, y: 4, w: 12, h: 14, r: 6 }, { kind: "line", x: 12, y: 18, w: 0, h: 3 }, { kind: "line", x: 9, y: 21, w: 6, h: 0 }],
   queue: [{ kind: "line", x: 5, y: 7, w: 14, h: 0 }, { kind: "line", x: 5, y: 12, w: 14, h: 0 }, { kind: "line", x: 5, y: 17, w: 14, h: 0 }, { kind: "dot", x: 4, y: 5, w: 4, h: 4 }, { kind: "dot", x: 4, y: 10, w: 4, h: 4 }, { kind: "dot", x: 4, y: 15, w: 4, h: 4 }],
+  // Fly Me: a raised wing (curved leading edge, four feather tips).
+  fly: [{ kind: "line", x: -1.61, y: 15.5, w: 11.22, h: 2, rotate: "-77deg" }, { kind: "line", x: 2.59, y: 8, w: 9.81, h: 2, rotate: "-50deg" }, { kind: "line", x: 8.8, y: 3.5, w: 13.4, h: 2, rotate: "-15deg" }, { kind: "line", x: 13.09, y: 4.5, w: 9.81, h: 2, rotate: "140deg" }, { kind: "line", x: 13.38, y: 8.5, w: 6.24, h: 2, rotate: "45deg" }, { kind: "line", x: 10.96, y: 10.5, w: 8.08, h: 2, rotate: "171deg" }, { kind: "line", x: 9.44, y: 13, w: 6.12, h: 2, rotate: "76deg" }, { kind: "line", x: 6.95, y: 14.5, w: 7.1, h: 2, rotate: "-169deg" }, { kind: "line", x: 5, y: 16, w: 6, h: 2, rotate: "90deg" }, { kind: "line", x: 1.81, y: 19, w: 7.39, h: 2, rotate: "158deg" }],
   // Quest: a flag on a pole — a goal you are working toward.
   quest: [{ kind: "line", x: 5, y: 3, w: 2, h: 18 }, { x: 6, y: 4, w: 13, h: 9, r: 2 }],
   rank: [{ x: 5, y: 6, w: 14, h: 11, r: 3 }, { kind: "line", x: 8, y: 5, w: 0, h: 5 }, { kind: "line", x: 16, y: 5, w: 0, h: 5 }, { kind: "line", x: 10, y: 19, w: 4, h: 0 }],

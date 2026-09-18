@@ -24,8 +24,8 @@ const PAGE_DEFS = [
   { id: "stories", icon: "story", labelKey: "tabs.stories" },
   { id: "board", icon: "board", labelKey: "tabs.board" },
   { id: "quest", icon: "quest", labelKey: "tabs.quest" },
+  { id: "about", icon: "fly", labelKey: "tabs.about" },
   { id: "profile", icon: "profile", labelKey: "tabs.profile" },
-  { id: "about", icon: "spark", labelKey: "tabs.about" },
 ] as const;
 
 const GITHUB_LINK_PENDING_KEY = "grip.githubLinkPending";

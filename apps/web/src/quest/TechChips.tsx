@@ -1,4 +1,4 @@
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 
 // Small removable/toggleable tech chip row shared by the posting detector and
 // the retro struggle tagger.
@@ -17,7 +17,7 @@ export function TechChips({
 }) {
   return (
     <div>
-      <div style={{ fontSize: 10, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.06em", marginBottom: 6 }}>
+      <div style={{ fontSize: font.size.caption, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.06em", marginBottom: 6 }}>
         {label.toUpperCase()}
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -37,7 +37,7 @@ export function TechChips({
                 border: `1px solid ${off ? colors.borderSoft : `${colors.accent}60`}`,
                 background: off ? "transparent" : `${colors.accent}1A`,
                 color: off ? colors.textFaint : colors.accentBright,
-                fontSize: 11,
+                fontSize: font.size.label,
                 fontWeight: 600,
                 cursor: "pointer",
                 textDecoration: off ? "line-through" : "none",

@@ -1,7 +1,7 @@
 import { buildPrepPlan } from "@grip/core/prepPlan";
 import { computeReadiness } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { writePrepPlan } from "../lib/prepPlanHandoff";
 import type { Contact, ScoredBoard } from "./types";
@@ -11,7 +11,7 @@ const PLAN_TECH_COUNT = 5;
 
 function ReadinessStat({ label, value }: { label: string; value: number | null }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 4, fontSize: 11, color: colors.textDim }}>
+    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 4, fontSize: font.size.label, color: colors.textDim }}>
       {label}
       <span style={{ fontWeight: 800, color: value === null ? colors.textFaint : colors.text }}>
         {value === null ? "--" : `${value}%`}
@@ -64,11 +64,11 @@ export function PrepPlanSection({
       }}
     >
       <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 11, fontWeight: 800, color: colors.accentBright, letterSpacing: "0.05em" }}>
+        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 800, color: colors.accentBright, letterSpacing: "0.05em" }}>
           <BrandIcon name="drill" color={colors.accentBright} size={13} />
           {t("plan.title").toUpperCase()}
         </span>
-        <span style={{ fontSize: 11, color: colors.textDim }}>
+        <span style={{ fontSize: font.size.label, color: colors.textDim }}>
           {contact.nextActionDate
             ? t("plan.deadline", { date: contact.nextActionDate, days: plan.daysLeft ?? 0 })
             : t("plan.noDeadline")}
@@ -80,7 +80,7 @@ export function PrepPlanSection({
           <ReadinessStat label={t("plan.readinessBoards")} value={readiness.arch} />
           {readiness.archTopology !== null && (
             <span
-              style={{ fontSize: 10.5, color: colors.textFaint }}
+              style={{ fontSize: font.size.label, color: colors.textFaint }}
               title={t("plan.readinessBoardsSplitHint")}
             >
               {t("plan.readinessBoardsSplit", {
@@ -104,7 +104,7 @@ export function PrepPlanSection({
               borderRadius: 999,
               border: `1px solid ${colors.borderSoft}`,
               background: colors.well,
-              fontSize: 11,
+              fontSize: font.size.label,
               color: colors.text,
             }}
           >
@@ -123,7 +123,7 @@ export function PrepPlanSection({
             border: "none",
             borderRadius: 8,
             color: colors.onAccent,
-            fontSize: 11,
+            fontSize: font.size.label,
             fontWeight: 700,
             cursor: "pointer",
           }}

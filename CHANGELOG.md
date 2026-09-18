@@ -18,6 +18,12 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Quest (web): Next Up, stage filters and an applications-per-week headline. Contacts, edits and retros open in a focused view, so cards no longer expand.
+- Profile (web): sections in the left rail, fields that save as you leave them, and a completion headline. Reset moved to Preferences.
+- Arch Board (web): three columns (scenario, canvas, status). The canvas is visible without scrolling, Next Up coaches each step with Evaluate as the one action, the design score heads the right rail, and inspectors open beside the canvas.
+- Arch Board (web): on an empty canvas, Next Up offers to continue your latest saved board (such as the demo sample).
+- Web: Tutorial is now "Fly Me" with a wing icon, placed before Profile.
+- Web: form fields follow one standard (40px, 8px corners, focus ring), and the hover lift is gentler.
 - Prep (web): a card's quiz opens as a focused session, so cards no longer grow.
 - Prep (web): Next Up is the one place to start sessions, and Mock loop moved into it. Rail drill buttons are removed, and category Drill buttons show on the active row or on hover.
 - Web: every screen uses dark soft borders and lifted cards. Light edges are kept only for informative containers, and cards with actions lift on hover.
@@ -29,6 +35,8 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Profile (web): guests saw "Loading…" under their name forever.
+- Profile (web): every field is labelled and typed for autofill, placeholders are real examples at AA contrast, and Enter saves without losing focus.
 - Web (Vercel): refreshing any page other than `/` returned 404. The app now serves `index.html` for every path.
 - Web: Inter weight 800 now loads (heavy weights were rendering at 700).
 - Icons (web + mobile): 12 icons that drew filled boxes instead of strokes (×, ✦ logo, arrows, check, `</>` and more).

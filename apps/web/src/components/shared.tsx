@@ -3,26 +3,8 @@ import { colors, space, font } from "@grip/core/tokens";
 import { FormInput, FormTextarea } from "./FormInput";
 import { MiniButton } from "./MiniButton";
 
-// Legacy exports for backward compatibility (deprecated — use FormInput/MiniButton directly)
-export const inputStyle: React.CSSProperties = {
-  width: "100%",
-  boxSizing: "border-box",
-  padding: `${space.xs}px ${space.sm! + 2}px`,
-  background: colors.bgDeep,
-  border: `1px solid ${colors.borderSoft}`,
-  borderRadius: space.md,
-  color: colors.text,
-  fontSize: font.size!.body,
-  outline: "none",
-  fontFamily: "inherit",
-};
-
-export const textareaStyle: React.CSSProperties = {
-  ...inputStyle,
-  minHeight: 56,
-  resize: "vertical",
-  lineHeight: 1.5,
-};
+// Field styles live with FormInput; these names stay for existing imports.
+export { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "./fieldStyles";
 
 export function miniBtn(color: string): React.CSSProperties {
   return {
@@ -43,12 +25,12 @@ export { FormInput, FormTextarea, MiniButton };
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label style={{ display: "flex", flexDirection: "column", gap: space.xs, minWidth: 0 }}>
+    <label style={{ display: "flex", flexDirection: "column", gap: space.xs + 2, minWidth: 0 }}>
       <span
         style={{
-          fontSize: font.size!.label,
-          fontWeight: "600",
-          color: colors.textFaint,
+          fontSize: font.size.label,
+          fontWeight: "700",
+          color: colors.textDim,
           letterSpacing: "0.03em",
         }}
       >

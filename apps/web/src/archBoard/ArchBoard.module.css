@@ -1,6 +1,5 @@
-.page { width: 100%; padding: 32px 32px 56px; box-sizing: border-box; }
-.actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
-.editor { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 14px; align-items: stretch; }
+/* Palette strip above the canvas, so the canvas keeps the main column's full width. */
+.editor { display: grid; gap: 10px; }
 .toolbarButton {
   padding: 7px 14px;
   border: 1px solid var(--arch-border);
@@ -24,12 +23,20 @@
   font-size: 12px;
   color-scheme: dark;
 }
-.connectionRow { display: block; min-height: 32px; margin-bottom: 10px; font-size: 12px; }
-.workflow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin: 0 0 10px; }
-.workflowStep { min-height: 54px; padding: 8px 10px; border: 1px solid var(--arch-border); border-radius: 8px; background: var(--arch-surface); box-shadow: var(--shadow-card); color: var(--arch-text-dim); }
-.workflowStep strong { display: block; margin-bottom: 2px; color: var(--arch-text); font-size: 12px; }
-.workflowStep span { font-size: 11px; line-height: 1.35; }
-.workflowActive { border-color: var(--arch-accent); background: color-mix(in srgb, var(--arch-accent) 8%, transparent); }
+.connectionRow { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+/* Saved boards: a native disclosure dressed as a rail panel; the list loads when opened. */
+.savedBoards {
+  background: var(--card-bg, #1E222D);
+  border: 1px solid var(--card-border, #262A36);
+  border-radius: 8px;
+  box-shadow: var(--shadow-card);
+}
+.savedSummary {
+  display: flex; align-items: center; gap: 10px; padding: 14px;
+  list-style: none; cursor: pointer; color: #F4F7FC; font-size: 13px; font-weight: 800;
+}
+.savedSummary::-webkit-details-marker { display: none; }
+.savedSummary:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 2px; border-radius: 8px; }
 .handle::after {
   content: "";
   position: absolute;
@@ -58,9 +65,3 @@
 .zoomPercent { min-width: 52px; font-variant-numeric: tabular-nums; font-size: 12px; }
 .toolbarButton:focus-visible, .connectionSelect:focus-visible,
 .node:focus-visible, .handle:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 3px; }
-@media (max-width: 760px) {
-  .page { padding: 20px 12px 40px; }
-  .editor { grid-template-columns: 1fr; }
-  .actions { margin-left: 0; width: 100%; }
-  .workflow { grid-template-columns: 1fr; }
-}

@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { SCENARIOS, TYPE_COLORS, evaluate, meta } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { brand, colors } from "@grip/core/tokens";
+import { brand, colors, font } from "@grip/core/tokens";
 import { getSharedBoard } from "../lib/api";
 import { BrandIcon } from "../components/BrandIcon";
 import { EvalResults } from "./EvalResults";
@@ -113,27 +113,27 @@ export function SharedBoardPage({ token }: { token: string }) {
       <div style={{ width: "min(100%, 960px)", display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <BrandIcon name="spark" color={colors.accentBright} size={22} />
-          <span style={{ fontSize: 15, fontWeight: 800, color: colors.textBright }}>{brand.productName}</span>
-          <span style={{ fontSize: 12, color: colors.textFaint }}>· {t("board.sharedTitle")}</span>
+          <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>{brand.productName}</span>
+          <span style={{ fontSize: font.size.small, color: colors.textFaint }}>· {t("board.sharedTitle")}</span>
         </div>
 
-        {isLoading && <p style={{ color: colors.textFaint, fontSize: 13 }}>{t("common.loading")}</p>}
+        {isLoading && <p style={{ color: colors.textFaint, fontSize: font.size.body }}>{t("common.loading")}</p>}
 
         {!isLoading && (error || !board) && (
-          <p style={{ color: colors.dangerBright, fontSize: 13 }}>{t("board.sharedNotFound")}</p>
+          <p style={{ color: colors.dangerBright, fontSize: font.size.body }}>{t("board.sharedNotFound")}</p>
         )}
 
         {board && (
           <>
             <div>
-              <h1 style={{ margin: "0 0 4px", fontSize: 24, fontWeight: 800, color: colors.textBright }}>
+              <h1 style={{ margin: "0 0 4px", fontSize: font.size.heading, fontWeight: 800, color: colors.textBright }}>
                 {board.title}
               </h1>
-              <p style={{ margin: 0, fontSize: 12.5, color: colors.textFaint }}>
+              <p style={{ margin: 0, fontSize: font.size.body, color: colors.textFaint }}>
                 {scenario ? scenario.name : board.scenarioId} · {t("board.sharedReadOnly")}
               </p>
               {scenario && (
-                <p style={{ margin: "10px 0 0", fontSize: 13, lineHeight: 1.6, color: colors.textDim, maxWidth: 720 }}>
+                <p style={{ margin: "10px 0 0", fontSize: font.size.body, lineHeight: 1.6, color: colors.textDim, maxWidth: 720 }}>
                   {scenario.brief}
                 </p>
               )}
@@ -144,7 +144,7 @@ export function SharedBoardPage({ token }: { token: string }) {
             {result && scenario ? (
               <EvalResults result={result} scenario={scenario} />
             ) : (
-              <p style={{ margin: 0, fontSize: 12.5, color: colors.textFaint }}>{t("board.sharedScenarioMissing")}</p>
+              <p style={{ margin: 0, fontSize: font.size.body, color: colors.textFaint }}>{t("board.sharedScenarioMissing")}</p>
             )}
           </>
         )}
