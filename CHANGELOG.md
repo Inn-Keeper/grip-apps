@@ -9,6 +9,7 @@ because they have to be applied by hand.
 ### Added
 
 - Tokens: `borderSoft`, `shadow.card` / `shadow.cardHover`, `accentDeep` and `font.size.hero`.
+- `SCREEN-GUIDELINES.md`: the playbook and checklist for bringing other screens up to Prep's standard.
 - Prep (web): selecting a category pulses its Drill button, then a shine sweeps across it every 10s.
 - Prep (web): a readiness score for your prep plan, stack or practiced techs heads the right rail. It counts up on open over a deep-teal gradient bar, then blinks when it lands.
 - Prep (web): the XP bar matches the readiness bar. The accuracy chart draws in, and Signal percentages count up.
@@ -28,6 +29,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Web (Vercel): refreshing any page other than `/` returned 404. The app now serves `index.html` for every path.
 - Web: Inter weight 800 now loads (heavy weights were rendering at 700).
 - Icons (web + mobile): 12 icons that drew filled boxes instead of strokes (×, ✦ logo, arrows, check, `</>` and more).
 - Prep: 6 of 9 categories showed the fallback icon because of a name mismatch.

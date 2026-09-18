@@ -3,7 +3,8 @@
 The single source of truth for the product's visual identity. Token values live in
 [`packages/core/src/tokens.js`](packages/core/src/tokens.js) and are consumed by both apps
 (mobile via `@/theme`, web via `@grip/core/tokens`). This document explains the
-rules behind them.
+rules behind them. How screens are structured, react and move lives in
+[SCREEN-GUIDELINES.md](SCREEN-GUIDELINES.md).
 
 ## Identity
 
