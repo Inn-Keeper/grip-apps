@@ -439,7 +439,7 @@ The workflow also uses read-only repository permissions, cancels superseded PR r
 ```bash
 pnpm build
 ```
-Outputs to `apps/web/dist/`. Deploy to Vercel, Netlify, or any static host.
+Outputs to `apps/web/dist/`. Deploy to Vercel, Netlify, or any static host. The app routes client-side, so the host must serve `index.html` for every path: `apps/web/vercel.json` does this on Vercel (project Root Directory `apps/web`).
 
 ### Mobile (iOS/Android)
 ```bash
