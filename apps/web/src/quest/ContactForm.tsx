@@ -6,7 +6,7 @@ import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { DateInput, Field } from "./shared";
-import { inputStyle, textareaStyle } from "../components/shared";
+import { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "../components/fieldStyles";
 import { TechChips } from "./TechChips";
 import type { Contact } from "./types";
 import { EMPTY_FORM } from "./types";

@@ -326,7 +326,9 @@ export default function InterviewPrep() {
 
   return (
     <WorkspaceLayout
-      mainLabel="Interview prep"
+      mainLabel={t("prep.mainLabel")}
+      // One session at a time: both rails lock while it runs (rule 10).
+      lockedHint={sessionBusy ? t("prep.railLocked") : null}
       leftRailBottomInset={layout.poeClearance}
       left={
         <PrepLeftRail
@@ -351,7 +353,6 @@ export default function InterviewPrep() {
           onCategoryDrill={startCategoryDrill}
           pendingCategory={pending?.startsWith("cat:") ? pending.slice(4) : null}
           categoryError={drillError?.source.startsWith("cat:") ? { name: drillError.source.slice(4), message: drillError.message } : null}
-          locked={sessionBusy}
         />
       }
       right={
@@ -421,7 +422,7 @@ export default function InterviewPrep() {
         </div>
       ) : visibleItems.length === 0 ? (
         <WorkspacePanel tone="sunken" style={{ textAlign: "center", color: colors.textFaint, padding: 28 }}>
-          No matches found.
+          {t("prep.noMatches")}
         </WorkspacePanel>
       ) : (
         <div key={deal} className={styles.cardGrid}>

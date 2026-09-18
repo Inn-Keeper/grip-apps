@@ -1,7 +1,7 @@
 import React, { type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
-import { brand, colors } from "@grip/core/tokens";
-import { BrandIcon } from "./components/BrandIcon";
+import { brand, colors, font } from "@grip/core/tokens";
+import { BrandMark } from "./components/BrandMark";
 
 type FooterLink = { label: string; action: (() => void) | null; href?: never } | { label: string; href: string; action?: never };
 
@@ -28,16 +28,16 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
           flexWrap: "wrap",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 260, flex: "1 1 360px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 260, flex: "2 1 360px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 11, flex: "0 0 auto", minWidth: 112 }}>
-            <BrandIcon name="spark" color={colors.accentBright} size={28} />
+            <BrandMark size={28} />
             <div>
-              <div style={{ fontSize: 16, fontWeight: 800, color: colors.textBright, lineHeight: 1, whiteSpace: "nowrap" }}>{brand.productName}</div>
-              <div style={{ fontSize: 11, fontWeight: 700, color: colors.textFaint, marginTop: 3, whiteSpace: "nowrap" }}>{brand.tagline}</div>
+              <div style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright, lineHeight: 1, whiteSpace: "nowrap" }}>{brand.productName}</div>
+              <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, marginTop: 3, whiteSpace: "nowrap" }}>{brand.tagline}</div>
             </div>
           </div>
-          <p style={{ margin: 0, color: colors.textDim, fontSize: 12.5, lineHeight: 1.55, maxWidth: 560 }}>
-            {brand.promise} {t("footer.promiseSuffix")}
+          <p style={{ margin: 0, color: colors.textDim, fontSize: font.size.body, lineHeight: 1.55, maxWidth: 720 }}>
+            {t("footer.promiseSuffix")}
           </p>
         </div>
 
@@ -55,7 +55,7 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
           gap: 16,
           flexWrap: "wrap",
           color: colors.textFaint,
-          fontSize: 11.5,
+          fontSize: font.size.small,
           fontWeight: 600,
         }}
       >
@@ -73,7 +73,7 @@ function FooterLinkGroup({ title, links }: { title: string; links: FooterLink[] 
     border: "none",
     color: colors.textDim,
     textDecoration: "none",
-    fontSize: 12,
+    fontSize: font.size.small,
     fontWeight: 800,
     cursor: "pointer",
     whiteSpace: "nowrap",
@@ -87,11 +87,12 @@ function FooterLinkGroup({ title, links }: { title: string; links: FooterLink[] 
         alignItems: "center",
         justifyContent: "flex-end",
         gap: 14,
-        flex: "1 1 420px",
+        flex: "0 1 auto",
         flexWrap: "wrap",
       }}
     >
-      <h2 style={{ margin: 0, color: colors.textBright, fontSize: 12, fontWeight: 800 }}>{title}</h2>
+      {/* A label, not a link: faint caps so it doesn't read as clickable. */}
+      <h2 style={{ margin: 0, color: colors.textFaint, fontSize: font.size.caption, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{title}</h2>
       <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px 14px", flexWrap: "wrap" }}>
         {links.map((link) =>
           link.href ? (

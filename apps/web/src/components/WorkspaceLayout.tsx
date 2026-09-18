@@ -78,8 +78,8 @@ export function WorkspaceTitle({ icon, title, subtitle, right }: WorkspaceTitleP
     <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
       {icon}
       <div style={{ flex: 1, minWidth: 0 }}>
-        <h2 style={{ margin: 0, color: colors.textBright, fontSize: 13, fontWeight: 800 }}>{title}</h2>
-        {subtitle && <p style={{ margin: "4px 0 0", color: colors.textFaint, fontSize: 11, lineHeight: 1.45 }}>{subtitle}</p>}
+        <h2 style={{ margin: 0, color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{title}</h2>
+        {subtitle && <p style={{ margin: "4px 0 0", color: colors.textFaint, fontSize: font.size.label, lineHeight: 1.45 }}>{subtitle}</p>}
       </div>
       {right}
     </div>

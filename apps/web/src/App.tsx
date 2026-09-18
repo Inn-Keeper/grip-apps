@@ -13,8 +13,9 @@ import { SharedBoardPage } from "./archBoard/SharedBoardPage";
 import StoryBank from "./storyBank/StoryBank";
 import Profile from "./profile/Profile";
 import About from "./about/About";
-import { brand, colors, layout, shadow } from "@grip/core/tokens";
+import { brand, colors, layout, shadow, font } from "@grip/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
+import { BrandMark } from "./components/BrandMark";
 import { DemoBanner } from "./components/DemoBanner";
 import { Footer } from "./Footer";
 import { SignIn } from "./SignIn";
@@ -242,25 +243,12 @@ export default function App() {
           }}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 150 }}>
-            <span
-              style={{
-                width: 36,
-                height: 36,
-                borderRadius: 12,
-                display: "grid",
-                placeItems: "center",
-                background: `linear-gradient(145deg, ${colors.surfaceHi}, ${colors.bgDeep})`,
-                border: `1px solid ${colors.borderSoft}`,
-                boxShadow: `0 0 0 1px ${colors.accent}18, 0 10px 24px rgba(0, 0, 0, 0.22)`,
-              }}
-            >
-              <BrandIcon name="spark" color={colors.accentBright} size={24} />
-            </span>
+            <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${colors.accent}18, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
             <span style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <span style={{ fontSize: 18, fontWeight: 800, letterSpacing: "0px", color: colors.textBright, lineHeight: 1 }}>
+              <span style={{ fontSize: font.size.title, fontWeight: 800, letterSpacing: "0px", color: colors.textBright, lineHeight: 1 }}>
                 {brand.productName}
               </span>
-              <span style={{ fontSize: 10.5, fontWeight: 700, color: colors.textFaint, lineHeight: 1.2 }}>
+              <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, lineHeight: 1.2 }}>
                 {brand.tagline}
               </span>
             </span>
@@ -269,7 +257,7 @@ export default function App() {
             <>
               <nav
                 ref={navRef}
-                aria-label="Primary"
+                aria-label={t("nav.primary")}
                 style={{
                   marginLeft: "auto",
                   display: "flex",
@@ -297,9 +285,11 @@ export default function App() {
                       bottom: 5,
                       left: navPill.left,
                       width: navPill.width,
-                      borderRadius: 11,
-                      background: colors.accent,
-                      boxShadow: `0 8px 22px ${colors.accent}22`,
+                      borderRadius: 8,
+                      // Translucent teal with a soft edge, so the active tab reads without shouting.
+                      background: `${colors.accent}33`,
+                      border: `1px solid ${colors.accent}66`,
+                      boxShadow: `0 6px 18px ${colors.accent}1F`,
                       transition: reduceMotion ? "none" : "left 320ms cubic-bezier(0.2, 0.72, 0.26, 1), width 320ms cubic-bezier(0.2, 0.72, 0.26, 1)",
                     }}
                   />
@@ -318,20 +308,20 @@ export default function App() {
                       gap: 8,
                       minHeight: 36,
                       padding: "8px 14px",
-                      borderRadius: 11,
+                      borderRadius: 8,
                       border: "none",
                       cursor: "pointer",
-                      fontSize: 13,
+                      fontSize: font.size.body,
                       fontWeight: 800,
                       letterSpacing: "0px",
                       whiteSpace: "nowrap",
                       position: "relative",
                       background: "transparent",
-                      color: page === p.id ? colors.onAccent : colors.textDim,
+                      color: page === p.id ? colors.textBright : colors.textDim,
                       transition: "color 0.2s ease",
                     }}
                   >
-                    <BrandIcon name={p.icon} color={page === p.id ? colors.onAccent : colors.textDim} size={16} />
+                    <BrandIcon name={p.icon} color={page === p.id ? colors.accentBright : colors.textDim} size={16} />
                     {p.label}
                   </button>
                 ))}
@@ -350,7 +340,7 @@ export default function App() {
               display: "grid",
               placeItems: "center",
               color: colors.textFaint,
-              fontSize: 13,
+              fontSize: font.size.body,
             }}
           >
             Loading…
@@ -363,8 +353,8 @@ export default function App() {
             {page === "stories" && <StoryBank />}
             {page === "board" && <ArchBoard />}
             {page === "quest" && <Quest />}
-            {page === "profile" && <Profile githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
             {page === "about" && <About onNavigate={selectPage} />}
+            {page === "profile" && <Profile githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
           </React.Fragment>
         )}
       </div>

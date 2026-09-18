@@ -1,7 +1,7 @@
 import React from "react";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 
 export function CompetencyBadge({ competency }: { competency: string }) {
   const color = COMPETENCY_COLORS[competency] || colors.textFaint;
@@ -13,7 +13,7 @@ export function CompetencyBadge({ competency }: { competency: string }) {
         background: `${color}20`,
         borderRadius: 20,
         color,
-        fontSize: 11,
+        fontSize: font.size.label,
         fontWeight: 700,
         letterSpacing: "0.04em",
       }}

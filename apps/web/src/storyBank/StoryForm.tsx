@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { COMPETENCIES, COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
-import { Field, inputStyle } from "../components/shared";
+import { Field } from "../components/shared";
+import { fieldStyle as inputStyle } from "../components/fieldStyles";
 import { textareaStyle } from "./styles";
 import { EMPTY_FORM } from "./types";
 import type { StoryForm as StoryFormType } from "./types";
@@ -49,7 +50,7 @@ export function StoryForm({
           value={form.competency}
           options={COMPETENCIES.map((competency) => ({
             value: competency,
-            label: competency,
+            label: t(`enum.competency.${competency}` as Parameters<typeof t>[0]),
             color: COMPETENCY_COLORS[competency],
           }))}
           onChange={(competency) => setForm((f) => ({ ...f, competency }))}
@@ -77,7 +78,7 @@ export function StoryForm({
             border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
             color: colors.textDim,
-            fontSize: 13,
+            fontSize: font.size.body,
             fontWeight: 600,
             cursor: "pointer",
           }}
@@ -93,7 +94,7 @@ export function StoryForm({
             border: "none",
             borderRadius: 8,
             color: colors.onAccent,
-            fontSize: 13,
+            fontSize: font.size.body,
             fontWeight: 600,
             cursor: form.title.trim() ? "pointer" : "not-allowed",
             opacity: form.title.trim() ? 1 : 0.5,

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import { getLocale } from "@grip/core/i18n";
 import { TURNSTILE_SITE_KEY } from "../lib/turnstile";
 
 type TurnstileApi = {
@@ -46,6 +47,9 @@ export function Turnstile({ onToken }: { onToken: (token: string | null) => void
           sitekey: TURNSTILE_SITE_KEY,
           theme: "dark",
           size: "flexible",
+          // Invisible unless Cloudflare needs a click; the submit button waits for the token either way.
+          appearance: "interaction-only",
+          language: getLocale() === "pt" ? "pt-br" : getLocale(),
           callback: (token: string) => onToken(token),
           "expired-callback": () => onToken(null),
           "error-callback": () => onToken(null),
@@ -58,5 +62,5 @@ export function Turnstile({ onToken }: { onToken: (token: string | null) => void
     };
   }, [onToken]);
 
-  return TURNSTILE_SITE_KEY ? <div ref={ref} style={{ minHeight: 65 }} /> : null;
+  return TURNSTILE_SITE_KEY ? <div ref={ref} /> : null;
 }

@@ -2,7 +2,7 @@ import { PROFILE_FIELDS } from "@grip/core/user";
 import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
-import { inputStyle } from "../components/shared";
+import { fieldStyle as inputStyle } from "../components/fieldStyles";
 import { WorkspacePanel } from "../components/WorkspaceLayout";
 import { ConnectionBadge, Switch } from "./shared";
 import type { ProfileForm, ProfileRecord } from "./types";

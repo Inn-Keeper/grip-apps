@@ -82,5 +82,6 @@ describe("buildFunnelSummary", () => {
     expect(summary.signals.join(" ")).toMatch(/Top of funnel is thin/);
     expect(summary.signals.join(" ")).toMatch(/Application pace is low/);
     expect(summary.signals.join(" ")).toMatch(/follow-up/);
+    expect(summary.signalIds.map((s) => s.id)).toEqual(expect.arrayContaining(["thin", "pace", "due"]));
   });
 });

@@ -1,4 +1,4 @@
-import { inputStyle } from "../components/shared";
+import { fieldStyle as inputStyle } from "../components/fieldStyles";
 import type React from "react";
 
 export const textareaStyle: React.CSSProperties = {

@@ -1,8 +1,9 @@
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow, font } from "@grip/core/tokens";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
 import { startTour } from "./tour";
 import hover from "../components/HoverCard.module.css";
+import { NextUpLink } from "../components/NextUpShell";
 
 type TKey = Parameters<typeof t>[0];
 
@@ -49,11 +50,11 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
           <BrandIcon name={icon} color={color} size={18} />
         </div>
         <div style={{ minWidth: 0 }}>
-          <div style={{ fontSize: 10.5, fontWeight: 800, color, textTransform: "uppercase", marginBottom: 4 }}>
+          <div style={{ fontSize: font.size.label, fontWeight: 800, color, textTransform: "uppercase", marginBottom: 4 }}>
             {t("about.step", { number: index + 1 })}
           </div>
-          <h2 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: colors.textBright }}>{t(titleKey)}</h2>
-          <p style={{ margin: "4px 0 0", fontSize: 12, color: colors.textFaint, lineHeight: 1.45 }}>{t(taglineKey)}</p>
+          <h2 style={{ margin: 0, fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>{t(titleKey)}</h2>
+          <p style={{ margin: "4px 0 0", fontSize: font.size.small, color: colors.textFaint, lineHeight: 1.45 }}>{t(taglineKey)}</p>
         </div>
       </div>
 
@@ -71,7 +72,7 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
                 boxShadow: `0 0 12px ${color}40`,
               }}
             />
-            <span style={{ fontSize: 12.5, color: colors.textDim, lineHeight: 1.5 }}>{t(b)}</span>
+            <span style={{ fontSize: font.size.body, color: colors.textDim, lineHeight: 1.5 }}>{t(b)}</span>
           </div>
         ))}
       </div>
@@ -86,7 +87,7 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
           border: `1px solid ${color}40`,
           borderRadius: 8,
           color,
-          fontSize: 12,
+          fontSize: font.size.small,
           fontWeight: 700,
           cursor: "pointer",
         }}
@@ -168,16 +169,17 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
             background: `linear-gradient(135deg, ${colors.surface}, ${colors.bgDeep})`,
             border: `1px solid ${colors.borderSoft}`,
             borderRadius: 8,
+            boxShadow: shadow.card,
             minHeight: 260,
           }}
         >
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, color: colors.accentBright, fontSize: 11, fontWeight: 800, marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8, color: colors.accentBright, fontSize: font.size.label, fontWeight: 800, marginBottom: 10 }}>
               <BrandIcon name="spark" color={colors.accentBright} size={14} />
               {t("about.kicker")}
             </div>
-            <h1 style={{ margin: 0, fontSize: 30, fontWeight: 800, color: colors.textBright }}>{t("about.title")}</h1>
-            <p style={{ margin: "10px 0 0", fontSize: 14, color: colors.textDim, maxWidth: 640, lineHeight: 1.65 }}>
+            <h1 style={{ margin: 0, fontSize: font.size.display, fontWeight: 800, color: colors.textBright }}>{t("about.title")}</h1>
+            <p style={{ margin: "10px 0 0", fontSize: font.size.body, color: colors.textDim, maxWidth: 640, lineHeight: 1.65 }}>
               {t("about.intro")}
             </p>
           </div>
@@ -194,7 +196,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
                 border: "none",
                 borderRadius: 8,
                 color: colors.onAccent,
-                fontSize: 13,
+                fontSize: font.size.body,
                 fontWeight: 800,
                 cursor: "pointer",
               }}
@@ -202,21 +204,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
               <BrandIcon name="spark" color={colors.onAccent} size={15} />
               {t("about.startTour")}
             </button>
-            <button
-              onClick={() => onNavigate("prep")}
-              style={{
-                padding: "10px 16px",
-                background: colors.surfaceHi,
-                border: `1px solid ${colors.borderSoft}`,
-                borderRadius: 8,
-                color: colors.textBright,
-                fontSize: 13,
-                fontWeight: 800,
-                cursor: "pointer",
-              }}
-            >
-              {t("about.startPrep")}
-            </button>
+            <NextUpLink label={t("about.startPrep")} onClick={() => onNavigate("prep")} />
           </div>
         </div>
 
@@ -229,7 +217,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
             borderRadius: 8,
           }}
         >
-          <h2 style={{ margin: "0 0 14px", color: colors.textBright, fontSize: 14, fontWeight: 800 }}>{t("about.quickStartTitle")}</h2>
+          <h2 style={{ margin: "0 0 14px", color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t("about.quickStartTitle")}</h2>
           <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
             {QUICK_START.map((item, index) => (
               <div key={item.labelKey} style={{ display: "grid", gridTemplateColumns: "28px 1fr", gap: 10 }}>
@@ -243,15 +231,15 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
                     background: `${colors.accent}18`,
                     color: colors.accentBright,
                     border: `1px solid ${colors.accent}35`,
-                    fontSize: 12,
+                    fontSize: font.size.small,
                     fontWeight: 800,
                   }}
                 >
                   {index + 1}
                 </div>
                 <div>
-                  <div style={{ color: colors.textBright, fontSize: 12.5, fontWeight: 800 }}>{t(item.labelKey)}</div>
-                  <div style={{ color: colors.textDim, fontSize: 12, lineHeight: 1.5, marginTop: 3 }}>{t(item.detailKey)}</div>
+                  <div style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t(item.labelKey)}</div>
+                  <div style={{ color: colors.textDim, fontSize: font.size.small, lineHeight: 1.5, marginTop: 3 }}>{t(item.detailKey)}</div>
                 </div>
               </div>
             ))}
@@ -281,7 +269,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
           borderRadius: 8,
         }}
       >
-        <div style={{ fontSize: 13, fontWeight: 800, color: colors.textBright, marginBottom: 10 }}>{t("about.howItWorks")}</div>
+        <div style={{ fontSize: font.size.body, fontWeight: 800, color: colors.textBright, marginBottom: 10 }}>{t("about.howItWorks")}</div>
         <div
           style={{
             display: "grid",
@@ -296,8 +284,8 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
             { labelKey: "about.how.privateLabel", detailKey: "about.how.privateDetail" },
           ].map((item) => (
             <div key={item.labelKey}>
-              <div style={{ fontSize: 12, fontWeight: 800, color: colors.accent, marginBottom: 4 }}>{t(item.labelKey as Parameters<typeof t>[0])}</div>
-              <div style={{ fontSize: 12, color: colors.textDim, lineHeight: 1.5 }}>{t(item.detailKey as Parameters<typeof t>[0])}</div>
+              <div style={{ fontSize: font.size.small, fontWeight: 800, color: colors.accent, marginBottom: 4 }}>{t(item.labelKey as Parameters<typeof t>[0])}</div>
+              <div style={{ fontSize: font.size.small, color: colors.textDim, lineHeight: 1.5 }}>{t(item.detailKey as Parameters<typeof t>[0])}</div>
             </div>
           ))}
         </div>

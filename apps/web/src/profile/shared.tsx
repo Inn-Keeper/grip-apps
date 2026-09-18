@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, font } from "@grip/core/tokens";
 import { t } from "@grip/core/i18n";
 
 export function ConnectionBadge({ connected }: { connected: boolean }) {
@@ -14,7 +14,7 @@ export function ConnectionBadge({ connected }: { connected: boolean }) {
         background: connected ? tints.successSoft : colors.surfaceHi,
         border: `1px solid ${connected ? colors.success : colors.borderSoft}`,
         color: connected ? colors.successBright : colors.textFaint,
-        fontSize: 11,
+        fontSize: font.size.label,
         fontWeight: 800,
         lineHeight: 1,
       }}

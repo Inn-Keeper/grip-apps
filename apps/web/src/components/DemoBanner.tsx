@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { useLinkGitHubMutation } from "../profile/queries";
 import { BrandIcon } from "./BrandIcon";
 
@@ -19,7 +19,7 @@ export function DemoBanner() {
         padding: "8px 24px",
         background: `${colors.accent}14`,
         borderBottom: `1px solid ${colors.accent}40`,
-        fontSize: 12.5,
+        fontSize: font.size.body,
         color: colors.text,
         position: "relative",
         zIndex: 1,
@@ -39,7 +39,7 @@ export function DemoBanner() {
           border: "none",
           borderRadius: 8,
           color: colors.onAccent,
-          fontSize: 12,
+          fontSize: font.size.small,
           fontWeight: 700,
           cursor: link.isPending ? "wait" : "pointer",
           opacity: link.isPending ? 0.6 : 1,

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { StoryCard } from "./StoryCard";
@@ -27,8 +27,9 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
     <div>
       <div
         style={{
-          background: colors.well,
+          background: colors.surface,
           border: `1px solid ${colors.borderSoft}`,
+          boxShadow: shadow.card,
           borderRadius: 14,
           padding: "24px",
           textAlign: "center",
@@ -37,10 +38,10 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
         <div style={{ marginBottom: 14 }}>
           <CompetencyBadge competency={prompt?.competency ?? ""} />
         </div>
-        <p style={{ margin: "0 0 8px", fontSize: 17, fontWeight: 600, lineHeight: 1.5, color: colors.textBright }}>
+        <p style={{ margin: "0 0 8px", fontSize: font.size.title, fontWeight: 600, lineHeight: 1.5, color: colors.textBright }}>
           "{prompt?.text}"
         </p>
-        <p style={{ margin: "0 0 20px", fontSize: 12, color: colors.textFaint }}>
+        <p style={{ margin: "0 0 20px", fontSize: font.size.small, color: colors.textFaint }}>
           {t("stories.answerOutLoud")}
         </p>
         <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
@@ -53,7 +54,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
               border: "none",
               borderRadius: 8,
               color: colors.onAccent,
-              fontSize: 13,
+              fontSize: font.size.body,
               fontWeight: 600,
               cursor: revealed ? "default" : "pointer",
               opacity: revealed ? 0.5 : 1,
@@ -69,7 +70,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
               border: `1px solid ${colors.borderSoft}`,
               borderRadius: 8,
               color: colors.textDim,
-              fontSize: 13,
+              fontSize: font.size.body,
               fontWeight: 600,
               cursor: "pointer",
             }}
@@ -89,7 +90,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
                 justifyContent: "center",
                 gap: 7,
                 color: colors.warningBright,
-                fontSize: 13,
+                fontSize: font.size.body,
                 textAlign: "center",
               }}
             >

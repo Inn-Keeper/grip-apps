@@ -60,11 +60,11 @@ export function EvalResults({
               color: result.score >= SHIP_SCORE ? colors.success : result.score >= REVIEW_SCORE ? colors.warning : colors.danger,
             }}
           >
-            {result.score}% <span style={{ fontSize: font.size.small, color: colors.textDim }}>checklist coverage</span>
+            {result.score}% <span style={{ fontSize: font.size.small, color: colors.textDim }}>{t("board.eval.coverage")}</span>
           </span>
         )}
         <span style={{ fontSize: font.size.body, fontWeight: 600, color: colors.textBright }}>
-          {result.score >= SHIP_SCORE ? "Checklist complete" : "Checklist partially complete"}
+          {result.score >= SHIP_SCORE ? t("board.eval.complete") : t("board.eval.partial")}
         </span>
         {showScore && (
         <span
@@ -78,21 +78,23 @@ export function EvalResults({
           }}
         >
           <BrandIcon name="cost" color={colors.textDim} size={14} />
-          cost units {result.cost}/{scenario.budget} ·
+          {t("board.eval.cost", { cost: result.cost, budget: scenario.budget })}
           <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-          maint {result.maint} (
-          {result.maint <= MAINT_LEAN_MAX ? "lean" : result.maint <= MAINT_MODERATE_MAX ? "moderate" : "heavy"})
+          {t("board.eval.maint", {
+            value: result.maint,
+            level: t(result.maint <= MAINT_LEAN_MAX ? "board.eval.lean" : result.maint <= MAINT_MODERATE_MAX ? "board.eval.moderate" : "board.eval.heavy"),
+          })}
         </span>
         )}
       </div>
       <p style={{ margin: "-6px 0 14px", fontSize: font.size.small, color: colors.textFaint }}>
-        Checks matched for this scenario; review the warnings and explain your trade-offs.
+        {t("board.eval.intro")}
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 18 }}>
         <div>
           <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
-            DESIGN CHECKS
+            {t("board.designChecks")}
           </div>
           <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
             {result.checks.map((check) => (
@@ -113,7 +115,7 @@ export function EvalResults({
                   size={14}
                 />
                 <span style={{ flex: 1 }}>
-                  {check.label} <span style={{ color: colors.textFaint }}>({check.points} pts)</span>
+                  {check.label} <span style={{ color: colors.textFaint }}>{t("board.eval.points", { points: check.points })}</span>
                 </span>
               </li>
             ))}
@@ -122,7 +124,7 @@ export function EvalResults({
         {result.warnings.length > 0 && (
           <div>
             <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
-              DESIGN WARNINGS ({result.warnings.length})
+              {t("board.eval.warnings", { count: result.warnings.length })}
             </div>
             <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
               {result.warnings.map((warning) => (

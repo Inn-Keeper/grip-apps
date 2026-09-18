@@ -1,6 +1,7 @@
 import React from "react";
 import { t } from "@grip/core/i18n";
-import { inputStyle, miniBtn, Field } from "../components/shared";
+import { Field } from "../components/shared";
+import { fieldStyle as inputStyle, miniBtn } from "../components/fieldStyles";
 
 export { Field };
 

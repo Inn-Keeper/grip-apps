@@ -1,0 +1,43 @@
+/* Poe's raven tile: every 9s a shine sweeps across it, then it blinks once. */
+.mark {
+  position: relative;
+  display: block;
+  flex-shrink: 0;
+  overflow: hidden;
+  animation: markBlink 9s ease-out 1.2s infinite;
+}
+
+.mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.mark::after {
+  content: "";
+  position: absolute;
+  inset: -20% auto -20% 0;
+  width: 45%;
+  background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.42), transparent);
+  transform: translateX(-160%) skewX(-18deg);
+  animation: markSweep 9s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+
+@keyframes markSweep {
+  0% { transform: translateX(-160%) skewX(-18deg); }
+  9%, 100% { transform: translateX(320%) skewX(-18deg); }
+}
+
+@keyframes markBlink {
+  0%, 9% { filter: brightness(1); }
+  11% { filter: brightness(1.35); }
+  13% { filter: brightness(1); }
+  15% { filter: brightness(1.25); }
+  18%, 100% { filter: brightness(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark, .mark::after { animation: none; }
+  .mark::after { display: none; }
+}

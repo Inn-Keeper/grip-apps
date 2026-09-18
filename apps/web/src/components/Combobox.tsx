@@ -1,13 +1,13 @@
 import type { CSSProperties } from "react";
 import { useId, useState } from "react";
-import { colors, tints } from "@grip/core/tokens";
+import { colors, tints, font } from "@grip/core/tokens";
 import { BrandIcon } from "./BrandIcon";
 import { fieldStyle } from "./fieldStyles";
 
 const DEFAULT_MAX_HEIGHT = 178;
 
 const labelStyle: CSSProperties = {
-  fontSize: 11,
+  fontSize: font.size.label,
   fontWeight: 600,
   color: colors.textFaint,
   letterSpacing: "0.03em",
@@ -162,7 +162,7 @@ export function Combobox({
             {groups.map((group) => (
               <div key={group.label ?? "options"}>
                 {group.label && (
-                  <div style={{ padding: "7px 10px 5px", color: colors.textFaint, fontSize: 10, fontWeight: 800, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+                  <div style={{ padding: "7px 10px 5px", color: colors.textFaint, fontSize: font.size.caption, fontWeight: 800, letterSpacing: "0.07em", textTransform: "uppercase" }}>
                     {group.label}
                   </div>
                 )}
@@ -193,7 +193,7 @@ export function Combobox({
                         borderRadius: 6,
                         color: selectedOption || active ? colors.accentBright : colors.textDim,
                         textAlign: "left",
-                        fontSize: 12.5,
+                        fontSize: font.size.body,
                         fontWeight: selectedOption || active ? 800 : 650,
                         cursor: "pointer",
                       }}

@@ -14,7 +14,7 @@
     "build:mobile:ios": "pnpm --filter mobile build:ios:sim",
     "preview": "pnpm --filter web preview",
     "postinstall": "pnpm --filter mobile exec install-skia",
-    "lint": "eslint .",
+    "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "typecheck": "pnpm --filter mobile exec tsc --noEmit && pnpm --filter web typecheck",
     "test": "pnpm --filter @grip/core test && pnpm --filter mobile test && pnpm --filter web test",

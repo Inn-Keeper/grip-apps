@@ -3,7 +3,7 @@ import { SCENARIOS, TYPE_COLORS, evaluate, meta } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { brand, colors, font } from "@grip/core/tokens";
 import { getSharedBoard } from "../lib/api";
-import { BrandIcon } from "../components/BrandIcon";
+import { BrandMark } from "../components/BrandMark";
 import { EvalResults } from "./EvalResults";
 import type { AugmentedScenario, BoardEdge, BoardNode } from "./types";
 
@@ -112,7 +112,7 @@ export function SharedBoardPage({ token }: { token: string }) {
     >
       <div style={{ width: "min(100%, 960px)", display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <BrandIcon name="spark" color={colors.accentBright} size={22} />
+          <BrandMark size={24} />
           <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>{brand.productName}</span>
           <span style={{ fontSize: font.size.small, color: colors.textFaint }}>· {t("board.sharedTitle")}</span>
         </div>

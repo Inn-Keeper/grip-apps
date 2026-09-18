@@ -3,23 +3,6 @@ import { colors, space, font } from "@grip/core/tokens";
 import { FormInput, FormTextarea } from "./FormInput";
 import { MiniButton } from "./MiniButton";
 
-// Field styles live with FormInput; these names stay for existing imports.
-export { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "./fieldStyles";
-
-export function miniBtn(color: string): React.CSSProperties {
-  return {
-    padding: `${space.xs}px ${space.sm! + 2}px`,
-    background: "transparent",
-    border: `1px solid ${color}50`,
-    borderRadius: space.md,
-    color,
-    fontSize: font.size!.label,
-    fontWeight: "600",
-    cursor: "pointer",
-    whiteSpace: "nowrap",
-  };
-}
-
 // New component exports
 export { FormInput, FormTextarea, MiniButton };
 

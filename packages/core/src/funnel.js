@@ -102,17 +102,23 @@ export function buildFunnelSummary(contacts = [], events = [], now = new Date())
   const applicationsPerWeek = round1(recentApplied / (PACE_WINDOW_DAYS / 7));
   const due = contacts.filter(isDue).length;
 
-  const signals = [];
-  if (active.length < 8) signals.push("Top of funnel is thin: add more contacts before judging conversion.");
-  if (applicationsPerWeek < PACE_GOAL_PER_WEEK) signals.push("Application pace is low: volume is probably the first bottleneck.");
-  if (reached.Applied >= 5 && rates.appliedToInterviewing < 0.25) {
-    signals.push("Applications are not turning into interviews yet: tune targeting, CV, and referrals.");
-  }
-  if (reached.Interviewing >= 3 && rates.interviewingToOffer < 0.2) {
-    signals.push("Interview conversion is the bottleneck: prioritize retros and focused drills.");
-  }
-  if (due > 0) signals.push(`${due} follow-up${due === 1 ? "" : "s"} due: clear these before adding more leads.`);
-  if (signals.length === 0) signals.push("Pipeline shape is healthy enough: keep shipping applications and learning from replies.");
+  // Stable ids + params for translated UIs; `signals` keeps the English text for mobile.
+  const signalIds = [];
+  if (active.length < 8) signalIds.push({ id: "thin" });
+  if (applicationsPerWeek < PACE_GOAL_PER_WEEK) signalIds.push({ id: "pace" });
+  if (reached.Applied >= 5 && rates.appliedToInterviewing < 0.25) signalIds.push({ id: "targeting" });
+  if (reached.Interviewing >= 3 && rates.interviewingToOffer < 0.2) signalIds.push({ id: "interviews" });
+  if (due > 0) signalIds.push({ id: "due", params: { count: due } });
+  if (signalIds.length === 0) signalIds.push({ id: "healthy" });
+  const SIGNAL_TEXT = {
+    thin: () => "Top of funnel is thin: add more contacts before judging conversion.",
+    pace: () => "Application pace is low: volume is probably the first bottleneck.",
+    targeting: () => "Applications are not turning into interviews yet: tune targeting, CV, and referrals.",
+    interviews: () => "Interview conversion is the bottleneck: prioritize retros and focused drills.",
+    due: () => `${due} follow-up${due === 1 ? "" : "s"} due: clear these before adding more leads.`,
+    healthy: () => "Pipeline shape is healthy enough: keep shipping applications and learning from replies.",
+  };
+  const signals = signalIds.map(({ id }) => SIGNAL_TEXT[id]());
 
   return {
     total: contacts.length,
@@ -125,6 +131,7 @@ export function buildFunnelSummary(contacts = [], events = [], now = new Date())
     applicationsPerWeek,
     due,
     signals,
+    signalIds,
     statuses: ACTIVE_STATUSES,
   };
 }

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 
 const DISMISS_MS = 2100;
 
@@ -72,8 +72,8 @@ export function CelebrationOverlay({ title, subtitle, accent = colors.accent, on
           animation: "celebration-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
         }}
       >
-        <div style={{ color: colors.textBright, fontSize: 22, fontWeight: 800 }}>{title}</div>
-        <div style={{ color: colors.textDim, fontSize: 13, marginTop: 6, lineHeight: 1.4 }}>{subtitle}</div>
+        <div style={{ color: colors.textBright, fontSize: font.size.heading, fontWeight: 800 }}>{title}</div>
+        <div style={{ color: colors.textDim, fontSize: font.size.body, marginTop: 6, lineHeight: 1.4 }}>{subtitle}</div>
       </div>
     </div>
   );

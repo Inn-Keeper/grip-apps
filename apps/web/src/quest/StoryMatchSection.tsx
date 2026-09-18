@@ -2,6 +2,9 @@ import { useState } from "react";
 import { groupStoriesByCompetency } from "@grip/core/stories";
 import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
+import { t } from "@grip/core/i18n";
+
+const competencyName = (key: string) => t(`enum.competency.${key}` as Parameters<typeof t>[0]);
 
 export type Story = { id?: string; title: string; competency: string };
 
@@ -30,7 +33,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
         }}
       >
         <BrandIcon name="story" color={colors.textDim} size={12} />
-        Prep stories ({covered.length}/{grouped.length} competencies)
+        {t("quest.storyMatch", { covered: covered.length, total: grouped.length })}
         <BrandIcon name={open ? "arrowUp" : "arrowDown"} color={colors.textDim} size={11} />
       </button>
 
@@ -62,7 +65,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
                   marginBottom: 4,
                 }}
               >
-                {g.competency.toUpperCase()}
+                {competencyName(g.competency).toUpperCase()}
               </span>
               <div style={{ display: "flex", flexDirection: "column", gap: 2, paddingLeft: 4 }}>
                 {g.stories.map((s) => (
@@ -87,7 +90,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
                     fontWeight: 600,
                   }}
                 >
-                  {g.competency} · no story
+                  {t("quest.noStory", { competency: competencyName(g.competency) })}
                 </span>
               ))}
             </div>

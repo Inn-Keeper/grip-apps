@@ -5,7 +5,7 @@ import { colors, shadow, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
-import { inputStyle } from "../components/shared";
+import { fieldStyle as inputStyle } from "../components/fieldStyles";
 
 type ScenarioFormProps = {
   onSave: (form: object) => void;
@@ -63,7 +63,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
     >
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
         <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={labelStyle}>Name *</span>
+          <span style={labelStyle}>{t("board.form.name")}</span>
           <input
             style={inputStyle}
             value={name}
@@ -73,7 +73,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
           />
         </label>
         <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-          <span style={labelStyle}>Budget (sum of component costs)</span>
+          <span style={labelStyle}>{t("board.form.budget")}</span>
           <input
             style={inputStyle}
             type="number"
@@ -85,7 +85,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
         </label>
       </div>
       <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={labelStyle}>Brief - the problem statement you'd get in the interview</span>
+        <span style={labelStyle}>{t("board.form.brief")}</span>
         <textarea
           style={{ ...inputStyle, minHeight: 52, resize: "vertical" as const, lineHeight: 1.5 }}
           value={brief}
@@ -94,7 +94,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
       </label>
 
       <div>
-        <div style={{ ...labelStyle, marginBottom: 6 }}>Required components - each is a scored check</div>
+        <div style={{ ...labelStyle, marginBottom: 6 }}>{t("board.form.requiredNodes")}</div>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
           {NODE_TYPES.map((spec) => {
             const active = requiredNodes.includes(spec.type);
@@ -125,7 +125,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
       </div>
 
       <div>
-        <div style={{ ...labelStyle, marginBottom: 6 }}>Required connections - scored when the edge exists</div>
+        <div style={{ ...labelStyle, marginBottom: 6 }}>{t("board.form.requiredEdges")}</div>
         <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
           {requiredEdges.map((edge, index) => (
             <div key={index} style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -165,7 +165,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
               cursor: "pointer",
             }}
           >
-            Add connection
+            {t("board.form.addEdge")}
           </button>
         </div>
       </div>

@@ -11,7 +11,7 @@ type FunnelSummary = {
   applicationsPerWeek: number;
   reached: Record<string, number>;
   rates: { contactedToApplied: number; appliedToInterviewing: number; interviewingToOffer: number };
-  signals: string[];
+  signalIds: { id: string; params?: Record<string, number> }[];
 };
 
 // Right rail: status (application pace, then conversion), then insights (rule 5).
@@ -60,9 +60,10 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
       <WorkspacePanel>
         <WorkspaceTitle icon={<BrandIcon name="accuracy" color={colors.successBright} size={17} />} title={t("quest.insights")} />
         <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 12 }}>
-          {/* ponytail: insight sentences come from core in English only; translate when core gets i18n keys. */}
-          {funnel.signals.slice(0, 2).map((signal) => (
-            <p key={signal} style={{ margin: 0, fontSize: font.size.small, lineHeight: 1.5, color: colors.textDim }}>{signal}</p>
+          {funnel.signalIds.slice(0, 2).map(({ id, params }) => (
+            <p key={id} style={{ margin: 0, fontSize: font.size.small, lineHeight: 1.5, color: colors.textDim }}>
+              {t(`funnel.signal.${id}` as Parameters<typeof t>[0], params)}
+            </p>
           ))}
         </div>
       </WorkspacePanel>

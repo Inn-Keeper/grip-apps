@@ -195,7 +195,7 @@ Gamified register for product nouns: **Quest** (pipeline tab), XP, ranks, drills
 
 ## Out of scope / follow-ups
 
-- App icon, splash icon, Android adaptive set, favicon still carry temporary identity assets -
+- Web favicon is the raven effigy (`apps/web/public/favicon.svg`). Mobile app icon, splash icon and Android adaptive set still carry temporary identity assets -
   regenerating them needs design tooling (binary assets). The Android adaptive background
   (`#E6F4FE`) intentionally stays until the foreground PNG is redone.
 - Full spacing/typography migration beyond `ui.tsx` happens opportunistically.

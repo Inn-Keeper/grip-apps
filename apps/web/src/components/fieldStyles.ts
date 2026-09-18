@@ -23,3 +23,18 @@ export const textareaFieldStyle: CSSProperties = {
   resize: "vertical",
   lineHeight: 1.5,
 };
+
+// Small outline button beside cards and rows.
+export function miniBtn(color: string): CSSProperties {
+  return {
+    padding: `${space.xs}px ${space.sm + 2}px`,
+    background: "transparent",
+    border: `1px solid ${color}50`,
+    borderRadius: space.md,
+    color,
+    fontSize: font.size.label,
+    fontWeight: "600",
+    cursor: "pointer",
+    whiteSpace: "nowrap",
+  };
+}

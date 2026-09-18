@@ -76,11 +76,11 @@ export function SavedBoards({
                 {board.title}
               </span>
               <span style={{ fontSize: font.size.label, color: colors.textFaint }}>
-                {boardScenario?.name ?? board.scenarioId} · updated {new Date(board.updatedAt).toLocaleDateString()}
+                {boardScenario?.name ?? board.scenarioId} {t("board.saved.updated", { date: new Date(board.updatedAt).toLocaleDateString() })}
               </span>
               {copyErrorId === board.id && board.shareToken && (
                 <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>
-                  Copy failed. Copy this link: <span style={{ userSelect: "all" }}>{shareUrl(board.shareToken)}</span>
+                  {t("board.saved.copyFailed")} <span style={{ userSelect: "all" }}>{shareUrl(board.shareToken)}</span>
                 </p>
               )}
               {shareMutation.error && shareMutation.variables?.id === board.id && <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>{shareMutation.error.message}</p>}

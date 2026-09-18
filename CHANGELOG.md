@@ -23,6 +23,15 @@ because they have to be applied by hand.
 - Arch Board (web): three columns (scenario, canvas, status). The canvas is visible without scrolling, Next Up coaches each step with Evaluate as the one action, the design score heads the right rail, and inspectors open beside the canvas.
 - Arch Board (web): on an empty canvas, Next Up offers to continue your latest saved board (such as the demo sample).
 - Web: Tutorial is now "Fly Me" with a wing icon, placed before Profile.
+- Stories (web): Next Up points to the first uncovered competency, stories open in a focused view, and a coverage headline heads the right rail.
+- Fly Me (web): the "Start with Prep" button became a Next Up link, and the page follows the card and type standards.
+- Web: every font size uses `font.size` tokens. The active nav pill is more translucent, with 8px corners.
+- Web: Sign-in, Arch Board panels, Quest insights and story matching are translated (pt/sv). Core funnel insights now carry stable ids.
+- Prep (web): both rails lock during a session through the shared rail lock.
+- Web: a raven silhouette of Poe, with his collar and medallion, is the favicon and the logo in the header, footer, sign-in and shared boards. The logo shines and blinks every 9s, and sign-in has a darker background.
+- CI: lint fails on any warning.
+- Footer (web): one benefit-led line instead of tech details, and the link group is titled "Explore".
+- Sign-in (web): the Cloudflare check runs invisibly and only shows when it needs a click, in the app language.
 - Web: form fields follow one standard (40px, 8px corners, focus ring), and the hover lift is gentler.
 - Prep (web): a card's quiz opens as a focused session, so cards no longer grow.
 - Prep (web): Next Up is the one place to start sessions, and Mock loop moved into it. Rail drill buttons are removed, and category Drill buttons show on the active row or on hover.

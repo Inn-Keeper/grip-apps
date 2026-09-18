@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { categories } from "@grip/core/prepData";
 import { extractTechsFromText } from "@grip/core/cvTechs";
-import { colors } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { t } from "@grip/core/i18n";
 import { readCvText, CvParseError } from "./cvParser";
 
@@ -82,10 +82,10 @@ export function CvUpload({
           transition: "background 0.18s ease, border-color 0.18s ease",
         }}
       >
-        <span style={{ fontSize: 15, fontWeight: 800, color: colors.textBright }}>
+        <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>
           {busy ? t("profile.cvReading") : t("profile.cvDropTitle")}
         </span>
-        <span style={{ fontSize: 13, color: colors.textFaint }}>{t("profile.cvDropHint")}</span>
+        <span style={{ fontSize: font.size.body, color: colors.textFaint }}>{t("profile.cvDropHint")}</span>
         <input
           ref={inputRef}
           type="file"
@@ -106,7 +106,7 @@ export function CvUpload({
           border: "none",
           borderRadius: 8,
           color: colors.onAccent,
-          fontSize: 13,
+          fontSize: font.size.body,
           fontWeight: 800,
           cursor: disabled || busy ? "default" : "pointer",
           opacity: disabled || busy ? 0.6 : 1,
@@ -116,18 +116,18 @@ export function CvUpload({
       </button>
 
       {error && (
-        <p style={{ marginTop: 16, color: colors.dangerBright, fontSize: 13, lineHeight: 1.6 }}>{error}</p>
+        <p style={{ marginTop: 16, color: colors.dangerBright, fontSize: font.size.body, lineHeight: 1.6 }}>{error}</p>
       )}
 
       {cvTechs.length > 0 && (
         <div style={{ marginTop: 28 }}>
           <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: colors.textBright }}>{t("profile.cvDetected")}</span>
+            <span style={{ fontSize: font.size.body, fontWeight: 800, color: colors.textBright }}>{t("profile.cvDetected")}</span>
             <button
               type="button"
               onClick={onClear}
               disabled={busy}
-              style={{ background: "none", border: "none", color: colors.textFaint, fontSize: 12, fontWeight: 700, cursor: "pointer" }}
+              style={{ background: "none", border: "none", color: colors.textFaint, fontSize: font.size.small, fontWeight: 700, cursor: "pointer" }}
             >
               {t("profile.cvClear")}
             </button>
@@ -142,7 +142,7 @@ export function CvUpload({
                   border: `1px solid ${colors.accent}40`,
                   borderRadius: 999,
                   color: colors.accentBright,
-                  fontSize: 13,
+                  fontSize: font.size.body,
                   fontWeight: 700,
                 }}
               >
