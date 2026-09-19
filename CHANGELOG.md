@@ -34,6 +34,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Web: signing in always opens Prep (email, password, demo and GitHub). Before, it reopened the page you signed out from or the last stored page. Reloading while signed in keeps the current page, and returning from linking GitHub still opens Profile.
 - Web: on tall screens (iPad Pro, Zenbook Fold, any page shorter than the screen) the footer sits at the bottom of the screen instead of starting below the fold. Pages no longer add their own full-screen minimum height on top of the header and demo bar; the page area between header and footer fills the space instead.
 - Web: the "or" before secondary links outside Next Up (e.g. the Fly Me hero) rendered as large bright text; it now matches the small faint Next Up style.
 - Web: smooth scrolling (Prep sessions, Stories, Quest, Arch Board results) jumps instead when reduced motion is on (rule 35).

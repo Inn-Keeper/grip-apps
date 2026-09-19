@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { identityChanged } from "@grip/core/authCache";
 import { setLocale, t } from "@grip/core/i18n";
-import { guardHistoryNavigation } from "./lib/navigation.js";
+import { guardHistoryNavigation, isAuthReturn, isFreshSignIn } from "./lib/navigation.js";
 import { supabase } from "./lib/supabase";
 import { useLocale } from "./lib/useLocale";
 import InterviewPrep from "./interviewPrep/InterviewPrep";
@@ -42,6 +42,10 @@ const LOCALE_STORAGE_KEY = "grip.locale";
 const savedLocale = typeof window !== "undefined" ? window.localStorage.getItem(LOCALE_STORAGE_KEY) : null;
 if (savedLocale) setLocale(savedLocale);
 
+// Read once at module load: Supabase clears the OAuth hash/code from the URL once it has
+// exchanged it, which can happen before React's first render.
+const returningFromSignIn = typeof window !== "undefined" && isAuthReturn(window.location.search, window.location.hash);
+
 // Resolves which page to show on load from the URL path, falling back to
 // stored preference. A GitHub OAuth return (?linked=github) overrides both.
 const initialPage = () => {
@@ -50,6 +54,8 @@ const initialPage = () => {
   if (params.get("linked") === "github" || window.localStorage.getItem(GITHUB_LINK_PENDING_KEY) === "1") {
     return "profile";
   }
+  // Signing in always opens Prep.
+  if (returningFromSignIn) return DEFAULT_PAGE;
   const fromPath = window.location.pathname.replace(/^\//, "");
   if (fromPath === "contacts") return "quest";
   if (fromPath && (PAGE_IDS as readonly string[]).includes(fromPath)) return fromPath;
@@ -119,6 +125,12 @@ export default function App() {
     const applySession = (nextSession: Session | null) => {
       const nextUserId = nextSession?.user.id ?? null;
       if (identityChanged(previousUserId.current, nextUserId)) queryClient.clear();
+      // Signing in from the sign-in screen always opens Prep (a reload keeps the current page).
+      if (isFreshSignIn(previousUserId.current, nextUserId)) {
+        setPage(DEFAULT_PAGE);
+        window.localStorage.setItem(ACTIVE_PAGE_KEY, DEFAULT_PAGE);
+        window.history.replaceState({ page: DEFAULT_PAGE }, "", `/${DEFAULT_PAGE}`);
+      }
       previousUserId.current = nextUserId;
       setSession(nextSession);
     };
