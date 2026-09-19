@@ -10,6 +10,7 @@ import { Combobox } from "../components/Combobox";
 import { HeadlineMetric } from "../components/HeadlineMetric";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout, WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
+import { workspaceFocusStyle } from "../components/fieldStyles";
 import { CATEGORY_ICONS, CUSTOM_CATEGORY, NODE_H, NODE_W, WORLD } from "./constants";
 import { DesignTimer } from "./DesignTimer";
 import { EdgeInspector } from "./EdgeInspector";
@@ -37,6 +38,9 @@ import {
   useSaveScenarioMutation,
 } from "./queries";
 import type { AugmentedScenario, BoardEdge, BoardNode, BoardSummary, ConnectDrag, DragRef, SavedBoard } from "./types";
+
+// Touch-first devices get tap/pinch wording instead of Shift-drag and Ctrl/⌘ + scroll.
+const coarsePointer = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
 export default function ArchBoard() {
   const [scenarioId, setScenarioId] = useState<string>((SCENARIOS[0] as AugmentedScenario).id);
@@ -516,7 +520,7 @@ export default function ArchBoard() {
       <div style={cssVars}>
         {creatorOpen ? (
           // Creating a scenario is a task: it takes the main column and locks the rails (rules 8, 10).
-          <div style={{ width: "min(100%, 860px)", paddingBottom: 48 }}>
+          <div style={workspaceFocusStyle}>
             <button type="button" onClick={() => setCreatorOpen(false)} style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}>
               {t("board.back")}
             </button>
@@ -614,7 +618,10 @@ export default function ArchBoard() {
               if ((e.target as HTMLElement).dataset.boardSurface === "true") cancelConnection();
             }}
             style={{
-              position: "relative", minWidth: 0, height: "calc(100vh - 430px)", minHeight: 420,
+              position: "relative", minWidth: 0, height: "calc(100svh - 430px)",
+              // Never taller than the screen minus a strip of page: the canvas eats swipes
+              // (touch-action: none), so there must always be room outside it to scroll.
+              minHeight: "clamp(220px, calc(100svh - 160px), 420px)",
               background: colors.bgDeep,
               // The dot grid belongs to the board, so it pans and scales with it.
               backgroundImage: `radial-gradient(${colors.borderSoft} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
@@ -630,7 +637,7 @@ export default function ArchBoard() {
                   justifyContent: "center", color: colors.textFaint, fontSize: font.size.body, pointerEvents: "none", padding: "0 24px", textAlign: "center",
                 }}
               >
-                {t("board.emptyCanvasHint")}
+                {t(coarsePointer ? "board.emptyCanvasHintTouch" : "board.emptyCanvasHint")}
               </div>
             )}
 

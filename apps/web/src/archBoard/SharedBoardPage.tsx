@@ -100,7 +100,7 @@ export function SharedBoardPage({ token }: { token: string }) {
     <div
       style={{
         fontFamily: "'Inter', system-ui, sans-serif",
-        minHeight: "100vh",
+        minHeight: "100svh",
         background: colors.bg,
         color: colors.text,
         display: "flex",

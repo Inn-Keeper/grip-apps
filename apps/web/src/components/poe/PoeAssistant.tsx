@@ -114,7 +114,10 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
 
   return (
     <aside
-      className={`${styles.assistant} ${styles[mood]} ${shining ? styles.shine : ""}`}
+      // "resting": idle with nothing to say. Where Poe would sit on top of content (narrow or
+      // short screens), the stylesheet hides him while resting, so he only covers a spot
+      // for the moment he reacts (rule 7).
+      className={`${styles.assistant} ${styles[mood]} ${shining ? styles.shine : ""} ${mood === "idle" && !message ? styles.resting : ""}`}
       aria-label={label}
       style={{ "--poe-lift": `${footerLift}px` } as React.CSSProperties}
     >

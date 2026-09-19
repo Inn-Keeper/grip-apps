@@ -58,7 +58,7 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 
 32. Motion explains a change. **Never** add it only for decoration.
 33. Each effect plays **once** when the screen opens. Numbers count up, bars grow and then blink, and charts draw in, all in about **1 second**.
-34. Only one thing may animate on its own: a shine every **10 seconds** on the single active main button.
+34. Only one thing may animate on its own: a shine every **10 seconds** on the single active main button. The one exception is a running clock in its last seconds (the Thunderstorm pulse), because there the motion is the message: time is running out.
 35. When the person has turned animations off in their system settings, **every** effect is skipped.
 
 ## Words and icons
@@ -75,9 +75,11 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 42. Locked areas cannot be reached by keyboard or screen reader.
 43. Screen readers announce confirmations, errors and loading states.
 44. Text keeps readable contrast on the dark background.
+45. Every button and control is at least **24px** tall, so it can be hit with a finger. Text links inside a sentence are the only exception.
 
 ## Before calling a screen done
 
 - [ ] It meets every rule above, or the rule it breaks was changed here first.
 - [ ] It has been checked in the browser at a normal (1280px) and a wide (1680px) window.
+- [ ] It has been checked on a phone (375px, and 740×375 in landscape) and a tablet (1024px), with touch: nothing overflows sideways, nothing is covered, and the footer can be reached.
 - [ ] It has been checked with the system's reduced-motion setting turned on.

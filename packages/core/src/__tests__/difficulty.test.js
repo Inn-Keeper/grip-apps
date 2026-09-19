@@ -1,4 +1,4 @@
-import { DIFFICULTIES, DIFFICULTY_KEYS, difficultyByKey } from "../difficulty.js";
+import { DIFFICULTIES, DIFFICULTY_KEYS, SPEED_LIMIT_MS, difficultyByKey, isTimedTier, speedBonusXp } from "../difficulty.js";
 
 describe("difficulty tiers", () => {
   it("ships the four tiers in easy → hardest order", () => {
@@ -25,5 +25,22 @@ describe("difficulty tiers", () => {
     expect(difficultyByKey("ultra")).toBe(DIFFICULTIES[3]);
     expect(difficultyByKey("nope")).toBeUndefined();
     expect(difficultyByKey(null)).toBeUndefined();
+  });
+});
+
+describe("Thunderstorm speed bonus", () => {
+  it("times only the hardest tier", () => {
+    expect(DIFFICULTY_KEYS.filter(isTimedTier)).toEqual(["ultra"]);
+  });
+
+  it("adds half the tier XP inside the limit, nothing at or after it", () => {
+    expect(speedBonusXp("ultra", 0)).toBe(20);
+    expect(speedBonusXp("ultra", SPEED_LIMIT_MS - 1)).toBe(20);
+    expect(speedBonusXp("ultra", SPEED_LIMIT_MS)).toBe(0);
+  });
+
+  it("never pays on untimed tiers or unknown keys", () => {
+    expect(speedBonusXp("high", 0)).toBe(0);
+    expect(speedBonusXp("nope", 0)).toBe(0);
   });
 });

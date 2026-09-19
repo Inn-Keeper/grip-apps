@@ -19,6 +19,13 @@
       body { background: #14171F; } /* keep in sync with tokens.colors.bg */
       /* Field focus ring (accentBright); fields set no outline of their own. */
       input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 1px; }
+      /* Scroll targets clear the sticky header; App.tsx measures it into --header-h. At
+         500px tall and below the header scrolls away (App.module.css), so only the gap stays. */
+      html { scroll-padding-top: calc(var(--header-h, 0px) + 16px); }
+      @media (max-height: 500px) { html { scroll-padding-top: 16px; } }
+      /* Tap targets: every button, select and disclosure is at least 24px tall (WCAG 2.5.8),
+         so the small outline buttons (Edit, Delete, Drill, All…) stay easy to hit on touch. */
+      button, select, summary { min-height: 24px; }
       /* Placeholders use textDim: readable (AA) but clearly dimmer than typed text. */
       ::placeholder { color: #9AA5BC; opacity: 1; }
 

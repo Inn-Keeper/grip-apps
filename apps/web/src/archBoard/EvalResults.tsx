@@ -9,6 +9,7 @@ import {
   SHIP_SCORE,
 } from "./constants";
 import type { AugmentedScenario } from "./types";
+import { scrollBehavior } from "../lib/motion";
 
 type EvalResult = {
   score: number;
@@ -33,7 +34,7 @@ export function EvalResults({
   // Results render below the canvas; bring them into view so "Evaluate design" visibly answers.
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    ref.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    ref.current?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   }, [result]);
 
   return (
@@ -41,8 +42,6 @@ export function EvalResults({
       ref={ref}
       aria-live="polite"
       style={{
-        // Clears the sticky app header.
-        scrollMarginTop: 96,
         marginTop: 16,
         padding: "18px 20px",
         background: colors.surface,

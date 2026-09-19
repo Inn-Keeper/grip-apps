@@ -4,6 +4,7 @@ import { t } from "@grip/core/i18n";
 import { colors, font, tints } from "@grip/core/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
+import { workspaceFocusStyle } from "../components/fieldStyles";
 import { PromptDrill } from "./PromptDrill";
 import { StoryCard, StoryDetail } from "./StoryCard";
 import { StoryForm } from "./StoryForm";
@@ -12,6 +13,7 @@ import { StoryCoverage } from "./StoryCoverage";
 import { EMPTY_FORM } from "./types";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "./queries";
 import type { Story, StoryForm as StoryFormType } from "./types";
+import { scrollBehavior } from "../lib/motion";
 
 // The focused view (rule 8): writing, editing or reading one story in place of the list.
 type Focus = { mode: "detail" | "edit"; id: string } | { mode: "new"; competency?: string } | null;
@@ -36,7 +38,7 @@ export default function StoryBank() {
   }, [notice]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: scrollBehavior() });
   }, [focus]);
 
   const announce = (text: string) => setNotice({ id: Date.now(), text });
@@ -96,7 +98,7 @@ export default function StoryBank() {
       )}
 
       {focus ? (
-        <div style={{ width: "min(100%, 860px)", paddingBottom: 48 }}>
+        <div style={workspaceFocusStyle}>
           <button type="button" onClick={() => setFocus(null)} style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}>
             {t("stories.back")}
           </button>
@@ -126,11 +128,12 @@ export default function StoryBank() {
               {stories ? t("stories.count", { count: stories.length }) : t("common.loading")}
             </span>
           </div>
-          {noticeLine ?? (
+          {/* The list explains itself (coverage and Next Up sit beside it); drill mode keeps its one-line how-to. */}
+          {noticeLine ?? (mode === "drill" && (
             <p style={{ margin: "0 0 16px", color: colors.textFaint, fontSize: font.size.body, maxWidth: 760, lineHeight: 1.6 }}>
-              {mode === "drill" ? t("stories.drillSubtitle") : t("stories.subtitle")}
+              {t("stories.drillSubtitle")}
             </p>
-          )}
+          ))}
 
           {mode === "drill" ? (
             <PromptDrill stories={storyList} />

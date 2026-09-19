@@ -38,3 +38,21 @@ export function miniBtn(color: string): CSSProperties {
     whiteSpace: "nowrap",
   };
 }
+
+// A focused view (a quiz, a form, a detail) in the main column: capped for readable
+// lines and centered, so wide screens don't leave all the spare room on one side.
+export const workspaceFocusStyle: CSSProperties = { width: "min(100%, 860px)", marginInline: "auto", paddingBottom: 48 };
+
+// Visually hidden, still read by screen readers.
+export const srOnly: CSSProperties = {
+  position: "absolute",
+  width: 1,
+  height: 1,
+  overflow: "hidden",
+  clip: "rect(0 0 0 0)",
+  whiteSpace: "nowrap",
+};
+
+// Quiet body text inside cards (descriptions, notes, how-tos): textDim at 80%, ~4.6:1 on
+// surface, so it recedes behind titles and data yet stays readable. textFaint would fail AA.
+export const quietText = `${colors.textDim}CC`;

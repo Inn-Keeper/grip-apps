@@ -4,6 +4,11 @@ import { BrandIcon } from "../components/BrandIcon";
 import { startTour } from "./tour";
 import hover from "../components/HoverCard.module.css";
 import { NextUpLink } from "../components/NextUpShell";
+import { quietText } from "../components/fieldStyles";
+
+// Phones get each feature's bullets folded behind "What's inside", so the page reads as five
+// short cards instead of a wall of 26 bullets. Wider screens start them open.
+const wide = typeof window !== "undefined" && window.matchMedia("(min-width: 821px)").matches;
 
 type TKey = Parameters<typeof t>[0];
 
@@ -31,7 +36,7 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
         display: "flex",
         flexDirection: "column",
         gap: 14,
-        minHeight: 280,
+        minHeight: wide ? 280 : undefined,
       }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", gap: 12 }}>
@@ -58,24 +63,29 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-        {bulletKeys.map((b) => (
-          <div key={b} style={{ display: "grid", gridTemplateColumns: "10px 1fr", gap: 8, alignItems: "start" }}>
-            <span
-              aria-hidden="true"
-              style={{
-                width: 5,
-                height: 5,
-                marginTop: 7,
-                borderRadius: 999,
-                background: color,
-                boxShadow: `0 0 12px ${color}40`,
-              }}
-            />
-            <span style={{ fontSize: font.size.body, color: colors.textDim, lineHeight: 1.5 }}>{t(b)}</span>
-          </div>
-        ))}
-      </div>
+      <details open={wide}>
+        <summary style={{ cursor: "pointer", color: colors.textFaint, fontSize: font.size.small, fontWeight: 700 }}>
+          {t("about.whatsInside", { count: bulletKeys.length })}
+        </summary>
+        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 10 }}>
+          {bulletKeys.map((b) => (
+            <div key={b} style={{ display: "grid", gridTemplateColumns: "10px 1fr", gap: 8, alignItems: "start" }}>
+              <span
+                aria-hidden="true"
+                style={{
+                  width: 5,
+                  height: 5,
+                  marginTop: 7,
+                  borderRadius: 999,
+                  background: color,
+                  boxShadow: `0 0 12px ${color}40`,
+                }}
+              />
+              <span style={{ fontSize: font.size.body, color: quietText, lineHeight: 1.5 }}>{t(b)}</span>
+            </div>
+          ))}
+        </div>
+      </details>
 
       <button
         onClick={() => onNavigate(page)}
@@ -179,7 +189,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
               {t("about.kicker")}
             </div>
             <h1 style={{ margin: 0, fontSize: font.size.display, fontWeight: 800, color: colors.textBright }}>{t("about.title")}</h1>
-            <p style={{ margin: "10px 0 0", fontSize: font.size.body, color: colors.textDim, maxWidth: 640, lineHeight: 1.65 }}>
+            <p style={{ margin: "10px 0 0", fontSize: font.size.body, color: quietText, maxWidth: 640, lineHeight: 1.65 }}>
               {t("about.intro")}
             </p>
           </div>
@@ -239,7 +249,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
                 </div>
                 <div>
                   <div style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t(item.labelKey)}</div>
-                  <div style={{ color: colors.textDim, fontSize: font.size.small, lineHeight: 1.5, marginTop: 3 }}>{t(item.detailKey)}</div>
+                  <div style={{ color: quietText, fontSize: font.size.small, lineHeight: 1.5, marginTop: 3 }}>{t(item.detailKey)}</div>
                 </div>
               </div>
             ))}
@@ -285,7 +295,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
           ].map((item) => (
             <div key={item.labelKey}>
               <div style={{ fontSize: font.size.small, fontWeight: 800, color: colors.accent, marginBottom: 4 }}>{t(item.labelKey as Parameters<typeof t>[0])}</div>
-              <div style={{ fontSize: font.size.small, color: colors.textDim, lineHeight: 1.5 }}>{t(item.detailKey as Parameters<typeof t>[0])}</div>
+              <div style={{ fontSize: font.size.small, color: quietText, lineHeight: 1.5 }}>{t(item.detailKey as Parameters<typeof t>[0])}</div>
             </div>
           ))}
         </div>

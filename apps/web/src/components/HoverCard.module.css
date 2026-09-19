@@ -4,10 +4,17 @@
 }
 
 /* A gentle 1px rise: felt more than seen. */
-.hoverCard:hover,
 .hoverCard:has(:focus-visible) {
   transform: translateY(-1px);
   box-shadow: var(--shadow-card-hover) !important;
+}
+
+/* Touch has no real hover: a tap would leave the card stuck raised. */
+@media (hover: hover) {
+  .hoverCard:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card-hover) !important;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

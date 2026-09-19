@@ -1,6 +1,8 @@
 .shell {
-  min-height: calc(100vh - var(--app-header-height));
   width: 100%;
+  /* Centered at the page width on wide screens (layout.webPageMax, set on the app root). */
+  max-width: var(--page-max, none);
+  margin-inline: auto;
   display: grid;
   grid-template-columns:
     minmax(var(--workspace-rail-min), var(--workspace-left-rail-max))
@@ -15,7 +17,7 @@
   position: sticky;
   top: var(--workspace-top);
   align-self: start;
-  max-height: calc(100vh - var(--workspace-top) - var(--workspace-bottom-inset));
+  max-height: calc(100svh - var(--workspace-top) - var(--workspace-bottom-inset));
   overflow: auto;
   display: flex;
   flex-direction: column;
@@ -23,20 +25,22 @@
 }
 
 .leftRail {
-  max-height: calc(100vh - var(--workspace-top) - var(--workspace-left-bottom-inset));
+  max-height: calc(100svh - var(--workspace-top) - var(--workspace-left-bottom-inset));
 }
 
 .main {
   min-width: 0;
 }
 
+/* Tablets: navigation beside the content (rule 4), progress and settings under it. The
+   left rail keeps its sticky behavior; the right rail flows with the main column. */
 @media (max-width: 1180px) {
   .shell {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(var(--workspace-rail-min), var(--workspace-left-rail-max)) minmax(0, 1fr);
     grid-template-areas:
-      "main"
-      "left"
-      "right";
+      "left main"
+      "left right";
+    align-items: start;
   }
 
   .leftRail {
@@ -49,10 +53,35 @@
 
   .rightRail {
     grid-area: right;
+    position: static;
+    max-height: none;
+  }
+}
+
+/* Phones: one column, content first. */
+@media (max-width: 820px) {
+  .shell {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "main"
+      "left"
+      "right";
   }
 
   .rail {
     position: static;
     max-height: none;
+  }
+}
+
+/* Touch-first screens (tablets in landscape keep three columns): no sticky rails with their
+   own scroll area. There the nested scroller has no visible scrollbar and swallows swipes
+   meant for the page, so a tall rail (e.g. Practice settings open) hid its end and the
+   footer. The rails scroll with the page instead. Last in the file so it beats .leftRail. */
+@media (hover: none), (pointer: coarse) {
+  .rail {
+    position: static;
+    max-height: none;
+    overflow: visible;
   }
 }

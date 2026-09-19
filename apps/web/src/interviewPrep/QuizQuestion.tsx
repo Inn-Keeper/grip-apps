@@ -3,6 +3,7 @@ import { t } from "@grip/core/i18n";
 import { colors, tints, font } from "@grip/core/tokens";
 import type { QuizQuestion as Question } from "./types";
 import styles from "./QuizQuestion.module.css";
+import { srOnly } from "../components/fieldStyles";
 
 type OptionState = "idle" | "correct" | "wrong" | "dimmed";
 
@@ -23,13 +24,15 @@ const LOOK: Record<OptionState, { bg?: string; border?: string; text?: string }>
 };
 
 // Progress, question, answers and the feedback/next footer — shared by card quizzes and drills.
-export function QuizQuestion({ question, questionNumber, total, answered, xp, color, link, large = false, wrongExtra, onAnswer, onNext }: {
+export function QuizQuestion({ question, questionNumber, total, answered, xp, xpNote, color, link, large = false, wrongExtra, onAnswer, onNext }: {
   question: Question;
   questionNumber: number;
   total: number;
   answered: number | null;
   // XP a correct answer earns at the current tier.
   xp: number;
+  // Shown after the XP in its pill, e.g. the speed multiplier.
+  xpNote?: string;
   color: string;
   link?: string;
   large?: boolean;
@@ -124,7 +127,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
                 {/* The win lands where you clicked: +XP rises off the right answer. */}
                 {isCorrect && state === "correct" && (
                   <span className={styles.xp} aria-hidden="true" style={{ background: tints.successSoft, border: `1px solid ${colors.success}80`, color: colors.successBright }}>
-                    +{xp} XP
+                    +{xp} XP{xpNote ? ` · ${xpNote}` : ""}
                   </span>
                 )}
               </button>
@@ -180,13 +183,3 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, co
     </div>
   );
 }
-
-// Visually hidden, still read by screen readers (the badge letter is aria-hidden).
-const srOnly: React.CSSProperties = {
-  position: "absolute",
-  width: 1,
-  height: 1,
-  overflow: "hidden",
-  clip: "rect(0 0 0 0)",
-  whiteSpace: "nowrap",
-};

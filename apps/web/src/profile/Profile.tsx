@@ -154,7 +154,8 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
         : { title: t("profile.nextDoneTitle"), sub: t("profile.nextDoneSub"), action: t("profile.nextDoneAction"), icon: "story", onAction: () => setSection("cv") };
 
   const header = {
-    account: { title: t("profile.account"), sub: t("profile.settingsSubtitle") },
+    // No subtitle: Next Up above already says what a complete profile does.
+    account: { title: t("profile.account"), sub: "" },
     cv: { title: t("profile.sectionCv"), sub: t("profile.cvSubtitle") },
     connections: { title: t("profile.connections"), sub: t("profile.connectionsSub") },
     preferences: { title: t("profile.preferences"), sub: t("profile.preferencesSub") },
@@ -170,9 +171,11 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
 
       <div style={{ marginBottom: 16 }}>
         <h1 style={{ margin: 0, color: colors.textBright, fontSize: font.size.heading, fontWeight: 800 }}>{header.title}</h1>
-        <p style={{ margin: "6px 0 0", maxWidth: 720, color: colors.textFaint, fontSize: font.size.body, lineHeight: 1.6 }}>
-          {isLoading ? t("common.loading") : header.sub}
-        </p>
+        {(isLoading || header.sub) && (
+          <p style={{ margin: "6px 0 0", maxWidth: 720, color: colors.textFaint, fontSize: font.size.body, lineHeight: 1.6 }}>
+            {isLoading ? t("common.loading") : header.sub}
+          </p>
+        )}
       </div>
 
       {loadErrors && <Banner tone="danger">{loadErrors.message}</Banner>}

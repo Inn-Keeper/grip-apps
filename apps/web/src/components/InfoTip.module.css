@@ -1,0 +1,47 @@
+/* ⓘ button: 24px so it meets the tap minimum (rule 45). */
+.button {
+  flex: none;
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.8;
+}
+.button:hover,
+.button:focus-visible { opacity: 1; }
+.button:focus-visible { outline: 2px solid var(--tip-focus); outline-offset: 1px; }
+
+/* Native popover: tap outside or Escape closes it. Without anchor positioning it opens
+   centered on screen (the browser default); with it, right under the ⓘ. */
+.popover {
+  /* max-content: it keeps its width near an edge, so it flips side instead of squeezing. */
+  width: max-content;
+  max-width: min(280px, calc(100vw - 32px));
+  margin: auto;
+  padding: 10px 12px;
+  border: 1px solid var(--tip-border);
+  border-radius: 8px;
+  background: var(--tip-bg);
+  color: var(--tip-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+}
+
+@supports (position-area: bottom) {
+  .popover {
+    margin: 6px 0 0;
+    /* Opens under the icon, extending right; near the right edge it flips to extend left,
+       and above when there's no room below. (A centered default gets pressed against the
+       screen edge instead of falling back.) */
+    position-area: bottom span-right;
+    position-try-fallbacks: bottom span-left, top span-right, top span-left;
+  }
+}

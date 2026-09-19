@@ -1,5 +1,6 @@
+import { useEffect, useEffectEvent } from "react";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
-import { difficultyByKey } from "@grip/core/difficulty";
+import { SPEED_MULTIPLIER, difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { colors, font, shadow, tints } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
@@ -8,12 +9,26 @@ import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizQuestion } from "./QuizQuestion";
 import { useCountUp } from "../lib/useCountUp";
 import styles from "./InterviewPrep.module.css";
+import { SpeedClock } from "./SpeedClock";
+import { AUTO_NEXT_MS } from "./quizPrefs";
 
-export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: { drill: DrillState; onAnswer: (i: number) => void; onNext: () => void; onExit: () => void; onRestart?: () => void }) {
+export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoNext = false }: { drill: DrillState; onAnswer: (i: number) => void; onNext: () => void; onExit: () => void; onRestart?: () => void; autoNext?: boolean }) {
   const { questions, index, answered, correctCount, done } = drill;
   const tier = difficultyByKey(drill.difficulty);
   const perAnswerXp = tier?.xp ?? CORRECT_XP;
+  // Tier XP for every correct answer, plus any speed bonus earned on the way.
+  const sessionXp = correctCount * perAnswerXp + drill.bonusXp;
   const shownCorrect = useCountUp(done ? correctCount : 0);
+
+  // Auto-next: a correct answer moves on once its +XP has landed. Wrong answers wait for
+  // Next, since reading the right answer is the point. Next, Exit or unmount cancel it.
+  const answeredCorrectly = !done && answered !== null && answered === questions[index]?.q.correct;
+  const advance = useEffectEvent(onNext);
+  useEffect(() => {
+    if (!autoNext || !answeredCorrectly) return;
+    const id = window.setTimeout(advance, AUTO_NEXT_MS);
+    return () => window.clearTimeout(id);
+  }, [autoNext, answeredCorrectly, index]);
 
   if (done) {
     const perfect = correctCount === questions.length;
@@ -48,7 +63,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: { d
         </div>
         <p style={{ margin: "0 0 20px", fontSize: font.size.body, color: colors.textDim }}>
           {t("prep.drillResult", {
-            xp: correctCount * perAnswerXp,
+            xp: sessionXp,
             bonus: perfect ? t("prep.perfectBonusSuffix", { bonus: PERFECT_QUIZ_BONUS }) : "",
           })}
         </p>
@@ -88,28 +103,32 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: { d
       style={{
         background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 14, boxShadow: shadow.card,
         padding: "20px", display: "flex", flexDirection: "column", gap: 12,
+        // The header below adapts to the card's width, not the window's.
+        containerType: "inline-size",
       }}
     >
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 8, fontSize: font.size.caption, fontWeight: 700, color: cur.color, letterSpacing: "0.08em" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+      {/* Wraps as two groups on narrow cards. The label group fills its line, which puts the
+          difficulty pill at its right edge. Question position lives in the progress bar below. */}
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "8px 12px" }}>
+        <span style={{ flex: "1 1 auto", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, fontSize: font.size.caption, fontWeight: 700, color: cur.color, letterSpacing: "0.08em" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
             <BrandIcon name="drill" color={cur.color} size={13} />
             {drill.source === "card" ? "QUIZ" : "DRILL"} · {cur.tech}
           </span>
           {tier && (
-            <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 999, background: `${tier.color}1A`, border: `1px solid ${tier.color}60`, color: tier.color, letterSpacing: "0.04em" }}>
+            <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 999, background: `${tier.color}1A`, border: `1px solid ${tier.color}60`, color: tier.color, letterSpacing: "0.04em" }}>
               <DifficultyIcon tier={tier} size={13} /> {tier.label.toUpperCase()}
             </span>
           )}
         </span>
-        <span style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        <span className={styles.sessionMeta} style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
           {correctCount > 0 && (
             // XP earned this run; keyed so it bumps each time it grows.
             <span key={correctCount} className={styles.sessionXp} title={t("prep.sessionXpHint")} style={{ color: colors.successBright, background: tints.successSoft, fontSize: font.size.label }}>
-              +{correctCount * perAnswerXp} XP
+              +{sessionXp} XP
             </span>
           )}
-          <span style={{ fontSize: font.size.caption, color: colors.textFaint }}>{index + 1} / {questions.length}</span>
+          {isTimedTier(drill.difficulty) && answered === null && <SpeedClock key={`clock-${index}`} shownAt={drill.shownAt} />}
           <button
             onClick={onExit}
             style={{
@@ -129,7 +148,8 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: { d
         questionNumber={index + 1}
         total={questions.length}
         answered={answered}
-        xp={perAnswerXp}
+        xp={perAnswerXp + drill.lastBonus}
+        xpNote={drill.lastBonus ? `×${SPEED_MULTIPLIER}` : undefined}
         color={cur.color}
         link={cur.link}
         large

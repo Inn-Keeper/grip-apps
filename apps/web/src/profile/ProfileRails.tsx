@@ -57,7 +57,6 @@ export function ProfileLeftRail({ profile, section, onSection, onSignOut }: {
       </WorkspacePanel>
 
       <WorkspacePanel tone="sunken">
-        <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.small, lineHeight: 1.5 }}>{t("profile.privateNote")}</p>
         {onSignOut && (
           <button
             type="button"

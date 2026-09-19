@@ -3,6 +3,7 @@ import { t } from "@grip/core/i18n";
 import { colors, font, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "./BrandIcon";
 import hover from "./HoverCard.module.css";
+import { quietText } from "./fieldStyles";
 
 type NextUpShellProps = {
   title: string;
@@ -37,7 +38,7 @@ export function NextUpShell({ title, sub, tone, actionLabel, actionIcon = "drill
           {t("nextUp.label")}
         </span>
         <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>{title}</span>
-        <span style={{ fontSize: font.size.small, color: colors.textDim }}>{sub}</span>
+        <span style={{ fontSize: font.size.small, color: quietText }}>{sub}</span>
         {links && (
           <span style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 4, fontSize: font.size.small, color: colors.textFaint }}>
             {links}
@@ -80,5 +81,6 @@ export function NextUpLink({ label, onClick, disabled = false, muted = false, wi
       {label}
     </button>
   );
-  return withOr ? <span>{t("nextUp.or")} {button}</span> : button;
+  // "or" carries its own size and color: it also sits outside Next Up (e.g. the Fly Me hero), where it inherited full-size bright text.
+  return withOr ? <span style={{ fontSize: font.size.small, color: colors.textFaint }}>{t("nextUp.or")} {button}</span> : button;
 }

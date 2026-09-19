@@ -1,10 +1,5 @@
 import React from "react";
 import { colors, space, font } from "@grip/core/tokens";
-import { FormInput, FormTextarea } from "./FormInput";
-import { MiniButton } from "./MiniButton";
-
-// New component exports
-export { FormInput, FormTextarea, MiniButton };
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

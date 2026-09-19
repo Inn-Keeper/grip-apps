@@ -19,6 +19,7 @@ import { BrandMark } from "./components/BrandMark";
 import { DemoBanner } from "./components/DemoBanner";
 import { Footer } from "./Footer";
 import { SignIn } from "./SignIn";
+import styles from "./App.module.css";
 
 const PAGE_DEFS = [
   { id: "prep", icon: "layers", labelKey: "tabs.prep" },
@@ -71,6 +72,7 @@ export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const previousUserId = useRef<string | null | undefined>(undefined);
   const navRef = useRef<HTMLElement | null>(null);
+  const headerRef = useRef<HTMLElement | null>(null);
   // The active tab's box; one teal pill slides between tabs instead of each tab painting its own.
   const [navPill, setNavPill] = useState<{ left: number; width: number } | null>(null);
 
@@ -86,6 +88,8 @@ export default function App() {
     setPage(id);
     window.localStorage.setItem(ACTIVE_PAGE_KEY, id);
     window.history.pushState({ page: id }, "", `/${id}`);
+    // A new page starts at its top, not at the scroll offset of the one we left.
+    window.scrollTo(0, 0);
   };
 
   // Sync state with browser back/forward, behind the same unsaved-changes guard as the tabs.
@@ -94,6 +98,7 @@ export default function App() {
       if (!guardHistoryNavigation(window, page)) return;
       const fromPath = window.location.pathname.replace(/^\//, "");
       const next = fromPath === "contacts" ? "quest" : fromPath;
+      // No scrollTo here: the browser restores where you were on that page.
       setPage((PAGE_IDS as readonly string[]).includes(next) ? next : DEFAULT_PAGE);
     };
     window.addEventListener("popstate", onPop);
@@ -142,6 +147,18 @@ export default function App() {
     return () => observer.disconnect();
   }, [locale, page, session]);
 
+  // The sticky header wraps to two rows on narrow screens (73px → 123px), so
+  // scrollIntoView targets clear its live height: index.html turns --header-h into
+  // scroll-padding (and skips it where the header isn't sticky).
+  useLayoutEffect(() => {
+    const header = headerRef.current;
+    if (!header) return;
+    const root = document.documentElement;
+    const observer = new ResizeObserver(() => root.style.setProperty("--header-h", `${header.offsetHeight}px`));
+    observer.observe(header);
+    return () => { observer.disconnect(); root.style.removeProperty("--header-h"); };
+  }, []);
+
   useEffect(() => {
     const activeLabel = pages.find((p) => p.id === page)?.label ?? brand.productName;
     document.title = `${activeLabel} - ${brand.productName}`;
@@ -176,9 +193,10 @@ export default function App() {
     <div
       style={{
         fontFamily: "'Inter', system-ui, sans-serif",
-        minHeight: "100vh",
-        // Card lift for stylesheets (CSS modules can't import tokens).
+        minHeight: "100svh",
+        // Card lift and page width for stylesheets (CSS modules can't import tokens).
         "--shadow-card": shadow.card,
+        "--page-max": `${layout.webPageMax}px`,
         "--shadow-card-hover": shadow.cardHover,
         background: colors.bg,
         color: colors.text,
@@ -202,12 +220,12 @@ export default function App() {
         }}
       />
       <header
+        ref={headerRef}
+        className={styles.header}
         style={{
           minHeight: layout.webHeaderHeight,
           borderBottom: `1px solid ${colors.borderSoft}`,
           background: `linear-gradient(180deg, ${colors.bgDeep}, ${colors.bg}F2)`,
-          position: "sticky",
-          top: 0,
           zIndex: 10,
           backdropFilter: "blur(14px)",
           boxShadow: "0 14px 38px rgba(0, 0, 0, 0.18)",
@@ -234,6 +252,9 @@ export default function App() {
         <div
           style={{
             minHeight: layout.webHeaderHeight,
+            // Same capped, centered width as the workspace, so the logo lines up with the rails.
+            maxWidth: "var(--page-max)",
+            marginInline: "auto",
             padding: "10px 24px",
             boxSizing: "border-box",
             display: "flex",
@@ -242,13 +263,13 @@ export default function App() {
             flexWrap: "wrap",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 11, minWidth: 150 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
             <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${colors.accent}18, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
             <span style={{ display: "flex", flexDirection: "column", gap: 1 }}>
               <span style={{ fontSize: font.size.title, fontWeight: 800, letterSpacing: "0px", color: colors.textBright, lineHeight: 1 }}>
                 {brand.productName}
               </span>
-              <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, lineHeight: 1.2 }}>
+              <span className={styles.tagline} style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, lineHeight: 1.2 }}>
                 {brand.tagline}
               </span>
             </span>
@@ -272,8 +293,9 @@ export default function App() {
                   minWidth: 0,
                   overflowX: "auto",
                   overflowY: "hidden",
+                  // No justifyContent: flex-end here: in a scroll container it pushes the
+                  // first tabs off the left edge where they can't be scrolled to.
                   scrollbarWidth: "none",
-                  justifyContent: "flex-end",
                 }}
               >
                 {navPill && (
@@ -300,6 +322,7 @@ export default function App() {
                     onClick={() => selectPage(p.id)}
                     aria-current={page === p.id ? "page" : undefined}
                     data-tour={`nav-${p.id}`}
+                    className={styles.tab}
                     style={{
                       flex: "0 0 auto",
                       display: "flex",
@@ -307,7 +330,6 @@ export default function App() {
                       justifyContent: "center",
                       gap: 8,
                       minHeight: 36,
-                      padding: "8px 14px",
                       borderRadius: 8,
                       border: "none",
                       cursor: "pointer",
@@ -330,13 +352,15 @@ export default function App() {
           )}
         </div>
       </header>
-      {session?.user.is_anonymous && <DemoBanner />}
+      {session && <DemoBanner anonymous={!!session.user.is_anonymous} />}
 
-      <div style={{ flex: 1 }}>
+      {/* Fills the space between header and footer, so the footer sits at the bottom of the
+          screen on short pages. Pages must not add their own full-screen min-height. */}
+      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
         {session === undefined && (
           <main
             style={{
-              minHeight: `calc(100vh - ${layout.webHeaderHeight}px)`,
+              flex: 1,
               display: "grid",
               placeItems: "center",
               color: colors.textFaint,

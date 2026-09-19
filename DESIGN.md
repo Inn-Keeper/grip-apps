@@ -147,11 +147,12 @@ Example: `apps/web/src/App.tsx` (header layout with flex, gap, colors).
 
 ### Shared Style Objects
 
-Extract repeated inline style objects to component wrappers or `shared.tsx`:
+Extract repeated inline style objects to `components/fieldStyles.ts`, or to a small wrapper component:
 
-- `FormInput`, `FormTextarea` (components) — use instead of raw objects
-- `MiniButton` (component) — use instead of raw objects  
-- `Field` — flexbox label wrapper with gap
+- `fieldStyle`, `textareaFieldStyle` — form fields (the 40px field standard)
+- `miniBtn(color)` — small outline buttons beside cards and rows
+- `workspaceFocusStyle` — a focused view centered in the main column
+- `Field` (`components/shared.tsx`) — label wrapper with gap
 
 **Principle:** Do NOT duplicate inline objects across files; pull them into a shared export or component wrapper.
 

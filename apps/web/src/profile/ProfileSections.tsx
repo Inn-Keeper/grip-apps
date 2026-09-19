@@ -2,9 +2,11 @@ import { PROFILE_FIELDS } from "@grip/core/user";
 import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
-import { fieldStyle as inputStyle } from "../components/fieldStyles";
+import { fieldStyle as inputStyle, srOnly } from "../components/fieldStyles";
+import { InfoTip } from "../components/InfoTip";
 import { WorkspacePanel } from "../components/WorkspaceLayout";
-import { ConnectionBadge, Switch } from "./shared";
+import { Switch } from "../components/Switch";
+import { ConnectionBadge } from "./shared";
 import type { ProfileForm, ProfileRecord } from "./types";
 
 // Browser autofill and mobile keyboards per field.
@@ -29,9 +31,13 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
 }) {
   return (
     <WorkspacePanel style={{ padding: 20 }}>
-      <p id="profile-autosave-hint" style={{ margin: "0 0 16px", color: colors.textFaint, fontSize: font.size.small }}>{t("profile.autosaveHint")}</p>
+      {/* A small ✓ badge instead of a sentence; fields still point at it for screen readers. */}
+      <p id="profile-autosave-hint" style={{ margin: "0 0 16px", display: "inline-flex", alignItems: "center", gap: 5, color: colors.textFaint, fontSize: font.size.label, fontWeight: 700 }}>
+        <BrandIcon name="check" color={colors.textFaint} size={12} />
+        {t("profile.autosaveHint")}
+      </p>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-        <FieldRow id="profile-email" label={t("profile.email")} hint={t("profile.emailHint")}>
+        <FieldRow id="profile-email" label={t("profile.email")} hint={t("profile.emailHint")} locked>
           {/* Read-only: it comes from sign-in, so it doesn't look like an editable field. */}
           <input
             id="profile-email"
@@ -75,15 +81,20 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
 }
 
 // Label above, field, then status/hint/error below. Status sits outside the label so it never renames the field.
-function FieldRow({ id, label, hint, status, error, children }: { id: string; label: string; hint?: string; status?: string | null; error?: string | null; children: React.ReactNode }) {
+// locked: read-only field; a 🔒 and an ⓘ carry the hint instead of a line of text.
+function FieldRow({ id, label, hint, locked = false, status, error, children }: { id: string; label: string; hint?: string; locked?: boolean; status?: string | null; error?: string | null; children: React.ReactNode }) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
       <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-        <label htmlFor={id} style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.03em" }}>{label}</label>
+        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+          <label htmlFor={id} style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.03em" }}>{label}</label>
+          {locked && <BrandIcon name="lock" color={colors.textFaint} size={12} />}
+          {locked && hint && <InfoTip>{hint}</InfoTip>}
+        </span>
         <span role="status" style={{ fontSize: font.size.label, fontWeight: 700, color: colors.successBright }}>{status ?? ""}</span>
       </div>
       {children}
-      {hint && <span id={`${id}-hint`} style={{ fontSize: font.size.label, color: colors.textFaint }}>{hint}</span>}
+      {hint && <span id={`${id}-hint`} style={locked ? srOnly : { fontSize: font.size.label, color: colors.textFaint }}>{hint}</span>}
       {error && <span id={`${id}-error`} role="alert" style={{ fontSize: font.size.label, color: colors.dangerBright }}>{error}</span>}
     </div>
   );

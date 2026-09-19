@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
 import { supabase } from "./lib/supabase";
-import { brand, colors, layout, font } from "@grip/core/tokens";
+import { brand, colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { Turnstile } from "./components/Turnstile";
@@ -81,7 +81,8 @@ export function SignIn() {
   return (
     <main
       style={{
-        minHeight: `calc(100vh - ${layout.webHeaderHeight}px)`,
+        // Fills the page area (App), so the form stays centered and the footer stays in view.
+        flex: 1,
         // Darker than the app shell so the mark and form stand out.
         background: `radial-gradient(ellipse at 50% 20%, ${colors.bgDeep}, #07090D 70%)`,
         display: "grid",
@@ -97,7 +98,7 @@ export function SignIn() {
           {brand.productName}
         </h1>
         <p style={{ margin: "0 0 24px", fontSize: font.size.body, color: colors.textFaint, lineHeight: 1.6 }}>
-          {brand.promise}
+          {t("auth.subtitle")}
         </p>
 
         <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>

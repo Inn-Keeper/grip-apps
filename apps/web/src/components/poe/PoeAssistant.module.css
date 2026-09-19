@@ -1,6 +1,7 @@
 .assistant {
   position: fixed;
-  left: clamp(14px, 2.2vw, 30px);
+  /* Past the page width, follow the centered page so Poe stays under the left rail. */
+  left: max(clamp(14px, 2.2vw, 30px), calc((100% - var(--page-max, 100%)) / 2 + 24px));
   bottom: calc(max(22px, env(safe-area-inset-bottom)) + var(--poe-lift, 0px));
   z-index: 22;
   width: clamp(150px, 12vw, 180px);
@@ -113,8 +114,26 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* Narrower layouts (at 1180px the workspace drops to two columns, then one), short screens and touch
+   screens (where the rails scroll under him) have no free corner, so resting Poe steps out
+   of view and comes back to react. Visibility waits for the fade, so he also leaves the
+   tab order and screen-reader tree. */
+@media (max-width: 1180px), (max-height: 500px), (hover: none), (pointer: coarse) {
   .assistant {
+    transition: bottom 0.38s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.24s ease, transform 0.24s ease, visibility 0s;
+  }
+
+  .resting {
+    opacity: 0;
+    transform: translateY(24px);
+    visibility: hidden;
+    transition: bottom 0.38s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.24s ease, transform 0.24s ease, visibility 0s linear 0.24s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .assistant,
+  .resting {
     transition: none;
   }
 

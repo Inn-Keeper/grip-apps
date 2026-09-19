@@ -5,6 +5,7 @@ import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { colors, font, tints } from "@grip/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
+import { workspaceFocusStyle } from "../components/fieldStyles";
 import { ContactCard } from "./ContactCard";
 import { ContactDetail } from "./ContactDetail";
 import { ContactForm } from "./ContactForm";
@@ -26,6 +27,7 @@ import {
   useStatusEventsQuery,
 } from "./queries";
 import type { Contact, Retro, ScoredBoard } from "./types";
+import { scrollBehavior } from "../lib/motion";
 
 // The focused view (rule 8): a contact's detail, a form, or a retro, in place of the list.
 type Focus = { mode: "detail" | "edit" | "retro"; id: string } | { mode: "new" } | null;
@@ -73,7 +75,7 @@ export default function Quest() {
 
   // Opening or leaving a focused view starts at the top of the page.
   useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    window.scrollTo({ top: 0, behavior: scrollBehavior() });
   }, [focus]);
 
   const announce = (text: string) => setNotice({ id: Date.now(), text });
@@ -162,7 +164,7 @@ export default function Quest() {
       )}
 
       {focus ? (
-        <div style={{ width: "min(100%, 860px)", paddingBottom: 48 }}>
+        <div style={workspaceFocusStyle}>
           <button
             type="button"
             onClick={() => setFocus(null)}
@@ -207,9 +209,8 @@ export default function Quest() {
               {visible ? t("quest.inPipeline", { count: visible.length }) : t("common.loading")}
             </span>
           </div>
-          {noticeLine ?? (
-            <p style={{ margin: "0 0 16px", color: colors.textFaint, fontSize: font.size.body, lineHeight: 1.6 }}>{t("quest.subtitle")}</p>
-          )}
+          {/* The pipeline speaks for itself; this slot only carries save/delete notices. */}
+          {noticeLine}
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {visible?.map((contact) => (

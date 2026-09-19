@@ -22,7 +22,6 @@ export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace"
       className={styles.shell}
       style={{
         background: colors.bg,
-        "--app-header-height": `${layout.webHeaderHeight}px`,
         "--workspace-top": `${layout.workspaceTop}px`,
         "--workspace-bottom-inset": `${layout.workspaceBottomInset}px`,
         "--workspace-left-bottom-inset": `${leftRailBottomInset ?? layout.workspaceBottomInset}px`,

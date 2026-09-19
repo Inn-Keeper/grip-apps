@@ -5,16 +5,15 @@ import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { categoryIconName } from "../components/brandIconNames";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
-import type { Category, GithubStatus, PrepItem, Scores } from "./types";
+import type { Category, GithubStatus, Scores } from "./types";
 import styles from "./InterviewPrep.module.css";
 
 function categoryAnswered(cat: Category, scores: Scores) {
   return cat.items.filter((item) => scores.answers[item.tech]?.correct || scores.answers[item.tech]?.wrong).length;
 }
 
-export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryName, allItems, categories, githubStatus, scores, search, setSearch, onCategory, onCategoryDrill }: {
+export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryName, categories, githubStatus, scores, search, setSearch, onCategory, onCategoryDrill }: {
   activeCategoryName: string;
-  allItems: PrepItem[];
   categories: Category[];
   githubStatus: GithubStatus;
   scores: Scores;
@@ -32,7 +31,6 @@ export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryNam
         <WorkspaceTitle
           icon={<BrandIcon name="layers" color={colors.accentBright} size={17} />}
           title={t("prep.practiceMap")}
-          subtitle={t("prep.practiceMapSubtitle", { count: allItems.length })}
         />
         <div style={{ position: "relative", marginTop: 14 }}>
           <span style={{ position: "absolute", left: 11, top: "50%", transform: "translateY(-50%)", display: "flex" }}>

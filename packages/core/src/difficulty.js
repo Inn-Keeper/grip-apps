@@ -35,3 +35,26 @@ export const DIFFICULTY_KEYS = DIFFICULTIES.map((d) => d.key);
  * @returns {Difficulty | undefined}
  */
 export const difficultyByKey = (key) => DIFFICULTIES.find((d) => d.key === key);
+
+// Thunderstorm speed bonus: a correct answer inside the limit earns the tier XP × the
+// multiplier. Running out costs nothing (the question stays open), so it's a nudge,
+// not a penalty. Both values are tuning knobs.
+export const SPEED_TIER = "ultra";
+// 20s: enough to read a Thunderstorm question and its options, tight enough to matter.
+export const SPEED_LIMIT_MS = 20_000;
+export const SPEED_MULTIPLIER = 1.5;
+
+/** @param {string} key */
+export const isTimedTier = (key) => key === SPEED_TIER;
+
+/**
+ * Extra XP on top of the tier's base for a correct answer after `elapsedMs`.
+ * @param {string} key
+ * @param {number} elapsedMs
+ * @returns {number}
+ */
+export function speedBonusXp(key, elapsedMs) {
+  const tier = difficultyByKey(key);
+  if (!tier || !isTimedTier(key) || elapsedMs >= SPEED_LIMIT_MS) return 0;
+  return Math.round(tier.xp * (SPEED_MULTIPLIER - 1));
+}

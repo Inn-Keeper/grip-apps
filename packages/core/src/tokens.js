@@ -99,6 +99,8 @@ export const shadow = {
 
 export const layout = {
   webHeaderHeight: 72,
+  // Wide screens: the page centers at this width; backgrounds still run edge to edge.
+  webPageMax: 1920,
   workspaceTop: 96,
   workspaceBottomInset: 22,
   poeClearance: 224, // Poe perch (max 190) + its 22px offset + a gap; rails end above it
@@ -106,7 +108,6 @@ export const layout = {
   workspaceLeftRailMax: 290,
   workspaceRightRailMin: 260,
   workspaceRightRailMax: 340,
-  prepCardMinHeight: 236,
   // Mobile: extra scroll padding so content clears the native tab bar.
   // Added on top of the safe-area bottom inset (home indicator).
   tabBarClearance: 56,

@@ -9,12 +9,13 @@ import { AccuracyChart } from "./AccuracyChart";
 import type { AccuracyPoint, Readiness, Scores, Summary } from "./types";
 import { LevelSelector } from "./LevelSelector";
 import { QuizSizeSelector } from "./QuizSizeSelector";
+import { AutoNextToggle } from "./AutoNextToggle";
 import { CountUp, GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";
 import styles from "./InterviewPrep.module.css";
 
 // Status first (readiness, rank), then signal, then the practice settings folded away.
-export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, summary, quizSize, poolSize, onQuizSize }: {
+export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, summary, quizSize, poolSize, onQuizSize, autoNext, onAutoNext }: {
   accuracy: AccuracyPoint[];
   level: string;
   onLevel: (key: string) => void;
@@ -24,6 +25,8 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
   quizSize: number | null;
   poolSize: number | null;
   onQuizSize: (v: number | null) => void;
+  autoNext: boolean;
+  onAutoNext: (value: boolean) => void;
 }) {
   // Flash the bar when XP lands, so earning it is visible outside the quiz.
   const previousXp = useRef(scores.xp);
@@ -50,7 +53,7 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
       <WorkspacePanel>
         {readiness && (
           // The screen's headline: how ready the chosen set of techs is. Untested techs count as 0.
-          <HeadlineMetric label={readiness.label} value={readiness.pct} unit="%" pct={readiness.pct} hint={t("prep.readinessHint", { count: readiness.count })} />
+          <HeadlineMetric label={readiness.label} value={readiness.pct} unit="%" pct={readiness.pct} hint={t("prep.readinessHint", { count: readiness.count })} info={t("prep.readinessInfo")} />
         )}
         <WorkspaceTitle
           icon={<BrandIcon name="rank" color={colors.accentBright} size={17} />}
@@ -70,23 +73,28 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
         <WorkspaceTitle
           icon={<BrandIcon name="accuracy" color={colors.successBright} size={17} />}
           title={t("prep.signal")}
-          subtitle={t("prep.signalSubtitle")}
         />
         <RailList title={t("prep.strongest2")} icon="arrowUp" items={strongest} color={colors.successBright ?? ""} />
         <RailList title={t("prep.needsReps")} icon="arrowDown" items={weakest} color={colors.warningBright ?? ""} />
       </WorkspacePanel>
 
-      {/* Native disclosure; the summary keeps the current tier and size visible while folded. */}
-      <details className={styles.settings} style={{ "--settings-focus": colors.accentBright } as React.CSSProperties}>
-        <summary
-          className={styles.settingsSummary}
-          style={{ background: colors.surface, border: `1px solid ${colors.borderSoft}`, boxShadow: shadow.card }}
-        >
+      {/* Native disclosure, one card: the summary keeps the current values visible while
+          folded, and the settings open as sections inside it (rule 5). */}
+      <details
+        className={styles.settings}
+        style={{
+          "--settings-focus": colors.accentBright,
+          "--settings-divider": colors.borderSoft,
+          background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 8, boxShadow: shadow.card,
+        } as React.CSSProperties}
+      >
+        <summary className={styles.settingsSummary}>
           <BrandIcon name="drill" color={colors.accentBright} size={17} />
           <span style={{ flex: 1, minWidth: 0 }}>
             <span style={{ display: "block", color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t("prep.practiceSettings")}</span>
             <span style={{ display: "block", marginTop: 4, color: colors.textFaint, fontSize: font.size.label }}>
               {t("prep.settingsSummary", { level: difficultyByKey(level)?.label ?? level, size: quizSize ?? t("prep.all") })}
+              {autoNext && <span style={{ whiteSpace: "nowrap" }}>{` · ${t("prep.autoNext")}`}</span>}
             </span>
           </span>
           <span className={styles.settingsChevron} aria-hidden="true">
@@ -96,6 +104,7 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
         <div className={styles.settingsBody}>
           <LevelSelector level={level} onLevel={onLevel} />
           <QuizSizeSelector quizSize={quizSize} poolSize={poolSize} onQuizSize={onQuizSize} />
+          <AutoNextToggle autoNext={autoNext} onAutoNext={onAutoNext} />
         </div>
       </details>
     </>

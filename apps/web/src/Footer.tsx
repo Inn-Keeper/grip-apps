@@ -2,6 +2,7 @@ import React, { type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
 import { brand, colors, font } from "@grip/core/tokens";
 import { BrandMark } from "./components/BrandMark";
+import { quietText } from "./components/fieldStyles";
 
 type FooterLink = { label: string; action: (() => void) | null; href?: never } | { label: string; href: string; action?: never };
 
@@ -16,9 +17,11 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
       style={{
         borderTop: `1px solid ${colors.borderSoft}`,
         background: colors.bgDeep,
-        padding: "24px 24px 22px",
+        padding: "24px 0 22px",
       }}
     >
+      {/* Background runs edge to edge; content keeps the page width, aligned with the header. */}
+      <div style={{ maxWidth: "var(--page-max)", marginInline: "auto", padding: "0 24px", boxSizing: "border-box" }}>
       <div
         style={{
           display: "flex",
@@ -28,7 +31,8 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
           flexWrap: "wrap",
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: 14, minWidth: 260, flex: "2 1 360px" }}>
+        {/* Wraps on phones, so the promise drops under the logo instead of squeezing beside it. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", minWidth: 0, flex: "2 1 360px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 11, flex: "0 0 auto", minWidth: 112 }}>
             <BrandMark size={28} />
             <div>
@@ -36,7 +40,7 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
               <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, marginTop: 3, whiteSpace: "nowrap" }}>{brand.tagline}</div>
             </div>
           </div>
-          <p style={{ margin: 0, color: colors.textDim, fontSize: font.size.body, lineHeight: 1.55, maxWidth: 720 }}>
+          <p style={{ margin: 0, flex: "1 1 240px", color: quietText, fontSize: font.size.body, lineHeight: 1.55, maxWidth: 720 }}>
             {t("footer.promiseSuffix")}
           </p>
         </div>
@@ -61,6 +65,7 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
       >
         <span>{t("footer.builtBy", { year: new Date().getFullYear() })}</span>
         <span>{t("footer.location")}</span>
+      </div>
       </div>
     </footer>
   );

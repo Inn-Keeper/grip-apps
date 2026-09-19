@@ -5,7 +5,10 @@ export type Category = { name: string; emoji: string; color: string; items: Prep
 export type DrillEntry = { tech: string; color: string; link?: string; q: QuizQuestion };
 export type DrillState = { questions: DrillEntry[]; index: number; answered: number | null; correctCount: number; done: boolean; difficulty: string;
   // "card": a single tech's quiz opened from its card; recorded and celebrated as such.
-  source?: "card" };
+  source?: "card";
+  // Speed bonus (Thunderstorm): when the current question appeared, the bonus XP it
+  // earned (for its +XP pill) and the session's running bonus total.
+  shownAt: number; lastBonus: number; bonusXp: number };
 export type CelebrationState = { title: string; subtitle: string; accent: string };
 export type PoeCue = { type: string; id?: number };
 export type ScoreEntry = { correct: number; wrong: number };

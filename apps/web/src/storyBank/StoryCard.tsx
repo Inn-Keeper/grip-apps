@@ -29,6 +29,10 @@ export function StarSections({ story }: { story: Story }) {
   );
 }
 
+// A real basis (not flex: 1's 0) lets a long title drop to its own line on narrow
+// cards instead of squeezing into a sliver beside the badge and buttons.
+const titleStyle = { flex: "1 1 220px", minWidth: 0, overflowWrap: "anywhere", fontSize: font.size.bodyLg, fontWeight: 700, color: colors.textBright } as const;
+
 // A fixed-size summary (rule 8). In the drill the STAR is shown in full, since that's what you came to read.
 export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly }: {
   story: Story;
@@ -43,15 +47,19 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
         <CompetencyBadge competency={s.competency} />
         {onOpen ? (
-          <button type="button" onClick={onOpen} style={{ flex: 1, minWidth: 0, padding: 0, background: "transparent", border: "none", textAlign: "left", fontSize: font.size.bodyLg, fontWeight: 700, color: colors.textBright, cursor: "pointer" }}>
+          <button type="button" onClick={onOpen} style={{ ...titleStyle, padding: 0, background: "transparent", border: "none", textAlign: "left", cursor: "pointer" }}>
             {s.title}
           </button>
         ) : (
-          <span style={{ flex: 1, minWidth: 0, fontSize: font.size.bodyLg, fontWeight: 700, color: colors.textBright }}>{s.title}</span>
+          <span style={titleStyle}>{s.title}</span>
         )}
-        {onOpen && <button type="button" onClick={onOpen} style={miniBtn(colors.accentBright ?? "")}>{t("stories.open")}</button>}
-        {!readOnly && onEdit && <button type="button" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>}
-        {!readOnly && onDelete && <button type="button" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>}
+        {(onOpen || !readOnly) && (
+          <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+            {onOpen && <button type="button" onClick={onOpen} style={miniBtn(colors.accentBright ?? "")}>{t("stories.open")}</button>}
+            {!readOnly && onEdit && <button type="button" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>}
+            {!readOnly && onDelete && <button type="button" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>}
+          </div>
+        )}
       </div>
       {readOnly && <StarSections story={s} />}
       {/* Errors land on the story they belong to (rule 13). */}

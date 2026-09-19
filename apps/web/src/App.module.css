@@ -1,0 +1,21 @@
+/* App header: only what needs media queries lives here; the rest stays inline in App.tsx. */
+.header {
+  position: sticky;
+  top: 0;
+}
+
+/* Short landscape screens: a sticky header would take a third of the view, so it scrolls
+   away with the page. index.html drops the header from scroll-padding at the same height. */
+@media (max-height: 500px) {
+  .header { position: static; }
+}
+
+.tab { padding: 8px 14px; }
+
+/* Narrow: drop the tagline and tighten the tabs, so logo and nav stay on one row down to
+   ~710px in English (768 tablets, 740 phone landscape; Swedish needs a little more). The full header needs ~830px in English and
+   ~915px in Swedish (longest labels), hence 940. Phones in portrait still wrap to two rows. */
+@media (max-width: 940px) {
+  .tagline { display: none; }
+  .tab { padding: 8px 10px; }
+}

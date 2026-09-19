@@ -4,6 +4,54 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-09-19
+
+### Added
+
+- Web: an ⓘ info button (`InfoTip`, a native popover under the icon) holds explanations that used to be printed on screen: readiness scoring, the scale brief's how-to and formulas, the locked email field. It works with tap, click and keyboard, unlike `title` tooltips.
+- Prep (web): an Auto-next practice setting (off by default). After a correct answer the next question opens by itself after 5s (Next skips the wait); wrong answers wait for Next. Saved per browser, and shown on the folded Practice settings row.
+- Prep (web): Thunderstorm questions have a 20s clock, shown as a teal pill that turns amber and pulses in the last 10s. A correct answer in time earns ×1.5 XP (+60 instead of +40), shown on the answer's +XP pill and in the session total. When time runs out it says "Time's up" and the question stays open at normal XP. Mock loop stays untimed. The rules live in `@grip/core/difficulty` for mobile to reuse.
+
+### Changed
+
+- Web: the demo bar is one slim line (31px, was 85px on phones) shown to everyone, since the whole app is a free demo: "Grip is a free demo." Anonymous visitors also get a small "Continue with GitHub" link. The "progress is kept for 7 days" line is gone. Mobile's banner is unchanged.
+- Sign-in (web): the subtitle is "Follow the Raven" (translated in pt and sv); the product promise stays in `brand.promise` for other uses.
+- Footer (web): the promise line uses the quieter card text color.
+- Web: far fewer instruction lines, especially on phones. Removed hints that repeat what the layout or a nearby number already says (Practice map, Prep steps, Signal, Difficulty, pool hint, Stories and Quest subtitles, Quest's "Click a stage", Profile's private-account note and Account subtitle). Visible hint sentences at 375px: Prep 13 → 2, Profile 6 → 2, Stories 3 → 2. Difficulty blurbs are hidden on phones, and the Auto-next hint is one short line.
+- Web: descriptions inside cards use one quieter text color (`quietText`, textDim at 80%): Prep notes, Next Up lines and the Fly Me texts.
+- Fly Me (web): on phones each feature card folds its bullets behind "What's inside", so the page is five short cards instead of 26 bullets.
+- Profile (web): the autosave note is a small ✓ "Autosaves" badge, and the email field shows a 🔒 with its explanation behind ⓘ.
+- Web: one switch design across the app. Profile's `Switch` moved to `components/Switch.tsx` and now also drives Auto-next, replacing the separate checkbox switch.
+- Cleanup: removed the unused `MiniButton` and `FormInput` components and a committed Vite cache (`.vite/`, now ignored); DESIGN.md points at the style helpers actually used.
+- Web: every button, select and disclosure is at least 24px tall (a global floor in `index.html`), so small outline buttons like Edit, Delete and Drill are easier to tap. The Auto-next switch is 40×24 and the quiz-size slider has a 24px hit area.
+- `SCREEN-GUIDELINES.md`: rule 34 allows the Thunderstorm clock pulse, new rule 45 sets the 24px tap minimum, and the done-checklist adds phone, landscape and tablet checks with touch.
+- Web: tablets (821–1180px) get two columns instead of one: the left rail (navigation and filters) stays beside the content, and the right rail (progress, insights, settings) sits under it. Phones (820px and below) keep one column.
+- Web: on screens wider than 1920px the page centers at 1920px (new `layout.webPageMax` token). Header, banner and footer backgrounds still run edge to edge; the logo, rails and footer share one left edge, and Poe follows it.
+- Prep (web): Practice settings is one card. Difficulty, questions per card and Auto-next open as sections inside it, split by dividers under small caps headings, instead of three separate cards. Auto-next is a switch.
+- Prep (web): study cards no longer flip. One face shows the tech, its prep notes (smaller and dimmer, as quiet reference text) and the quiz button, which appears on hover or keyboard focus and is always shown on touch screens. Copy that said "flip a card" now says to read the notes.
+- Tokens: removed `layout.prepCardMinHeight`; cards size to their notes.
+- Web: focused views (Prep sessions, Stories and Quest detail/forms, the Arch Board scenario creator) are centered in the main column on wide screens instead of sitting at its left edge. They share one `workspaceFocusStyle`.
+
+### Fixed
+
+- Web: on tall screens (iPad Pro, Zenbook Fold, any page shorter than the screen) the footer sits at the bottom of the screen instead of starting below the fold. Pages no longer add their own full-screen minimum height on top of the header and demo bar; the page area between header and footer fills the space instead.
+- Web: the "or" before secondary links outside Next Up (e.g. the Fly Me hero) rendered as large bright text; it now matches the small faint Next Up style.
+- Web: smooth scrolling (Prep sessions, Stories, Quest, Arch Board results) jumps instead when reduced motion is on (rule 35).
+- Web: on touch screens a tapped card no longer stays stuck in its hover lift; the lift is kept for real hover and keyboard focus.
+- Arch Board (web): on touch screens the empty-canvas hint says to tap handles and pinch, instead of Shift-drag and Ctrl/⌘ + scroll.
+- Footer (web): on phones the promise text wraps under the logo instead of squeezing into a narrow column beside it.
+- Web: the header fits one row down to ~710px wide (tagline hidden and tabs tightened below 940px, which also covers the longer Swedish labels), so tablets and phones in landscape no longer get a 123px two-row header. On screens 500px tall or less it scrolls away instead of staying pinned; its styles that need media queries moved to `App.module.css`.
+- Arch Board (web): in phone landscape the canvas no longer fills the whole screen. It is capped below the visible height, so there is always page outside it to swipe (the canvas itself captures swipes to pan).
+- Web: on touch screens (e.g. iPad Pro in landscape) the side rails scroll with the page instead of sticking with their own hidden scroll area, which swallowed swipes and kept tall rails (Practice settings open) and the footer out of reach. Mouse users keep sticky rails.
+- Prep (web): on phones, tablets, touch screens and short landscape screens Poe no longer sits on top of content (rule 7). He stays out of view while idle and appears only while reacting to an answer.
+- Prep (web): the chosen difficulty survives a page refresh (it was reset to Tailwind).
+- Web: on phones, the header nav no longer hides its first tabs (Prep, Stories, Arch Board) off the left edge where they couldn't be scrolled to.
+- Web: switching pages (header, footer, cross-page links) starts the new page at its top instead of the previous page's scroll offset. Back/Forward still returns to where you were.
+- Web: scrolled-to content (Arch Board results, Prep drill sessions) clears the sticky header at every width, including when the header wraps to two rows.
+- Stories (web): on narrow screens a story's title takes its own line instead of being squeezed into a sliver that overlapped the Open/Edit/Delete buttons.
+- Prep (web): the quiz/drill header no longer breaks on narrow screens. The difficulty pill sits at the right edge, and on narrow cards the XP, clock and Exit get their own row, spread across the card. The "1 / 10" counter is gone; the progress bar under the header shows (and announces) the question position.
+- Web: full-height layouts use `svh`, so they fit the visible area on mobile browsers with a collapsing URL bar.
+
 ## 2026-09-18
 
 ### Added

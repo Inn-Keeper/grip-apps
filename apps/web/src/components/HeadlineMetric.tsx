@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { InfoTip } from "./InfoTip";
 import { colors, font } from "@grip/core/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import { GlowBar } from "./GlowBar";
@@ -13,10 +14,12 @@ type HeadlineMetricProps = {
   // Bar fill, 0–100.
   pct: number;
   hint?: string;
+  // How the number is worked out, behind an ⓘ instead of on screen (rule 20).
+  info?: string;
 };
 
 // A screen's one headline number: teal count-up over a glow bar, landing together at ~1.1s.
-export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hint }: HeadlineMetricProps) {
+export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hint, info }: HeadlineMetricProps) {
   const scale = 10 ** decimals;
   const shown = (useCountUp(Math.round(value * scale), 1100) / scale).toFixed(decimals);
   return (
@@ -44,7 +47,12 @@ export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hin
         </span>
       </div>
       <GlowBar pct={pct} marginTop={12} />
-      {hint && <p style={{ margin: "8px 0 0", color: colors.textFaint, fontSize: font.size.label }}>{hint}</p>}
+      {(hint || info) && (
+        <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: 6 }}>
+          {hint && <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.label }}>{hint}</p>}
+          {info && <InfoTip>{info}</InfoTip>}
+        </div>
+      )}
     </div>
   );
 }

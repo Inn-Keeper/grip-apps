@@ -28,7 +28,6 @@ export function QuestLeftRail({ contacts, filter, onFilter }: {
         <WorkspaceTitle
           icon={<BrandIcon name="contact" color={colors.accentBright} size={17} />}
           title={t("contacts.pipeline")}
-          subtitle={t("quest.filterHint")}
         />
       </WorkspacePanel>
 
