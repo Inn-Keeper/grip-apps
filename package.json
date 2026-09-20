@@ -18,6 +18,7 @@
     "format": "prettier --write .",
     "typecheck": "pnpm --filter mobile exec tsc --noEmit && pnpm --filter web typecheck",
     "test": "pnpm --filter @grip/core test && pnpm --filter mobile test && pnpm --filter web test",
+    "seed:questions": "node --env-file-if-exists=.env scripts/seed-questions.mjs",
     "clean:ghosts": "find . -name '._*' -not -path '*/.git/*' -delete",
     "ci": "pnpm lint && pnpm test && pnpm typecheck && pnpm build"
   },

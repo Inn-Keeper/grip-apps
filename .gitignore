@@ -3,6 +3,7 @@ dist/
 .vite/
 .env
 .env.*
+!.env.example
 
 # macOS / external drive artifacts
 .DS_Store

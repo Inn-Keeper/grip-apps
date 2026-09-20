@@ -21,6 +21,7 @@ import { validateQuestionSet } from "../packages/core/src/questions.js";
 const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), "../packages/core/data/questions");
 
 const url = process.env.SUPABASE_URL;
+// Service role only: the anon key can't delete under RLS, so re-seeding with it would duplicate rows.
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
 if (!url || !key) {
   console.error("Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY in the environment.");
