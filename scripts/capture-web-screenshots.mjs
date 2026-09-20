@@ -1,4 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
+import * as fixtures from "./screenshot-fixtures.mjs";
 import { spawn } from "node:child_process";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -84,7 +85,11 @@ async function waitForLoad(cdp) {
   await new Promise((resolve) => setTimeout(resolve, 900));
 }
 
-async function capture(cdp, name) {
+async function capture(cdp, name, { scrollTop = true } = {}) {
+  if (scrollTop) {
+    await cdp.send("Runtime.evaluate", { expression: "window.scrollTo(0, 0)" });
+    await new Promise((resolve) => setTimeout(resolve, 300));
+  }
   const result = await cdp.send("Page.captureScreenshot", { format: "png", captureBeyondViewport: false });
   await writeFile(new URL(`${name}.png`, outDir), Buffer.from(result.data, "base64"));
 }
@@ -101,6 +106,23 @@ async function clickTab(cdp, label) {
   `;
   const result = await cdp.send("Runtime.evaluate", { expression, returnByValue: true });
   if (!result.result.value) throw new Error(`Could not find tab "${label}".`);
+  await new Promise((resolve) => setTimeout(resolve, 700));
+}
+
+// Clicks the first button whose label contains the text (buttons carry their
+// own labels here, so this is enough to drive the board without coordinates).
+async function clickText(cdp, text) {
+  const expression = `
+    (() => {
+      const match = [...document.querySelectorAll('button, [role="button"]')]
+        .find((item) => item.textContent.includes(${JSON.stringify(text)}));
+      if (!match) return false;
+      match.click();
+      return true;
+    })()
+  `;
+  const result = await cdp.send("Runtime.evaluate", { expression, returnByValue: true });
+  if (!result.result.value) throw new Error(`Could not find a button containing "${text}".`);
   await new Promise((resolve) => setTimeout(resolve, 700));
 }
 
@@ -136,6 +158,37 @@ const fakeSession = {
 // We intercept that request via CDP Fetch and return a mocked user response
 // so the app sees a valid session without any real credentials in this script.
 const supabaseHost = new URL(env.VITE_SUPABASE_URL).hostname;
+const pipelineOrigin = env.VITE_PIPELINE_URL ? new URL(env.VITE_PIPELINE_URL).origin : "";
+
+// PostgREST routing: the table is the first path segment after /rest/v1/.
+// A request asking for a single object (maybeSingle) gets the row itself, and a
+// paginated range past the end of a table gets [] so the caller's loop stops.
+function restPayload(url, headers) {
+  const { pathname, searchParams } = new URL(url);
+  const table = pathname.split("/rest/v1/")[1]?.split("?")[0] ?? "";
+  const wantsObject = (headers.Accept ?? headers.accept ?? "").includes("pgrst.object");
+  // supabase-js paginates with offset/limit; anything past the first page must
+  // come back empty or the caller keeps asking for more.
+  const offset = Number(searchParams.get("offset") ?? (headers.Range ?? headers.range ?? "0-").split("-")[0]);
+
+  const rows = {
+    profiles: [fixtures.profile],
+    contacts: fixtures.contacts,
+    stories: fixtures.stories,
+    answer_events: fixtures.answerEvents,
+    status_events: fixtures.statusEvents,
+    arch_boards: fixtures.boards,
+    custom_scenarios: fixtures.customScenarios,
+    questions: [],
+  }[table] ?? [];
+
+  // arch_boards is read both as a list and as one board by id.
+  const id = searchParams.get("id")?.replace("eq.", "");
+  const selected = id ? rows.filter((row) => row.id === id) : rows;
+  const paged = offset > 0 ? [] : selected;
+
+  return wantsObject ? (paged[0] ?? null) : paged;
+}
 
 await mkdir(outDir, { recursive: true });
 
@@ -155,23 +208,54 @@ try {
   await cdp.send("Page.enable");
   await cdp.send("Runtime.enable");
   await cdp.send("Fetch.enable", {
-    patterns: [{ urlPattern: `https://${supabaseHost}/auth/v1/*`, requestStage: "Request" }],
+    patterns: [
+      { urlPattern: `https://${supabaseHost}/auth/v1/*`, requestStage: "Request" },
+      { urlPattern: `https://${supabaseHost}/rest/v1/*`, requestStage: "Request" },
+      ...(pipelineOrigin ? [{ urlPattern: `${pipelineOrigin}/*`, requestStage: "Request" }] : []),
+    ],
   });
 
-  // Handle intercepted Supabase auth requests — return mocked responses.
+  // Serve auth, data and pipeline requests from fixtures, so every screen shows
+  // a populated state and nothing renders an error.
+  // Fulfilled cross-origin responses still go through CORS, so every reply
+  // carries the headers, and preflights are answered before any routing.
+  const corsHeaders = [
+    { name: "Access-Control-Allow-Origin", value: "*" },
+    { name: "Access-Control-Allow-Headers", value: "*" },
+    { name: "Access-Control-Allow-Methods", value: "GET,POST,PATCH,DELETE,OPTIONS" },
+    { name: "Access-Control-Expose-Headers", value: "Content-Range" },
+  ];
+
   cdp.onEvent("Fetch.requestPaused", async (params) => {
     const url = params.request.url;
-    let body;
-    if (url.includes("/auth/v1/token") || url.includes("/auth/v1/user")) {
-      body = JSON.stringify(fakeUser);
-    } else {
-      body = JSON.stringify({ message: "ok" });
+    const headers = params.request.headers ?? {};
+    let payload;
+
+    if (params.request.method === "OPTIONS") {
+      await cdp.send("Fetch.fulfillRequest", {
+        requestId: params.requestId,
+        responseCode: 204,
+        responseHeaders: corsHeaders,
+      });
+      return;
     }
+
+    if (url.includes("/auth/v1/")) {
+      payload = url.includes("/token") || url.includes("/user") ? fakeUser : { message: "ok" };
+    } else if (url.includes("/api/pipeline/velocity")) {
+      payload = fixtures.velocity;
+    } else if (url.includes("/rest/v1/")) {
+      payload = restPayload(url, headers);
+      if (process.env.DEBUG_REST) console.log("REST", params.request.method, url.split("/rest/v1/")[1]?.slice(0, 110), "->", Array.isArray(payload) ? payload.length + " rows" : typeof payload);
+    } else {
+      payload = { message: "ok" };
+    }
+
     await cdp.send("Fetch.fulfillRequest", {
       requestId: params.requestId,
       responseCode: 200,
-      responseHeaders: [{ name: "Content-Type", value: "application/json" }],
-      body: Buffer.from(body).toString("base64"),
+      responseHeaders: [{ name: "Content-Type", value: "application/json" }, ...corsHeaders],
+      body: Buffer.from(JSON.stringify(payload)).toString("base64"),
     });
   });
 
@@ -211,14 +295,20 @@ try {
   await clickTab(cdp, "Stories");
   await capture(cdp, "02-stories");
   await clickTab(cdp, "Arch Board");
+  // Open the saved board so the canvas shows a finished design, then score it.
+  // The board list lives in a collapsed <details>; open it before clicking Load.
+  await cdp.send("Runtime.evaluate", {
+    expression: `document.querySelectorAll('details').forEach((item) => { item.open = true; })`,
+  });
+  await new Promise((resolve) => setTimeout(resolve, 400));
+  await clickText(cdp, "Load");
+  await clickText(cdp, "Evaluate design");
+  await new Promise((resolve) => setTimeout(resolve, 900));
   await capture(cdp, "03-arch-board");
   await clickTab(cdp, "Quest");
   await capture(cdp, "04-quest");
   await clickTab(cdp, "Profile");
   await capture(cdp, "05-profile");
-  await cdp.send("Runtime.evaluate", { expression: "window.scrollTo(0, document.body.scrollHeight)" });
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  await capture(cdp, "06-footer");
   cdp.close();
 } finally {
   chrome.kill("SIGTERM");

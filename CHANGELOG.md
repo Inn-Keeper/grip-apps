@@ -11,8 +11,14 @@ because they have to be applied by hand.
 - Web: an ⓘ info button (`InfoTip`, a native popover under the icon) holds explanations that used to be printed on screen: readiness scoring, the scale brief's how-to and formulas, the locked email field. It works with tap, click and keyboard, unlike `title` tooltips.
 - Prep (web): an Auto-next practice setting (off by default). After a correct answer the next question opens by itself after 5s (Next skips the wait); wrong answers wait for Next. Saved per browser, and shown on the folded Practice settings row.
 - Prep (web): Thunderstorm questions have a 20s clock, shown as a teal pill that turns amber and pulses in the last 10s. A correct answer in time earns ×1.5 XP (+60 instead of +40), shown on the answer's +XP pill and in the session total. When time runs out it says "Time's up" and the question stays open at normal XP. Mock loop stays untimed. The rules live in `@grip/core/difficulty` for mobile to reuse.
+- Question bank: every subject has 100 questions (25 per level), up from 20. React and TypeScript stay at 120. Total 1,200 → 5,140. The database only gets them after reseeding (`scripts/seed-questions.mjs`, run by hand with the service-role key).
+- New subject: Engineering Principles (category Engineering 🛠️), with prep notes, a link and 100 questions in `data/questions/engineering.json`.
 
 ### Changed
+
+- Prep (web): questions are drawn as a deck. Drills and card quizzes show questions you haven't seen at that level before repeating any, then start a new round. Seen questions are kept per browser (`grip.seenQuestions`) and cleared when a different user signs in. The picking rule is `drawFromDeck` in `@grip/core/quiz`.
+- README: rewritten to a third of its length, with fresh screenshots. `scripts/capture-web-screenshots.mjs` now serves `scripts/screenshot-fixtures.mjs` for auth, PostgREST and pipeline calls, so every captured screen shows sample data instead of empty states, and the Arch Board shot loads a scored board. Still no real account and no writes.
+- Question validation: prompts must be unique per tech across all levels, ignoring case and punctuation, and a question's four options must all differ.
 
 - Web: the demo bar is one slim line (31px, was 85px on phones) shown to everyone, since the whole app is a free demo: "Grip is a free demo." Anonymous visitors also get a small "Continue with GitHub" link. The "progress is kept for 7 days" line is gone. Mobile's banner is unchanged.
 - Sign-in (web): the subtitle is "Follow the Raven" (translated in pt and sv); the product promise stays in `brand.promise` for other uses.
@@ -34,6 +40,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- `scripts/seed-questions.mjs` uses only `SUPABASE_SERVICE_ROLE_KEY`. It used to prefer `VITE_SUPABASE_ANON_KEY` when that was set, and RLS then blocks the deletes, so a re-seed would duplicate questions.
 - Web: signing in always opens Prep (email, password, demo and GitHub). Before, it reopened the page you signed out from or the last stored page. Reloading while signed in keeps the current page, and returning from linking GitHub still opens Profile.
 - Web: on tall screens (iPad Pro, Zenbook Fold, any page shorter than the screen) the footer sits at the bottom of the screen instead of starting below the fold. Pages no longer add their own full-screen minimum height on top of the header and demo bar; the page area between header and footer fills the space instead.
 - Web: the "or" before secondary links outside Next Up (e.g. the Fly Me hero) rendered as large bright text; it now matches the small faint Next Up style.
