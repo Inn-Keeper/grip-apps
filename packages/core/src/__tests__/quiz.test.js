@@ -1,4 +1,4 @@
-import { buildDrill, buildDrillFromQuestions, selectCategoryDrillTechs, selectDrillTechs, shuffleOptions } from "../quiz.js";
+import { buildDrill, buildDrillFromQuestions, drawFromDeck, selectCategoryDrillTechs, selectDrillTechs, shuffleOptions } from "../quiz.js";
 
 const question = {
   question: "Which one is right?",
@@ -171,5 +171,40 @@ describe("selectCategoryDrillTechs", () => {
   it("returns all items when techCount exceeds category size", () => {
     const techs = selectCategoryDrillTechs(items, {}, { techCount: 100 });
     expect(techs).toHaveLength(items.length);
+  });
+});
+
+describe("drawFromDeck", () => {
+  const pool = ["a", "b", "c", "d", "e"].map((id) => ({ id }));
+  const ids = (qs) => qs.map((q) => q.id).sort();
+
+  it("never repeats a question until the whole pool has been drawn", () => {
+    let seen = [];
+    const drawn = [];
+    for (let i = 0; i < 5; i++) {
+      const next = drawFromDeck(pool, seen, 1);
+      drawn.push(next.picked[0].id);
+      seen = next.seen;
+    }
+    expect(drawn.sort()).toEqual(["a", "b", "c", "d", "e"]);
+  });
+
+  it("starts a new round with the rest of the pool when unseen ones run out", () => {
+    const { picked, seen } = drawFromDeck(pool, ["a", "b", "c", "d"], 3);
+    expect(picked).toHaveLength(3);
+    expect(picked[0].id).toBe("e"); // the last unseen one comes first
+    expect(new Set(ids(picked)).size).toBe(3); // no duplicates within a draw
+    expect(seen.sort()).toEqual(ids(picked.slice(1))); // the new round holds only the refill
+  });
+
+  it("leaves ids from other pools alone", () => {
+    const { seen } = drawFromDeck(pool, ["x", "y"], 2);
+    expect(seen.slice(0, 2)).toEqual(["x", "y"]);
+    expect(seen).toHaveLength(4);
+  });
+
+  it("handles a draw larger than the pool", () => {
+    const { picked } = drawFromDeck(pool, [], 10);
+    expect(ids(picked)).toEqual(["a", "b", "c", "d", "e"]);
   });
 });

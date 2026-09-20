@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchGithubTechSignals } from "@grip/core/githubTechs";
 import { questionCapForPool } from "@grip/core/quizPrefs";
-import { shuffle, shuffleOptions } from "@grip/core/quiz";
+import { shuffleOptions } from "@grip/core/quiz";
+import { drawUnseen } from "./questionDeck";
 import * as api from "../lib/api";
 import type { AccuracyPoint, QuizQuestion } from "./types";
 
@@ -51,11 +52,15 @@ export function useGithubTechsQuery(githubUsername: string, allTechs: string[], 
 export function usePrepQuestionFetchers(level: string, quizSize: number | null, onCardPoolSize?: (size: number) => void) {
   const queryClient = useQueryClient();
 
-  const fetchTierQuestions = (difficulty: string, techs: string[]) =>
-    queryClient.fetchQuery({
+  // The whole pool is fetched (and cached briefly); the deck then picks unseen questions,
+  // outside the cache, so "Drill again" never gets the same cached draw back.
+  const fetchTierQuestions = async (difficulty: string, techs: string[]) => {
+    const pool = await queryClient.fetchQuery({
       queryKey: prepQueryKeys.tierQuestions(difficulty, techs),
-      queryFn: () => api.getQuestions({ techs, difficulty, limit: DRILL_SIZE * 3 }),
+      queryFn: () => api.getQuestions({ techs, difficulty, limit: CARD_POOL_LIMIT }),
     });
+    return drawUnseen(difficulty, pool, DRILL_SIZE);
+  };
 
   const fetchCardQuestions = async (tech: string): Promise<QuizQuestion[] | null> => {
     try {
@@ -66,7 +71,7 @@ export function usePrepQuestionFetchers(level: string, quizSize: number | null, 
       if (rows.length) {
         onCardPoolSize?.(rows.length);
         const cap = questionCapForPool(quizSize, rows.length);
-        return shuffle(rows).slice(0, cap).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct }));
+        return drawUnseen(level, rows, cap).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct }));
       }
       console.warn(`No ${level} questions in the DB for "${tech}" — falling back to static prep questions (these don't vary by level). Run the questions seed.`);
     } catch (err) {

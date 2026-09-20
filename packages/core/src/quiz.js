@@ -12,6 +12,33 @@ export const shuffle = (arr) => {
   return copy;
 };
 
+/**
+ * Draws `n` questions without repeats until the whole pool has been seen: unseen ones
+ * first (in random order); once they run out, a new round starts from the rest of the
+ * pool. `seen` is a flat list of question ids that may cover other pools too (only this
+ * pool's ids are touched), so one list per difficulty serves both single-tech cards
+ * and multi-tech drills.
+ * @template {{ id: string }} Q
+ * @param {Q[]} pool
+ * @param {string[]} seen
+ * @param {number} n
+ * @returns {{ picked: Q[], seen: string[] }}
+ */
+export function drawFromDeck(pool, seen, n) {
+  const inPool = new Set(pool.map((q) => q.id));
+  const seenHere = new Set(seen.filter((id) => inPool.has(id)));
+  let picked = shuffle(pool.filter((q) => !seenHere.has(q.id))).slice(0, n);
+  let round = new Set([...seenHere, ...picked.map((q) => q.id)]);
+  if (picked.length < n) {
+    // Round over: top up from the rest of the pool; those open the next round.
+    const taken = new Set(picked.map((q) => q.id));
+    const refill = shuffle(pool.filter((q) => !taken.has(q.id))).slice(0, n - picked.length);
+    picked = [...picked, ...refill];
+    round = new Set(refill.map((q) => q.id));
+  }
+  return { picked, seen: [...seen.filter((id) => !inPool.has(id)), ...round] };
+}
+
 export function shuffleOptions(question) {
   const indexed = question.options.map((opt, i) => ({ opt, isCorrect: i === question.correct }));
   const shuffled = shuffle(indexed);

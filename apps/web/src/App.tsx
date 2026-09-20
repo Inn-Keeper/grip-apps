@@ -10,6 +10,7 @@ import InterviewPrep from "./interviewPrep/InterviewPrep";
 import Quest from "./quest/Quest";
 import ArchBoard from "./archBoard/ArchBoard";
 import { SharedBoardPage } from "./archBoard/SharedBoardPage";
+import { clearSeenQuestions } from "./interviewPrep/questionDeck";
 import StoryBank from "./storyBank/StoryBank";
 import Profile from "./profile/Profile";
 import About from "./about/About";
@@ -124,7 +125,10 @@ export default function App() {
   useEffect(() => {
     const applySession = (nextSession: Session | null) => {
       const nextUserId = nextSession?.user.id ?? null;
-      if (identityChanged(previousUserId.current, nextUserId)) queryClient.clear();
+      if (identityChanged(previousUserId.current, nextUserId)) {
+        queryClient.clear();
+        clearSeenQuestions();
+      }
       // Signing in from the sign-in screen always opens Prep (a reload keeps the current page).
       if (isFreshSignIn(previousUserId.current, nextUserId)) {
         setPage(DEFAULT_PAGE);
