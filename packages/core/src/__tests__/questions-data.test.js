@@ -29,3 +29,20 @@ describe("question bank content", () => {
     for (const q of questions) expect(DIFFICULTY_KEYS).toContain(q.difficulty);
   });
 });
+
+describe("validateQuestionSet duplicate rules", () => {
+  const q = (over) => ({ tech: "Java", category: "Languages", difficulty: "easy", prompt: "What is the JVM?", options: ["a", "b", "c", "d"], correct: 0, ...over });
+
+  it("flags the same prompt at another level, ignoring case and punctuation", () => {
+    const errors = validateQuestionSet([q({}), q({ difficulty: "ultra", prompt: "what is the JVM" })]);
+    expect(errors.join()).toMatch(/duplicate prompt in Java \(easy and ultra\)/);
+  });
+
+  it("allows the same prompt in different techs", () => {
+    expect(validateQuestionSet([q({}), q({ tech: "Kotlin" })])).toEqual([]);
+  });
+
+  it("flags repeated options inside one question", () => {
+    expect(validateQuestionSet([q({ options: ["a", "a ", "c", "d"] })]).join()).toMatch(/options must all be different/);
+  });
+});

@@ -2,6 +2,7 @@
 /** @type {Record<string, string>} */
 export const techLinks = {
   TypeScript: "https://www.typescriptlang.org/docs/",
+  "Engineering Principles": "https://martinfowler.com/",
   JavaScript: "https://developer.mozilla.org/en-US/docs/Web/JavaScript",
   Java: "https://docs.oracle.com/en/java/",
   PHP: "https://www.php.net/docs.php",

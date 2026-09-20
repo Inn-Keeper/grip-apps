@@ -1755,6 +1755,56 @@ export const categories = [
     ],
   },
   {
+    name: "Engineering",
+    emoji: "🛠️",
+    color: "#E879F9",
+    items: [
+      {
+        tech: "Engineering Principles",
+        oneliner: "The design judgment behind good code: SOLID, coupling, simplicity and trade-offs.",
+        prep: [
+          "SOLID, and when each principle helps more than it costs",
+          "Coupling vs cohesion: depend on abstractions, keep related things together",
+          "KISS, YAGNI and DRY, including when duplication is the cheaper option",
+          "Composition over inheritance; common design patterns and their misuse",
+          "Refactoring safely: tests first, small steps, clear names",
+        ],
+        quiz: [
+          {
+            question: "What does the Single Responsibility Principle ask of a module?",
+            options: [
+              "It should have one reason to change",
+              "It should contain exactly one function",
+              "It should be used by only one caller",
+              "It should never depend on another module",
+            ],
+            correct: 0,
+          },
+          {
+            question: "What does YAGNI warn against?",
+            options: [
+              "Building features or flexibility before there is a real need for them",
+              "Writing tests before the implementation",
+              "Refactoring code that already works",
+              "Using third-party libraries instead of writing your own",
+            ],
+            correct: 0,
+          },
+          {
+            question: "Why is composition often preferred over inheritance?",
+            options: [
+              "It combines small behaviors without locking classes into a rigid hierarchy",
+              "It always runs faster at runtime",
+              "It removes the need for interfaces",
+              "It lets a class inherit from several parents at once",
+            ],
+            correct: 0,
+          },
+        ],
+      },
+    ],
+  },
+  {
     name: "Mobile Delivery",
     emoji: "📱",
     color: "#FB923C",

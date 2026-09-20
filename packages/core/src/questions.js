@@ -23,6 +23,8 @@ export function validateQuestion(q) {
     errors.push(`${where}: needs exactly ${OPTION_COUNT} options`);
   } else if (!q.options.every(isNonEmptyString)) {
     errors.push(`${where}: every option must be a non-empty string`);
+  } else if (new Set(q.options.map((o) => o.trim())).size !== OPTION_COUNT) {
+    errors.push(`${where}: options must all be different`);
   }
   if (!Number.isInteger(q?.correct) || q.correct < 0 || q.correct >= OPTION_COUNT) {
     errors.push(`${where}: correct must be an integer 0..${OPTION_COUNT - 1}`);
@@ -33,21 +35,27 @@ export function validateQuestion(q) {
   return errors;
 }
 
+// Case, punctuation and spacing don't make a question new: "What is JSX?" and
+// "what is jsx" are the same question.
+export const normalizePrompt = (prompt) =>
+  prompt.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, "").replace(/\s+/g, " ").trim();
+
 /**
- * Validates a full set and flags duplicate prompts within the same
- * (tech, difficulty) bucket — the most common authoring mistake.
+ * Validates a full set and flags duplicate prompts within a tech, across all its
+ * difficulty levels (the same question at two levels still repeats for the learner).
+ * Different techs may share a prompt: "What does EXPLAIN show?" differs in MySQL and PostgreSQL.
  * @param {object[]} questions
  * @returns {string[]}
  */
 export function validateQuestionSet(questions) {
   const errors = questions.flatMap(validateQuestion);
-  const seen = new Set();
+  const seen = new Map();
   for (const q of questions) {
-    const key = `${q?.tech}|${q?.difficulty}|${(q?.prompt ?? "").trim().toLowerCase()}`;
-    if (q?.tech && q?.difficulty && q?.prompt) {
-      if (seen.has(key)) errors.push(`duplicate prompt in ${q.tech}/${q.difficulty}: "${q.prompt.slice(0, 50)}"`);
-      seen.add(key);
-    }
+    if (!q?.tech || !q?.difficulty || !q?.prompt) continue;
+    const key = `${q.tech}|${normalizePrompt(q.prompt)}`;
+    const first = seen.get(key);
+    if (first) errors.push(`duplicate prompt in ${q.tech} (${first} and ${q.difficulty}): "${q.prompt.slice(0, 50)}"`);
+    else seen.set(key, q.difficulty);
   }
   return errors;
 }

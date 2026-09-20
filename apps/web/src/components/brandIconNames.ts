@@ -31,6 +31,7 @@ export const categoryIconName = (name: string): string => {
     Testing: "test",
     Mobile: "client",
     Databases: "database",
+    Engineering: "maintenance",
   };
   // Keyed by the first word: category names are "Frontend & Mobile", "AI Tooling", ...
   return map[name.split(" ")[0] ?? name] ?? "spark";
