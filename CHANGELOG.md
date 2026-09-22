@@ -4,6 +4,20 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-09-22
+
+### Added
+
+- Arch Board (web): "Grade my reasoning" in the talk-track card sends the six sections, the scenario's derived figures and the design checks to `grip-ai-api`, then shows a per-section verdict (Covered / Thin / Missing), the question an interviewer would still ask, the hardest follow-up, and how far the self-rating sits above the grade. The score lands in `talkGrade`, so Save persists it. Editing any section clears the grade and its verdicts, because a grade belongs to the text that earned it.
+- Web: `VITE_AI_URL` points at `grip-ai-api`. Leaving it empty hides the grading action entirely.
+  The action needs a saved board and one written section — the service's own floor, not the 40-character bar the coverage meter uses.
+- Arch Board (web): a graded section shows the verbatim quote the grade was given for, so credit is visible rather than taken on trust.
+- Arch Board (web): the Grade action is disabled while the AI provider is rate limited, naming the time it returns, instead of letting you click into a refusal. The board asks `grip-ai-api` on load; the service answers from its memory of the last 429, so the check costs no provider quota. Google publishes no remaining-quota figure, so this only knows once a request has been refused.
+
+### Changed
+
+- Arch Board (web): only earned verdicts carry colour. `missing` is the absence of credit, not an error, so it no longer renders as a red badge plus a red error icon on every ungraded section; the interviewer's follow-up question is now the prominent line instead of the faintest one. A section holding text but graded `missing` reads "Too thin" rather than contradicting itself.
+
 ## 2026-09-19
 
 ### Added

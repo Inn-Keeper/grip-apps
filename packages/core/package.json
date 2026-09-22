@@ -28,6 +28,7 @@
     "./pushback": "./src/pushback.js",
     "./estimation": "./src/estimation.js",
     "./talkTrack": "./src/talkTrack.js",
+    "./talkGrade": "./src/talkGrade.js",
     "./designTimer": "./src/designTimer.js",
     "./gamification": "./src/gamification.js",
     "./funnel": "./src/funnel.js",

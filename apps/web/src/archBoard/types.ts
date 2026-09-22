@@ -39,6 +39,26 @@ export type AugmentedScenario = {
 
 export type TalkTrackData = { sections: Record<string, string>; rating: number | null };
 
+/** What grip-ai-api returns from /api/v1/ai/status. */
+export type GradingStatus = {
+  grading: "available" | "unavailable";
+  code?: string;
+  message?: string;
+  /** Seconds until the provider limit lapses. */
+  retry_after?: number;
+};
+
+/** What grip-ai-api returns from /api/v1/ai/grade-talk-track. */
+export type TalkGradeResult = {
+  board_id: string;
+  score: number;
+  divergence: number | null;
+  suggestion: {
+    sections: { section: string; verdict: "covered" | "thin" | "missing"; evidence: string; gap: string }[];
+    hardest_followup: string;
+  };
+};
+
 export type SavedBoard = {
   id?: string;
   title: string;

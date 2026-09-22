@@ -1,9 +1,11 @@
 // Thin binding of the shared data layer to this app's Supabase client.
 import { createApi, dateToUi, dateToDb } from "@grip/core/api";
 import { createPipelineApi, PipelineApiError } from "@grip/core/pipeline";
+import { createTalkGradeApi } from "@grip/core/talkGrade";
 import { supabase } from "./supabase";
 
 const pipelineUrl = import.meta.env.VITE_PIPELINE_URL ?? "";
+const aiUrl = import.meta.env.VITE_AI_URL ?? "";
 
 const getToken = async () => {
   const { data } = await supabase.auth.getSession();
@@ -16,9 +18,13 @@ const pipeline = pipelineUrl
   ? createPipelineApi(getToken, pipelineUrl)
   : { async getVelocity(): Promise<never> { throw new PipelineApiError("pipeline: not configured"); } };
 
+// Null when VITE_AI_URL is unset: grading is optional, and the board hides the
+// action rather than offering a button that can only fail.
+const talkGrade = aiUrl ? createTalkGradeApi(getToken, aiUrl) : null;
+
 const api = createApi(supabase);
 
-export { dateToUi, dateToDb, pipeline };
+export { dateToUi, dateToDb, pipeline, talkGrade };
 export const {
   listBoards,
   listBoardSummaries,

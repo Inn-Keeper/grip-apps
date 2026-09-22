@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, evaluate } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
+import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
@@ -26,16 +27,20 @@ import { findPlacement } from "./boardGeometry.js";
 import { useBoardViewport } from "./useBoardViewport";
 import { ViewportControls } from "./ViewportControls";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
+import { gradeBlockedKey, gradeDetailFor, resumeTime } from "./gradeState.js";
 import { workflowStep } from "./workflowState.js";
 import styles from "./ArchBoard.module.css";
 import {
   useCustomScenariosQuery,
   useDeleteBoardMutation,
   useDeleteScenarioMutation,
+  useGradeTalkTrackMutation,
+  useGradingStatusQuery,
   useSaveBoardMutation,
   useSavedBoardsQuery,
   useLoadBoard,
   useSaveScenarioMutation,
+  talkGradeEnabled,
 } from "./queries";
 import type { AugmentedScenario, BoardEdge, BoardNode, BoardSummary, ConnectDrag, DragRef, SavedBoard } from "./types";
 
@@ -141,6 +146,10 @@ export default function ArchBoard() {
   const deleteScenarioMutation = useDeleteScenarioMutation((id) => {
     if (id === scenarioId) switchScenario((SCENARIOS[0] as AugmentedScenario).id);
   });
+  // Answered from the service's memory of the last refusal, so asking is free.
+  const { data: gradingStatus } = useGradingStatusQuery();
+  // The score joins the snapshot, so the board turns dirty and Save persists it.
+  const gradeMutation = useGradeTalkTrackMutation((graded) => setTalkGrade(graded.score));
 
   const cancelConnection = () => {
     connectDragRef.current = null;
@@ -366,6 +375,22 @@ export default function ArchBoard() {
     });
   };
   const evaluateDesign = () => setResult(evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges));
+  // The grader checks the candidate's arithmetic against the design checks, so
+  // run evaluate() here rather than making the user press Evaluate design first.
+  const gradeTalkTrack = () => {
+    if (!activeBoardId) return;
+    const checks = result ?? evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges);
+    gradeMutation.mutate({
+      boardId: activeBoardId,
+      facts: buildGradeFacts(scenario, nodes, checks),
+      sections: talkSections,
+      selfRating: talkRating,
+    });
+  };
+  // Counts written sections, not "covered" ones: the grader's floor is any text at all.
+  const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
+  const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
+  const blockedKey = gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
   const nodeName = (id: string | null) => meta(nodeById[id ?? ""]?.type ?? "client").label;
 
   // On an empty, unsaved canvas, the one main action is picking up where you left off.
@@ -506,6 +531,12 @@ export default function ArchBoard() {
             <TalkTrack
               sections={talkSections}
               rating={talkRating}
+              grade={talkGrade}
+              gradeDetail={gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId)}
+              grading={gradeMutation.isPending}
+              gradeError={gradeMutation.error}
+              gradeBlocked={blockedKey ? t(blockedKey, limit ? { time: resumeTime(limit.retry_after) } : undefined) : null}
+              onGrade={talkGradeEnabled ? gradeTalkTrack : null}
               onChangeSection={(id, value) => {
                 commit({ ...snapshot(), talkSections: { ...talkSections, [id]: value }, talkGrade: null });
               }}

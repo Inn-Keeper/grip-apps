@@ -1,8 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "../lib/api";
-import type { BoardSummary, SavedBoard } from "./types";
+import type { BoardSummary, GradingStatus, SavedBoard, TalkGradeResult } from "./types";
 
 export const archBoardQueryKeys = {
+  gradingStatus: ["talk-grade-status"] as const,
   boards: ["arch-board-summaries"] as const,
   // Full boards (nodes + edges) for Quest scoring. Must not share the summaries key:
   // summaries lack nodes/edges, and a shared cache entry crashed Quest's evaluate().
@@ -45,6 +46,44 @@ export function useSaveBoardMutation(onSaved: (board: SavedBoard) => void) {
           shareToken: board.shareToken ?? null, createdAt: board.createdAt ?? new Date().toISOString(), updatedAt: board.updatedAt ?? new Date().toISOString() };
         return [summary, ...current.filter((item) => item.id !== board.id)];
       });
+    },
+  });
+}
+
+/** False when VITE_AI_URL is unset: the board then hides grading entirely. */
+export const talkGradeEnabled = Boolean(api.talkGrade);
+
+/**
+ * Whether the grader is answering right now. The service replies from memory of
+ * the last provider rate limit, so polling it spends no quota — but it only
+ * knows once a request has been refused, because Google publishes no balance.
+ */
+export function useGradingStatusQuery() {
+  return useQuery({
+    queryKey: archBoardQueryKeys.gradingStatus,
+    queryFn: () => api.talkGrade!.getGradingStatus() as Promise<GradingStatus>,
+    enabled: talkGradeEnabled,
+    // A limit lapses on its own, so a stale "unavailable" must not stick.
+    staleTime: 30_000,
+  });
+}
+
+/**
+ * Grades the talk track through grip-ai-api. Not cached: a grade belongs to the
+ * exact text that was sent, and that text changes as the user types.
+ */
+export function useGradeTalkTrackMutation(onGraded: (result: TalkGradeResult) => void) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { boardId: string; facts: object; sections: Record<string, string>; selfRating: number | null }) => {
+      const client = api.talkGrade;
+      if (!client) throw new Error("talkGrade: VITE_AI_URL is not configured");
+      return (await client.gradeTalkTrack(input)) as TalkGradeResult;
+    },
+    onSuccess: onGraded,
+    onError: (error: Error & { status?: number }) => {
+      // A refusal is how the service learns the limit; pick it up immediately.
+      if (error?.status === 429) queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.gradingStatus });
     },
   });
 }
