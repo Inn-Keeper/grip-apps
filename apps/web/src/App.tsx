@@ -1,4 +1,5 @@
 import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import type { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { identityChanged } from "@grip/core/authCache";
@@ -400,6 +401,7 @@ export default function App() {
       </div>
 
       <Footer pages={pages} onNavigate={session ? selectPage : null} />
+      <Analytics />
     </div>
   );
 }

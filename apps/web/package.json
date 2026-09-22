@@ -11,9 +11,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@grip/core": "workspace:*",
     "@supabase/supabase-js": "^2.108.1",
     "@tanstack/react-query": "^5.101.0",
-    "@grip/core": "workspace:*",
+    "@vercel/analytics": "^2.0.1",
     "driver.js": "^1.4.0",
     "pdfjs-dist": "^6.0.227",
     "react": "^19.2.7",
