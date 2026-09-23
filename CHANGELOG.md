@@ -19,6 +19,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Prep (mobile): study cards work like web's. One face shows the tech, its one-liner and the prep notes as quiet reference text, and tapping the card starts the quiz; the flip to a notes-only back face, one tap before the quiz, is gone.
 - Demo banner (mobile): one slim line like web's, "Grip is a free demo." with a Continue with GitHub link, instead of a two-row card with a filled button that took about a fifth of a phone screen.
 - Prep (web): the quiz hint names the A to D keys only on desktops with a precise pointer and hover. Phones and tablets, where there is no keyboard to press them on, read "Pick the best answer".
 - Mobile: cards look like web's. Prep's tech cards, story cards, the XP and accuracy cards, Quest contacts, Profile sections and the rest had a light edge, several tinted with their tech or competency colour; they now use web's dark soft edge (`borderSoft`) and the same lifted card shadow. Next Up keeps its tone edge, as on web, and a contact with a due follow-up keeps its red one. Bottom sheets take the dark edge too.
@@ -38,6 +39,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Prep (mobile): a card quiz can be left before its last question. It had no Exit, so a 30-question run could only be abandoned by switching tabs; it now carries the drill's header, the tier and Exit. The drill's Exit label is translated too.
 - Arch Board (mobile): the scenario sheet rides above the keyboard. Typing a search hid the results behind it on a phone.
 - Stories and Quest (mobile): after saving an edit, a card could stay invisible and leave a gap in the list. The cards' staggered entrance animation restarted when the list remounted and was cut off by the refetch; the lists now render without it.
 - Prep (mobile): the XP bar no longer runs past its new value and pulls back after a correct answer. It animated with a loose spring, which overshoots; it now eases in and stops on the value.
