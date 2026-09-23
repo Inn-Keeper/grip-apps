@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Text, View } from "react-native";
-import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
@@ -17,7 +17,8 @@ export function StatsBar({ scores }: Props) {
 
   const fill = useSharedValue(0);
   useEffect(() => {
-    fill.value = withSpring(progress, { damping: 18, stiffness: 90 });
+    // Eased, not a spring: a spring overshoots and pulls back, which reads as XP taken away.
+    fill.value = withTiming(progress, { duration: 600, easing: Easing.out(Easing.cubic) });
   }, [progress, fill]);
 
   // Flash the bar when XP lands, so earning it is visible outside the quiz.

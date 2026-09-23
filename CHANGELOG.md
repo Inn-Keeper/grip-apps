@@ -18,6 +18,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Tab bar (mobile): the icons match the web header's (stacked layers for Prep, a page for Stories, the grid for Arch Board, a flag for Quest, a person for Profile), labels are lighter, and on iOS 26 the bar is left to the system's Liquid Glass, a floating capsule with the teal pill on the active tab, instead of being painted over with our own dark background. Older iOS and Android keep the dark blurred bar.
 - Arch Board (web): the design checklist reads as a to-do list. A summary line and bar give checks and points earned; what is still missing comes first, biggest points first, with a points pill each, and nothing is red, because a missing check is credit not yet earned. Earned checks fold under Done until everything passes, and design warnings sit in their own amber block.
 - Fly Me (web): the page and the guided tour describe the app as it is now: readiness, the Thunderstorm clock, unseen questions first, Auto-next, Mock loop, story links to scenarios and boards, the five-step board with AI grading, scenario search, full screen and share links, Quest's Next Up, velocity and Drill these in Prep, and CV import. Counts are corrected (10 categories, about 50 technologies), the Synced and Offline-ready claims are gone while mobile is on hold, and Free demo joins What stays handled.
 - Story Bank and Arch Board (web): a story has one board, the design you tell for it, improved in place rather than redrawn. The story shows that board with its scores and offers New board for this story only until it exists; the board's story picker shows stories another board already holds as taken, and a save that would give a story a second board says so in words.
@@ -33,6 +34,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Prep (mobile): the XP bar no longer runs past its new value and pulls back after a correct answer. It animated with a loose spring, which overshoots; it now eases in and stops on the value.
 - Arch Board (web): full screen opens framed. It kept the small canvas's zoom and pan, so the board sat off to one side or tiny; entering and leaving full screen now fit the board to the new size.
 - Arch Board (web): leaving the New scenario form no longer leaves a second copy of the Next Up action under the steps. The card's visibility watcher stayed on the card that was unmounted, so the board thought Next Up had scrolled away for the rest of the visit.
 - Quest (web): the stage-velocity panel is hidden when `VITE_PIPELINE_URL` is unset, instead of showing a red error. The client used to throw "pipeline: not configured" on every load, which surfaced as a failure even though nothing had been asked of the service — an unconfigured optional service now behaves like `VITE_AI_URL` does and simply offers nothing.
