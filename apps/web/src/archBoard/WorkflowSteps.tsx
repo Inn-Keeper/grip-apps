@@ -1,15 +1,38 @@
 import { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
+import { BrandIcon } from "../components/BrandIcon";
+import styles from "./ArchBoard.module.css";
 import { WORKFLOW_STEPS, stepState } from "./workflowState.js";
+
+export type RailAction = {
+  label: string;
+  icon: string;
+  onClick: () => void;
+  disabled: boolean;
+  /** False once the action has been taken, which stops the shine. */
+  highlight: boolean;
+};
 
 /**
  * The whole journey, always on screen. Finished steps stay visible and marked
  * done: a rail that shows only the current step is as opaque as no rail, since
  * you cannot reason about where you are without seeing where you have been.
  */
-export function WorkflowSteps({ activeStep }: { activeStep: number }) {
-  const rail = useRef<HTMLOListElement>(null);
+export function WorkflowSteps({
+  activeStep,
+  action,
+}: {
+  activeStep: number;
+  /**
+   * The step's main action, carried only while the Next Up card is off screen.
+   * Knowing which step you are on is useless if the button for it scrolled
+   * away, but showing it in both places would put one action twice on a screen
+   * that allows it once (rules 1 and 6).
+   */
+  action: RailAction | null;
+}) {
+  const rail = useRef<HTMLDivElement>(null);
 
   // Publish the real height: the pills wrap on narrow screens, so a fixed value
   // would leave scrolled-to content either clipped or floating.
@@ -27,15 +50,13 @@ export function WorkflowSteps({ activeStep }: { activeStep: number }) {
   }, []);
 
   return (
-    <ol
+    <div
       ref={rail}
-      aria-label={t("board.railLabel")}
       style={{
         display: "flex",
         alignItems: "center",
-        gap: 6,
+        gap: 10,
         flexWrap: "wrap",
-        margin: 0,
         // Sticky so evaluating, which scrolls the results into view, cannot take
         // the sense of progress off screen with it. --rail-h in index.html keeps
         // scroll targets clear of it, so it hides nothing (rule 7).
@@ -46,6 +67,21 @@ export function WorkflowSteps({ activeStep }: { activeStep: number }) {
         zIndex: 3,
         padding: "6px 0 10px",
         background: colors.bg,
+      }}
+    >
+    <ol
+      aria-label={t("board.railLabel")}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        flexWrap: "wrap",
+        // Shrinks rather than claiming the row, so the action stays on the same
+        // line as the step it belongs to instead of wrapping under it.
+        flex: "1 1 auto",
+        minWidth: 0,
+        margin: 0,
+        padding: 0,
         listStyle: "none",
       }}
     >
@@ -100,5 +136,32 @@ export function WorkflowSteps({ activeStep }: { activeStep: number }) {
         );
       })}
     </ol>
+      {action && (
+        <button
+          type="button"
+          className={`${styles.railAction}${action.highlight ? ` ${styles.railActionShine}` : ""}`}
+          onClick={action.onClick}
+          disabled={action.disabled}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            flex: "0 0 auto",
+            padding: "6px 14px",
+            background: colors.accent,
+            border: "none",
+            borderRadius: 8,
+            color: colors.onAccent,
+            fontSize: font.size.small,
+            fontWeight: 800,
+            cursor: action.disabled ? "default" : "pointer",
+            opacity: action.disabled ? 0.6 : 1,
+          }}
+        >
+          <BrandIcon name={action.icon} color={colors.onAccent} size={13} />
+          {action.label}
+        </button>
+      )}
+    </div>
   );
 }

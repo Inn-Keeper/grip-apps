@@ -112,12 +112,15 @@ export function DesignTimer() {
           onClick={running ? pause : start}
           style={{
             display: "flex", alignItems: "center", gap: 5,
-            padding: "8px 14px", background: running ? "transparent" : colors.accent,
+            // Outline, never filled: the round is an optional aid beside the
+            // work, and a second filled button reads as a second main action
+            // on a screen that allows one (rules 1 and 2).
+            padding: "8px 14px", background: "transparent",
             border: `1px solid ${running ? colors.borderSoft : colors.accent}`, borderRadius: 8,
-            color: running ? colors.textDim : colors.onAccent, fontSize: font.size.small, fontWeight: 700, cursor: "pointer",
+            color: running ? colors.textDim : colors.accentBright, fontSize: font.size.small, fontWeight: 700, cursor: "pointer",
           }}
         >
-          <BrandIcon name={running ? "close" : "spark"} color={running ? colors.textDim : colors.onAccent} size={13} />
+          <BrandIcon name={running ? "close" : "spark"} color={running ? colors.textDim : colors.accentBright} size={13} />
           {running ? t("timer.pause") : started ? t("timer.resume") : t("timer.start")}
         </button>
         {started && (

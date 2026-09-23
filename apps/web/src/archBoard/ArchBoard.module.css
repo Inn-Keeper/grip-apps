@@ -98,3 +98,55 @@
   grid-template-rows: auto 1fr;
   overflow: hidden;
 }
+
+/* The rail's action appears only once the Next Up card has scrolled away, so it
+   arrives mid-scroll with nothing to announce it. Motion explains the change
+   (rule 32) and plays once (rule 33). */
+.railAction {
+  position: relative;
+  overflow: hidden;
+  animation: railActionIn 220ms ease-out;
+}
+
+@keyframes railActionIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Then two glow pulses, the same greeting the Drill button gives when a
+   category is picked, so the one button you should press next announces
+   itself rather than waiting to be noticed. */
+.railActionShine {
+  animation: railActionIn 220ms ease-out, railActionGlow 900ms ease-out 220ms 2;
+}
+
+@keyframes railActionGlow {
+  0% { box-shadow: 0 0 0 0 var(--arch-accent); }
+  30% { transform: scale(1.04); }
+  100% { box-shadow: 0 0 0 7px transparent; transform: scale(1); }
+}
+
+/* Then the shine rule 34 allows on the single active main button, every 10s.
+   It is the only thing on this screen animating on its own, and it stops once
+   the action has been taken. */
+.railActionShine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 25%, #FFFFFF38 50%, transparent 75%);
+  transform: translateX(-100%);
+  animation: railActionShine 10s ease-in-out 2s infinite;
+  pointer-events: none;
+}
+
+@keyframes railActionShine {
+  0% { transform: translateX(-100%); }
+  8%, 100% { transform: translateX(100%); }
+}
+
+/* Rule 35: every effect skipped when the system asks for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .railAction,
+  .railActionShine { animation: none; }
+  .railActionShine::after { content: none; }
+}

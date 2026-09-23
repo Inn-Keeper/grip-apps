@@ -30,7 +30,7 @@ import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./edito
 import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "./gradeState.js";
 import { appendHandoff } from "./scaleHandoff.js";
 import { workflowStep } from "./workflowState.js";
-import { WorkflowSteps } from "./WorkflowSteps";
+import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
 import styles from "./ArchBoard.module.css";
 import {
   useCustomScenariosQuery,
@@ -79,6 +79,20 @@ export default function ArchBoard() {
   };
   // The section the verdict card sends you to; cleared once the cursor lands.
   const [focusSection, setFocusSection] = useState<string | null>(null);
+  const nextUpRef = useRef<HTMLDivElement>(null);
+  const [nextUpVisible, setNextUpVisible] = useState(true);
+
+  useEffect(() => {
+    const node = nextUpRef.current;
+    if (!node) return;
+    const observer = new IntersectionObserver((entries) => setNextUpVisible(entries[entries.length - 1]?.isIntersecting ?? true), {
+      // The sticky rail sits over the top of the page, so a card tucked under
+      // it is not really visible.
+      rootMargin: "-90px 0px 0px 0px",
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
   const [talkGrade, setTalkGrade] = useState<number | null>(null);
@@ -427,6 +441,14 @@ export default function ArchBoard() {
     setTalkOpen(true);
     if (verdict?.weakest) setFocusSection(verdict.weakest.section);
   };
+  // Opening the panel is done after the first press, so every press after it
+  // puts the cursor in the next section still to write instead of doing
+  // nothing while the button keeps asking to be pressed.
+  const writeTalkTrack = () => {
+    setTalkOpen(true);
+    const unwritten = TALK_TRACK_SECTIONS.find((section) => !(talkSections[section.id] ?? "").trim());
+    if (unwritten) setFocusSection(unwritten.id);
+  };
   const stepCopy =
     activeWorkflowStep === 1
       ? { title: t("board.stepAddTitle"), sub: t("board.stepAddSub") }
@@ -454,6 +476,24 @@ export default function ArchBoard() {
   // Past step 3 the design is scored and the unscored half is the talk track,
   // so the one main action becomes writing it rather than evaluating again.
   const explaining = activeWorkflowStep >= 4;
+  // One definition of the step's main action. The Next Up card renders it, and
+  // the sticky rail repeats it only once that card has scrolled away.
+  const primaryAction: RailAction = latestBoard
+    ? { label: t("board.continueAction"), icon: "story", onClick: () => requestBoard(latestBoard), disabled: false, highlight: true }
+    : {
+        label: verdict?.weakest
+          ? t("board.answerAction")
+          : explaining
+            ? t("board.explainAction")
+            : t("board.evaluateDesign"),
+        icon: explaining ? "spark" : "evaluate",
+        onClick: verdict?.weakest ? answerWeakest : explaining ? writeTalkTrack : evaluateDesign,
+        disabled: nodes.length === 0,
+        // The shine asks you to act. Once the panel is open the asking is done,
+        // and continuing would be nagging while you type.
+        highlight: !(explaining && talkOpen),
+      };
+
   const statusText = saveBoardMutation.isPending ? t("board.statusSaving") : isDirty ? t("board.statusDirty") : activeBoardId ? t("board.saved") : t("board.statusNew");
   const cssVars = {
     ["--arch-border" as string]: colors.borderSoft,
@@ -636,38 +676,38 @@ export default function ArchBoard() {
           <>
             {/* Above both branches: the journey must stay on screen even when
                 the card is offering to resume an earlier board. */}
-            <WorkflowSteps activeStep={activeWorkflowStep} />
-            {latestBoard ? (
-              <NextUpShell
-                title={t("board.continueTitle", { title: latestBoard.title })}
-                sub={t("board.continueSub", {
-                  scenario: allScenarios.find((item) => item.id === latestBoard.scenarioId)?.name ?? latestBoard.scenarioId,
-                  date: new Date(latestBoard.updatedAt).toLocaleDateString(),
-                })}
-                tone={colors.accent ?? ""}
-                actionLabel={t("board.continueAction")}
-                actionIcon="story"
-                onAction={() => requestBoard(latestBoard)}
-              />
-            ) : (
-              <NextUpShell
-                title={stepCopy.title}
-                sub={stepCopy.sub}
-                tone={colors.accent ?? ""}
-                actionLabel={
-                  verdict?.weakest ? t("board.answerAction") : explaining ? t("board.explainAction") : t("board.evaluateDesign")
-                }
-                actionIcon={explaining ? "spark" : "evaluate"}
-                onAction={verdict?.weakest ? answerWeakest : explaining ? () => setTalkOpen(true) : evaluateDesign}
-                disabled={nodes.length === 0}
-                links={
-                  <>
-                    <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} />
-                    {explaining && <NextUpLink label={t("board.evaluateDesign")} onClick={evaluateDesign} />}
-                  </>
-                }
-              />
-            )}
+            <WorkflowSteps activeStep={activeWorkflowStep} action={nextUpVisible ? null : primaryAction} />
+            <div ref={nextUpRef}>
+              {latestBoard ? (
+                <NextUpShell
+                  title={t("board.continueTitle", { title: latestBoard.title })}
+                  sub={t("board.continueSub", {
+                    scenario: allScenarios.find((item) => item.id === latestBoard.scenarioId)?.name ?? latestBoard.scenarioId,
+                    date: new Date(latestBoard.updatedAt).toLocaleDateString(),
+                  })}
+                  tone={colors.accent ?? ""}
+                  actionLabel={primaryAction.label}
+                  actionIcon={primaryAction.icon}
+                  onAction={primaryAction.onClick}
+                />
+              ) : (
+                <NextUpShell
+                  title={stepCopy.title}
+                  sub={stepCopy.sub}
+                  tone={colors.accent ?? ""}
+                  actionLabel={primaryAction.label}
+                  actionIcon={primaryAction.icon}
+                  onAction={primaryAction.onClick}
+                  disabled={primaryAction.disabled}
+                  links={
+                    <>
+                      <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} />
+                      {explaining && <NextUpLink label={t("board.evaluateDesign")} onClick={evaluateDesign} />}
+                    </>
+                  }
+                />
+              )}
+            </div>
 
             {/* Slim toolbar: editing controls for the canvas right under it. */}
             <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
