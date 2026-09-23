@@ -28,8 +28,7 @@ only; 2026-09-17 and earlier shipped on both.
 
 **Prep** (about 40 web strings have no mobile counterpart)
 - Mock loop (`@grip/core/mockLoop`).
-- Readiness score, category mastery percentages, Signal.
-- Auto-next, the practice settings card, tech search.
+- Signal. (Readiness, category mastery, Auto-next and tech search shipped in phase 5b.)
 - Poe assistant, rail lock during a session.
 - Mobile does have the review queue and the accuracy timeline.
 
@@ -55,5 +54,5 @@ only; 2026-09-17 and earlier shipped on both.
 2. ~~Scoring parity: the speed bonus and unseen-first drawing.~~ Done 2026-09-23.
 3. ~~Story links: scenario and board on the story, story on the board.~~ Done 2026-09-23.
 4. ~~AI grading and the workflow rail on the board.~~ Done 2026-09-23.
-5. Profile: ~~autosave, completion and Next Up (5a)~~ Done 2026-09-23. Then the Prep extras: readiness, Auto-next and tech search (5b), and the Mock loop (5c).
+5. Profile: ~~autosave, completion and Next Up (5a)~~ Done 2026-09-23. Then the Prep extras: ~~readiness, Auto-next and tech search (5b)~~ Done 2026-09-23, and the Mock loop (5c).
 6. A SCREEN-GUIDELINES.md pass per screen, with the Maestro flows updated.

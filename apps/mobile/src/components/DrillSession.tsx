@@ -1,8 +1,10 @@
+import { useEffect, useRef } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
+import { AUTO_NEXT_MS } from "@grip/core/quizPrefs";
 import { useCountUp } from "@/lib/useCountUp";
 import { colors, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
@@ -30,12 +32,25 @@ type Props = {
   onExit: () => void;
   /** Repeats the same techs and tier; omitted inside the mock loop. */
   onRestart?: () => void;
+  /** Move on by itself after a correct answer. */
+  autoNext?: boolean;
 };
 
-export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Props) {
+export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoNext = false }: Props) {
   const tier = difficultyByKey(drill.difficulty);
   const perAnswerXp = tier?.xp ?? CORRECT_XP;
   const shownCorrect = useCountUp(drill.done ? drill.correctCount : 0);
+
+  // Auto-next, as on web: a correct answer moves on once its +XP has landed. Wrong answers
+  // wait for Next, since reading the right answer is the point. Next, Exit or unmount cancel it.
+  const answeredCorrectly = !drill.done && drill.answered !== null && drill.answered === drill.questions[drill.index]?.q.correct;
+  const advance = useRef(onNext);
+  advance.current = onNext;
+  useEffect(() => {
+    if (!autoNext || !answeredCorrectly) return;
+    const id = setTimeout(() => advance.current(), AUTO_NEXT_MS);
+    return () => clearTimeout(id);
+  }, [autoNext, answeredCorrectly, drill.index]);
 
   if (drill.done) {
     const perfect = drill.correctCount === drill.questions.length;

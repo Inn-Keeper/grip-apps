@@ -1,5 +1,5 @@
 import { DIFFICULTY_KEYS } from "@grip/core/difficulty";
-import { parseQuizSize, serializeQuizSize, QUIZ_SIZE_STORAGE_KEY } from "@grip/core/quizPrefs";
+import { AUTO_NEXT_MS, AUTO_NEXT_STORAGE_KEY, parseQuizSize, serializeQuizSize, QUIZ_SIZE_STORAGE_KEY } from "@grip/core/quizPrefs";
 
 /** Returns the stored quiz size, or null meaning "use all available". */
 export function getQuizSize() {
@@ -31,9 +31,8 @@ export function saveLevel(key: string) {
   if (typeof window !== "undefined") window.localStorage.setItem(LEVEL_STORAGE_KEY, key);
 }
 
-const AUTO_NEXT_STORAGE_KEY = "grip.autoNext";
-// Time to take in the answer and its +XP before moving on; Next skips the wait.
-export const AUTO_NEXT_MS = 5000;
+// Shared with mobile, so both apps pace Auto-next the same.
+export { AUTO_NEXT_MS };
 
 /** Whether sessions move on by themselves after a correct answer (off unless chosen). */
 export function getAutoNext(): boolean {

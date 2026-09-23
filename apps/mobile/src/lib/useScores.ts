@@ -47,6 +47,8 @@ export function useScores() {
 
   return {
     scores,
+    // False until the real scores arrive; `scores` is EMPTY until then.
+    loaded: data !== undefined,
     record: (tech: string, isCorrect: boolean, source = "card", difficulty: string | null = null) =>
       recordMutation.mutate({
         requestId: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,

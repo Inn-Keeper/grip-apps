@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Text, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { categories } from "@grip/core/prepData";
 import { buildGithubTechCategory, githubUsernameFromUrl } from "@grip/core/githubTechs";
 import { mergeTechSignals } from "@grip/core/cvTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
+import { computeReadiness } from "@grip/core/readiness";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { difficultyByKey, speedBonusXp } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
@@ -13,18 +14,19 @@ import type { NextUpKind } from "@grip/core/nextUp";
 import { useLocale } from "@/lib/useLocale";
 import { DEFAULT_QUIZ_SIZE } from "@grip/core/quizPrefs";
 import { buildDrillFromQuestions, selectCategoryDrillTechs, selectDrillTechs } from "@grip/core/quiz";
-import { getQuizSize, setQuizSize } from "@/lib/quizPrefs";
+import { getAutoNext, getQuizSize, setAutoNext, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
 import { colors, layout } from "@/theme";
 import { PrepCard } from "@/components/PrepCard";
 import { StatsBar } from "@/components/StatsBar";
 import { NextUpCard } from "@/components/NextUpCard";
+import { ReadinessCard } from "@/components/ReadinessCard";
 import { PrepSettings } from "@/components/PrepSettings";
 import { DrillSession, type Drill } from "@/components/DrillSession";
 import { AccuracyChart } from "@/components/AccuracyChart";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
-import { Screen, ScreenHeader, SegmentedPills } from "@/components/ui";
+import { Screen, ScreenHeader, SegmentedPills, inputStyle } from "@/components/ui";
 import { categoryIconName } from "@/components/BrandIcon";
 import {
   useAccuracyTimelineQuery,
@@ -70,10 +72,12 @@ export default function PrepScreen() {
   const [drillLoading, setDrillLoading] = useState(false);
   const [drillError, setDrillError] = useState<string | null>(null);
   const [celebration, setCelebration] = useState<Celebration | null>(null);
+  const [autoNext, setAutoNextState] = useState(false);
+  const [search, setSearch] = useState("");
   const previousRank = useRef<ReturnType<typeof rankForXp> | null>(null);
   // What "Drill again" repeats: the same techs and tier as the drill just finished.
   const lastDrillRef = useRef<{ difficulty: string; techs: string[]; fallbackToAll: boolean } | null>(null);
-  const { scores, record, addXp } = useScores();
+  const { scores, loaded: scoresLoaded, record, addXp } = useScores();
   const { data: accuracy = [] } = useAccuracyTimelineQuery();
   const { data: reviewQueue = [] } = useReviewQueueQuery();
   const { data: prepContacts = [] } = usePrepContactsQuery();
@@ -89,7 +93,13 @@ export default function PrepScreen() {
 
   useEffect(() => {
     getQuizSize().then(setQuizSizeState).catch(() => setQuizSizeState(DEFAULT_QUIZ_SIZE));
+    getAutoNext().then(setAutoNextState).catch(() => undefined);
   }, []);
+
+  const updateAutoNext = (value: boolean) => {
+    setAutoNextState(value);
+    setAutoNext(value).catch(() => undefined);
+  };
 
   const updateQuizSize = (value: number | null) => {
     setQuizSizeState(value);
@@ -117,7 +127,32 @@ export default function PrepScreen() {
   const displayCategories = githubCategory ? [githubCategory, ...categories] : categories;
   const category = (displayCategories.find((c: { name: string }) => c.name === activeCategoryName) ?? displayCategories[0]) as PrepCategory;
 
+  // Search spans every category by name or one-liner, as on web.
+  const query = search.trim().toLowerCase();
+  const searchResults = query
+    ? (allItems as unknown as (PrepItem & { color: string })[]).filter(
+        (item) => item.tech.toLowerCase().includes(query) || item.oneliner.toLowerCase().includes(query)
+      )
+    : null;
+  const visibleItems = searchResults ?? category.items.map((item: PrepItem) => ({ ...item, color: item.color ?? category.color }));
+
+  // Readiness scope, as on web: the prep plan's techs, else the profile stack, else what's been
+  // practiced. Only techs Prep can drill count, so the number can always be moved.
+  const practicable = (techs: string[]) => techs.filter((tech) => colorByTech[tech]);
+  const planTechs = practicable(prepPlan?.techs ?? []);
+  const stackTechs = practicable(combinedSignals.map((signal: { tech: string }) => signal.tech));
+  const [readinessTechs, readinessLabel] = planTechs.length
+    ? [planTechs, t("prep.readinessPlan", { name: prepPlan?.name ?? "" })]
+    : stackTechs.length
+      ? [stackTechs, t("prep.readinessStack")]
+      : [practicable(Object.keys(scores.answers)), t("prep.readinessPracticed")];
+  const readinessPct = computeReadiness({ postingTechs: readinessTechs, answers: scores.answers }).prep;
+  // Mastery, not coverage: average accuracy across a category, untested techs as 0.
+  const mastery = (items: { tech: string }[]) => computeReadiness({ postingTechs: items.map((item) => item.tech), answers: scores.answers }).prep ?? 0;
+
+  // Starts from the loaded score, not the empty placeholder, so opening the app isn't a rank-up.
   useEffect(() => {
+    if (!scoresLoaded) return;
     const current = rankForXp(scores.xp);
     if (previousRank.current && current.min > previousRank.current.min) {
       setCelebration({
@@ -127,7 +162,7 @@ export default function PrepScreen() {
       });
     }
     previousRank.current = current;
-  }, [scores.xp]);
+  }, [scores.xp, scoresLoaded]);
 
   // Fetches questions for the given techs and opens the drill UI.
   // `fallbackToAll` widens an empty pool to every tech — wanted for the generic
@@ -263,26 +298,43 @@ export default function PrepScreen() {
     <Screen key={locale}>
       {!drill && (
         <ScreenHeader title={t("tabs.prep")} subtitle={t("screen.prepSubtitle")}>
+          <TextInput
+            value={search}
+            onChangeText={setSearch}
+            placeholder={t("prep.searchTechnology")}
+            placeholderTextColor={colors.textFaint}
+            accessibilityLabel={t("prep.searchTechnology")}
+            autoCapitalize="none"
+            autoCorrect={false}
+            clearButtonMode="while-editing"
+            returnKeyType="search"
+            style={[inputStyle, { marginBottom: 8 }]}
+          />
           <SegmentedPills
-            options={displayCategories.map((cat: { name: string; color: string }) => ({
+            options={displayCategories.map((cat: { name: string; color: string; items: { tech: string }[] }) => ({
               key: cat.name,
-              label: cat.name,
+              label: `${cat.name} ${mastery(cat.items)}%`,
               icon: categoryIconName(cat.name),
               color: cat.color,
             }))}
             activeKey={activeCategoryName}
-            onChange={(key) => setActiveCategoryName(String(key))}
+            onChange={(key) => {
+              setActiveCategoryName(String(key));
+              setSearch("");
+            }}
           />
         </ScreenHeader>
       )}
       <FlatList
-        data={drill ? [] : category.items.map((item: PrepItem) => ({ ...item, color: item.color ?? category.color }))}
+        data={drill ? [] : visibleItems}
         // Including level remounts cards on a tier change, resetting any open quiz to the new tier.
-        keyExtractor={(item) => `${activeCategoryName}-${level}-${item.tech}`}
+        keyExtractor={(item) => `${searchResults ? "search" : activeCategoryName}-${level}-${item.tech}`}
+        keyboardShouldPersistTaps="handled"
         contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: insets.bottom + layout.tabBarClearance }}
         ListHeaderComponent={
           <View style={{ gap: 14 }}>
-            {!drill && (
+            {/* While searching, the results come first: on a phone the keyboard hides the rest. */}
+            {!drill && !searchResults && (
               <NextUpCard
                 reviewDueCount={reviewDueTechs.length}
                 plan={prepPlan}
@@ -292,8 +344,16 @@ export default function PrepScreen() {
                 onDismissPlan={() => setPrepPlan(null)}
               />
             )}
-            <StatsBar scores={scores} />
-            {!drill && (
+            {!drill && !searchResults && readinessPct !== null && (
+              <ReadinessCard label={readinessLabel} pct={readinessPct} count={readinessTechs.length} />
+            )}
+            {!searchResults && <StatsBar scores={scores} />}
+            {!drill && searchResults && (
+              <Text style={{ fontSize: 12, fontWeight: "700", color: colors.textDim }}>
+                {`${t("prep.searchResults")} · ${searchResults.length}`}
+              </Text>
+            )}
+            {!drill && !searchResults && (
               <TouchableOpacity
                 onPress={startCategoryDrill}
                 disabled={drillLoading}
@@ -312,8 +372,16 @@ export default function PrepScreen() {
                 </Text>
               </TouchableOpacity>
             )}
-            {!drill && (
-              <PrepSettings level={level} onLevel={requestLevel} quizSize={quizSize} poolSize={poolSize} onQuizSize={updateQuizSize} />
+            {!drill && !searchResults && (
+              <PrepSettings
+                level={level}
+                onLevel={requestLevel}
+                quizSize={quizSize}
+                poolSize={poolSize}
+                onQuizSize={updateQuizSize}
+                autoNext={autoNext}
+                onAutoNext={updateAutoNext}
+              />
             )}
             {drillError && !drill && (
               <Text style={{ fontSize: 11, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
@@ -325,6 +393,7 @@ export default function PrepScreen() {
                 onAnswer={answerDrill}
                 onNext={nextDrill}
                 onExit={() => setDrill(null)}
+                autoNext={autoNext}
                 onRestart={() => {
                   const last = lastDrillRef.current;
                   if (last) runDrill(last.difficulty, last.techs, { fallbackToAll: last.fallbackToAll });

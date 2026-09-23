@@ -64,3 +64,7 @@ export function questionCapForPool(quizSize, poolSize) {
   const normalized = normalizeQuizSize(quizSize);
   return normalized === null ? poolSize : Math.min(normalized, poolSize);
 }
+
+export const AUTO_NEXT_STORAGE_KEY = "grip.autoNext";
+// Time to take in the answer and its +XP before moving on; Next skips the wait.
+export const AUTO_NEXT_MS = 5000;
