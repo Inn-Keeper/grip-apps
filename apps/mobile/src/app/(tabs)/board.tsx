@@ -8,6 +8,7 @@ import { NODE_TYPES, SCENARIOS, TYPE_COLORS, evaluate, meta } from "@grip/core/a
 import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
+import { workflowStep } from "@grip/core/workflowState";
 import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch";
 import type { SavedBoard, Story } from "@grip/core/api";
@@ -23,6 +24,7 @@ import { ScaleSheet } from "@/components/board/ScaleSheet";
 import { TalkTrackSheet } from "@/components/board/TalkTrackSheet";
 import { ScenarioSheet } from "@/components/board/ScenarioSheet";
 import { StorySheet } from "@/components/board/StorySheet";
+import { BoardProgress } from "@/components/board/BoardProgress";
 import { useStoriesQuery } from "@/queries/stories";
 import { useDeleteBoardMutation, useSaveBoardMutation, useSavedBoardsQuery, useScenarioCatalog } from "@/queries/board";
 
@@ -39,7 +41,10 @@ export default function BoardScreen() {
   const [viewKey, setViewKey] = useState(0);
   const [nodes, setNodes] = useState<BoardNode[]>([]);
   const [edges, setEdges] = useState<BoardEdge[]>([]);
+  // The last evaluation stays after its sheet closes: it moves the board past step 3.
+  // Any edit clears it, as on web.
   const [result, setResult] = useState<EvalResult | null>(null);
+  const [resultOpen, setResultOpen] = useState(false);
   const [inspectingEdgeId, setInspectingEdgeId] = useState<string | null>(null);
   const [savedOpen, setSavedOpen] = useState(false);
   const [talkOpen, setTalkOpen] = useState(false);
@@ -87,6 +92,22 @@ export default function BoardScreen() {
   const liveMaint = nodes.reduce((sum, node) => sum + meta(node.type).maint, 0);
   const overBudget = liveCost > scenario.budget;
   const talkAnswered = scoreTalkTrack({ sections: talkSections, rating: talkRating }).answered.length;
+  const step = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
+  // Steps 1 to 3 end in Evaluate, already in the toolbar; from 4 the action is the talk track.
+  const stepCopy =
+    step === 1
+      ? { title: t("board.stepAddTitle"), sub: t("board.stepAddSubTouch") }
+      : step === 2
+        ? { title: t("board.stepConnectTitle"), sub: t("board.stepConnectSubTouch") }
+        : step === 3
+          ? { title: t("board.stepDescribeTitle"), sub: t("board.stepDescribeSubTouch") }
+          : step === 4
+            ? { title: t("board.stepExplainTitle"), sub: t("board.stepExplainSub") }
+            : { title: t("board.stepGradedTitle", { scenario: scenario.name }), sub: t("board.stepGradedSub") };
+  const evaluateBoard = () => {
+    setResult(evaluate(scenario, nodes, edges));
+    setResultOpen(true);
+  };
 
   const clearBoard = () => {
     setNodes([]);
@@ -257,6 +278,15 @@ export default function BoardScreen() {
           paddingBottom: chrome === "zen" ? insets.bottom + 4 : insets.bottom + layout.tabBarClearance,
         }}
       >
+      {chrome === "full" && (
+        <BoardProgress
+          step={step}
+          title={stepCopy.title}
+          sub={stepCopy.sub}
+          action={step >= 4 ? { label: t("board.explainAction"), onPress: () => setTalkOpen(true) } : null}
+        />
+      )}
+
       {chrome !== "zen" && <DesignTimerBar timer={timer} />}
 
       {chrome !== "zen" && (
@@ -312,7 +342,7 @@ export default function BoardScreen() {
               }
             />
             <MiniButton label={t("common.clear")} color={colors.textDim} onPress={clearBoard} />
-            <Button label={t("board.evaluate")} onPress={() => setResult(evaluate(scenario, nodes, edges))} disabled={nodes.length === 0} />
+            <Button label={t("board.evaluate")} onPress={evaluateBoard} disabled={nodes.length === 0} />
           </View>
         </View>
       )}
@@ -472,10 +502,10 @@ export default function BoardScreen() {
         />
 
         <ResultSheet
-          result={result}
+          result={resultOpen ? result : null}
           scenario={scenario}
           pushback={buildPushback(scenario, nodes)}
-          onClose={() => setResult(null)}
+          onClose={() => setResultOpen(false)}
         />
       </View>
     </Screen>

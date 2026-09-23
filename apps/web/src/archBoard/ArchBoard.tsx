@@ -30,7 +30,7 @@ import { ViewportControls } from "./ViewportControls";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
 import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "./gradeState.js";
 import { appendHandoff } from "./scaleHandoff.js";
-import { workflowStep } from "./workflowState.js";
+import { workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
 import { ROUND_MINUTES } from "@grip/core/designTimer";
 import { useDesignRound } from "./useDesignRound";

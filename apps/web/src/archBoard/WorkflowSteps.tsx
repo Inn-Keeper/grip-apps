@@ -5,7 +5,7 @@ import { formatClock } from "@grip/core/designTimer";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
 import type { DesignRound } from "./useDesignRound";
-import { WORKFLOW_STEPS, stepState } from "./workflowState.js";
+import { WORKFLOW_STEPS, stepState } from "@grip/core/workflowState";
 
 export type RailAction = {
   label: string;

@@ -1,5 +1,5 @@
 // Where the board is in its journey. Out of the component so it can be tested
-// without rendering.
+// without rendering. Shared by the web rail and the mobile board.
 
 /** Every step, in order, so the rail can show the ones already behind you. */
 export const WORKFLOW_STEPS = [
