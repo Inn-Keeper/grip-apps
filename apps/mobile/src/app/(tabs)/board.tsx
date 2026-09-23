@@ -8,10 +8,10 @@ import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import type { BoardEdge, BoardNode, EvalResult } from "@grip/core/arch";
+import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch";
 import type { SavedBoard } from "@grip/core/api";
 import { colors, layout } from "@/theme";
-import { Button, MiniButton, Screen, ScreenHeader, SegmentedPills } from "@/components/ui";
+import { Button, MiniButton, Screen, ScreenHeader } from "@/components/ui";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
 import { DesignTimerBar, useDesignTimer } from "@/components/board/DesignTimerBar";
@@ -20,12 +20,14 @@ import { EdgeInspectorSheet } from "@/components/board/EdgeInspectorSheet";
 import { NodeInspectorSheet } from "@/components/board/NodeInspectorSheet";
 import { ScaleSheet } from "@/components/board/ScaleSheet";
 import { TalkTrackSheet } from "@/components/board/TalkTrackSheet";
-import { useDeleteBoardMutation, useSaveBoardMutation, useSavedBoardsQuery } from "@/queries/board";
+import { ScenarioSheet } from "@/components/board/ScenarioSheet";
+import { useDeleteBoardMutation, useSaveBoardMutation, useSavedBoardsQuery, useScenarioCatalog } from "@/queries/board";
 
 export default function BoardScreen() {
   const locale = useLocale();
   const insets = useSafeAreaInsets();
-  const [scenarioIndex, setScenarioIndex] = useState(0);
+  const [scenarioId, setScenarioId] = useState(SCENARIOS[0].id);
+  const [pickerOpen, setPickerOpen] = useState(false);
   const canvasRef = useRef<BoardCanvasHandle>(null);
   // Bumped when a different board or scenario is shown, so the canvas re-frames (saving doesn't bump it).
   const [viewKey, setViewKey] = useState(0);
@@ -53,7 +55,9 @@ export default function BoardScreen() {
   }, [chrome]);
 
   const timer = useDesignTimer();
-  const scenario = SCENARIOS[scenarioIndex];
+  const { allScenarios, groups: scenarioGroups } = useScenarioCatalog();
+  // A custom scenario may still be loading; show the first built-in until it arrives.
+  const scenario = allScenarios.find((item) => item.id === scenarioId) ?? SCENARIOS[0];
   const { data: savedBoards = [], error: boardsError } = useSavedBoardsQuery();
   const saveBoardMutation = useSaveBoardMutation(
     (board) => {
@@ -87,8 +91,8 @@ export default function BoardScreen() {
     setActiveBoardTitle(null);
   };
 
-  const switchScenario = (index: number) => {
-    setScenarioIndex(index);
+  const switchScenario = (id: string) => {
+    setScenarioId(id);
     clearBoard();
     setViewKey((key) => key + 1);
   };
@@ -120,12 +124,11 @@ export default function BoardScreen() {
   };
 
   const loadBoard = (board: SavedBoard) => {
-    const nextScenarioIndex = SCENARIOS.findIndex((item) => item.id === board.scenarioId);
-    if (nextScenarioIndex < 0) {
+    if (!allScenarios.some((item) => item.id === board.scenarioId)) {
       Alert.alert(t("board.unknownScenarioTitle"), t("board.unknownScenarioMessage", { scenarioId: board.scenarioId }));
       return;
     }
-    setScenarioIndex(nextScenarioIndex);
+    setScenarioId(board.scenarioId);
     setViewKey((key) => key + 1);
     setNodes(board.nodes);
     setEdges(board.edges);
@@ -175,11 +178,16 @@ export default function BoardScreen() {
       {chrome === "full" && (
         <Animated.View entering={FadeInDown.duration(180)}>
           <ScreenHeader title={t("tabs.board")} subtitle={scenario.brief}>
-            <SegmentedPills
-              options={SCENARIOS.map((item, index) => ({ key: index, label: item.name }))}
-              activeKey={scenarioIndex}
-              onChange={(key) => switchScenario(Number(key))}
-            />
+            <TouchableOpacity
+              accessibilityRole="button"
+              accessibilityLabel={t("board.pickScenario")}
+              accessibilityValue={{ text: scenario.name }}
+              onPress={() => setPickerOpen(true)}
+              style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface }}
+            >
+              <Text numberOfLines={1} style={{ flex: 1, fontSize: 14, fontWeight: "600", color: colors.textBright }}>{scenario.name}</Text>
+              <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
+            </TouchableOpacity>
           </ScreenHeader>
         </Animated.View>
       )}
@@ -199,11 +207,11 @@ export default function BoardScreen() {
         // Wraps onto a second line on narrow screens so every action stays reachable.
         <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", columnGap: 10, rowGap: 6 }}>
           <MiniButton
-            label={chrome === "full" ? "Hide" : "Show"}
+            label={chrome === "full" ? t("board.chromeHide") : t("board.chromeShow")}
             color={colors.textDim}
             onPress={() => setChrome(chrome === "full" ? "compact" : "full")}
           />
-          <MiniButton label="Zen" color={colors.textDim} onPress={() => setChrome("zen")} />
+          <MiniButton label={t("board.zen")} color={colors.textDim} onPress={() => setChrome("zen")} />
           {chrome === "compact" && (
             <Text numberOfLines={1} style={{ fontSize: 12, fontWeight: "600", color: colors.textDim, flexShrink: 1 }}>
               {scenario.name}
@@ -259,7 +267,7 @@ export default function BoardScreen() {
       )}
 
       {savedOpen && chrome !== "zen" && (
-        <SavedBoardsTray boards={savedBoards} activeId={activeBoardId} onLoad={loadBoard} onDelete={confirmDeleteBoard} />
+        <SavedBoardsTray boards={savedBoards} scenarios={allScenarios} activeId={activeBoardId} onLoad={loadBoard} onDelete={confirmDeleteBoard} />
       )}
 
       <View style={{ flex: 1 }}>
@@ -389,6 +397,14 @@ export default function BoardScreen() {
           onClose={() => setTalkOpen(false)}
         />
 
+        <ScenarioSheet
+          visible={pickerOpen}
+          groups={scenarioGroups}
+          activeId={scenario.id}
+          onPick={(id) => id !== scenario.id && switchScenario(id)}
+          onClose={() => setPickerOpen(false)}
+        />
+
         <ResultSheet
           result={result}
           scenario={scenario}
@@ -402,12 +418,13 @@ export default function BoardScreen() {
 
 type SavedBoardsTrayProps = {
   boards: SavedBoard[];
+  scenarios: Scenario[];
   activeId: string | null;
   onLoad: (board: SavedBoard) => void;
   onDelete: (board: SavedBoard) => void;
 };
 
-function SavedBoardsTray({ boards, activeId, onLoad, onDelete }: SavedBoardsTrayProps) {
+function SavedBoardsTray({ boards, scenarios, activeId, onLoad, onDelete }: SavedBoardsTrayProps) {
   return (
     <Animated.View entering={FadeInDown.duration(180)} style={{ gap: 8 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -421,7 +438,7 @@ function SavedBoardsTray({ boards, activeId, onLoad, onDelete }: SavedBoardsTray
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 8 }}>
           {boards.map((board) => {
-            const scenario = SCENARIOS.find((item) => item.id === board.scenarioId);
+            const scenario = scenarios.find((item) => item.id === board.scenarioId);
             const active = board.id === activeId;
             return (
               <View

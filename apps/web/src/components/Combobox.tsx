@@ -3,7 +3,7 @@ import { useId, useRef, useState } from "react";
 import { t } from "@grip/core/i18n";
 import { colors, tints, font } from "@grip/core/tokens";
 import { BrandIcon } from "./BrandIcon";
-import { filterGroups } from "./comboboxFilter.js";
+import { filterGroups } from "@grip/core/scenarioCatalog";
 import { fieldStyle } from "./fieldStyles";
 
 const DEFAULT_MAX_HEIGHT = 178;

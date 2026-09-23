@@ -12,18 +12,17 @@ only; 2026-09-17 and earlier shipped on both.
 | Board to story link | Safe. Mobile never sends `storyId`; `boardToDb` only writes `story_id` when sent. |
 | One board per story | Safe. Mobile can't set a board's story, so it can't hit the unique index. |
 | Talk track grade | Aligned. Mobile clears the grade on talk track edits, like web. |
-| Boards on custom scenarios | **Gap users can see.** Mobile only knows the 100 built-ins, so a board made on web with a custom scenario shows "unknown scenario". |
+| Boards on custom scenarios | Fixed 2026-09-23 (phase 1): mobile loads your custom scenarios, so these boards open. |
 
 ## Missing on mobile, by screen
 
 **Arch Board** (biggest gap)
-- Custom scenarios (create, delete, pick) and scenario search. The picker is 100 pills in a row.
+- Creating and deleting custom scenarios. (Picking and loading them, and a searchable picker, shipped in phase 1.)
 - The board's story picker and the story's STAR.
 - The five-step workflow rail, Next Up coaching, and the graded verdict (thinnest section, the interviewer's question).
 - AI grading: "Grade my reasoning", quoted evidence per section, rate-limit handling (`@grip/core/talkGrade`).
 - Scale brief handing numbers to the talk track, and "Check my math".
 - Undo and redo, share links, full screen (mobile has its own Zen mode).
-- Hardcoded English: the Hide, Show and Zen buttons.
 
 **Stories**
 - The competency coverage headline and Next Up for the first uncovered competency.
@@ -58,7 +57,7 @@ only; 2026-09-17 and earlier shipped on both.
 
 ## Suggested order
 
-1. Custom scenarios on the board, at least loading and picking them (the visible gap).
+1. ~~Custom scenarios on the board: loading and picking them, and a searchable picker.~~ Done 2026-09-23.
 2. Scoring parity: the speed bonus and unseen-first drawing.
 3. Story links: scenario and board on the story, story on the board (the data model is done).
 4. AI grading and the workflow rail on the board.
