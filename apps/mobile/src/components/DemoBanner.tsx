@@ -21,30 +21,28 @@ export function DemoBanner() {
     }
   };
 
+  // One slim line, like web's demo bar: what this is, and a link to keep the progress.
   return (
     <View
       accessibilityRole="summary"
       style={{
-        marginHorizontal: 16,
-        marginTop: 6,
-        padding: 10,
-        gap: 8,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: `${colors.accent}40`,
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
+        justifyContent: "center",
+        columnGap: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 4,
         backgroundColor: `${colors.accent}14`,
+        borderBottomWidth: 1,
+        borderBottomColor: `${colors.accent}40`,
       }}
     >
-      <Text style={{ fontSize: 12, color: colors.text }}>{t("demo.banner")}</Text>
-      <TouchableOpacity
-        onPress={keepProgress}
-        disabled={busy}
-        accessibilityRole="button"
-        style={{ alignSelf: "flex-start", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, backgroundColor: colors.accent, opacity: busy ? 0.6 : 1 }}
-      >
-        <Text style={{ fontSize: 12, fontWeight: "700", color: colors.onAccent }}>{t("demo.keepProgress")}</Text>
+      <Text style={{ fontSize: 11.5, color: colors.textDim }}>{t("demo.bar")}</Text>
+      <TouchableOpacity onPress={keepProgress} disabled={busy} accessibilityRole="link" hitSlop={8}>
+        <Text style={{ fontSize: 11.5, fontWeight: "700", color: colors.accentBright, opacity: busy ? 0.6 : 1 }}>{t("auth.github")}</Text>
       </TouchableOpacity>
-      {error && <Text style={{ fontSize: 12, color: colors.dangerBright }}>{error}</Text>}
+      {error && <Text style={{ width: "100%", textAlign: "center", fontSize: 11.5, color: colors.dangerBright }}>{error}</Text>}
     </View>
   );
 }
