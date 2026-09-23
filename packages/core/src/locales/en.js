@@ -437,6 +437,8 @@ export const en = {
   "talk.verdictThin": "Thin",
   "talk.verdictMissing": "Missing",
   "talk.verdictTooThin": "Too thin",
+  "timer.offer": "Practise under time",
+  "timer.offerHint": "A {minutes}-minute round, scoped like the real thing.",
   "timer.round": "{minutes}-min round",
   "timer.idleHint": "Scope, math, boxes, deep dive, defend.",
   "timer.start": "Start round",

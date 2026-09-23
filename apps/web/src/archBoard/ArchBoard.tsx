@@ -31,6 +31,8 @@ import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "./gra
 import { appendHandoff } from "./scaleHandoff.js";
 import { workflowStep } from "./workflowState.js";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
+import { ROUND_MINUTES } from "@grip/core/designTimer";
+import { useDesignRound } from "./useDesignRound";
 import styles from "./ArchBoard.module.css";
 import {
   useCustomScenariosQuery,
@@ -81,6 +83,8 @@ export default function ArchBoard() {
   const [focusSection, setFocusSection] = useState<string | null>(null);
   const nextUpRef = useRef<HTMLDivElement>(null);
   const [nextUpVisible, setNextUpVisible] = useState(true);
+  const round = useDesignRound();
+  const [timerVisible, setTimerVisible] = useState(true);
 
   useEffect(() => {
     const node = nextUpRef.current;
@@ -92,6 +96,44 @@ export default function ArchBoard() {
     });
     observer.observe(node);
     return () => observer.disconnect();
+  }, []);
+
+  // The clock joins the rail only while its own panel is off screen, so the
+  // time is always reachable without being stated twice (rule 6). A callback
+  // ref, because the panel mounts and unmounts as the step changes.
+  const [ctaVisible, setCtaVisible] = useState(false);
+  const ctaObserver = useRef<IntersectionObserver | null>(null);
+  // Watches wherever the writing happens: the call to action before the panel
+  // is open, the panel itself after. The rail repeats the action only when that
+  // place is off screen, which on a sticky desktop rail is rarely, and on a
+  // phone is as soon as you scroll.
+  const ctaRef = useCallback((node: HTMLDivElement | null) => {
+    ctaObserver.current?.disconnect();
+    if (!node) {
+      setCtaVisible(false);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => setCtaVisible(entries[entries.length - 1]?.isIntersecting ?? false),
+      { rootMargin: "-90px 0px 0px 0px" }
+    );
+    observer.observe(node);
+    ctaObserver.current = observer;
+  }, []);
+
+  const timerObserver = useRef<IntersectionObserver | null>(null);
+  const timerRef = useCallback((node: HTMLDivElement | null) => {
+    timerObserver.current?.disconnect();
+    if (!node) {
+      setTimerVisible(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      (entries) => setTimerVisible(entries[entries.length - 1]?.isIntersecting ?? true),
+      { rootMargin: "-90px 0px 0px 0px" }
+    );
+    observer.observe(node);
+    timerObserver.current = observer;
   }, []);
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
@@ -476,6 +518,9 @@ export default function ArchBoard() {
   // Past step 3 the design is scored and the unscored half is the talk track,
   // so the one main action becomes writing it rather than evaluating again.
   const explaining = activeWorkflowStep >= 4;
+  // From Explain on, the action belongs beside the sections it opens, so the
+  // card and the sticky rail both stand down and it appears exactly once.
+  const actionInRightRail = activeWorkflowStep >= 4 && !talkOpen;
   // One definition of the step's main action. The Next Up card renders it, and
   // the sticky rail repeats it only once that card has scrolled away.
   const primaryAction: RailAction = latestBoard
@@ -615,7 +660,79 @@ export default function ArchBoard() {
             </div>
           </WorkspacePanel>
 
-          <DesignTimer />
+          {/* Off by default: most sessions are not timed, and a clock sitting
+              in the rail implies you ought to be timing yourself. It is offered
+              as one quiet line at the first step, where a 40-minute round still
+              has 40 minutes of work ahead of it, and becomes the full panel
+              only once someone takes it up. */}
+          {round.started ? (
+            <div ref={timerRef}>
+              <DesignTimer round={round} />
+            </div>
+          ) : (
+            activeWorkflowStep === 1 && (
+              <button
+                type="button"
+                onClick={round.start}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  width: "100%",
+                  padding: "10px 14px",
+                  background: "transparent",
+                  border: `1px dashed ${colors.borderSoft}`,
+                  borderRadius: 8,
+                  color: colors.textDim,
+                  textAlign: "left",
+                  cursor: "pointer",
+                }}
+              >
+                <BrandIcon name="spark" color={colors.textFaint} size={14} />
+                <span style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+                  <span style={{ fontSize: font.size.small, fontWeight: 700, color: colors.textDim }}>{t("timer.offer")}</span>
+                  <span style={{ fontSize: font.size.label, color: colors.textFaint }}>
+                    {t("timer.offerHint", { minutes: ROUND_MINUTES })}
+                  </span>
+                </span>
+              </button>
+            )
+          )}
+
+          {/* Above the sections it opens, where the round used to sit: the button
+              and the thing it produces share a place, so pressing it reads as
+              the panel arriving rather than something happening elsewhere.
+              Inset on every side by the halo's own width. The rail scrolls its
+              overflow and this is usually its last child, so without the room
+              the ring is cut off at the sides and along the bottom edge. */}
+          {actionInRightRail && (
+            <div ref={ctaRef} style={{ padding: 8 }}>
+              <button
+                type="button"
+                className={`${styles.railAction} ${styles.railActionShine}`}
+                onClick={primaryAction.onClick}
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 7,
+                  width: "100%",
+                  padding: "11px 14px",
+                  background: colors.accent,
+                  border: "none",
+                  borderRadius: 8,
+                  color: colors.onAccent,
+                  fontSize: font.size.body,
+                  fontWeight: 800,
+                  cursor: "pointer",
+                  ["--twinkle-color" as string]: colors.accentBright,
+                } as React.CSSProperties}
+              >
+                <BrandIcon name={primaryAction.icon} color={colors.onAccent} size={14} />
+                {primaryAction.label}
+              </button>
+            </div>
+          )}
 
           {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
             const edge = edges.find((e) => e.id === inspectingEdgeId)!;
@@ -636,6 +753,7 @@ export default function ArchBoard() {
           )}
 
           {talkOpen && (
+            <div ref={ctaRef}>
             <TalkTrack
               sections={talkSections}
               rating={talkRating}
@@ -654,6 +772,7 @@ export default function ArchBoard() {
               focusSection={focusSection}
               onFocused={clearFocusSection}
             />
+            </div>
           )}
         </>
       }
@@ -676,7 +795,11 @@ export default function ArchBoard() {
           <>
             {/* Above both branches: the journey must stay on screen even when
                 the card is offering to resume an earlier board. */}
-            <WorkflowSteps activeStep={activeWorkflowStep} action={nextUpVisible ? null : primaryAction} />
+            <WorkflowSteps
+              activeStep={activeWorkflowStep}
+              action={nextUpVisible || ctaVisible ? null : primaryAction}
+              round={round.started && !timerVisible ? round : null}
+            />
             <div ref={nextUpRef}>
               {latestBoard ? (
                 <NextUpShell
@@ -697,11 +820,13 @@ export default function ArchBoard() {
                   tone={colors.accent ?? ""}
                   actionLabel={primaryAction.label}
                   actionIcon={primaryAction.icon}
-                  onAction={primaryAction.onClick}
+                  onAction={actionInRightRail ? null : primaryAction.onClick}
                   disabled={primaryAction.disabled}
                   links={
                     <>
-                      <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} />
+                      {/* The leading "or" answers a button beside it. With the action in the
+                          right rail there is nothing for it to answer. */}
+                      <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} withOr={!actionInRightRail} />
                       {explaining && <NextUpLink label={t("board.evaluateDesign")} onClick={evaluateDesign} />}
                     </>
                   }

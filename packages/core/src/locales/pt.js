@@ -437,6 +437,8 @@ export const pt = {
   "talk.verdictThin": "Raso",
   "talk.verdictMissing": "Ausente",
   "talk.verdictTooThin": "Raso demais",
+  "timer.offer": "Praticar com tempo",
+  "timer.offerHint": "Uma rodada de {minutes} minutos, no formato real.",
   "timer.round": "Rodada de {minutes} min",
   "timer.idleHint": "Escopo, contas, caixas, aprofundamento, defesa.",
   "timer.start": "Iniciar rodada",

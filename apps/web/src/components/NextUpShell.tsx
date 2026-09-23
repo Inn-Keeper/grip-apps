@@ -12,7 +12,9 @@ type NextUpShellProps = {
   tone: string;
   actionLabel: string;
   actionIcon?: string;
-  onAction: () => void;
+  /** Null when the action lives elsewhere on the screen, which leaves the card
+      as the suggestion alone rather than repeating a button already on show. */
+  onAction: (() => void) | null;
   // busy: something this card started is loading; disabled: anything is loading.
   busy?: boolean;
   disabled?: boolean;
@@ -48,20 +50,22 @@ export function NextUpShell({ title, sub, tone, actionLabel, actionIcon = "drill
           <span role="alert" style={{ marginTop: 4, fontSize: font.size.small, color: colors.warningBright }}>{error}</span>
         )}
       </div>
-      <button
-        type="button"
-        onClick={onAction}
-        disabled={disabled}
-        aria-busy={busy}
-        style={{
-          display: "flex", alignItems: "center", gap: 7, padding: "10px 18px",
-          background: tone, border: "none", borderRadius: 9, color: colors.onAccent,
-          fontSize: font.size.body, fontWeight: 800, cursor: busy ? "wait" : disabled ? "default" : "pointer", opacity: disabled ? 0.6 : 1,
-        }}
-      >
-        <BrandIcon name={actionIcon} color={colors.onAccent} size={14} />
-        {busy ? t("common.loading") : actionLabel}
-      </button>
+      {onAction && (
+        <button
+          type="button"
+          onClick={onAction}
+          disabled={disabled}
+          aria-busy={busy}
+          style={{
+            display: "flex", alignItems: "center", gap: 7, padding: "10px 18px",
+            background: tone, border: "none", borderRadius: 9, color: colors.onAccent,
+            fontSize: font.size.body, fontWeight: 800, cursor: busy ? "wait" : disabled ? "default" : "pointer", opacity: disabled ? 0.6 : 1,
+          }}
+        >
+          <BrandIcon name={actionIcon} color={colors.onAccent} size={14} />
+          {busy ? t("common.loading") : actionLabel}
+        </button>
+      )}
     </section>
   );
 }

@@ -58,7 +58,7 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 
 32. Motion explains a change. **Never** add it only for decoration.
 33. Each effect plays **once** when the screen opens. Numbers count up, bars grow and then blink, and charts draw in, all in about **1 second**.
-34. Only one thing may animate on its own: a shine every **10 seconds** on the single active main button. The one exception is a running clock in its last seconds (the Thunderstorm pulse), because there the motion is the message: time is running out.
+34. Only one thing may animate on its own: the single active main button, which carries a slow twinkle and a sweep every **10 seconds**. The twinkle is the halo the Drill button uses: a box-shadow ring in the accent colour, expanding out of the edge and fading. Never a transform, which would widen the button inside a scrolling rail and add a horizontal scrollbar, and the button is inset by the ring's own width on every side, including the bottom, so a rail that clips its overflow cannot cut the halo off. Both stop once the action has been taken. The one exception is a running clock in its last seconds (the Thunderstorm pulse), because there the motion is the message: time is running out.
 35. When the person has turned animations off in their system settings, **every** effect is skipped.
 
 ## Words and icons

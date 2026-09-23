@@ -437,6 +437,8 @@ export const sv = {
   "talk.verdictThin": "Tunt",
   "talk.verdictMissing": "Saknas",
   "talk.verdictTooThin": "För tunt",
+  "timer.offer": "Öva på tid",
+  "timer.offerHint": "En runda på {minutes} minuter, upplagd som på riktigt.",
   "timer.round": "{minutes}-min runda",
   "timer.idleHint": "Avgränsa, räkna, rita, djupdyk, försvara.",
   "timer.start": "Starta rundan",

@@ -1,8 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
+import { formatClock } from "@grip/core/designTimer";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
+import type { DesignRound } from "./useDesignRound";
 import { WORKFLOW_STEPS, stepState } from "./workflowState.js";
 
 export type RailAction = {
@@ -22,6 +24,7 @@ export type RailAction = {
 export function WorkflowSteps({
   activeStep,
   action,
+  round,
 }: {
   activeStep: number;
   /**
@@ -31,6 +34,12 @@ export function WorkflowSteps({
    * that allows it once (rules 1 and 6).
    */
   action: RailAction | null;
+  /**
+   * The running round, passed only while its panel is off screen. The rail is
+   * where the journey lives, so the clock joins it rather than starting a
+   * second progress display of its own.
+   */
+  round: DesignRound | null;
 }) {
   const rail = useRef<HTMLDivElement>(null);
 
@@ -136,6 +145,29 @@ export function WorkflowSteps({
         );
       })}
     </ol>
+      {round && (
+        <span
+          aria-label={round.overrun ? t("timer.overtime") : round.phase.label}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            flex: "0 0 auto",
+            padding: "3px 10px",
+            borderRadius: 999,
+            border: `1px solid ${round.overrun ? `${colors.danger}55` : colors.borderSoft}`,
+            background: colors.surface,
+            fontSize: font.size.label,
+          }}
+        >
+          <span style={{ fontWeight: 800, color: round.overrun ? colors.dangerBright : colors.textBright, fontVariantNumeric: "tabular-nums" }}>
+            {round.overrun ? formatClock(-round.overrunMs) : formatClock(round.remainingMs)}
+          </span>
+          <span style={{ color: colors.textFaint }}>
+            {round.overrun ? t("timer.overtime") : round.phase.label}
+          </span>
+        </span>
+      )}
       {action && (
         <button
           type="button"
@@ -156,7 +188,8 @@ export function WorkflowSteps({
             fontWeight: 800,
             cursor: action.disabled ? "default" : "pointer",
             opacity: action.disabled ? 0.6 : 1,
-          }}
+            ["--twinkle-color" as string]: colors.accentBright,
+          } as CSSProperties}
         >
           <BrandIcon name={action.icon} color={colors.onAccent} size={13} />
           {action.label}

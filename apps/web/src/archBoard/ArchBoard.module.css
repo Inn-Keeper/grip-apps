@@ -113,22 +113,31 @@
   to { opacity: 1; transform: none; }
 }
 
-/* Then two glow pulses, the same greeting the Drill button gives when a
-   category is picked, so the one button you should press next announces
-   itself rather than waiting to be noticed. */
+/* A slow twinkle that keeps going, so the one button you should press next
+   stays findable rather than announcing itself once and going quiet.
+   No transform: this button lives in the right rail, which scrolls its own
+   overflow, and scaling it even 4% made the rail wider than itself and put a
+   horizontal scrollbar under it. A box-shadow ring costs no layout. */
 .railActionShine {
-  animation: railActionIn 220ms ease-out, railActionGlow 900ms ease-out 220ms 2;
+  animation: railActionIn 220ms ease-out, railActionTwinkle 2600ms ease-out 220ms infinite;
 }
 
-@keyframes railActionGlow {
-  0% { box-shadow: 0 0 0 0 var(--arch-accent); }
-  30% { transform: scale(1.04); }
-  100% { box-shadow: 0 0 0 7px transparent; transform: scale(1); }
+@keyframes railActionTwinkle {
+  /* The Drill button's halo: a ring in the accent colour that expands out of the
+     edge and fades. No transform, which would widen the button inside a rail
+     that scrolls its own overflow and put a scrollbar under it.
+
+     --twinkle-color comes from the button, not the board wrapper: this button
+     also renders in the right rail, which is outside that wrapper, and one
+     unresolvable var voids the whole box-shadow and the twinkle silently
+     vanishes. */
+  0% { box-shadow: 0 0 0 0 var(--twinkle-color, #2DD4BF); }
+  35%, 100% { box-shadow: 0 0 0 7px transparent; }
 }
 
-/* Then the shine rule 34 allows on the single active main button, every 10s.
-   It is the only thing on this screen animating on its own, and it stops once
-   the action has been taken. */
+
+/* And the sweep across it every 10s. Both stop once the action has been taken;
+   rule 34 covers the pair. */
 .railActionShine::after {
   content: "";
   position: absolute;

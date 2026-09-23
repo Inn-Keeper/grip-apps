@@ -1,60 +1,18 @@
-import { useEffect, useRef, useState } from "react";
-import {
-  DESIGN_PHASES,
-  ROUND_MINUTES,
-  formatClock,
-  phaseAt,
-  roundProgress,
-} from "@grip/core/designTimer";
+import { DESIGN_PHASES, ROUND_MINUTES, formatClock } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { colors, font, shadow } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./DesignTimer.module.css";
-
-// One tick per second is all a MM:SS clock can show.
-const TICK_MS = 1000;
+import type { DesignRound } from "./useDesignRound";
 
 const sectionLabels = (ids: string[]) =>
   ids.map((id) => TALK_TRACK_SECTIONS.find((s) => s.id === id)?.label ?? id).join(" · ");
 
-export function DesignTimer() {
-  const [running, setRunning] = useState(false);
-  const [elapsedMs, setElapsedMs] = useState(0);
-  // Wall-clock anchor, so a backgrounded tab resumes at the right time rather
-  // than counting the ticks it missed.
-  const anchorRef = useRef<{ startedAt: number; before: number } | null>(null);
+/** The round's own panel. State lives in useDesignRound, shared with the rail. */
+export function DesignTimer({ round }: { round: DesignRound }) {
+  const { running, elapsedMs, started, phase, index, phaseRemainingMs, overrun, remainingMs, start, pause, reset } = round;
 
-  useEffect(() => {
-    if (!running) return;
-    const id = window.setInterval(() => {
-      const anchor = anchorRef.current;
-      if (anchor) setElapsedMs(anchor.before + (Date.now() - anchor.startedAt));
-    }, TICK_MS);
-    return () => window.clearInterval(id);
-  }, [running]);
-
-  const start = () => {
-    anchorRef.current = { startedAt: Date.now(), before: elapsedMs };
-    setRunning(true);
-  };
-
-  const pause = () => {
-    const anchor = anchorRef.current;
-    if (anchor) setElapsedMs(anchor.before + (Date.now() - anchor.startedAt));
-    anchorRef.current = null;
-    setRunning(false);
-  };
-
-  const reset = () => {
-    anchorRef.current = null;
-    setRunning(false);
-    setElapsedMs(0);
-  };
-
-  const { phase, index, phaseRemainingMs, overrun } = phaseAt(elapsedMs);
-  const { remainingMs } = roundProgress(elapsedMs);
-  const started = elapsedMs > 0 || running;
   const clockColor = overrun ? colors.danger : phaseRemainingMs <= 60_000 && started ? colors.warning : colors.textBright;
 
   // A rail panel: the rails are sticky, so the clock stays in view without pinning itself.
