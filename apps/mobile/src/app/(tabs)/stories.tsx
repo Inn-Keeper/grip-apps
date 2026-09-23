@@ -5,11 +5,14 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { COMPETENCIES, COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { colors, layout } from "@/theme";
+import { colors, layout, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, Button, Field, HeaderAction, MiniButton, Pill, Screen, ScreenHeader, Section, SegmentedPills, inputStyle, multilineStyle } from "@/components/ui";
 import type { Story } from "@grip/core/api";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "@/queries/stories";
+import { useScenarioCatalog } from "@/queries/board";
+import { ScenarioSheet } from "@/components/board/ScenarioSheet";
+import { StoryLinks } from "@/components/StoryLinks";
 
 const EMPTY_FORM: Story = { title: "", competency: "Conflict", situation: "", task: "", action: "", result: "" };
 
@@ -75,10 +78,10 @@ export default function StoriesScreen() {
             )}
           </View>
         }
-        renderItem={({ item, index }) => (
-          <Animated.View entering={FadeInDown.delay(Math.min(index * 50, 250)).springify().damping(18)}>
-            <StoryCard story={item} onEdit={() => setEditing(item)} onDelete={() => confirmDelete(item)} />
-          </Animated.View>
+        // No entrance animation: the list remounts after an edit and refetches mid-spring,
+        // which left a card stuck invisible at its starting frame.
+        renderItem={({ item }) => (
+          <StoryCard story={item} onEdit={() => setEditing(item)} onDelete={() => confirmDelete(item)} />
         )}
       />
     </Screen>
@@ -92,7 +95,7 @@ function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
   const color = COMPETENCY_COLORS[story.competency] ?? colors.textFaint;
 
   return (
-    <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: `${color}30`, borderRadius: 14, padding: 16 }}>
+    <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: 14, padding: 16 }}>
       <TouchableOpacity
         onPress={() => setExpanded((value) => !value)}
         style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
@@ -108,6 +111,7 @@ function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
           <Section label={t("stories.task")} text={story.task} />
           <Section label={t("stories.action")} text={story.action} />
           <Section label={t("stories.result")} text={story.result} />
+          <StoryLinks story={story} />
           {onEdit && onDelete && (
             <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>
               <MiniButton label={t("common.edit")} color={colors.textDim} onPress={onEdit} />
@@ -124,6 +128,9 @@ type StoryFormProps = { initial: Story; onSave: (story: Story) => void; onCancel
 
 function StoryForm({ initial, onSave, onCancel }: StoryFormProps) {
   const [form, setForm] = useState({ ...initial });
+  const [scenarioOpen, setScenarioOpen] = useState(false);
+  const { allScenarios, groups: scenarioGroups } = useScenarioCatalog();
+  const scenario = form.scenarioId ? allScenarios.find((item) => item.id === form.scenarioId) : undefined;
   const insets = useSafeAreaInsets();
   const set = (field: keyof Story) => (value: string) => setForm((current) => ({ ...current, [field]: value }));
 
@@ -162,6 +169,31 @@ function StoryForm({ initial, onSave, onCancel }: StoryFormProps) {
         <TextInput style={[inputStyle, multilineStyle]} value={form.result} onChangeText={set("result")} multiline />
       </Field>
 
+      {/* The system behind the story. Creating a scenario stays on web for now. */}
+      <Field label={t("stories.fieldScenario")}>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <TouchableOpacity
+            accessibilityRole="button"
+            accessibilityLabel={t("board.pickScenario")}
+            onPress={() => setScenarioOpen(true)}
+            style={[inputStyle, { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }]}
+          >
+            <Text numberOfLines={1} style={{ flex: 1, fontSize: 14, color: scenario ? colors.text : colors.textFaint }}>
+              {scenario?.name ?? t("stories.noScenario")}
+            </Text>
+            <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
+          </TouchableOpacity>
+          {form.scenarioId && <MiniButton label={t("common.clear")} color={colors.textDim} onPress={() => setForm((current) => ({ ...current, scenarioId: null }))} />}
+        </View>
+      </Field>
+      <ScenarioSheet
+        visible={scenarioOpen}
+        groups={scenarioGroups}
+        activeId={form.scenarioId ?? ""}
+        onPick={(id) => setForm((current) => ({ ...current, scenarioId: id }))}
+        onClose={() => setScenarioOpen(false)}
+      />
+
       <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
         <Button label={t("common.cancel")} variant="ghost" onPress={onCancel} />
         <Button label={t("common.save")} onPress={() => onSave(form)} disabled={!form.title.trim()} />
@@ -192,7 +224,7 @@ function PromptDrill({ stories }: { stories: Story[] }) {
         style={{
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: colors.borderSoft, boxShadow: shadow.card,
           borderRadius: 14,
           padding: 20,
           alignItems: "center",

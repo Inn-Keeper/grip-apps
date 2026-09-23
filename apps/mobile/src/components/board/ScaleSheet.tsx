@@ -48,7 +48,7 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.borderSoft,
             padding: 20,
           }}
         >

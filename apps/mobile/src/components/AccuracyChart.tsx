@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { Canvas, Circle, Path } from "@shopify/react-native-skia";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 
 type Point = { date: string; accuracy: number; total: number };
 
@@ -35,7 +35,7 @@ export function AccuracyChart({ points }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 12,
         padding: 12,
         gap: 8,

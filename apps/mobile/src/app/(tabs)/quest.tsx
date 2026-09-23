@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Alert, FlatList, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import Animated, { FadeInDown } from "react-native-reanimated";
 import { STATUSES, isDue, todayDDMMYYYY } from "@grip/core/contacts";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
@@ -105,25 +104,25 @@ export default function QuestScreen() {
             )}
           </View>
         }
-        renderItem={({ item, index }) => (
-          <Animated.View entering={FadeInDown.delay(Math.min(index * 50, 250)).springify().damping(18)}>
-            <ContactCard
-              contact={item}
-              stories={stories}
-              answers={scores.answers}
-              retroFormOpen={retroFor === item.id}
-              onEdit={() => setEditing(item)}
-              onDelete={() => confirmDelete(item)}
-              onAdvance={() => advanceStatus(item)}
-              onClearAction={() => clearNextAction(item)}
-              onToggleRetroForm={() => setRetroFor(retroFor === item.id ? null : item.id!)}
-              onAddRetro={(retro) => {
-                addRetroMutation.mutate({ contactId: item.id!, retro });
-                setRetroFor(null);
-              }}
-              onDeleteRetro={(retroId) => deleteRetroMutation.mutate(retroId)}
-            />
-          </Animated.View>
+        // No entrance animation: the list remounts after an edit and refetches mid-spring,
+        // which can leave a card stuck invisible at its starting frame.
+        renderItem={({ item }) => (
+          <ContactCard
+            contact={item}
+            stories={stories}
+            answers={scores.answers}
+            retroFormOpen={retroFor === item.id}
+            onEdit={() => setEditing(item)}
+            onDelete={() => confirmDelete(item)}
+            onAdvance={() => advanceStatus(item)}
+            onClearAction={() => clearNextAction(item)}
+            onToggleRetroForm={() => setRetroFor(retroFor === item.id ? null : item.id!)}
+            onAddRetro={(retro) => {
+              addRetroMutation.mutate({ contactId: item.id!, retro });
+              setRetroFor(null);
+            }}
+            onDeleteRetro={(retroId) => deleteRetroMutation.mutate(retroId)}
+          />
         )}
       />
     </Screen>

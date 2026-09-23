@@ -7,7 +7,7 @@ import { LOCALE_LABELS, t } from "@grip/core/i18n";
 import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@grip/core/user";
 import { supabase } from "@/lib/supabase";
 import { changeLocale, useLocale } from "@/lib/useLocale";
-import { colors, font, layout, radius, space, tints } from "@/theme";
+import { colors, font, layout, radius, space, tints, shadow } from "@/theme";
 import { Button, Field, HeaderAction, Screen, ScreenHeader, inputStyle } from "@/components/ui";
 import {
   useAuthIdentitiesQuery,
@@ -86,7 +86,7 @@ export default function ProfileScreen() {
       >
         {error && <Text style={{ color: colors.dangerBright, fontSize: font.size.body }}>{error.message}</Text>}
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: space.md }}>
             <View
               style={{
@@ -148,7 +148,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
             <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>GitHub</Text>
             <ConnectionBadge connected={githubConnected} />
@@ -194,7 +194,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
           <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>{t("profile.cvSection")}</Text>
           <Text style={{ color: colors.textFaint, fontSize: font.size.small, lineHeight: 18 }}>
             {t("profile.cvSubtitleMobile")}
@@ -233,7 +233,7 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
           <Field label={t("profile.email")}>
             <TextInput editable={false} value={profile?.email ?? ""} style={[inputStyle, { color: colors.textDim }]} />
           </Field>
@@ -263,7 +263,7 @@ export default function ProfileScreen() {
           </View>
         </View>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.border, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
           <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("profile.language")}</Text>
           <View style={{ flexDirection: "row", gap: space.sm, flexWrap: "wrap" }}>
             {(Object.entries(LOCALE_LABELS) as [string, string][]).map(([code, label]) => {
@@ -298,7 +298,7 @@ export default function ProfileScreen() {
             justifyContent: "space-between",
             backgroundColor: colors.surface,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.borderSoft, boxShadow: shadow.card,
             borderRadius: radius.md,
             padding: space.lg,
           }}

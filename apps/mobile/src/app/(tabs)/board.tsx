@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -9,8 +10,8 @@ import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch";
-import type { SavedBoard } from "@grip/core/api";
-import { colors, layout } from "@/theme";
+import type { SavedBoard, Story } from "@grip/core/api";
+import { colors, layout, shadow } from "@/theme";
 import { Button, MiniButton, Screen, ScreenHeader } from "@/components/ui";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
@@ -21,6 +22,8 @@ import { NodeInspectorSheet } from "@/components/board/NodeInspectorSheet";
 import { ScaleSheet } from "@/components/board/ScaleSheet";
 import { TalkTrackSheet } from "@/components/board/TalkTrackSheet";
 import { ScenarioSheet } from "@/components/board/ScenarioSheet";
+import { StorySheet } from "@/components/board/StorySheet";
+import { useStoriesQuery } from "@/queries/stories";
 import { useDeleteBoardMutation, useSaveBoardMutation, useSavedBoardsQuery, useScenarioCatalog } from "@/queries/board";
 
 export default function BoardScreen() {
@@ -28,6 +31,9 @@ export default function BoardScreen() {
   const insets = useSafeAreaInsets();
   const [scenarioId, setScenarioId] = useState(SCENARIOS[0].id);
   const [pickerOpen, setPickerOpen] = useState(false);
+  // The story this board is designed for (one board per story), as on web.
+  const [storyId, setStoryId] = useState<string | null>(null);
+  const [storyOpen, setStoryOpen] = useState(false);
   const canvasRef = useRef<BoardCanvasHandle>(null);
   // Bumped when a different board or scenario is shown, so the canvas re-frames (saving doesn't bump it).
   const [viewKey, setViewKey] = useState(0);
@@ -55,7 +61,8 @@ export default function BoardScreen() {
   }, [chrome]);
 
   const timer = useDesignTimer();
-  const { allScenarios, groups: scenarioGroups } = useScenarioCatalog();
+  const { allScenarios, groups: scenarioGroups, isFetching: scenariosFetching } = useScenarioCatalog();
+  const { data: stories = [] } = useStoriesQuery();
   // A custom scenario may still be loading; show the first built-in until it arrives.
   const scenario = allScenarios.find((item) => item.id === scenarioId) ?? SCENARIOS[0];
   const { data: savedBoards = [], error: boardsError } = useSavedBoardsQuery();
@@ -64,7 +71,8 @@ export default function BoardScreen() {
       setActiveBoardId(board.id ?? null);
       setActiveBoardTitle(board.title);
     },
-    (error) => Alert.alert(t("board.saveFailedTitle"), error.message)
+    // The one-board-per-story index gets words of its own; the story sheet normally prevents it.
+    (error) => Alert.alert(t("board.saveFailedTitle"), error.message.includes("arch_boards_one_per_story") ? t("board.storyTakenError") : error.message)
   );
   const deleteBoardMutation = useDeleteBoardMutation(
     (id) => {
@@ -93,6 +101,7 @@ export default function BoardScreen() {
 
   const switchScenario = (id: string) => {
     setScenarioId(id);
+    setStoryId(null);
     clearBoard();
     setViewKey((key) => key + 1);
   };
@@ -129,6 +138,7 @@ export default function BoardScreen() {
       return;
     }
     setScenarioId(board.scenarioId);
+    setStoryId(board.storyId ?? null);
     setViewKey((key) => key + 1);
     setNodes(board.nodes);
     setEdges(board.edges);
@@ -150,6 +160,37 @@ export default function BoardScreen() {
       { text: t("common.delete"), style: "destructive", onPress: () => deleteBoardMutation.mutate(id) },
     ]);
   };
+
+  const currentStory = stories.find((story) => story.id === storyId);
+  // The board's own link counts even if the story was since pointed at another scenario.
+  const storyCandidates = stories.filter((story) => story.scenarioId === scenario.id || story.id === storyId);
+  const takenStories = new Set(savedBoards.filter((board) => board.id !== activeBoardId && board.storyId).map((board) => board.storyId));
+
+  // A story's "New board" or "Open" arrives as route params. It waits for the saved boards
+  // and custom scenarios it needs, runs once, then clears the params. The ref keeps the
+  // effect to its real triggers while still calling this render's loadBoard/switchScenario.
+  const router = useRouter();
+  const params = useLocalSearchParams<{ scenarioId?: string; storyId?: string; boardId?: string }>();
+  const handoffRef = useRef<() => boolean>(() => true);
+  handoffRef.current = () => {
+    if (params.boardId) {
+      const board = savedBoards.find((item) => item.id === params.boardId);
+      if (!board) return false;
+      if (!allScenarios.some((item) => item.id === board.scenarioId) && scenariosFetching) return false;
+      loadBoard(board);
+      return true;
+    }
+    if (params.scenarioId) {
+      if (!allScenarios.some((item) => item.id === params.scenarioId) && scenariosFetching) return false;
+      switchScenario(params.scenarioId);
+      setStoryId(params.storyId ?? null);
+    }
+    return true;
+  };
+  useEffect(() => {
+    if (!params.boardId && !params.scenarioId) return;
+    if (handoffRef.current()) router.setParams({ scenarioId: undefined, storyId: undefined, boardId: undefined });
+  }, [params.boardId, params.scenarioId, params.storyId, savedBoards, scenariosFetching, router]);
 
   const addEdge = (from: string, to: string) => {
     setEdges((current) =>
@@ -188,6 +229,21 @@ export default function BoardScreen() {
               <Text numberOfLines={1} style={{ flex: 1, fontSize: 14, fontWeight: "600", color: colors.textBright }}>{scenario.name}</Text>
               <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
             </TouchableOpacity>
+            {storyCandidates.length > 0 && (
+              <TouchableOpacity
+                accessibilityRole="button"
+                accessibilityLabel={t("board.storyLabel")}
+                accessibilityValue={{ text: currentStory?.title ?? t("board.noStory") }}
+                onPress={() => setStoryOpen(true)}
+                style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 40, marginTop: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface }}
+              >
+                <BrandIcon name="story" color={currentStory ? colors.accentBright : colors.textFaint} size={14} />
+                <Text numberOfLines={1} style={{ flex: 1, fontSize: 13, fontWeight: "600", color: currentStory ? colors.text : colors.textFaint }}>
+                  {currentStory?.title ?? t("board.noStory")}
+                </Text>
+                <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
+              </TouchableOpacity>
+            )}
           </ScreenHeader>
         </Animated.View>
       )}
@@ -247,6 +303,7 @@ export default function BoardScreen() {
                   id: activeBoardId ?? undefined,
                   title: activeBoardTitle ?? t("board.draftTitle", { scenario: scenario.name }),
                   scenarioId: scenario.id,
+                  storyId,
                   nodes,
                   edges,
                   talkTrack: { sections: talkSections, rating: talkRating },
@@ -267,7 +324,7 @@ export default function BoardScreen() {
       )}
 
       {savedOpen && chrome !== "zen" && (
-        <SavedBoardsTray boards={savedBoards} scenarios={allScenarios} activeId={activeBoardId} onLoad={loadBoard} onDelete={confirmDeleteBoard} />
+        <SavedBoardsTray boards={savedBoards} scenarios={allScenarios} stories={stories} activeId={activeBoardId} onLoad={loadBoard} onDelete={confirmDeleteBoard} />
       )}
 
       <View style={{ flex: 1 }}>
@@ -405,6 +462,15 @@ export default function BoardScreen() {
           onClose={() => setPickerOpen(false)}
         />
 
+        <StorySheet
+          visible={storyOpen}
+          candidates={storyCandidates}
+          current={currentStory}
+          taken={takenStories}
+          onPick={setStoryId}
+          onClose={() => setStoryOpen(false)}
+        />
+
         <ResultSheet
           result={result}
           scenario={scenario}
@@ -419,12 +485,13 @@ export default function BoardScreen() {
 type SavedBoardsTrayProps = {
   boards: SavedBoard[];
   scenarios: Scenario[];
+  stories: Story[];
   activeId: string | null;
   onLoad: (board: SavedBoard) => void;
   onDelete: (board: SavedBoard) => void;
 };
 
-function SavedBoardsTray({ boards, scenarios, activeId, onLoad, onDelete }: SavedBoardsTrayProps) {
+function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelete }: SavedBoardsTrayProps) {
   return (
     <Animated.View entering={FadeInDown.duration(180)} style={{ gap: 8 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -449,7 +516,7 @@ function SavedBoardsTray({ boards, scenarios, activeId, onLoad, onDelete }: Save
                   gap: 8,
                   backgroundColor: colors.surface,
                   borderWidth: 1,
-                  borderColor: active ? colors.accent : colors.border,
+                  borderColor: active ? colors.accent : colors.borderSoft, boxShadow: shadow.card,
                   borderRadius: 8,
                 }}
               >
@@ -459,6 +526,11 @@ function SavedBoardsTray({ boards, scenarios, activeId, onLoad, onDelete }: Save
                 <Text numberOfLines={1} style={{ fontSize: 10.5, color: colors.textFaint }}>
                   {t("board.boardMeta", { scenario: scenario?.name ?? board.scenarioId, nodes: board.nodes.length, edges: board.edges.length })}
                 </Text>
+                {board.storyId && stories.some((story) => story.id === board.storyId) && (
+                  <Text numberOfLines={1} style={{ fontSize: 10.5, color: colors.accentBright }}>
+                    {t("board.saved.story", { title: stories.find((story) => story.id === board.storyId)?.title ?? "" })}
+                  </Text>
+                )}
                 <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
                   <MiniButton label={t("common.load")} color={colors.accent} onPress={() => onLoad(board)} />
                   <MiniButton label={t("common.delete")} color={colors.danger} onPress={() => onDelete(board)} />

@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- Stories and Arch Board (mobile): stories link to scenarios and boards as on web. The story form picks the system scenario from the searchable scenario sheet (creating one stays on web). An expanded story shows its scenario, New board for this story until it has one, and its board with the design score and talk track grade; Open takes you to it. On the board, a story row under the scenario picks the story it is designed for from those linked to the scenario, with its STAR on top and stories another board holds shown as taken; the story is saved with the board, and the saved boards tray names it.
 - Prep (mobile): scoring matches web. Thunderstorm drills and card quizzes show the 20s clock (amber in the last 10s), and a correct answer inside it earns ×1.5 XP, shown in the feedback and the run's total. Drills and card quizzes deal questions you haven't seen at that level before repeating any; the seen list lives on the device and clears when the signed-in user changes.
 - Arch Board (mobile): your own scenarios, made on web, now load and can be picked, so a board built on one opens instead of reporting an unknown scenario. The row of 100 scenario pills is replaced by the current scenario's name; tapping it opens a sheet with a search field over the scenarios grouped by category, where typing a category ("fintech") shows the whole group. The Hide, Show and Zen buttons are translated. Web and mobile now share the scenario list and its search filter from `@grip/core/scenarioCatalog`.
 - Docs: `docs/mobile-parity.md` records what the web app has that mobile lacks or does differently, with a suggested order, for when mobile work resumes.
@@ -18,6 +19,9 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Demo banner (mobile): one slim line like web's, "Grip is a free demo." with a Continue with GitHub link, instead of a two-row card with a filled button that took about a fifth of a phone screen.
+- Prep (web): the quiz hint names the A to D keys only on desktops with a precise pointer and hover. Phones and tablets, where there is no keyboard to press them on, read "Pick the best answer".
+- Mobile: cards look like web's. Prep's tech cards, story cards, the XP and accuracy cards, Quest contacts, Profile sections and the rest had a light edge, several tinted with their tech or competency colour; they now use web's dark soft edge (`borderSoft`) and the same lifted card shadow. Next Up keeps its tone edge, as on web, and a contact with a due follow-up keeps its red one. Bottom sheets take the dark edge too.
 - Tab bar (mobile): the icons match the web header's (stacked layers for Prep, a page for Stories, the grid for Arch Board, a flag for Quest, a person for Profile), labels are lighter, and on iOS 26 the bar is left to the system's Liquid Glass, a floating capsule with the teal pill on the active tab, instead of being painted over with our own dark background. Older iOS and Android keep the dark blurred bar.
 - Arch Board (web): the design checklist reads as a to-do list. A summary line and bar give checks and points earned; what is still missing comes first, biggest points first, with a points pill each, and nothing is red, because a missing check is credit not yet earned. Earned checks fold under Done until everything passes, and design warnings sit in their own amber block.
 - Fly Me (web): the page and the guided tour describe the app as it is now: readiness, the Thunderstorm clock, unseen questions first, Auto-next, Mock loop, story links to scenarios and boards, the five-step board with AI grading, scenario search, full screen and share links, Quest's Next Up, velocity and Drill these in Prep, and CV import. Counts are corrected (10 categories, about 50 technologies), the Synced and Offline-ready claims are gone while mobile is on hold, and Free demo joins What stays handled.
@@ -34,6 +38,8 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Arch Board (mobile): the scenario sheet rides above the keyboard. Typing a search hid the results behind it on a phone.
+- Stories and Quest (mobile): after saving an edit, a card could stay invisible and leave a gap in the list. The cards' staggered entrance animation restarted when the list remounted and was cut off by the refetch; the lists now render without it.
 - Prep (mobile): the XP bar no longer runs past its new value and pulls back after a correct answer. It animated with a loose spring, which overshoots; it now eases in and stops on the value.
 - Arch Board (web): full screen opens framed. It kept the small canvas's zoom and pan, so the board sat off to one side or tiny; entering and leaving full screen now fit the board to the new size.
 - Arch Board (web): leaving the New scenario form no longer leaves a second copy of the Next Up action under the steps. The card's visibility watcher stayed on the card that was unmounted, so the board thought Next Up had scrolled away for the rest of the visit.

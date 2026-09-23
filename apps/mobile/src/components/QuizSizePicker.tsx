@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { normalizeQuizSize, QUIZ_SIZE_OPTIONS } from "@grip/core/quizPrefs";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = {
@@ -22,7 +22,7 @@ export function QuizSizePicker({ quizSize, poolSize, onQuizSize }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 12,
         padding: 12,
         gap: 10,

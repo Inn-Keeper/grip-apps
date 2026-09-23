@@ -26,7 +26,7 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
           borderTopLeftRadius: 20,
           borderTopRightRadius: 20,
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: colors.borderSoft,
           padding: 20,
           gap: 14,
         }}

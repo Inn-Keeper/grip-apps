@@ -4,7 +4,7 @@ import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { useCountUp } from "@/lib/useCountUp";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizView } from "./QuizView";
@@ -45,7 +45,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Pro
         style={{
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: colors.border,
+          borderColor: colors.borderSoft, boxShadow: shadow.card,
           borderRadius: 14,
           padding: 28,
           alignItems: "center",
@@ -108,7 +108,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Pro
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: `${cur.color}40`,
+        borderColor: colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 14,
         padding: 16,
         gap: 10,

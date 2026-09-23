@@ -31,7 +31,7 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.borderSoft,
             padding: 20,
             gap: 14,
           }}

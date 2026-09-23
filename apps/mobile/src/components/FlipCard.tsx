@@ -10,7 +10,7 @@ import Animated, {
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier, speedBonusXp } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
@@ -145,7 +145,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           minHeight: 185,
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: `${tone}60`,
+          borderColor: colors.borderSoft, boxShadow: shadow.card,
           borderRadius: 14,
           alignItems: "center",
           justifyContent: "center",
@@ -169,7 +169,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         style={{
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: `${item.color}40`,
+          borderColor: colors.borderSoft, boxShadow: shadow.card,
           borderRadius: 14,
           padding: 16,
         }}
@@ -202,7 +202,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           style={{
             backgroundColor: colors.surface,
             borderWidth: 1,
-            borderColor: `${item.color}30`,
+            borderColor: colors.borderSoft, boxShadow: shadow.card,
             borderRadius: 14,
             padding: 18,
             minHeight: 185,
@@ -257,7 +257,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
             style={{
               backgroundColor: colors.surface,
               borderWidth: 1,
-              borderColor: `${item.color}50`,
+              borderColor: colors.borderSoft, boxShadow: shadow.card,
               borderRadius: 14,
               padding: 16,
               minHeight: 185,

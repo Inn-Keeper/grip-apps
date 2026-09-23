@@ -18,7 +18,6 @@ only; 2026-09-17 and earlier shipped on both.
 
 **Arch Board** (biggest gap)
 - Creating and deleting custom scenarios. (Picking and loading them, and a searchable picker, shipped in phase 1.)
-- The board's story picker and the story's STAR.
 - The five-step workflow rail, Next Up coaching, and the graded verdict (thinnest section, the interviewer's question).
 - AI grading: "Grade my reasoning", quoted evidence per section, rate-limit handling (`@grip/core/talkGrade`).
 - Scale brief handing numbers to the talk track, and "Check my math".
@@ -26,7 +25,7 @@ only; 2026-09-17 and earlier shipped on both.
 
 **Stories**
 - The competency coverage headline and Next Up for the first uncovered competency.
-- The scenario link: picker, "New scenario from this story", "New board for this story", the story's board with its scores.
+- "New scenario from this story" (creating scenarios stays on web). The rest of the story links shipped in phase 3.
 
 **Prep** (about 40 web strings have no mobile counterpart)
 - Mock loop (`@grip/core/mockLoop`).
@@ -55,7 +54,7 @@ only; 2026-09-17 and earlier shipped on both.
 
 1. ~~Custom scenarios on the board: loading and picking them, and a searchable picker.~~ Done 2026-09-23.
 2. ~~Scoring parity: the speed bonus and unseen-first drawing.~~ Done 2026-09-23.
-3. Story links: scenario and board on the story, story on the board (the data model is done).
+3. ~~Story links: scenario and board on the story, story on the board.~~ Done 2026-09-23.
 4. AI grading and the workflow rail on the board.
 5. Profile fields and GitHub prep, then the Prep extras (Mock loop, readiness, Auto-next).
 6. A SCREEN-GUIDELINES.md pass per screen, with the Maestro flows updated.

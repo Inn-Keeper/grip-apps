@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import type { Scores } from "@/lib/useScores";
 
@@ -45,7 +45,7 @@ export function StatsBar({ scores }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 12,
         padding: 14,
         gap: 8,

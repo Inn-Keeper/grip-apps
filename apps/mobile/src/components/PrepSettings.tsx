@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 import { DifficultyPicker } from "@/components/DifficultyPicker";
 import { QuizSizePicker } from "@/components/QuizSizePicker";
@@ -28,7 +28,7 @@ export function PrepSettings({ level, onLevel, quizSize, poolSize, onQuizSize }:
         accessibilityState={{ expanded: open }}
         style={{
           flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 12, paddingVertical: 10,
-          borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface,
+          borderRadius: 10, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, backgroundColor: colors.surface,
         }}
       >
         {tier && <DifficultyIcon tier={tier} size={15} />}

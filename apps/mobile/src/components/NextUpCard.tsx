@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
 import type { PrepPlan } from "@/lib/uiStore";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = {
@@ -40,7 +40,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onDi
   return (
     <View
       accessibilityLabel={t("nextUp.label")}
-      style={{ padding: 14, gap: 6, borderRadius: 14, borderWidth: 1, borderColor: `${copy.tone}60`, backgroundColor: colors.surface }}
+      style={{ padding: 14, gap: 6, borderRadius: 14, borderWidth: 1, borderColor: `${copy.tone}60`, boxShadow: shadow.card, backgroundColor: colors.surface }}
     >
       <Text style={{ fontSize: 10.5, fontWeight: "800", letterSpacing: 0.8, color: copy.tone }}>{t("nextUp.label").toUpperCase()}</Text>
       <Text style={{ fontSize: 15, fontWeight: "800", color: colors.textBright }}>{copy.title}</Text>

@@ -17,11 +17,12 @@ export function useSavedBoardsQuery() {
 
 // Built-in plus the user's own scenarios (created on web), grouped for the picker.
 export function useScenarioCatalog() {
-  const { data: customScenarios } = useQuery({ queryKey: boardQueryKeys.customScenarios, queryFn: api.listCustomScenarios });
-  return useMemo(() => {
+  const { data: customScenarios, isFetching } = useQuery({ queryKey: boardQueryKeys.customScenarios, queryFn: api.listCustomScenarios });
+  const catalog = useMemo(() => {
     const { allScenarios, groups } = buildScenarioCatalog(customScenarios ?? []);
     return { allScenarios: allScenarios as Scenario[], groups };
   }, [customScenarios]);
+  return { ...catalog, isFetching };
 }
 
 export function useSaveBoardMutation(

@@ -30,7 +30,7 @@ export function TalkTrackSheet({ visible, sections, rating, onChangeSection, onC
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderWidth: 1,
-            borderColor: colors.border,
+            borderColor: colors.borderSoft,
             padding: 20,
           }}
         >

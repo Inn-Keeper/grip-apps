@@ -1,1 +1,1 @@
-export { brand, brandColors, colors, tints, font, layout, space, radius } from "@grip/core/tokens";
+export { brand, brandColors, colors, tints, font, layout, space, radius, shadow } from "@grip/core/tokens";

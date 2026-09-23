@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors, tints, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, MiniButton, Section } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
@@ -48,7 +48,7 @@ export function ContactCard({
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: due ? `${colors.danger}80` : `${status.color}30`,
+        borderColor: due ? `${colors.danger}80` : colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 14,
         padding: 16,
         gap: 8,

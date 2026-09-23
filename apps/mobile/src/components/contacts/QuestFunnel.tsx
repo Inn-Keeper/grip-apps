@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { Badge } from "@/components/ui";
 
 type FunnelSummary = ReturnType<typeof buildFunnelSummary>;
@@ -56,7 +56,7 @@ export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 12,
         padding: 14,
         gap: 12,

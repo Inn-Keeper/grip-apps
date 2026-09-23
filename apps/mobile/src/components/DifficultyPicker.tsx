@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { DIFFICULTIES, difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, shadow } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 
 type Props = {
@@ -18,7 +18,7 @@ export function DifficultyPicker({ level, onLevel }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.border,
+        borderColor: colors.borderSoft, boxShadow: shadow.card,
         borderRadius: 12,
         padding: 12,
         gap: 8,
