@@ -9,6 +9,7 @@ because they have to be applied by hand.
 ### Fixed
 
 - Quest (web): the stage-velocity panel is hidden when `VITE_PIPELINE_URL` is unset, instead of showing a red error. The client used to throw "pipeline: not configured" on every load, which surfaced as a failure even though nothing had been asked of the service — an unconfigured optional service now behaves like `VITE_AI_URL` does and simply offers nothing.
+- Quest (web): an empty velocity panel says which kind of empty it is. With no contact yet moved between stages it still says to move one; with transitions recorded but no averages returned it points at the pipeline service, because that is no longer something more data would fix.
 
 ## 2026-09-22
 

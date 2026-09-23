@@ -113,6 +113,7 @@ export const en = {
   "quest.velocityLoading": "Loading velocity…",
   "quest.velocityError": "Velocity unavailable. Check the pipeline service connection.",
   "quest.velocityEmpty": "Move contacts between stages to build velocity history.",
+  "quest.velocityNoAverages": "Contacts have moved between stages, but no averages came back. Check the pipeline service.",
   "quest.insights": "Insights",
   "quest.retrosTitle": "Retros",
   "quest.noRetros": "No retros yet. Log one after each round.",

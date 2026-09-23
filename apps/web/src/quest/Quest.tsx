@@ -156,7 +156,7 @@ export default function Quest() {
       mainLabel={t("quest.title")}
       lockedHint={focus ? t("quest.lockedHint") : null}
       left={<QuestLeftRail contacts={contacts ?? []} filter={filter} onFilter={setFilter} />}
-      right={<QuestRightRail funnel={funnel} velocity={velocity} velocityError={velocityError} velocityLoading={velocityLoading} velocityEnabled={pipelineConfigured} />}
+      right={<QuestRightRail funnel={funnel} velocity={velocity} velocityError={velocityError} velocityLoading={velocityLoading} velocityEnabled={pipelineConfigured} statusEvents={statusEvents} />}
     >
       {loadError && (
         <div role="alert" style={{ marginBottom: 16, padding: "10px 14px", background: tints.dangerSoft, border: `1px solid ${colors.danger}60`, borderRadius: 8, color: colors.dangerBright, fontSize: font.size.body }}>

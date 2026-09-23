@@ -2,6 +2,7 @@ import { PACE_GOAL_PER_WEEK, PACE_WINDOW_DAYS } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import type { VelocityReport } from "@grip/core/pipeline";
+import { velocityEmptyKey } from "./velocityState.js";
 import { BrandIcon } from "../components/BrandIcon";
 import { CountUp, GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";
@@ -15,7 +16,7 @@ type FunnelSummary = {
 };
 
 // Right rail: status (application pace, then conversion), then insights (rule 5).
-export function QuestRightRail({ funnel, velocity, velocityError, velocityLoading, velocityEnabled }: {
+export function QuestRightRail({ funnel, velocity, velocityError, velocityLoading, velocityEnabled, statusEvents }: {
   funnel: FunnelSummary;
   velocity?: VelocityReport;
   velocityError?: Error | null;
@@ -23,6 +24,8 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
   // False when no pipeline service is configured. The panel is dropped rather
   // than shown empty, which would claim you have no data when nothing asked.
   velocityEnabled: boolean;
+  // Only to tell "nothing to average yet" apart from "the service found none".
+  statusEvents: { contactId: string }[];
 }) {
   const pace = funnel.applicationsPerWeek;
   const conversions = [
@@ -82,7 +85,9 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
             {velocityLoading && velocityStages.length === 0 && <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityLoading")}</p>}
             {velocityError && <p style={{ margin: 0, color: colors.dangerBright }}>{t("quest.velocityError")}</p>}
             {!velocityLoading && !velocityError && velocityStages.length === 0 && (
-              <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityEmpty")}</p>
+              <p style={{ margin: 0, color: colors.textFaint }}>
+                {t(velocityEmptyKey(statusEvents) as Parameters<typeof t>[0])}
+              </p>
             )}
             {velocityStages.map((stage, index) => (
               <div key={index} style={{ display: "flex", alignItems: "center", gap: 8 }}>

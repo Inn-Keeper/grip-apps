@@ -113,6 +113,7 @@ export const sv = {
   "quest.velocityLoading": "Laddar takt…",
   "quest.velocityError": "Takten är inte tillgänglig. Kontrollera anslutningen till pipelinetjänsten.",
   "quest.velocityEmpty": "Flytta kontakter mellan steg för att bygga upp takthistorik.",
+  "quest.velocityNoAverages": "Kontakter har flyttats mellan steg, men inga medelvärden kom tillbaka. Kontrollera pipelinetjänsten.",
   "quest.insights": "Insikter",
   "quest.retrosTitle": "Retros",
   "quest.noRetros": "Inga retros än. Logga en efter varje runda.",

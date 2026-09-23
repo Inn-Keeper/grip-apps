@@ -113,6 +113,7 @@ export const pt = {
   "quest.velocityLoading": "Carregando velocidade…",
   "quest.velocityError": "Velocidade indisponível. Verifique a conexão com o serviço do pipeline.",
   "quest.velocityEmpty": "Mova contatos entre etapas para criar histórico de velocidade.",
+  "quest.velocityNoAverages": "Os contatos mudaram de etapa, mas nenhuma média foi retornada. Verifique o serviço do pipeline.",
   "quest.insights": "Insights",
   "quest.retrosTitle": "Retros",
   "quest.noRetros": "Nenhuma retro ainda. Registre uma após cada rodada.",
