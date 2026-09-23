@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- Arch Board and Story Bank (web): the scenario pickers search. Opening one puts a search field above the 100 scenarios; typing filters by name or by category ("fintech" shows the group), the arrow keys and Enter pick from what's left, and only a real scenario can be chosen. Escape leaves the choice as it was.
 - Story Bank (web): a story can link to the Arch Board scenario of the system behind it. The story form picks one of the built-in scenarios or your own, or drafts a new scenario from the story (its title as the name, situation and task as the brief). The story view names the scenario and opens the Arch Board on it. The link is optional, since many behavioral stories have no system behind them, and a story whose custom scenario was deleted says so.
 - Arch Board (web): a saved board can belong to the story it was designed for. A story's New board for this story opens a board already tied to it; the rail offers the stories linked to the scenario (or none) and shows the chosen one's STAR, so the situation you will actually talk about sits next to the design and the talk track. The story is part of the board's saved state, and the saved boards list names it.
 - Story Bank (web): a story lists the boards designed for it, with each one's design score and talk track grade, and opens any of them on the Arch Board.

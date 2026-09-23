@@ -81,6 +81,7 @@ export function StoryForm({
       {/* The system behind the story: a built-in scenario, or a new one drafted from the story. */}
       <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
         <Combobox
+          filterable
           label={t("stories.fieldScenario")}
           value={form.scenarioId ?? ""}
           options={[{ label: null, options: [{ value: "", label: t("stories.noScenario") }] }, ...scenarioOptions]}

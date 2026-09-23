@@ -4,6 +4,8 @@ export const pt = {
   "common.save": "Salvar",
   "common.saving": "Salvando",
   "common.cancel": "Cancelar",
+  "common.search": "Buscar",
+  "common.noMatches": "Nenhum resultado",
   "common.delete": "Excluir",
   "common.edit": "Editar",
   "common.clear": "Limpar",

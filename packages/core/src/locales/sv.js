@@ -4,6 +4,8 @@ export const sv = {
   "common.save": "Spara",
   "common.saving": "Sparar",
   "common.cancel": "Avbryt",
+  "common.search": "Sök",
+  "common.noMatches": "Inga träffar",
   "common.delete": "Radera",
   "common.edit": "Redigera",
   "common.clear": "Rensa",

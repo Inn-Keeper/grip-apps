@@ -577,7 +577,7 @@ export default function ArchBoard() {
               subtitle={t("board.scenarioCount", { count: allScenarios.length })}
             />
             <div style={{ marginTop: 12 }}>
-              <Combobox value={scenario.id} options={scenarioOptions} onChange={switchScenario} style={{ width: "100%" }} triggerStyle={{ fontWeight: 600 }} />
+              <Combobox filterable value={scenario.id} options={scenarioOptions} onChange={switchScenario} style={{ width: "100%" }} triggerStyle={{ fontWeight: 600 }} />
             </div>
             {/* The problem every check and figure is judged against; recessed inside its card (rule 24). */}
             {scenario.brief && (

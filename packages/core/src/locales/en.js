@@ -4,6 +4,8 @@ export const en = {
   "common.save": "Save",
   "common.saving": "Saving",
   "common.cancel": "Cancel",
+  "common.search": "Search",
+  "common.noMatches": "No matches",
   "common.delete": "Delete",
   "common.edit": "Edit",
   "common.clear": "Clear",
