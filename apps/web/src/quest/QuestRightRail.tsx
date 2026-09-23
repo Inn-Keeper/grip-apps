@@ -15,11 +15,14 @@ type FunnelSummary = {
 };
 
 // Right rail: status (application pace, then conversion), then insights (rule 5).
-export function QuestRightRail({ funnel, velocity, velocityError, velocityLoading }: {
+export function QuestRightRail({ funnel, velocity, velocityError, velocityLoading, velocityEnabled }: {
   funnel: FunnelSummary;
   velocity?: VelocityReport;
   velocityError?: Error | null;
   velocityLoading: boolean;
+  // False when no pipeline service is configured. The panel is dropped rather
+  // than shown empty, which would claim you have no data when nothing asked.
+  velocityEnabled: boolean;
 }) {
   const pace = funnel.applicationsPerWeek;
   const conversions = [
@@ -68,26 +71,28 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
         </div>
       </WorkspacePanel>
 
-      <WorkspacePanel>
-        <WorkspaceTitle
-          icon={<BrandIcon name="calendar" color={colors.accentBright} size={17} />}
-          title={t("quest.velocityTitle")}
-          subtitle={t("quest.velocitySub")}
-        />
-        <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14, fontSize: font.size.small }}>
-          {velocityLoading && velocityStages.length === 0 && <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityLoading")}</p>}
-          {velocityError && <p style={{ margin: 0, color: colors.dangerBright }}>{t("quest.velocityError")}</p>}
-          {!velocityLoading && !velocityError && velocityStages.length === 0 && (
-            <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityEmpty")}</p>
-          )}
-          {velocityStages.map((stage, index) => (
-            <div key={index} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ flex: 1, color: colors.textDim, fontWeight: 600 }}>{stage.fromStage} → {stage.toStage}</span>
-              <span style={{ color: colors.textBright, fontWeight: 800 }}>{t("quest.days", { days: Number(stage.avgDays).toFixed(1) })}</span>
-            </div>
-          ))}
-        </div>
-      </WorkspacePanel>
+      {velocityEnabled && (
+        <WorkspacePanel>
+          <WorkspaceTitle
+            icon={<BrandIcon name="calendar" color={colors.accentBright} size={17} />}
+            title={t("quest.velocityTitle")}
+            subtitle={t("quest.velocitySub")}
+          />
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14, fontSize: font.size.small }}>
+            {velocityLoading && velocityStages.length === 0 && <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityLoading")}</p>}
+            {velocityError && <p style={{ margin: 0, color: colors.dangerBright }}>{t("quest.velocityError")}</p>}
+            {!velocityLoading && !velocityError && velocityStages.length === 0 && (
+              <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityEmpty")}</p>
+            )}
+            {velocityStages.map((stage, index) => (
+              <div key={index} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ flex: 1, color: colors.textDim, fontWeight: 600 }}>{stage.fromStage} → {stage.toStage}</span>
+                <span style={{ color: colors.textBright, fontWeight: 800 }}>{t("quest.days", { days: Number(stage.avgDays).toFixed(1) })}</span>
+              </div>
+            ))}
+          </div>
+        </WorkspacePanel>
+      )}
     </>
   );
 }

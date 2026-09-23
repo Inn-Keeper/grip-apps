@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { skipToken, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "../lib/api";
 import { pipeline } from "../lib/api";
 import { archBoardQueryKeys } from "../archBoard/queries";
@@ -33,10 +33,17 @@ export function useBoardsQuery() {
   return useQuery({ queryKey: archBoardQueryKeys.fullBoards, queryFn: api.listBoards });
 }
 
+// Local const so the null check narrows inside the closure below; an imported
+// binding does not.
+const velocityClient = pipeline;
+export const pipelineConfigured = velocityClient !== null;
+
+// skipToken, not `enabled`, so the query is typed as never-run rather than
+// pending: with no pipeline service configured the rail hides the panel.
 export function usePipelineVelocityQuery() {
   return useQuery({
     queryKey: contactsQueryKeys.velocity,
-    queryFn: pipeline.getVelocity,
+    queryFn: velocityClient ? () => velocityClient.getVelocity() : skipToken,
     retry: false,
   });
 }

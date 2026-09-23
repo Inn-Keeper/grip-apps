@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-09-23
+
+### Fixed
+
+- Quest (web): the stage-velocity panel is hidden when `VITE_PIPELINE_URL` is unset, instead of showing a red error. The client used to throw "pipeline: not configured" on every load, which surfaced as a failure even though nothing had been asked of the service — an unconfigured optional service now behaves like `VITE_AI_URL` does and simply offers nothing.
+
 ## 2026-09-22
 
 ### Added

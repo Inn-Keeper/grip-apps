@@ -1,6 +1,6 @@
 // Thin binding of the shared data layer to this app's Supabase client.
 import { createApi, dateToUi, dateToDb } from "@grip/core/api";
-import { createPipelineApi, PipelineApiError } from "@grip/core/pipeline";
+import { createPipelineApi } from "@grip/core/pipeline";
 import { createTalkGradeApi } from "@grip/core/talkGrade";
 import { supabase } from "./supabase";
 
@@ -14,9 +14,10 @@ const getToken = async () => {
   return token ?? null;
 };
 
-const pipeline = pipelineUrl
-  ? createPipelineApi(getToken, pipelineUrl)
-  : { async getVelocity(): Promise<never> { throw new PipelineApiError("pipeline: not configured"); } };
+// Null when VITE_PIPELINE_URL is unset, like talkGrade below: the Quest rail
+// drops the velocity panel rather than showing an error for a service that was
+// never deployed.
+const pipeline = pipelineUrl ? createPipelineApi(getToken, pipelineUrl) : null;
 
 // Null when VITE_AI_URL is unset: grading is optional, and the board hides the
 // action rather than offering a button that can only fail.
