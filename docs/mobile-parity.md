@@ -38,8 +38,8 @@ only; 2026-09-17 and earlier shipped on both.
 - Missing: stage filters, Next Up, the applications-per-week headline, the stage velocity panel (`@grip/core/pipeline`), focused views for contact detail and forms.
 
 **Profile**
-- Has: language, CV import, rank and XP.
-- Missing: headline, target role, location, portfolio, LinkedIn, time zone; GitHub linking and "use GitHub techs for prep" (`@grip/core/githubUrl`); autosave, the completion headline, Reset under Preferences.
+- Has: every profile field, GitHub linking and "use GitHub techs for prep", CV import, language, rank and XP. Autosave, the completion headline, Next Up and Reset under Preferences shipped in phase 5a.
+- Missing: the Poe assistant toggle (mobile has no Poe).
 
 **App level**
 - No Fly Me tour (mobile has an older `about.tsx`, not a tab), no shared board page, no abbreviation or ⓘ explainers (`@grip/core/abbreviations`).
@@ -55,5 +55,5 @@ only; 2026-09-17 and earlier shipped on both.
 2. ~~Scoring parity: the speed bonus and unseen-first drawing.~~ Done 2026-09-23.
 3. ~~Story links: scenario and board on the story, story on the board.~~ Done 2026-09-23.
 4. ~~AI grading and the workflow rail on the board.~~ Done 2026-09-23.
-5. Profile fields and GitHub prep, then the Prep extras (Mock loop, readiness, Auto-next).
+5. Profile: ~~autosave, completion and Next Up (5a)~~ Done 2026-09-23. Then the Prep extras: readiness, Auto-next and tech search (5b), and the Mock loop (5c).
 6. A SCREEN-GUIDELINES.md pass per screen, with the Maestro flows updated.
