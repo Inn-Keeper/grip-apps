@@ -5,15 +5,20 @@ import { Combobox } from "../components/Combobox";
 import { CompetencyBadge } from "../storyBank/CompetencyBadge";
 import { StarSections } from "../storyBank/StoryCard";
 import { useStoriesQuery } from "../storyBank/queries";
+import { useSavedBoardsQuery } from "./queries";
 
 // The story this board is designed for: picked from the stories linked to the scenario,
 // with its STAR one click away, since that's the situation the talk track should tell.
-export function BoardStory({ scenarioId, storyId, onChange }: {
+export function BoardStory({ boardId, scenarioId, storyId, onChange }: {
+  boardId: string | null;
   scenarioId: string;
   storyId: string | null;
   onChange: (storyId: string | null) => void;
 }) {
   const { data: stories = [] } = useStoriesQuery();
+  const { data: boards = [] } = useSavedBoardsQuery();
+  // One board per story (enforced by a unique index): stories another board already holds can't be picked.
+  const taken = new Set(boards.filter((b) => b.id !== boardId && b.storyId).map((b) => b.storyId));
   const current = stories.find((s) => s.id === storyId);
   // The board's own link counts even if the story was since pointed at another scenario.
   const candidates = stories.filter((s) => s.scenarioId === scenarioId || s.id === storyId);
@@ -24,7 +29,10 @@ export function BoardStory({ scenarioId, storyId, onChange }: {
       <Combobox
         label={t("board.storyLabel")}
         value={current?.id ?? ""}
-        options={[{ value: "", label: t("board.noStory") }, ...candidates.map((s) => ({ value: s.id ?? "", label: s.title }))]}
+        options={[{ value: "", label: t("board.noStory") }, ...candidates.map((s) => {
+          const disabled = taken.has(s.id);
+          return { value: s.id ?? "", label: disabled ? t("board.storyTaken", { title: s.title }) : s.title, disabled };
+        })]}
         onChange={(id) => onChange(id || null)}
         style={{ width: "100%" }}
       />

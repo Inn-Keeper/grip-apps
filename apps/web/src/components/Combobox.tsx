@@ -16,7 +16,8 @@ const labelStyle: CSSProperties = {
 // The shared field standard (40px, 8px corners); focus rings come from index.html.
 const controlStyle: CSSProperties = fieldStyle;
 
-type Option = { label: string; value: string; color?: string };
+// A disabled option is shown (with its reason in the label) but cannot be chosen.
+type Option = { label: string; value: string; color?: string; disabled?: boolean };
 type OptionGroup = { label: string | null; options: Option[] };
 
 type ComboboxProps = {
@@ -67,6 +68,7 @@ export function Combobox({
   const activeOption = visibleOptions[Math.min(activeIndex, Math.max(visibleOptions.length - 1, 0))];
 
   const choose = (nextValue: string) => {
+    if (flatOptions.find((option) => option.value === nextValue)?.disabled) return;
     onChange(nextValue);
     setOpen(false);
     setActiveIndex(0);
@@ -185,6 +187,7 @@ export function Combobox({
                       type="button"
                       role="option"
                       aria-selected={selectedOption}
+                      aria-disabled={option.disabled || undefined}
                       tabIndex={-1}
                       onPointerDown={(event) => {
                         event.preventDefault();
@@ -204,7 +207,8 @@ export function Combobox({
                         textAlign: "left",
                         fontSize: font.size.body,
                         fontWeight: selectedOption || active ? 800 : 650,
-                        cursor: "pointer",
+                        cursor: option.disabled ? "not-allowed" : "pointer",
+                        opacity: option.disabled ? 0.5 : 1,
                       }}
                     >
                       {option.color && <span style={{ width: 8, height: 8, borderRadius: 4, background: option.color, flex: "0 0 auto" }} />}

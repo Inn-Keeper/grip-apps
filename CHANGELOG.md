@@ -14,6 +14,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Story Bank and Arch Board (web): a story has one board, the design you tell for it, improved in place rather than redrawn. The story shows that board with its scores and offers New board for this story only until it exists; the board's story picker shows stories another board already holds as taken, and a save that would give a story a second board says so in words.
 - Arch Board (web): the scenario brief reads as the brief. It was an untitled card of its own below the scenario picker, dimmed, which made the one paragraph every check, figure and talk track section is judged against look like a caption. It now sits inside the scenario card it belongs to, labelled and marked with an icon, on the deep background behind a soft edge, in full-strength text, with the scenario actions below it rather than above. The left rail carries three cards instead of four.
 - Arch Board (web): the Edit arrow row has room above and below it. It wraps under the toolbar buttons at practically every width, where it sat flush against them and against the palette.
 - Arch Board (web): Check my math waits until something has been estimated. With both fields empty it graded nothing and nothing appeared, which reads as a broken button rather than an empty answer. It uses the same test as Use in your talk track, so the two buttons agree on what counts as an estimate.
@@ -50,6 +51,7 @@ because they have to be applied by hand.
 
 - `0017_story_scenario.sql`: applied; adds the optional `stories.scenario_id` behind the story to scenario link.
 - `0018_board_story.sql`: applied; adds the optional `arch_boards.story_id`. Deleting a story keeps its boards and unlinks them.
+- `0019_one_board_per_story.sql`: applied; a unique index on `arch_boards.story_id`. Existing duplicates keep their most recently updated board linked; the others are unlinked, not deleted.
 
 ## 2026-09-22
 

@@ -593,7 +593,7 @@ export default function ArchBoard() {
                 </div>
               </div>
             )}
-            <BoardStory scenarioId={scenario.id} storyId={storyId} onChange={(id) => commit({ ...snapshot(), storyId: id })} />
+            <BoardStory boardId={activeBoardId} scenarioId={scenario.id} storyId={storyId} onChange={(id) => commit({ ...snapshot(), storyId: id })} />
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <button type="button" className={styles.toolbarButton} onClick={() => setCreatorOpen(true)} style={{ display: "flex", alignItems: "center", gap: 5, color: colors.accentBright }}>
                 <BrandIcon name="board" color={colors.accentBright} size={13} />
@@ -898,8 +898,12 @@ export default function ArchBoard() {
                 />
               </div>
             </div>
+            {/* The one-board-per-story index gets words of its own; the story picker normally prevents it. */}
             {saveBoardMutation.error && (
-              <p role="alert" style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.dangerBright }}>{`${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</p>
+              <p role="alert" style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.dangerBright }}>
+                {saveBoardMutation.error.message.includes("arch_boards_one_per_story")
+                  ? t("board.storyTakenError")
+                  : `${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</p>
             )}
 
             <div className={styles.editor} ref={editorRef} data-fullscreen={isFullscreen || undefined}>
