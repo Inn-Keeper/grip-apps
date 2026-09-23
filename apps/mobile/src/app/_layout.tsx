@@ -9,6 +9,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
 import type { Session } from "@supabase/supabase-js";
 import { identityChanged } from "@grip/core/authCache";
+import { clearSeenQuestions } from "@/lib/questionDeck";
 import { supabase } from "@/lib/supabase";
 import { restoreLocale } from "@/lib/useLocale";
 import { SignIn } from "@/components/SignIn";
@@ -34,6 +35,7 @@ export default function RootLayout() {
       const nextUserId = nextSession?.user.id ?? null;
       if (identityChanged(previousUserId.current, nextUserId)) {
         queryClient.clear();
+        clearSeenQuestions();
         void persister.removeClient();
       }
       previousUserId.current = nextUserId;

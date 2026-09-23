@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
-import { difficultyByKey } from "@grip/core/difficulty";
+import { difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { useCountUp } from "@/lib/useCountUp";
 import { colors } from "@/theme";
@@ -16,6 +16,11 @@ export type Drill = {
   correctCount: number;
   done: boolean;
   difficulty: string;
+  // When the current question appeared, for the Thunderstorm speed bonus.
+  shownAt: number;
+  // Bonus the last answer earned, and the session's total.
+  lastBonus: number;
+  bonusXp: number;
 };
 
 type Props = {
@@ -66,7 +71,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Pro
         </Text>
         <Text style={{ fontSize: 13, color: colors.textDim, textAlign: "center" }}>
           {t("prep.drillResult", {
-            xp: drill.correctCount * perAnswerXp,
+            xp: drill.correctCount * perAnswerXp + drill.bonusXp,
             bonus: perfect ? t("prep.perfectBonusSuffix", { bonus: PERFECT_QUIZ_BONUS }) : "",
           })}
         </Text>
@@ -131,7 +136,8 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Pro
         questionNumber={drill.index + 1}
         total={drill.questions.length}
         answered={drill.answered}
-        xp={perAnswerXp}
+        xp={perAnswerXp + drill.lastBonus}
+        timedFrom={isTimedTier(drill.difficulty) ? drill.shownAt : undefined}
         onAnswer={onAnswer}
         onNext={onNext}
         isLast={drill.index === drill.questions.length - 1}

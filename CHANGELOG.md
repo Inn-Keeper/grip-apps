@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- Prep (mobile): scoring matches web. Thunderstorm drills and card quizzes show the 20s clock (amber in the last 10s), and a correct answer inside it earns ×1.5 XP, shown in the feedback and the run's total. Drills and card quizzes deal questions you haven't seen at that level before repeating any; the seen list lives on the device and clears when the signed-in user changes.
 - Arch Board (mobile): your own scenarios, made on web, now load and can be picked, so a board built on one opens instead of reporting an unknown scenario. The row of 100 scenario pills is replaced by the current scenario's name; tapping it opens a sheet with a search field over the scenarios grouped by category, where typing a category ("fintech") shows the whole group. The Hide, Show and Zen buttons are translated. Web and mobile now share the scenario list and its search filter from `@grip/core/scenarioCatalog`.
 - Docs: `docs/mobile-parity.md` records what the web app has that mobile lacks or does differently, with a suggested order, for when mobile work resumes.
 - Arch Board and Story Bank (web): the scenario pickers search. Opening one puts a search field above the 100 scenarios; typing filters by name or by category ("fintech" shows the group), the arrow keys and Enter pick from what's left, and only a real scenario can be chosen. Escape leaves the choice as it was.

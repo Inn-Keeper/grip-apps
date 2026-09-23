@@ -15,9 +15,19 @@ const activeDrill: Drill = {
   correctCount: 0,
   done: false,
   difficulty: "mid",
+  shownAt: Date.now(),
+  lastBonus: 0,
+  bonusXp: 0,
 };
 
 describe("DrillSession", () => {
+  it("shows the speed clock only on the timed tier", async () => {
+    const timed = await render(<DrillSession drill={{ ...activeDrill, difficulty: "ultra" }} onAnswer={jest.fn()} onNext={jest.fn()} onExit={jest.fn()} />);
+    expect(timed.getByText("0:20")).toBeTruthy();
+    const untimed = await render(<DrillSession drill={activeDrill} onAnswer={jest.fn()} onNext={jest.fn()} onExit={jest.fn()} />);
+    expect(untimed.queryByText(/^0:\d\d$/)).toBeNull();
+  });
+
   it("lets the user answer the current question", async () => {
     const onAnswer = jest.fn();
     const view = await render(<DrillSession drill={activeDrill} onAnswer={onAnswer} onNext={jest.fn()} onExit={jest.fn()} />);

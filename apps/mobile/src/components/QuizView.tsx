@@ -6,6 +6,7 @@ import { techLinks } from "@grip/core/techLinks";
 import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
 import { AnswerOption, type OptionState } from "./AnswerOption";
+import { SpeedClock } from "./SpeedClock";
 
 type Question = { question: string; options: string[]; correct: number };
 
@@ -16,8 +17,10 @@ type Props = {
   questionNumber: number;
   total: number;
   answered: number | null;
-  // XP a correct answer earns at the current tier.
+  // XP a correct answer earns at the current tier, plus any speed bonus once answered.
   xp: number;
+  /** When the question appeared, on a timed (Thunderstorm) tier; shows the speed clock. */
+  timedFrom?: number;
   onAnswer: (i: number) => void;
   onNext: () => void;
   isLast: boolean;
@@ -31,7 +34,7 @@ function optionState(i: number, answered: number | null, correct: number): Optio
   return i === answered ? "wrong" : "dimmed";
 }
 
-export function QuizView({ tech, color, question, questionNumber, total, answered, xp, onAnswer, onNext, isLast }: Props) {
+export function QuizView({ tech, color, question, questionNumber, total, answered, xp, timedFrom, onAnswer, onNext, isLast }: Props) {
   const isCorrect = answered !== null && answered === question.correct;
   const link = techLinks[tech];
   const feedbackFor = (right: boolean) =>
@@ -49,13 +52,16 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
 
   return (
     <View style={{ gap: 10 }}>
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Text style={{ fontSize: 10, fontWeight: "700", color, letterSpacing: 0.8 }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+        <Text style={{ flexShrink: 1, fontSize: 10, fontWeight: "700", color, letterSpacing: 0.8 }}>
           {tech.toUpperCase()} · QUIZ
         </Text>
-        <Text style={{ fontSize: 10, color: colors.textFaint }}>
-          {questionNumber} / {total}
-        </Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          {timedFrom !== undefined && answered === null && <SpeedClock key={questionNumber} shownAt={timedFrom} />}
+          <Text style={{ fontSize: 10, color: colors.textFaint }}>
+            {questionNumber} / {total}
+          </Text>
+        </View>
       </View>
       <ProgressSegments color={color} current={questionNumber} total={total} />
 

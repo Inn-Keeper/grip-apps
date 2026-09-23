@@ -8,7 +8,7 @@ import Animated, {
   withSpring,
 } from "react-native-reanimated";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
-import { difficultyByKey } from "@grip/core/difficulty";
+import { difficultyByKey, isTimedTier, speedBonusXp } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
 import { colors } from "@/theme";
 import { t } from "@grip/core/i18n";
@@ -53,7 +53,8 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
   const [phase, setPhase] = useState<"front" | "back" | "quiz" | "result">("front");
   const [result, setResult] = useState<{ correct: number; total: number; xp: number } | null>(null);
   const [quizLoading, setQuizLoading] = useState(false);
-  const [quiz, setQuiz] = useState<{ questions: Item["quiz"]; index: number; answered: number | null; runCorrect: number } | null>(null);
+  // shownAt, lastBonus and bonusXp drive the Thunderstorm speed bonus, as in drills.
+  const [quiz, setQuiz] = useState<{ questions: Item["quiz"]; index: number; answered: number | null; runCorrect: number; shownAt: number; lastBonus: number; bonusXp: number } | null>(null);
 
   // Signal active while the quiz is open; the cleanup also fires on unmount (e.g. tier remount).
   useEffect(() => {
@@ -88,7 +89,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
     setQuizLoading(true);
     const fetched = await loadQuiz(item.tech);
     const questions = fetched ?? shuffle(item.quiz).map(shuffleOptions);
-    setQuiz({ questions, index: 0, answered: null, runCorrect: 0 });
+    setQuiz({ questions, index: 0, answered: null, runCorrect: 0, shownAt: Date.now(), lastBonus: 0, bonusXp: 0 });
     setPhase("quiz");
     setQuizLoading(false);
   };
@@ -96,8 +97,10 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
   const answer = (i: number) => {
     if (!quiz || quiz.answered !== null) return;
     const isCorrect = i === quiz.questions[quiz.index].correct;
-    setQuiz({ ...quiz, answered: i, runCorrect: quiz.runCorrect + (isCorrect ? 1 : 0) });
+    const bonus = isCorrect ? speedBonusXp(level, Date.now() - quiz.shownAt) : 0;
+    setQuiz({ ...quiz, answered: i, runCorrect: quiz.runCorrect + (isCorrect ? 1 : 0), lastBonus: bonus, bonusXp: quiz.bonusXp + bonus });
     record(item.tech, isCorrect, "card", level);
+    if (bonus) addXp(bonus);
   };
 
   const next = () => {
@@ -114,7 +117,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
       setResult({
         correct: quiz.runCorrect,
         total,
-        xp: quiz.runCorrect * (tier?.xp ?? CORRECT_XP) + (perfect ? PERFECT_QUIZ_BONUS : 0),
+        xp: quiz.runCorrect * (tier?.xp ?? CORRECT_XP) + quiz.bonusXp + (perfect ? PERFECT_QUIZ_BONUS : 0),
       });
       setPhase("result");
       setQuiz(null);
@@ -123,7 +126,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         flipToFront();
       }, RESULT_MS);
     } else {
-      setQuiz({ ...quiz, index: nextIndex, answered: null });
+      setQuiz({ ...quiz, index: nextIndex, answered: null, shownAt: Date.now(), lastBonus: 0 });
     }
   };
 
@@ -178,7 +181,8 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           questionNumber={quiz.index + 1}
           total={quiz.questions.length}
           answered={quiz.answered}
-          xp={tier?.xp ?? CORRECT_XP}
+          xp={(tier?.xp ?? CORRECT_XP) + quiz.lastBonus}
+          timedFrom={isTimedTier(level) ? quiz.shownAt : undefined}
           onAnswer={answer}
           onNext={next}
           isLast={quiz.index === quiz.questions.length - 1}

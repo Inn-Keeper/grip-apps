@@ -30,8 +30,6 @@ only; 2026-09-17 and earlier shipped on both.
 
 **Prep** (about 40 web strings have no mobile counterpart)
 - Mock loop (`@grip/core/mockLoop`).
-- Thunderstorm's 20s clock and ×1.5 XP speed bonus.
-- Unseen questions first (web `questionDeck.ts`); mobile draws from the raw pool.
 - Readiness score, category mastery percentages, Signal.
 - Auto-next, the practice settings card, tech search.
 - Poe assistant, rail lock during a session.
@@ -50,15 +48,13 @@ only; 2026-09-17 and earlier shipped on both.
 
 ## Present on both, but behaving differently
 
-- **XP:** a Thunderstorm answer earns different XP on each app, so rank can drift.
-- **Repeats:** web tracks seen questions per level; mobile doesn't, so the same account sees repeats there.
 - **Screen standard:** no mobile screen has had the SCREEN-GUIDELINES.md pass (Next Up, one main action, focused views, locked rails).
 - **E2E:** the Maestro smoke flow needs `EMAIL`/`PASSWORD` and dismisses nothing; Expo Go's first-launch developer menu blocks it on a fresh simulator. `board-zen-evaluate.yaml` needs the dev-client build.
 
 ## Suggested order
 
 1. ~~Custom scenarios on the board: loading and picking them, and a searchable picker.~~ Done 2026-09-23.
-2. Scoring parity: the speed bonus and unseen-first drawing.
+2. ~~Scoring parity: the speed bonus and unseen-first drawing.~~ Done 2026-09-23.
 3. Story links: scenario and board on the story, story on the board (the data model is done).
 4. AI grading and the workflow rail on the board.
 5. Profile fields and GitHub prep, then the Prep extras (Mock loop, readiness, Auto-next).

@@ -7,7 +7,7 @@ import { buildGithubTechCategory, githubUsernameFromUrl } from "@grip/core/githu
 import { mergeTechSignals } from "@grip/core/cvTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
-import { difficultyByKey } from "@grip/core/difficulty";
+import { difficultyByKey, speedBonusXp } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
 import { useLocale } from "@/lib/useLocale";
@@ -149,6 +149,9 @@ export default function PrepScreen() {
         answered: null,
         correctCount: 0,
         done: false,
+        shownAt: Date.now(),
+        lastBonus: 0,
+        bonusXp: 0,
         difficulty,
       });
     } catch {
@@ -194,6 +197,9 @@ export default function PrepScreen() {
         answered: null,
         correctCount: 0,
         done: false,
+        shownAt: Date.now(),
+        lastBonus: 0,
+        bonusXp: 0,
         difficulty: level,
       });
     } catch {
@@ -228,8 +234,11 @@ export default function PrepScreen() {
   const answerDrill = (i: number) => {
     if (!drill || drill.answered !== null) return;
     const isCorrect = i === drill.questions[drill.index].q.correct;
-    setDrill({ ...drill, answered: i, correctCount: drill.correctCount + (isCorrect ? 1 : 0) });
+    const bonus = isCorrect ? speedBonusXp(drill.difficulty, Date.now() - drill.shownAt) : 0;
+    setDrill({ ...drill, answered: i, correctCount: drill.correctCount + (isCorrect ? 1 : 0), lastBonus: bonus, bonusXp: drill.bonusXp + bonus });
     record(drill.questions[drill.index].tech, isCorrect, "drill", drill.difficulty);
+    // ponytail: add_xp isn't retry-safe like record_answer, same as web; fine while mutations don't retry.
+    if (bonus) addXp(bonus);
   };
 
   const nextDrill = () => {
@@ -246,7 +255,7 @@ export default function PrepScreen() {
       }
       setDrill({ ...drill, done: true });
     } else {
-      setDrill({ ...drill, index: nextIndex, answered: null });
+      setDrill({ ...drill, index: nextIndex, answered: null, shownAt: Date.now(), lastBonus: 0 });
     }
   };
 

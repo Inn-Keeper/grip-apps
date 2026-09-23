@@ -1,8 +1,9 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchGithubTechSignals } from "@grip/core/githubTechs";
 import { DEFAULT_QUIZ_SIZE, questionCapForPool } from "@grip/core/quizPrefs";
-import { shuffle, shuffleOptions } from "@grip/core/quiz";
+import { shuffleOptions } from "@grip/core/quiz";
 import { api } from "@/lib/api";
+import { drawUnseen } from "@/lib/questionDeck";
 
 const DRILL_SIZE = 10;
 const CARD_POOL_LIMIT = 50;
@@ -50,11 +51,15 @@ export function usePrepQuestionFetchers(
 ) {
   const queryClient = useQueryClient();
 
-  const fetchTierQuestions = (difficulty: string, techs: string[]) =>
-    queryClient.fetchQuery({
+  // The whole pool is fetched (and cached briefly); the deck then picks unseen questions,
+  // outside the cache, so "Drill again" never gets the same cached draw back.
+  const fetchTierQuestions = async (difficulty: string, techs: string[]) => {
+    const pool = await queryClient.fetchQuery({
       queryKey: prepQueryKeys.tierQuestions(difficulty, techs),
-      queryFn: () => api.getQuestions({ techs, difficulty, limit: DRILL_SIZE * 3 }),
+      queryFn: () => api.getQuestions({ techs, difficulty, limit: CARD_POOL_LIMIT }),
     });
+    return drawUnseen(difficulty, pool, DRILL_SIZE);
+  };
 
   const loadCardQuiz = async (tech: string) => {
     try {
@@ -65,7 +70,7 @@ export function usePrepQuestionFetchers(
       if (rows.length) {
         onCardPoolSize?.(rows.length);
         const cap = questionCapForPool(quizSize ?? DEFAULT_QUIZ_SIZE, rows.length);
-        return shuffle(rows).slice(0, cap).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct }));
+        return (await drawUnseen(level, rows, cap)).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct }));
       }
       console.warn(`No ${level} questions in the DB for "${tech}". Falling back to static prep questions (these don't vary by level). Run the questions seed.`);
     } catch (err) {
