@@ -26,7 +26,7 @@ const LOOK: Record<OptionState, { bg?: string; border?: string; text?: string }>
 };
 
 // Progress, question, answers and the feedback/next footer — shared by card quizzes and drills.
-export function QuizQuestion({ question, questionNumber, total, answered, xp, xpNote, color, link, large = false, wrongExtra, onAnswer, onNext }: {
+export function QuizQuestion({ question, questionNumber, total, answered, xp, xpNote, color, link, large = false, wrongExtra, autoNextMs, onAnswer, onNext }: {
   question: Question;
   questionNumber: number;
   total: number;
@@ -39,6 +39,8 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
   link?: string;
   large?: boolean;
   wrongExtra?: React.ReactNode;
+  /** Set while Auto-next counts down: the Next button fills over this many ms. */
+  autoNextMs?: number;
   onAnswer: (i: number) => void;
   onNext: () => void;
 }) {
@@ -175,9 +177,14 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
                 fontSize: font.size.small,
                 fontWeight: 600,
                 whiteSpace: "nowrap",
+                overflow: "hidden",
               }}
             >
-              {isLast ? t("prep.finish") : t("common.next")}
+              {/* The button mounts on answering, so the fill starts with the countdown and ends with it. */}
+              {autoNextMs !== undefined && (
+                <span aria-hidden className={styles.autoNextFill} style={{ background: `${color}40`, animationDuration: `${autoNextMs}ms` }} />
+              )}
+              <span style={{ position: "relative" }}>{isLast ? t("prep.finish") : t("common.next")}</span>
             </button>
           </>
         )}

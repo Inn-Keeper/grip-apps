@@ -153,6 +153,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
         color={cur.color}
         link={cur.link}
         large
+        autoNextMs={autoNext && answeredCorrectly ? AUTO_NEXT_MS : undefined}
         onAnswer={onAnswer}
         onNext={onNext}
         wrongExtra={

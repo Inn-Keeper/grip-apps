@@ -117,7 +117,19 @@
   animation: xpFloat 1100ms cubic-bezier(0.2, 0.72, 0.26, 1) forwards;
 }
 
+/* Auto-next countdown: fills the Next button left to right, timed to the jump. */
+.autoNextFill {
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  animation: autoNextFill linear forwards;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .autoNextFill {
+    display: none;
+  }
+
   .body,
   .correct,
   .wrong {
@@ -146,6 +158,11 @@
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+@keyframes autoNextFill {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
 @keyframes pop {

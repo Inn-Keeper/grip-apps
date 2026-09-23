@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { AccessibilityInfo, Linking, Text, TouchableOpacity, View } from "react-native";
-import Animated, { FadeInRight, useAnimatedStyle, useSharedValue, withTiming } from "react-native-reanimated";
+import Animated, { Easing, FadeInRight, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from "react-native-reanimated";
 import * as Haptics from "expo-haptics";
 import { techLinks } from "@grip/core/techLinks";
 import { t } from "@grip/core/i18n";
@@ -24,6 +24,8 @@ type Props = {
   onAnswer: (i: number) => void;
   onNext: () => void;
   isLast: boolean;
+  /** Set while Auto-next counts down: the Next button fills over this many ms. */
+  autoNextMs?: number;
 };
 
 const letterFor = (i: number) => String.fromCharCode(65 + i);
@@ -34,7 +36,7 @@ function optionState(i: number, answered: number | null, correct: number): Optio
   return i === answered ? "wrong" : "dimmed";
 }
 
-export function QuizView({ tech, color, question, questionNumber, total, answered, xp, timedFrom, onAnswer, onNext, isLast }: Props) {
+export function QuizView({ tech, color, question, questionNumber, total, answered, xp, timedFrom, onAnswer, onNext, isLast, autoNextMs }: Props) {
   const isCorrect = answered !== null && answered === question.correct;
   const link = techLinks[tech];
   const feedbackFor = (right: boolean) =>
@@ -111,8 +113,10 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
                 borderWidth: 1,
                 borderColor: `${color}60`,
                 borderRadius: 8,
+                overflow: "hidden",
               }}
             >
+              {autoNextMs !== undefined && <AutoNextFill ms={autoNextMs} color={color} />}
               <Text style={{ fontSize: 12, fontWeight: "600", color }}>{isLast ? t("prep.finish") : t("common.next")}</Text>
             </TouchableOpacity>
           </>
@@ -160,4 +164,17 @@ function XpFloat({ xp }: { xp: number }) {
       <Text style={{ fontSize: 11, fontWeight: "800", color: colors.successBright }}>+{xp}</Text>
     </Animated.View>
   );
+}
+
+// Auto-next countdown, as on web: fills the Next button left to right, timed to the jump.
+// The button mounts on answering, so the fill starts with the countdown and ends with it.
+function AutoNextFill({ ms, color }: { ms: number; color: string }) {
+  const reduceMotion = useReducedMotion();
+  const progress = useSharedValue(0);
+  useEffect(() => {
+    progress.value = withTiming(1, { duration: ms, easing: Easing.linear });
+  }, [ms, progress]);
+  const style = useAnimatedStyle(() => ({ width: `${progress.value * 100}%` }));
+  if (reduceMotion) return null;
+  return <Animated.View pointerEvents="none" style={[{ position: "absolute", top: 0, bottom: 0, left: 0, backgroundColor: `${color}40` }, style]} />;
 }

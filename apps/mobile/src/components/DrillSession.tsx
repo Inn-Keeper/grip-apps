@@ -156,6 +156,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
         onAnswer={onAnswer}
         onNext={onNext}
         isLast={drill.index === drill.questions.length - 1}
+        autoNextMs={autoNext && answeredCorrectly ? AUTO_NEXT_MS : undefined}
       />
     </Animated.View>
   );
