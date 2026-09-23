@@ -3,6 +3,7 @@ import { colors, font, shadow } from "@grip/core/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import hover from "../components/HoverCard.module.css";
 import { CompetencyBadge } from "./CompetencyBadge";
+import { StoryLinks } from "./StoryLinks";
 import type { Story } from "./types";
 
 function StarSection({ label, text }: { label: string; text: string }) {
@@ -81,6 +82,7 @@ export function StoryDetail({ story, onEdit, onDelete, error }: { story: Story; 
       </div>
       <h2 style={{ margin: "12px 0 0", fontSize: font.size.title, fontWeight: 800, color: colors.textBright }}>{story.title}</h2>
       <StarSections story={story} />
+      <StoryLinks story={story} />
       {error && <p role="alert" style={{ margin: "12px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{error}</p>}
     </div>
   );

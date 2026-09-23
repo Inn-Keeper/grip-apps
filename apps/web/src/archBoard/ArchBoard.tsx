@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, evaluate } from "@grip/core/arch";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { TYPE_COLORS, meta, SCENARIOS, STATEFUL_TYPES, evaluate } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { buildGradeFacts } from "@grip/core/talkGrade";
@@ -12,7 +12,7 @@ import { HeadlineMetric } from "../components/HeadlineMetric";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout, WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
-import { CATEGORY_ICONS, CUSTOM_CATEGORY, NODE_H, NODE_W, WORLD } from "./constants";
+import { CATEGORY_ICONS, NODE_H, NODE_W, WORLD } from "./constants";
 import { DesignTimer } from "./DesignTimer";
 import { EdgeInspector } from "./EdgeInspector";
 import { EvalResults } from "./EvalResults";
@@ -21,6 +21,7 @@ import { NodePalette } from "./NodePalette";
 import { SavedBoards } from "./SavedBoards";
 import { ScaleBrief } from "./ScaleBrief";
 import { ScenarioForm } from "./ScenarioForm";
+import { BoardStory } from "./BoardStory";
 import { TalkTrack } from "./TalkTrack";
 import { activateConnection } from "./connectionState.js";
 import { findPlacement } from "./boardGeometry.js";
@@ -33,9 +34,10 @@ import { workflowStep } from "./workflowState.js";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
 import { ROUND_MINUTES } from "@grip/core/designTimer";
 import { useDesignRound } from "./useDesignRound";
+import { useScenarioCatalog } from "./useScenarioCatalog";
+import { clearBoardHandoff, readBoardHandoff } from "../lib/boardHandoff";
 import styles from "./ArchBoard.module.css";
 import {
-  useCustomScenariosQuery,
   useDeleteBoardMutation,
   useDeleteScenarioMutation,
   useGradeTalkTrackMutation,
@@ -52,7 +54,12 @@ import type { AugmentedScenario, BoardEdge, BoardNode, BoardSummary, ConnectDrag
 const coarsePointer = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
 export default function ArchBoard() {
-  const [scenarioId, setScenarioId] = useState<string>((SCENARIOS[0] as AugmentedScenario).id);
+  // A story hands over its scenario (new board) or one of its saved boards; cleared once the board mounts.
+  const [handoff] = useState(readBoardHandoff);
+  useEffect(clearBoardHandoff, []);
+  const [scenarioId, setScenarioId] = useState<string>(handoff?.scenarioId ?? (SCENARIOS[0] as AugmentedScenario).id);
+  // The story this board is designed for; part of the saved snapshot like the rest.
+  const [storyId, setStoryId] = useState<string | null>(handoff?.boardId ? null : handoff?.storyId ?? null);
   const [creatorOpen, setCreatorOpen] = useState(false);
   const [nodes, setNodes] = useState<BoardNode[]>([]);
   const [edges, setEdges] = useState<BoardEdge[]>([]);
@@ -81,21 +88,26 @@ export default function ArchBoard() {
   };
   // The section the verdict card sends you to; cleared once the cursor lands.
   const [focusSection, setFocusSection] = useState<string | null>(null);
-  const nextUpRef = useRef<HTMLDivElement>(null);
   const [nextUpVisible, setNextUpVisible] = useState(true);
   const round = useDesignRound();
   const [timerVisible, setTimerVisible] = useState(true);
 
-  useEffect(() => {
-    const node = nextUpRef.current;
-    if (!node) return;
+  // A callback ref: the card unmounts while the scenario form is open, and the
+  // one that comes back must be watched, or the rail repeats its action for good.
+  const nextUpObserver = useRef<IntersectionObserver | null>(null);
+  const nextUpRef = useCallback((node: HTMLDivElement | null) => {
+    nextUpObserver.current?.disconnect();
+    if (!node) {
+      setNextUpVisible(true);
+      return;
+    }
     const observer = new IntersectionObserver((entries) => setNextUpVisible(entries[entries.length - 1]?.isIntersecting ?? true), {
       // The sticky rail sits over the top of the page, so a card tucked under
       // it is not really visible.
       rootMargin: "-90px 0px 0px 0px",
     });
     observer.observe(node);
-    return () => observer.disconnect();
+    nextUpObserver.current = observer;
   }, []);
 
   // The clock joins the rail only while its own panel is off screen, so the
@@ -151,22 +163,10 @@ export default function ArchBoard() {
   nodesRef.current = nodes;
   const { view, setView, toBoard, zoomStep, resetZoom, fit, consumePan } = useBoardViewport(canvasRef, nodesRef);
 
-  const { data: customScenarios = [], error: scenariosError } = useCustomScenariosQuery();
-  const allScenarios: AugmentedScenario[] = useMemo(() => [
-    ...(SCENARIOS as AugmentedScenario[]),
-    ...customScenarios.map((s) => ({ ...s, category: CUSTOM_CATEGORY, custom: true })),
-  ], [customScenarios]);
-  const scenarioOptions = useMemo(() => [...SCENARIO_CATEGORIES, CUSTOM_CATEGORY]
-    .map((category) => ({
-      label: category,
-      options: allScenarios
-        .filter((s) => s.category === category)
-        .map((s) => ({ value: s.id, label: s.name })),
-    }))
-    .filter((group) => group.options.length > 0), [allScenarios]);
+  const { allScenarios, scenarioOptions, error: scenariosError, isFetching: scenariosFetching } = useScenarioCatalog();
   const scenario: AugmentedScenario = allScenarios.find((s) => s.id === scenarioId) ?? (SCENARIOS[0] as AugmentedScenario);
   const nodeById = Object.fromEntries(nodes.map((n) => [n.id, n]));
-  const snapshot = () => ({ scenarioId, nodes, edges, talkSections, talkRating, talkGrade });
+  const snapshot = () => ({ scenarioId, storyId, nodes, edges, talkSections, talkRating, talkGrade });
   if (!historyRef.current) {
     historyRef.current = createHistory(snapshot());
     savedSnapshotRef.current = snapshot();
@@ -231,7 +231,7 @@ export default function ArchBoard() {
   };
 
   const applySnapshot = (value: any) => {
-    setScenarioId(value.scenarioId); setNodes(value.nodes); setEdges(value.edges);
+    setScenarioId(value.scenarioId); setStoryId(value.storyId ?? null); setNodes(value.nodes); setEdges(value.edges);
     setTalkSections(value.talkSections); setTalkRating(value.talkRating); setTalkGrade(value.talkGrade);
     setResult(null); cancelConnection();
   };
@@ -248,6 +248,7 @@ export default function ArchBoard() {
       return;
     }
     setScenarioId(board.scenarioId);
+    setStoryId(board.storyId ?? null);
     setNodes(board.nodes);
     setEdges(board.edges);
     setTalkSections({ ...emptyTalkTrack(), ...(board.talkTrack?.sections ?? {}) });
@@ -257,7 +258,7 @@ export default function ArchBoard() {
     setResult(null);
     setActiveBoardId(board.id ?? null);
     setActiveBoardTitle(board.title);
-    const loaded = { scenarioId: board.scenarioId, nodes: board.nodes, edges: board.edges,
+    const loaded = { scenarioId: board.scenarioId, storyId: board.storyId ?? null, nodes: board.nodes, edges: board.edges,
       talkSections: { ...emptyTalkTrack(), ...(board.talkTrack?.sections ?? {}) },
       talkRating: board.talkTrack?.rating ?? null, talkGrade: board.talkGrade ?? null };
     historyRef.current = createHistory(loaded);
@@ -270,6 +271,17 @@ export default function ArchBoard() {
     if (!mayDiscard()) return;
     try { loadBoard(await fetchBoard(summary.id), true); } catch (error) { window.alert((error as Error).message); }
   };
+  // A saved board handed over from a story loads once the custom scenarios are in, since
+  // loadBoard refuses a scenario it can't find. Refs keep the effect to that one trigger.
+  const pendingBoardRef = useRef(handoff?.boardId ?? null);
+  const loadHandedBoardRef = useRef<(id: string) => void>(() => {});
+  loadHandedBoardRef.current = (id) => fetchBoard(id).then((board) => loadBoard(board, true), (error) => window.alert((error as Error).message));
+  useEffect(() => {
+    const id = pendingBoardRef.current;
+    if (!id || scenariosFetching) return;
+    pendingBoardRef.current = null;
+    loadHandedBoardRef.current(id);
+  }, [scenariosFetching]);
   const liveCost = nodes.reduce((s, n) => s + meta(n.type).cost, 0);
   const liveMaint = nodes.reduce((s, n) => s + meta(n.type).maint, 0);
   const talkAnswered = scoreTalkTrack({ sections: talkSections, rating: talkRating }).answered.length;
@@ -277,6 +289,7 @@ export default function ArchBoard() {
   const switchScenario = (id: string) => {
     if (!mayDiscard()) return;
     setScenarioId(id);
+    setStoryId(null);
     setView({ scale: 1, x: 0, y: 0 });
     setNodes([]);
     setEdges([]);
@@ -287,7 +300,7 @@ export default function ArchBoard() {
     setResult(null);
     setActiveBoardId(null);
     setActiveBoardTitle(null);
-    const next = { scenarioId: id, nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null };
+    const next = { scenarioId: id, storyId: null, nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null };
     historyRef.current = createHistory(next); savedSnapshotRef.current = next;
   };
 
@@ -441,6 +454,7 @@ export default function ArchBoard() {
       id: activeBoardId ?? undefined,
       title: activeBoardTitle ?? t("board.draftTitle", { scenario: scenario.name }),
       scenarioId: scenario.id,
+      storyId,
       nodes,
       edges,
       talkTrack: { sections: talkSections, rating: talkRating },
@@ -579,6 +593,7 @@ export default function ArchBoard() {
                 </div>
               </div>
             )}
+            <BoardStory scenarioId={scenario.id} storyId={storyId} onChange={(id) => commit({ ...snapshot(), storyId: id })} />
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <button type="button" className={styles.toolbarButton} onClick={() => setCreatorOpen(true)} style={{ display: "flex", alignItems: "center", gap: 5, color: colors.accentBright }}>
                 <BrandIcon name="board" color={colors.accentBright} size={13} />

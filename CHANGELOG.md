@@ -6,6 +6,12 @@ because they have to be applied by hand.
 
 ## 2026-09-23
 
+### Added
+
+- Story Bank (web): a story can link to the Arch Board scenario of the system behind it. The story form picks one of the built-in scenarios or your own, or drafts a new scenario from the story (its title as the name, situation and task as the brief). The story view names the scenario and opens the Arch Board on it. The link is optional, since many behavioral stories have no system behind them, and a story whose custom scenario was deleted says so.
+- Arch Board (web): a saved board can belong to the story it was designed for. A story's New board for this story opens a board already tied to it; the rail offers the stories linked to the scenario (or none) and shows the chosen one's STAR, so the situation you will actually talk about sits next to the design and the talk track. The story is part of the board's saved state, and the saved boards list names it.
+- Story Bank (web): a story lists the boards designed for it, with each one's design score and talk track grade, and opens any of them on the Arch Board.
+
 ### Changed
 
 - Arch Board (web): the scenario brief reads as the brief. It was an untitled card of its own below the scenario picker, dimmed, which made the one paragraph every check, figure and talk track section is judged against look like a caption. It now sits inside the scenario card it belongs to, labelled and marked with an icon, on the deep background behind a soft edge, in full-strength text, with the scenario actions below it rather than above. The left rail carries three cards instead of four.
@@ -20,6 +26,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Arch Board (web): leaving the New scenario form no longer leaves a second copy of the Next Up action under the steps. The card's visibility watcher stayed on the card that was unmounted, so the board thought Next Up had scrolled away for the rest of the visit.
 - Quest (web): the stage-velocity panel is hidden when `VITE_PIPELINE_URL` is unset, instead of showing a red error. The client used to throw "pipeline: not configured" on every load, which surfaced as a failure even though nothing had been asked of the service — an unconfigured optional service now behaves like `VITE_AI_URL` does and simply offers nothing.
 - Quest (web): an empty velocity panel says which kind of empty it is. With no contact yet moved between stages it still says to move one; with transitions recorded but no averages returned it points at the pipeline service, because that is no longer something more data would fix.
 - Arch Board (web): the next action twinkles continuously rather than pulsing twice and falling silent, and it no longer drags a horizontal scrollbar under the right rail. The pulse scaled the button 4%, which made it wider than the rail it scrolls inside; a box-shadow ring costs no layout. The twinkle is the Drill button's halo, a ring in the accent colour that expands out of the edge and fades. The rail scrolls its overflow and this button is usually its last child, so it is inset by the ring's own width on every side; flush with the rail its halo was cut off at the sides and along the bottom. Its colour comes from the button rather than the board wrapper, which the right rail sits outside of: one unresolvable variable had been voiding the whole box-shadow, and the twinkle never ran at all. Rule 34 in SCREEN-GUIDELINES.md now describes the pair, twinkle and sweep, and says it is never a transform.
@@ -38,6 +45,11 @@ because they have to be applied by hand.
 - Arch Board (web): the scale brief reads as one brief again. Five givens wrapped into ragged groups in a narrow rail; they are now aligned rows, and a heading marks where the numbers you are given end and the two you work out begin.
 - Arch Board (web): the grade button spins while grading. It takes a few seconds against a free tier model and a label change alone left it looking inert. The spinner is dropped entirely under reduced motion.
 - Footer (web): the page menu is hidden when signed out. Every page rendered as a disabled button, so the sign-in screen showed a full menu that did nothing.
+
+### Database
+
+- `0017_story_scenario.sql`: applied; adds the optional `stories.scenario_id` behind the story to scenario link.
+- `0018_board_story.sql`: applied; adds the optional `arch_boards.story_id`. Deleting a story keeps its boards and unlinks them.
 
 ## 2026-09-22
 

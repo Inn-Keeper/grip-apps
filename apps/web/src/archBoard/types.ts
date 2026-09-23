@@ -63,6 +63,7 @@ export type SavedBoard = {
   id?: string;
   title: string;
   scenarioId: string;
+  storyId?: string | null;
   nodes: BoardNode[];
   edges: BoardEdge[];
   talkTrack?: TalkTrackData;
@@ -72,7 +73,7 @@ export type SavedBoard = {
   updatedAt?: string;
 };
 
-export type BoardSummary = Pick<SavedBoard, "id" | "title" | "scenarioId" | "shareToken"> & {
+export type BoardSummary = Pick<SavedBoard, "id" | "title" | "scenarioId" | "storyId" | "shareToken"> & {
   id: string;
   createdAt: string;
   updatedAt: string;

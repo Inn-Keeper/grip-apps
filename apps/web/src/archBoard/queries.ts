@@ -42,7 +42,7 @@ export function useSaveBoardMutation(onSaved: (board: SavedBoard) => void) {
       queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.fullBoards });
       queryClient.setQueryData<BoardSummary[]>(archBoardQueryKeys.boards, (current) => {
         if (!current || !board.id) return current;
-        const summary: BoardSummary = { id: board.id, title: board.title, scenarioId: board.scenarioId,
+        const summary: BoardSummary = { id: board.id, title: board.title, scenarioId: board.scenarioId, storyId: board.storyId ?? null,
           shareToken: board.shareToken ?? null, createdAt: board.createdAt ?? new Date().toISOString(), updatedAt: board.updatedAt ?? new Date().toISOString() };
         return [summary, ...current.filter((item) => item.id !== board.id)];
       });

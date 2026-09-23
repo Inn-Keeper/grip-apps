@@ -2,6 +2,7 @@ import { useState } from "react";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
 import { useAuthUserQuery } from "../profile/queries";
+import { useStoriesQuery } from "../storyBank/queries";
 import { useShareBoardMutation } from "./queries";
 import type { AugmentedScenario, BoardSummary } from "./types";
 
@@ -23,6 +24,7 @@ export function SavedBoards({
   onLoad: (board: BoardSummary) => void;
 }) {
   const shareMutation = useShareBoardMutation();
+  const { data: stories = [] } = useStoriesQuery();
   // Demo (anonymous) users can't create public links; the database rejects it too.
   const isDemo = !!useAuthUserQuery().data?.is_anonymous;
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -47,6 +49,7 @@ export function SavedBoards({
       ) : (
         boards.map((board) => {
           const boardScenario = allScenarios.find((item) => item.id === board.scenarioId);
+          const boardStory = board.storyId ? stories.find((item) => item.id === board.storyId) : undefined;
           const active = board.id === activeBoardId;
           return (
             <div
@@ -78,6 +81,11 @@ export function SavedBoards({
               <span style={{ fontSize: font.size.label, color: colors.textFaint }}>
                 {boardScenario?.name ?? board.scenarioId} {t("board.saved.updated", { date: new Date(board.updatedAt).toLocaleDateString() })}
               </span>
+              {boardStory && (
+                <span style={{ fontSize: font.size.label, color: colors.accentBright, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                  {t("board.saved.story", { title: boardStory.title })}
+                </span>
+              )}
               {copyErrorId === board.id && board.shareToken && (
                 <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>
                   {t("board.saved.copyFailed")} <span style={{ userSelect: "all" }}>{shareUrl(board.shareToken)}</span>

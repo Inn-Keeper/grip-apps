@@ -3,8 +3,11 @@ import { COMPETENCIES, COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
+import { ScenarioForm } from "../archBoard/ScenarioForm";
+import { useSaveScenarioMutation } from "../archBoard/queries";
+import { useScenarioCatalog } from "../archBoard/useScenarioCatalog";
 import { Field } from "../components/shared";
-import { fieldStyle as inputStyle } from "../components/fieldStyles";
+import { fieldStyle as inputStyle, miniBtn } from "../components/fieldStyles";
 import { textareaStyle } from "./styles";
 import { EMPTY_FORM } from "./types";
 import type { StoryForm as StoryFormType } from "./types";
@@ -19,6 +22,12 @@ export function StoryForm({
   onCancel: () => void;
 }) {
   const [form, setForm] = useState<StoryFormType>({ ...EMPTY_FORM, ...initial });
+  const [creatingScenario, setCreatingScenario] = useState(false);
+  const { scenarioOptions } = useScenarioCatalog();
+  const saveScenario = useSaveScenarioMutation((saved) => {
+    setForm((f) => ({ ...f, scenarioId: saved.id }));
+    setCreatingScenario(false);
+  });
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
 
@@ -68,6 +77,31 @@ export function StoryForm({
       <Field label={t("stories.fieldResult")}>
         <textarea style={textareaStyle} value={form.result} onChange={set("result")} />
       </Field>
+
+      {/* The system behind the story: a built-in scenario, or a new one drafted from the story. */}
+      <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
+        <Combobox
+          label={t("stories.fieldScenario")}
+          value={form.scenarioId ?? ""}
+          options={[{ label: null, options: [{ value: "", label: t("stories.noScenario") }] }, ...scenarioOptions]}
+          onChange={(scenarioId) => setForm((f) => ({ ...f, scenarioId: scenarioId || null }))}
+          style={{ flex: "1 1 260px" }}
+        />
+        {!creatingScenario && (
+          <button type="button" onClick={() => setCreatingScenario(true)} style={miniBtn(colors.accentBright ?? "")}>
+            {t("stories.newScenarioFromStory")}
+          </button>
+        )}
+      </div>
+      {creatingScenario && (
+        <ScenarioForm
+          initial={{ name: form.title, brief: [form.situation, form.task].filter(Boolean).join("\n\n") }}
+          onSave={(scenario) => saveScenario.mutate(scenario)}
+          onCancel={() => setCreatingScenario(false)}
+          saving={saveScenario.isPending}
+          error={saveScenario.error}
+        />
+      )}
 
       <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
         <button

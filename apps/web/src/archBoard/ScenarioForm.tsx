@@ -12,11 +12,13 @@ type ScenarioFormProps = {
   onCancel: () => void;
   saving: boolean;
   error: Error | null;
+  /** Prefill, e.g. from the story the scenario is created for. */
+  initial?: { name?: string; brief?: string };
 };
 
-export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormProps) {
-  const [name, setName] = useState("");
-  const [brief, setBrief] = useState("");
+export function ScenarioForm({ onSave, onCancel, saving, error, initial }: ScenarioFormProps) {
+  const [name, setName] = useState(initial?.name ?? "");
+  const [brief, setBrief] = useState(initial?.brief ?? "");
   const [budget, setBudget] = useState(12);
   const [requiredNodes, setRequiredNodes] = useState<string[]>([]);
   const [requiredEdges, setRequiredEdges] = useState<{ from: string; to: string }[]>([]);
@@ -61,7 +63,8 @@ export function ScenarioForm({ onSave, onCancel, saving, error }: ScenarioFormPr
         gap: 12,
       }}
     >
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
+      {/* Bottom-aligned: the budget label wraps to two lines, the name label does not. */}
+      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10, alignItems: "end" }}>
         <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <span style={labelStyle}>{t("board.form.name")}</span>
           <input

@@ -6,6 +6,7 @@ export type Story = {
   task: string;
   action: string;
   result: string;
+  scenarioId?: string | null;
 };
 
 export type StoryForm = Omit<Story, "id"> & { id?: string };

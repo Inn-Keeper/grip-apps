@@ -45,6 +45,7 @@ const QUESTION_FETCH_CAP = 500;
  * @property {string} task
  * @property {string} action
  * @property {string} result
+ * @property {string | null} [scenarioId] Arch Board scenario (built-in key or custom uuid)
  */
 
 /**
@@ -66,6 +67,7 @@ const QUESTION_FETCH_CAP = 500;
  * @property {string} [id]
  * @property {string} title
  * @property {string} scenarioId
+ * @property {string | null} [storyId] the story this board was designed for
  * @property {import("./arch.js").BoardNode[]} nodes
  * @property {import("./arch.js").BoardEdge[]} edges
  * @property {{ sections: Record<string, string>, rating: number | null }} [talkTrack]
@@ -80,6 +82,7 @@ const QUESTION_FETCH_CAP = 500;
  * @property {string} id
  * @property {string} title
  * @property {string} scenarioId
+ * @property {string | null} [storyId]
  * @property {string | null} shareToken
  * @property {string} createdAt
  * @property {string} updatedAt
@@ -247,6 +250,7 @@ export function createApi(supabase) {
     task: r.task ?? "",
     action: r.action ?? "",
     result: r.result ?? "",
+    scenarioId: r.scenario_id ?? null,
   });
 
   const storyToDb = (s) => ({
@@ -256,6 +260,8 @@ export function createApi(supabase) {
     task: s.task || null,
     action: s.action || null,
     result: s.result || null,
+    // Only when the caller knows about the link, so clients without it (mobile) don't clear it.
+    ...(s.scenarioId !== undefined && { scenario_id: s.scenarioId || null }),
   });
 
   async function listStories() {
@@ -284,6 +290,7 @@ export function createApi(supabase) {
     id: r.id,
     title: r.title,
     scenarioId: r.scenario_id,
+    storyId: r.story_id ?? null,
     nodes: r.nodes ?? [],
     edges: r.edges ?? [],
     talkTrack: normalizeTalkTrack(r.talk_track),
@@ -302,12 +309,15 @@ export function createApi(supabase) {
     talk_grade: Number.isFinite(b.talkGrade) && b.talkGrade >= 0 && b.talkGrade <= 100
       ? Math.round(b.talkGrade)
       : null,
+    // Only when the caller knows about the link, so clients without it (mobile) don't clear it.
+    ...(b.storyId !== undefined && { story_id: b.storyId || null }),
   });
 
   const boardSummaryToUi = (r) => ({
     id: r.id,
     title: r.title,
     scenarioId: r.scenario_id,
+    storyId: r.story_id ?? null,
     shareToken: r.share_token ?? null,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
@@ -316,7 +326,7 @@ export function createApi(supabase) {
   async function listBoardSummaries() {
     const { data, error } = await supabase
       .from("arch_boards")
-      .select("id,title,scenario_id,share_token,created_at,updated_at")
+      .select("id,title,scenario_id,story_id,share_token,created_at,updated_at")
       .order("updated_at", { ascending: false });
     if (error) fail(error);
     return data.map(boardSummaryToUi);

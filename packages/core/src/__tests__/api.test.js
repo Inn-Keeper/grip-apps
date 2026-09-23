@@ -91,8 +91,8 @@ describe("createApi", () => {
   it("lists board summaries without graph payloads", async () => {
     const { client, calls } = fakeSupabase({ arch_boards: [{ id: "b", title: "Board", scenario_id: "s", share_token: null, created_at: "c", updated_at: "u" }] });
     const summaries = await createApi(client).listBoardSummaries();
-    expect(calls.selects.at(-1).columns).toBe("id,title,scenario_id,share_token,created_at,updated_at");
-    expect(summaries[0]).toEqual({ id: "b", title: "Board", scenarioId: "s", shareToken: null, createdAt: "c", updatedAt: "u" });
+    expect(calls.selects.at(-1).columns).toBe("id,title,scenario_id,story_id,share_token,created_at,updated_at");
+    expect(summaries[0]).toEqual({ id: "b", title: "Board", scenarioId: "s", storyId: null, shareToken: null, createdAt: "c", updatedAt: "u" });
   });
 
   it("gets one full board by id", async () => {
@@ -265,6 +265,7 @@ describe("createApi", () => {
         id: "board-1",
         title: "Payment draft",
         scenarioId: "payment",
+        storyId: null,
         nodes: [{ id: "n1", type: "client", x: 0, y: 0 }],
         edges: [],
         talkTrack: { sections: emptyTalkTrack(), rating: null },
@@ -274,6 +275,18 @@ describe("createApi", () => {
         updatedAt: "2026-01-02",
       },
     ]);
+  });
+
+  it("writes a board's story only when the caller sends one", async () => {
+    const { client, calls } = fakeSupabase();
+    const api = createApi(client);
+
+    await api.upsertBoard({ title: "Mobile save", scenarioId: "s", nodes: [], edges: [] });
+    await api.upsertBoard({ title: "Linked", scenarioId: "s", storyId: "story-1", nodes: [], edges: [] });
+    await api.upsertBoard({ title: "Unlinked", scenarioId: "s", storyId: null, nodes: [], edges: [] });
+
+    expect(calls.inserts.map(({ rows }) => rows.story_id)).toEqual([undefined, "story-1", null]);
+    expect("story_id" in calls.inserts[0].rows).toBe(false);
   });
 
   it("round-trips a talk track through the board mapping", async () => {
