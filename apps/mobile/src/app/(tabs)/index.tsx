@@ -24,6 +24,7 @@ import { NextUpCard } from "@/components/NextUpCard";
 import { ReadinessCard } from "@/components/ReadinessCard";
 import { PrepSettings } from "@/components/PrepSettings";
 import { DrillSession, type Drill } from "@/components/DrillSession";
+import { MockLoop } from "@/components/MockLoop";
 import { AccuracyChart } from "@/components/AccuracyChart";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 import { Screen, ScreenHeader, SegmentedPills, inputStyle } from "@/components/ui";
@@ -64,6 +65,8 @@ export default function PrepScreen() {
   // category is prepended once it loads, which would shift every index underneath it.
   const [activeCategoryName, setActiveCategoryName] = useState<string>(categories[0].name);
   const [drill, setDrill] = useState<Drill | null>(null);
+  // The running drill is round 1 of a mock loop.
+  const [mockActive, setMockActive] = useState(false);
   // Global difficulty — drives both the quiz cards and the drill.
   const [level, setLevel] = useState("mid");
   const [openQuizCount, setOpenQuizCount] = useState(0);
@@ -167,7 +170,7 @@ export default function PrepScreen() {
   // Fetches questions for the given techs and opens the drill UI.
   // `fallbackToAll` widens an empty pool to every tech — wanted for the generic
   // weakest-drill, wrong for targeted drills (review queue, prep plan).
-  const runDrill = async (difficulty: string, techs: string[], { fallbackToAll = false } = {}) => {
+  const runDrill = async (difficulty: string, techs: string[], { fallbackToAll = false } = {}): Promise<boolean> => {
     lastDrillRef.current = { difficulty, techs, fallbackToAll };
     setDrillLoading(true);
     setDrillError(null);
@@ -176,7 +179,7 @@ export default function PrepScreen() {
       if (questions.length === 0 && fallbackToAll) questions = await fetchTierQuestions(difficulty, allTechs);
       if (questions.length === 0) {
         setDrillError(`No ${difficultyByKey(difficulty)?.label ?? difficulty} questions yet. More land soon.`);
-        return;
+        return false;
       }
       setDrill({
         questions: buildDrillFromQuestions(questions, { colorByTech, fallbackColor: colors.accent, size: DRILL_SIZE }),
@@ -189,19 +192,26 @@ export default function PrepScreen() {
         bonusXp: 0,
         difficulty,
       });
+      return true;
     } catch {
       setDrillError("Couldn't load questions. Check your connection and retry.");
+      return false;
     } finally {
       setDrillLoading(false);
     }
   };
 
-  const startDrill = (difficulty: string) =>
-    runDrill(
-      difficulty,
-      selectDrillTechs(displayCategories, scores.answers, { techCount: 5, boost: struggleBoost }),
-      { fallbackToAll: true }
-    );
+  const weakestTechs = () => selectDrillTechs(displayCategories, scores.answers, { techCount: 5, boost: struggleBoost });
+  const startDrill = (difficulty: string) => runDrill(difficulty, weakestTechs(), { fallbackToAll: true });
+
+  // Round 1 of the mock loop is a weakest drill, as on web.
+  const startMockLoop = async () => {
+    if (await runDrill(level, weakestTechs(), { fallbackToAll: true })) setMockActive(true);
+  };
+  const exitSession = () => {
+    setDrill(null);
+    setMockActive(false);
+  };
 
   const startReviewDrill = () => runDrill(level, reviewDueTechs);
 
@@ -341,6 +351,7 @@ export default function PrepScreen() {
                 attempts={attempts}
                 busy={drillLoading}
                 onStart={startNextUp}
+                onMock={startMockLoop}
                 onDismissPlan={() => setPrepPlan(null)}
               />
             )}
@@ -387,12 +398,15 @@ export default function PrepScreen() {
               <Text style={{ fontSize: 11, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
             )}
 
-            {drill && (
+            {drill && mockActive && (
+              <MockLoop drill={drill} onAnswer={answerDrill} onNextQuestion={nextDrill} onExit={exitSession} />
+            )}
+            {drill && !mockActive && (
               <DrillSession
                 drill={drill}
                 onAnswer={answerDrill}
                 onNext={nextDrill}
-                onExit={() => setDrill(null)}
+                onExit={exitSession}
                 autoNext={autoNext}
                 onRestart={() => {
                   const last = lastDrillRef.current;

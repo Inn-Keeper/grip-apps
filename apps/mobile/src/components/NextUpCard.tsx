@@ -11,6 +11,7 @@ type Props = {
   attempts: number;
   busy: boolean;
   onStart: (kind: NextUpKind) => void;
+  onMock: () => void;
   onDismissPlan: () => void;
 };
 
@@ -22,7 +23,7 @@ const ALT_LABEL: Record<NextUpKind, Parameters<typeof t>[0]> = {
 };
 
 // The one suggested action at the top of Prep; the other available actions stay one tap away.
-export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onDismissPlan }: Props) {
+export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onMock, onDismissPlan }: Props) {
   const { primary, alternatives } = pickNextUp({ reviewDueCount, hasPlan: !!plan, attempts });
 
   const copy = {
@@ -59,22 +60,26 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onDi
         <Text style={{ fontSize: 14, fontWeight: "800", color: colors.onAccent }}>{busy ? t("common.loading") : copy.action}</Text>
       </TouchableOpacity>
 
-      {(alternatives.length > 0 || primary === "plan") && (
-        <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 12, marginTop: 4 }}>
-          {alternatives.map((kind) => (
-            <TouchableOpacity key={kind} onPress={() => onStart(kind)} disabled={busy} accessibilityRole="button">
-              <Text style={{ fontSize: 12, color: colors.textFaint }}>
-                {t("nextUp.or")} <Text style={{ color: colors.accentBright, fontWeight: "600" }}>{t(ALT_LABEL[kind])}</Text>
-              </Text>
-            </TouchableOpacity>
-          ))}
-          {primary === "plan" && (
-            <TouchableOpacity onPress={onDismissPlan} accessibilityRole="button">
-              <Text style={{ fontSize: 12, color: colors.textFaint, textDecorationLine: "underline" }}>{t("prep.planDismiss")}</Text>
-            </TouchableOpacity>
-          )}
-        </View>
-      )}
+      {/* The mock loop is always on offer, as on web. */}
+      <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 12, marginTop: 4 }}>
+        {alternatives.map((kind) => (
+          <TouchableOpacity key={kind} onPress={() => onStart(kind)} disabled={busy} accessibilityRole="button">
+            <Text style={{ fontSize: 12, color: colors.textFaint }}>
+              {t("nextUp.or")} <Text style={{ color: colors.accentBright, fontWeight: "600" }}>{t(ALT_LABEL[kind])}</Text>
+            </Text>
+          </TouchableOpacity>
+        ))}
+        <TouchableOpacity onPress={onMock} disabled={busy} accessibilityRole="button">
+          <Text style={{ fontSize: 12, color: colors.textFaint }}>
+            {t("nextUp.or")} <Text style={{ color: colors.accentBright, fontWeight: "600" }}>{t("nextUp.altMock")}</Text>
+          </Text>
+        </TouchableOpacity>
+        {primary === "plan" && (
+          <TouchableOpacity onPress={onDismissPlan} accessibilityRole="button">
+            <Text style={{ fontSize: 12, color: colors.textFaint, textDecorationLine: "underline" }}>{t("prep.planDismiss")}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   );
 }
