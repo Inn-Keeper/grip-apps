@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
 import { Pressable, Text, TouchableOpacity, View } from "react-native";
-import Animated, {
-  FadeIn,
-  interpolate,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from "react-native-reanimated";
+import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier, speedBonusXp } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
@@ -41,16 +35,15 @@ type Props = {
   onPerfect?: () => void;
 };
 
-const SPRING = { damping: 16, stiffness: 140 };
 const PRESS_SPRING = { damping: 18, stiffness: 320 };
 // Long enough to read the run summary, short enough not to feel like waiting.
 const RESULT_MS = 1700;
 
-// 3D card flip on the UI thread: front face 0→180°, back face -180→0.
-export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizActiveChange, onPerfect }: Props) {
-  const rotation = useSharedValue(0);
+// A study card, as on web: what the tech is, its interview notes and its quiz on one face.
+// Tapping the card starts the quiz in place; the run summary shows, then the card returns.
+export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizActiveChange, onPerfect }: Props) {
   const press = useSharedValue(1);
-  const [phase, setPhase] = useState<"front" | "back" | "quiz" | "result">("front");
+  const [phase, setPhase] = useState<"card" | "quiz" | "result">("card");
   const [result, setResult] = useState<{ correct: number; total: number; xp: number } | null>(null);
   const [quizLoading, setQuizLoading] = useState(false);
   // shownAt, lastBonus and bonusXp drive the Thunderstorm speed bonus, as in drills.
@@ -63,24 +56,10 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
     return () => onQuizActiveChange?.(false);
   }, [phase, onQuizActiveChange]);
 
-  const frontStyle = useAnimatedStyle(() => ({
-    transform: [{ perspective: 1200 }, { rotateY: `${rotation.value}deg` }, { scale: press.value }],
-    backfaceVisibility: "hidden" as const,
-  }));
-  const backStyle = useAnimatedStyle(() => ({
-    transform: [{ perspective: 1200 }, { rotateY: `${rotation.value - 180}deg` }],
-    backfaceVisibility: "hidden" as const,
-    opacity: interpolate(rotation.value, [89, 91], [0, 1]),
-  }));
+  const pressStyle = useAnimatedStyle(() => ({ transform: [{ scale: press.value }] }));
 
-  const flipToBack = () => {
-    rotation.value = withSpring(180, SPRING);
-    setPhase("back");
-  };
-
-  const flipToFront = () => {
-    rotation.value = withSpring(0, SPRING);
-    setPhase("front");
+  const backToCard = () => {
+    setPhase("card");
     setQuiz(null);
   };
 
@@ -123,7 +102,7 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
       setQuiz(null);
       setTimeout(() => {
         setResult(null);
-        flipToFront();
+        backToCard();
       }, RESULT_MS);
     } else {
       setQuiz({ ...quiz, index: nextIndex, answered: null, shownAt: Date.now(), lastBonus: 0 });
@@ -172,8 +151,24 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           borderColor: colors.borderSoft, boxShadow: shadow.card,
           borderRadius: 14,
           padding: 16,
+          gap: 10,
         }}
       >
+        {/* Same header as a drill: what kind of run this is, and a way out before the end. */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+          {tier ? (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}60` }}>
+              <DifficultyIcon tier={tier} size={11} />
+              <Text style={{ fontSize: 9.5, fontWeight: "700", color: tier.color, letterSpacing: 0.3 }}>{tier.label.toUpperCase()}</Text>
+            </View>
+          ) : <View />}
+          <TouchableOpacity onPress={backToCard} accessibilityRole="button" hitSlop={10}>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+              <Text style={{ fontSize: 11, color: colors.textFaint }}>{t("prep.exit")}</Text>
+              <BrandIcon name="close" color={colors.textFaint} size={11} />
+            </View>
+          </TouchableOpacity>
+        </View>
         <QuizView
           tech={item.tech}
           color={item.color}
@@ -192,111 +187,58 @@ export function FlipCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
   }
 
   return (
-    <View style={{ minHeight: 185 }}>
-      {/* Front */}
-      <Animated.View style={[{ borderRadius: 14 }, frontStyle, phase !== "front" && { position: "absolute", inset: 0 }]}>
-        <Pressable
-          onPress={flipToBack}
-          onPressIn={() => (press.value = withSpring(0.98, PRESS_SPRING))}
-          onPressOut={() => (press.value = withSpring(1, PRESS_SPRING))}
-          style={{
-            backgroundColor: colors.surface,
-            borderWidth: 1,
-            borderColor: colors.borderSoft, boxShadow: shadow.card,
-            borderRadius: 14,
-            padding: 18,
-            minHeight: 185,
-            justifyContent: "space-between",
-          }}
-        >
-          <View>
-            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
-              <View
-                style={{
-                  paddingHorizontal: 10,
-                  paddingVertical: 3,
-                  backgroundColor: `${item.color}20`,
-                  borderRadius: 20,
-                }}
-              >
-                <Text style={{ color: item.color, fontSize: 11, fontWeight: "700", letterSpacing: 0.4 }}>
-                  {item.tech}
-                </Text>
-              </View>
-              {tier && (
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}55` }}>
-                  <DifficultyIcon tier={tier} size={11} />
-                  <Text style={{ fontSize: 9.5, fontWeight: "800", color: tier.color }}>{tier.label}</Text>
-                </View>
-              )}
-            </View>
-            <Text style={{ fontSize: 14, lineHeight: 21, color: colors.text }}>{item.oneliner}</Text>
+    <Animated.View style={[{ borderRadius: 14 }, pressStyle]}>
+      <Pressable
+        onPress={startQuiz}
+        disabled={quizLoading}
+        onPressIn={() => (press.value = withSpring(0.98, PRESS_SPRING))}
+        onPressOut={() => (press.value = withSpring(1, PRESS_SPRING))}
+        accessibilityRole="button"
+        accessibilityLabel={`${item.tech}. ${t("prep.takeQuiz")}`}
+        accessibilityState={{ busy: quizLoading }}
+        style={{
+          backgroundColor: colors.surface,
+          borderWidth: 1,
+          borderColor: colors.borderSoft, boxShadow: shadow.card,
+          borderRadius: 14,
+          padding: 18,
+        }}
+      >
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
+          <View style={{ paddingHorizontal: 10, paddingVertical: 3, backgroundColor: `${item.color}20`, borderRadius: 20 }}>
+            <Text style={{ color: item.color, fontSize: 11, fontWeight: "700", letterSpacing: 0.4 }}>{item.tech}</Text>
           </View>
-          {accuracy !== null && (
-            // A bar reads at a glance; the number stays for the exact value.
-            <View style={{ height: 3, backgroundColor: colors.well, borderRadius: 2, overflow: "hidden", marginTop: 12 }}>
-              <View style={{ width: `${accuracy}%`, height: "100%", backgroundColor: accuracy >= 70 ? colors.success : colors.warning }} />
+          {tier && (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}55` }}>
+              <DifficultyIcon tier={tier} size={11} />
+              <Text style={{ fontSize: 9.5, fontWeight: "800", color: tier.color }}>{tier.label}</Text>
             </View>
           )}
-          <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 8 }}>
-            <Text style={{ fontSize: 11, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
-              {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
+        </View>
+        <Text style={{ fontSize: 14, lineHeight: 21, color: colors.text }}>{item.oneliner}</Text>
+        {/* Quiet reference text: smaller and dimmer than the one-liner, as on web. */}
+        <View style={{ gap: 4, marginTop: 10 }}>
+          {item.prep.map((point) => (
+            <Text key={point} style={{ fontSize: 12, lineHeight: 17, color: `${colors.textDim}CC` }}>
+              {"•"} {point}
             </Text>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-              <Text style={{ fontSize: 11, fontWeight: "600", color: item.color }}>{t("prep.prepNotes")}</Text>
-              <BrandIcon name="arrowRight" color={item.color} size={11} />
-            </View>
+          ))}
+        </View>
+        {accuracy !== null && (
+          // A bar reads at a glance; the number stays for the exact value.
+          <View style={{ height: 3, backgroundColor: colors.well, borderRadius: 2, overflow: "hidden", marginTop: 12 }}>
+            <View style={{ width: `${accuracy}%`, height: "100%", backgroundColor: accuracy >= 70 ? colors.success : colors.warning }} />
           </View>
-        </Pressable>
-      </Animated.View>
-
-      {/* Back */}
-      {phase === "back" && (
-        <Animated.View style={[{ borderRadius: 14 }, backStyle]}>
-          <View
-            style={{
-              backgroundColor: colors.surface,
-              borderWidth: 1,
-              borderColor: colors.borderSoft, boxShadow: shadow.card,
-              borderRadius: 14,
-              padding: 16,
-              minHeight: 185,
-              gap: 10,
-            }}
-          >
-            <Text style={{ fontSize: 11, fontWeight: "700", color: item.color, letterSpacing: 0.6 }}>
-              INTERVIEW PREP
-            </Text>
-            <View style={{ gap: 6 }}>
-              {item.prep.map((point) => (
-                <Text key={point} style={{ fontSize: 12.5, lineHeight: 18, color: colors.textDim }}>
-                  {"•"} {point}
-                </Text>
-              ))}
-            </View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: "auto" }}>
-              <TouchableOpacity onPress={flipToFront} style={{ padding: 8 }}>
-                <Text style={{ fontSize: 12, color: colors.textFaint }}>← flip back</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={startQuiz}
-                disabled={quizLoading}
-                style={{
-                  paddingHorizontal: 14,
-                  paddingVertical: 8,
-                  backgroundColor: `${item.color}25`,
-                  borderWidth: 1,
-                  borderColor: `${item.color}60`,
-                  borderRadius: 8,
-                  opacity: quizLoading ? 0.6 : 1,
-                }}
-              >
-                <Text style={{ fontSize: 12, fontWeight: "600", color: item.color }}>{quizLoading ? "Loading…" : "Take quiz →"}</Text>
-              </TouchableOpacity>
-            </View>
+        )}
+        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: 10 }}>
+          <Text style={{ fontSize: 11, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
+            {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
+          </Text>
+          <View style={{ paddingHorizontal: 14, paddingVertical: 7, backgroundColor: `${item.color}25`, borderWidth: 1, borderColor: `${item.color}60`, borderRadius: 8, opacity: quizLoading ? 0.6 : 1 }}>
+            <Text style={{ fontSize: 12, fontWeight: "700", color: item.color }}>{quizLoading ? t("common.loading") : t("prep.takeQuiz")}</Text>
           </View>
-        </Animated.View>
-      )}
-    </View>
+        </View>
+      </Pressable>
+    </Animated.View>
   );
 }

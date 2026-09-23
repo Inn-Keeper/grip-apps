@@ -126,7 +126,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart }: Pro
           )}
         </View>
         <TouchableOpacity onPress={onExit}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}><Text style={{ fontSize: 11, color: colors.textFaint }}>Exit</Text><BrandIcon name="close" color={colors.textFaint} size={11} /></View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}><Text style={{ fontSize: 11, color: colors.textFaint }}>{t("prep.exit")}</Text><BrandIcon name="close" color={colors.textFaint} size={11} /></View>
         </TouchableOpacity>
       </View>
       <QuizView

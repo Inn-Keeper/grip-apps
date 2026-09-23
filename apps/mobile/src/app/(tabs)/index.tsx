@@ -17,7 +17,7 @@ import { getQuizSize, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
 import { colors, layout } from "@/theme";
-import { FlipCard } from "@/components/FlipCard";
+import { PrepCard } from "@/components/PrepCard";
 import { StatsBar } from "@/components/StatsBar";
 import { NextUpCard } from "@/components/NextUpCard";
 import { PrepSettings } from "@/components/PrepSettings";
@@ -209,7 +209,7 @@ export default function PrepScreen() {
     }
   };
 
-  // FlipCards report when their quiz opens/closes so we know whether to confirm.
+  // PrepCards report when their quiz opens/closes so we know whether to confirm.
   const setQuizActive = useCallback((active: boolean) => {
     setOpenQuizCount((c) => Math.max(0, c + (active ? 1 : -1)));
   }, []);
@@ -337,7 +337,7 @@ export default function PrepScreen() {
         ListFooterComponent={drill ? null : <AccuracyChart points={accuracy} />}
         renderItem={({ item, index }) => (
           <Animated.View entering={FadeInDown.delay(Math.min(index * 60, 360)).springify().damping(18)}>
-            <FlipCard
+            <PrepCard
               item={item}
               level={level}
               stat={scores.answers[item.tech]}
