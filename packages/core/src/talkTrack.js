@@ -32,7 +32,7 @@ export const TALK_TRACK_SECTIONS = [
   {
     id: "scale",
     label: "Back-of-envelope",
-    hint: "DAU, peak QPS, payload size, storage per year. Show the arithmetic — order of magnitude is what's being graded, not precision.",
+    hint: "DAU, peak QPS, payload size, storage per year. Show the arithmetic. Order of magnitude is what's being graded, not precision.",
   },
   {
     id: "api",

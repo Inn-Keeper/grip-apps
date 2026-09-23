@@ -19,7 +19,7 @@ export const MAX_PUSHBACK = 5;
  */
 export const NODE_PROBES = {
   client: [
-    "What happens on a flaky mobile network — where do you retry, and how do you avoid duplicate writes?",
+    "What happens on a flaky mobile network? Where do you retry, and how do you avoid duplicate writes?",
     "How much of this works offline, and what reconciles when the client comes back?",
   ],
   cdn: [
@@ -32,18 +32,18 @@ export const NODE_PROBES = {
   ],
   gateway: [
     "Where does rate limiting live, and what does a client see when it trips?",
-    "The gateway is now a single point of failure — what's your answer when it's down?",
+    "The gateway is now a single point of failure. What's your answer when it's down?",
   ],
   auth: [
     "Token or session, and how do you revoke access before it expires naturally?",
-    "Every request now depends on auth being up — how do you keep it off the critical path?",
+    "Every request now depends on auth being up. How do you keep it off the critical path?",
   ],
   service: [
     "This is stateless, so what happens to an in-flight request when you deploy mid-flight?",
     "What's your timeout to downstream, and what do you return when it's exceeded?",
   ],
   worker: [
-    "The worker crashes halfway through a job — does that job run twice, or not at all?",
+    "The worker crashes halfway through a job. Does that job run twice, or not at all?",
     "How do you keep one slow tenant's backlog from starving everyone else's?",
   ],
   queue: [
@@ -63,11 +63,11 @@ export const NODE_PROBES = {
     "What's your consistency model, and where does eventual consistency become visible to a user?",
   ],
   psp: [
-    "The provider times out after taking the money — how does the user's next retry not double-charge them?",
+    "The provider times out after taking the money. How does the user's next retry not double-charge them?",
     "What's your answer when this third party is down for an hour?",
   ],
   blob: [
-    "How does a client actually get the bytes — through your service, or a pre-signed URL straight to storage?",
+    "How does a client actually get the bytes: through your service, or a pre-signed URL straight to storage?",
     "What's your lifecycle policy, and when does old data stop being instantly retrievable?",
   ],
   search: [
@@ -75,7 +75,7 @@ export const NODE_PROBES = {
     "How far behind can the index be before a user notices they can't find what they just created?",
   ],
   stream: [
-    "Why a log rather than a queue here — who needs to replay, and how far back?",
+    "Why a log rather than a queue here? Who needs to replay, and how far back?",
     "What's your partition key, and what happens to ordering when one partition gets hot?",
   ],
   monitor: [

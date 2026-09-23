@@ -225,13 +225,13 @@ export function evaluate(scenario, nodes, edges) {
   if (cost > scenario.budget)
     warnings.push(`Over budget: cost ${cost} against a budget of ${scenario.budget}. Every box is a monthly bill.`);
   if (nodes.length > 12)
-    warnings.push("A lot of moving parts — each one is deploy, patch, and on-call surface for the team.");
+    warnings.push("A lot of moving parts: each one is deploy, patch, and on-call surface for the team.");
   if (hasEdge(["client"], ["sql", "nosql"]))
-    warnings.push("The client talks directly to a database — no validation layer, no auth boundary.");
+    warnings.push("The client talks directly to a database: no validation layer, no auth boundary.");
   if (hasNode(["cache"]) && !hasEdge(["service", "worker", "gateway"], ["cache"]))
     warnings.push("A cache that nothing reads is pure cost.");
   if (hasNode(["queue"]) && !hasEdge(["queue"], ["worker", "service"], true))
-    warnings.push("A queue with no consumer — messages go in and rot.");
+    warnings.push("A queue with no consumer: messages go in and rot.");
   // Rows this size make backups, replication, and every full scan miserable.
   if (
     scenario.scale?.payloadKb >= LARGE_PAYLOAD_KB &&
@@ -248,12 +248,12 @@ export function evaluate(scenario, nodes, edges) {
     )
   )
     warnings.push(
-      "A connection into the buffer is marked synchronous — if the caller waits for it, that queue is just a slow function call."
+      "A connection into the buffer is marked synchronous. If the caller waits for it, that queue is just a slow function call."
     );
 
   if (edges.length >= SEMANTICS_EDGE_FLOOR && !edges.some((e) => e.mode))
     warnings.push(
-      "No connection says whether it's synchronous or asynchronous. That choice decides which failures cascade — say it on every hop that matters."
+      "No connection says whether it's synchronous or asynchronous. That choice decides which failures cascade. Say it on every hop that matters."
     );
 
   // Sharding and replication only matter once the numbers say they do, so both

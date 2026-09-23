@@ -22,7 +22,7 @@ export const colors = {
   textFaint: "#6B7690", // captions, placeholders
 
   // Brand
-  accent: "#14B8A6", // focus teal — fills, lines, active states
+  accent: "#14B8A6", // focus teal: fills, lines, active states
   accentBright: "#2DD4BF", // glow, active accents, links
   accentDeep: "#0F766E", // deep end of teal gradients (progress fills)
   onAccent: "#0F141C", // text/icons on accent or category fills

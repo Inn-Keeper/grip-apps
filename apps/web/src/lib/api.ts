@@ -10,7 +10,7 @@ const aiUrl = import.meta.env.VITE_AI_URL ?? "";
 const getToken = async () => {
   const { data } = await supabase.auth.getSession();
   const token = data.session?.access_token;
-  if (!token) console.warn("⚠️ No Supabase session — sign in to use pipeline analytics");
+  if (!token) console.warn("⚠️ No Supabase session. Sign in to use pipeline analytics");
   return token ?? null;
 };
 

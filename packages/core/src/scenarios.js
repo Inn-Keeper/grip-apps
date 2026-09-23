@@ -51,7 +51,7 @@ const COMMERCE = [
     warnings: [
       {
         when: ({ hasNode }) => !hasNode(["cdn"]),
-        text: "Every image and JS bundle ships from origin — a CDN is the cheapest win available here.",
+        text: "Every image and JS bundle ships from origin. A CDN is the cheapest win available here.",
       },
     ],
   },
@@ -77,7 +77,7 @@ const COMMERCE = [
     warnings: [
       {
         when: ({ hasNode, hasEdge }) => hasNode(["service"]) && hasEdge(["service"], ["sql", "nosql"]) && !hasNode(["queue"]),
-        text: "Synchronous writes straight to the database — at 100× load this is where it falls over. Buffer through a queue.",
+        text: "Synchronous writes straight to the database. At 100× load this is where it falls over. Buffer through a queue.",
       },
     ],
   },
@@ -203,7 +203,7 @@ const COMMERCE = [
     category: "Commerce",
     name: "You-may-also-like widget",
     brief:
-      "Personalized recommendations on every product page. Computing them online is too slow — serve precomputed lists fast.",
+      "Personalized recommendations on every product page. Computing them online is too slow. Serve precomputed lists fast.",
     budget: 12,
     checks: [
       node(["client"], "Every product page requests recommendations", 5),
@@ -248,10 +248,10 @@ const FINTECH = [
     budget: 16,
     checks: [
       node(["client"], "A client initiates checkout", 5),
-      edge(["client"], ["gateway", "lb"], "Traffic enters through a gateway or load balancer — clients never hit services directly", 10),
+      edge(["client"], ["gateway", "lb"], "Traffic enters through a gateway or load balancer. Clients never hit services directly", 10),
       node(["auth"], "Authentication sits in front of money movement", 10),
       edge(["gateway", "lb", "auth"], ["service"], "Requests are routed to a payment service", 10),
-      edge(["service"], ["psp"], "The service calls the payment provider — your servers own that integration", 15),
+      edge(["service"], ["psp"], "The service calls the payment provider. Your servers own that integration", 15),
       edge(["psp"], ["service", "worker", "queue"], "A webhook path back from the provider for async confirmations and disputes", 15),
       node(["queue"], "A queue decouples confirmation and reconciliation work", 10),
       biEdge(["queue"], ["worker"], "Workers consume from the queue", 10),
@@ -261,11 +261,11 @@ const FINTECH = [
     warnings: [
       {
         when: ({ hasEdge }) => hasEdge(["client"], ["psp"]),
-        text: "The client integrates the payment provider directly — API secrets belong on the server, and you lose the ability to record the attempt.",
+        text: "The client integrates the payment provider directly. API secrets belong on the server, and you lose the ability to record the attempt.",
       },
       {
         when: ({ hasNode }) => !hasNode(["sql", "nosql"]),
-        text: "Nowhere durable to store payment state — reconciliation against the provider becomes impossible.",
+        text: "Nowhere durable to store payment state. Reconciliation against the provider becomes impossible.",
       },
     ],
   },
@@ -290,7 +290,7 @@ const FINTECH = [
     warnings: [
       {
         when: ({ hasEdge }) => hasEdge(["service", "worker"], ["nosql"]),
-        text: "A ledger on eventually-consistent storage — balance invariants need real transactions.",
+        text: "A ledger on eventually-consistent storage. Balance invariants need real transactions.",
       },
     ],
   },
@@ -358,7 +358,7 @@ const FINTECH = [
     category: "Fintech",
     name: "FX rate service",
     brief:
-      "Every pricing call needs a fresh exchange rate. The upstream feed allows one request per second — your traffic is thousands.",
+      "Every pricing call needs a fresh exchange rate. The upstream feed allows one request per second. Your traffic is thousands.",
     budget: 10,
     checks: [
       node(["client"], "Pricing calls ask for rates", 5),
@@ -435,7 +435,7 @@ const FINTECH = [
     category: "Fintech",
     name: "Spending insights",
     brief:
-      "Monthly spending breakdowns computed from millions of transactions — offline aggregation, instant reads.",
+      "Monthly spending breakdowns computed from millions of transactions: offline aggregation, instant reads.",
     budget: 13,
     checks: [
       node(["client"], "Users open their insights tab", 5),
@@ -458,7 +458,7 @@ const SOCIAL = [
     category: "Social",
     name: "Social feed fan-out",
     brief:
-      "A post from someone with 2M followers must land in followers' feeds within seconds — without 2M synchronous writes at post time.",
+      "A post from someone with 2M followers must land in followers' feeds within seconds, without 2M synchronous writes at post time.",
     budget: 15,
     checks: [
       node(["client"], "Clients post and scroll", 5),
@@ -475,7 +475,7 @@ const SOCIAL = [
     warnings: [
       {
         when: ({ hasNode }) => !hasNode(["queue"]),
-        text: "Fan-out happens synchronously at post time — a celebrity post becomes a 2M-write transaction.",
+        text: "Fan-out happens synchronously at post time. A celebrity post becomes a 2M-write transaction.",
       },
     ],
   },
@@ -503,7 +503,7 @@ const SOCIAL = [
     category: "Social",
     name: "Notification delivery",
     brief:
-      "Likes, follows, and mentions become pushes and badge counts. Bursty and fire-and-forget — but users notice missing ones.",
+      "Likes, follows, and mentions become pushes and badge counts. Bursty and fire-and-forget, but users notice missing ones.",
     budget: 13,
     checks: [
       node(["client"], "Clients receive notifications", 5),
@@ -619,7 +619,7 @@ const SOCIAL = [
     category: "Social",
     name: "Photo tagging pipeline",
     brief:
-      "Uploaded photos get faces and objects tagged by ML within a minute — entirely off the upload path.",
+      "Uploaded photos get faces and objects tagged by ML within a minute, entirely off the upload path.",
     budget: 14,
     checks: [
       node(["client"], "Users upload photos", 5),
@@ -679,7 +679,7 @@ const REALTIME = [
     warnings: [
       {
         when: ({ hasNode }) => !hasNode(["queue"]),
-        text: "No queue between send and delivery — reconnect storms and group bursts will drop or reorder messages.",
+        text: "No queue between send and delivery. Reconnect storms and group bursts will drop or reorder messages.",
       },
     ],
   },
@@ -688,13 +688,13 @@ const REALTIME = [
     category: "Realtime",
     name: "Presence service",
     brief:
-      "Online/offline dots for millions of users via heartbeats. State is ephemeral — losing it costs seconds of accuracy, not data.",
+      "Online/offline dots for millions of users via heartbeats. State is ephemeral. Losing it costs seconds of accuracy, not data.",
     budget: 10,
     checks: [
       node(["client"], "Clients send heartbeats", 5),
       edge(["client"], ["gateway", "lb"], "Heartbeats terminate at the edge", 15),
       edge(["gateway", "lb"], ["service"], "A presence service ingests beats", 10),
-      node(["cache"], "Presence lives in memory with TTLs — nowhere else", 25),
+      node(["cache"], "Presence lives in memory with TTLs, nowhere else", 25),
       edge(["service"], ["cache"], "Reads and writes go to the cache", 15),
       node(["worker"], "A sweeper expires stale entries", 10),
       edge(["worker"], ["cache"], "The sweeper works against the cache", 10),
@@ -703,7 +703,7 @@ const REALTIME = [
     warnings: [
       {
         when: ({ hasEdge }) => hasEdge(["service", "worker"], ["sql", "nosql"]),
-        text: "Persisting every heartbeat — presence is ephemeral by design; the database adds cost and latency for nothing.",
+        text: "Persisting every heartbeat: presence is ephemeral by design; the database adds cost and latency for nothing.",
       },
     ],
   },
@@ -732,7 +732,7 @@ const REALTIME = [
     category: "Realtime",
     name: "Live sports scores",
     brief:
-      "One score update fans out to millions of viewers within a second. Every read is identical — cache everything.",
+      "One score update fans out to millions of viewers within a second. Every read is identical. Cache everything.",
     budget: 11,
     checks: [
       node(["client"], "Millions of clients poll or subscribe", 5),
@@ -827,7 +827,7 @@ const REALTIME = [
     warnings: [
       {
         when: ({ hasEdge }) => hasEdge(["service"], ["sql", "nosql"]),
-        text: "The database sits on the hot read path — last-price reads belong in memory.",
+        text: "The database sits on the hot read path. Last-price reads belong in memory.",
       },
     ],
   },
@@ -895,7 +895,7 @@ const CONTENT = [
     warnings: [
       {
         when: ({ hasNode }) => !hasNode(["cdn"]),
-        text: "Serving video straight from origin — bandwidth costs and latency will bury you without a CDN.",
+        text: "Serving video straight from origin: bandwidth costs and latency will bury you without a CDN.",
       },
     ],
   },
@@ -960,7 +960,7 @@ const CONTENT = [
     category: "Content & Media",
     name: "Live stream ingest",
     brief:
-      "Streamers push live video; viewers watch with a few seconds' delay. Segment, store, distribute — continuously.",
+      "Streamers push live video; viewers watch with a few seconds' delay. Segment, store, distribute, continuously.",
     budget: 14,
     checks: [
       node(["client"], "Streamers push, viewers watch", 5),
@@ -1137,7 +1137,7 @@ const DATA = [
     category: "Data & Analytics",
     name: "Log aggregation",
     brief:
-      "Every service ships structured logs; engineers search them seconds later. Ingest spikes exactly when something breaks — when you need it most.",
+      "Every service ships structured logs; engineers search them seconds later. Ingest spikes exactly when something breaks, when you need it most.",
     budget: 13,
     checks: [
       node(["client"], "Services ship logs", 5),
@@ -1148,7 +1148,7 @@ const DATA = [
       biEdge(["queue", "stream"], ["worker"], "Indexer workers consume the stream", 10),
       edge(["worker"], ["nosql", "sql"], "Logs land in a search index", 15),
       edge(["service"], ["nosql", "sql"], "The search API queries the index", 10),
-      node(["monitor"], "Ingest lag alerts — meta but critical", 15),
+      node(["monitor"], "Ingest lag alerts, meta but critical", 15),
     ],
   },
   {
@@ -1259,7 +1259,7 @@ const DATA = [
     checks: [
       node(["client"], "Users request and download exports", 5),
       edge(["client"], ["gateway", "lb"], "Requests enter through a managed edge", 10),
-      node(["auth"], "Exports are authenticated — it's all their data", 10),
+      node(["auth"], "Exports are authenticated: it's all their data", 10),
       edge(["gateway", "lb", "auth"], ["service"], "An export service owns requests", 10),
       edge(["service"], ["queue"], "Export jobs are enqueued", 15),
       node(["queue"], "The queue isolates batch work", 10),
@@ -1292,7 +1292,7 @@ const INFRA = [
     warnings: [
       {
         when: ({ hasNode }) => !hasNode(["cache"]),
-        text: "Every redirect hits the database — at billions of reads this is the whole problem.",
+        text: "Every redirect hits the database. At billions of reads this is the whole problem.",
       },
     ],
   },
@@ -1354,7 +1354,7 @@ const INFRA = [
     warnings: [
       {
         when: ({ hasNode }) => !hasNode(["queue"]),
-        text: "Webhooks processed synchronously — a partner burst times out, they retry, and the burst doubles.",
+        text: "Webhooks processed synchronously: a partner burst times out, they retry, and the burst doubles.",
       },
     ],
   },
@@ -1419,7 +1419,7 @@ const INFRA = [
     category: "Infrastructure",
     name: "Public status page",
     brief:
-      "When production burns, everyone loads this page at once — it must not share production's fate.",
+      "When production burns, everyone loads this page at once. It must not share production's fate.",
     budget: 8,
     checks: [
       node(["client"], "Everyone checks at the same time", 5),
@@ -1613,7 +1613,7 @@ const MOBILITY = [
     category: "Mobility & Logistics",
     name: "Driver onboarding",
     brief:
-      "License checks, background checks, vehicle photos — a multi-day pipeline with humans in the loop.",
+      "License checks, background checks, vehicle photos: a multi-day pipeline with humans in the loop.",
     budget: 14,
     checks: [
       node(["client"], "Applicants upload documents", 5),
@@ -1633,7 +1633,7 @@ const MOBILITY = [
     category: "Mobility & Logistics",
     name: "Geofence alerts",
     brief:
-      "\"Your driver is nearby\" — location events tested against thousands of fences, notifications within seconds.",
+      "\"Your driver is nearby\": location events tested against thousands of fences, notifications within seconds.",
     budget: 13,
     checks: [
       node(["client"], "Drivers emit locations, customers get alerts", 5),
@@ -1714,7 +1714,7 @@ const GAMING = [
     category: "Gaming",
     name: "Gameplay telemetry",
     brief:
-      "Every match emits thousands of events for balance tuning. Lossy is fine for analytics — lossless for purchases.",
+      "Every match emits thousands of events for balance tuning. Lossy is fine for analytics. Lossless for purchases.",
     budget: 12,
     checks: [
       node(["client"], "Game clients emit events", 5),
@@ -1792,7 +1792,7 @@ const GAMING = [
     category: "Gaming",
     name: "Cross-device save sync",
     brief:
-      "Pick up on your phone where the console left off. Conflicts resolve deterministically — last-write-wins is not enough.",
+      "Pick up on your phone where the console left off. Conflicts resolve deterministically. Last-write-wins is not enough.",
     budget: 12,
     checks: [
       node(["client"], "Multiple devices sync saves", 5),
@@ -1895,7 +1895,7 @@ const SAAS = [
     category: "B2B SaaS",
     name: "Usage metering",
     brief:
-      "Billable events must be counted exactly once — undercounting burns revenue, overcounting burns trust.",
+      "Billable events must be counted exactly once. Undercounting burns revenue, overcounting burns trust.",
     budget: 13,
     checks: [
       node(["client"], "Product surfaces emit billable events", 5),

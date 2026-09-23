@@ -11,7 +11,7 @@ export class CvParseError extends Error {}
 
 export async function readCvText(file: File): Promise<string> {
   if (file.size > MAX_BYTES) {
-    throw new CvParseError("File is too large — please upload a CV under 5MB.");
+    throw new CvParseError("File is too large. Please upload a CV under 5MB.");
   }
 
   const isPdf = file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf");
@@ -19,7 +19,7 @@ export async function readCvText(file: File): Promise<string> {
 
   if (isTxt) return file.text();
   if (isPdf) return readPdfText(file);
-  throw new CvParseError("Unsupported file — please upload a PDF or TXT.");
+  throw new CvParseError("Unsupported file. Please upload a PDF or TXT.");
 }
 
 async function readPdfText(file: File): Promise<string> {
@@ -36,7 +36,7 @@ async function readPdfText(file: File): Promise<string> {
   }
 
   if (!text.trim()) {
-    throw new CvParseError("No text found — scanned/image-only PDFs can't be read. Try a text-based PDF or TXT.");
+    throw new CvParseError("No text found. Scanned or image-only PDFs can't be read. Try a text-based PDF or TXT.");
   }
   return text;
 }

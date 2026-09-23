@@ -67,7 +67,7 @@ export function usePrepQuestionFetchers(
         const cap = questionCapForPool(quizSize ?? DEFAULT_QUIZ_SIZE, rows.length);
         return shuffle(rows).slice(0, cap).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct }));
       }
-      console.warn(`No ${level} questions in the DB for "${tech}" — falling back to static prep questions (these don't vary by level). Run the questions seed.`);
+      console.warn(`No ${level} questions in the DB for "${tech}". Falling back to static prep questions (these don't vary by level). Run the questions seed.`);
     } catch (err) {
       console.error(`Failed to load ${level} questions for "${tech}"; using static prep questions.`, err);
     }

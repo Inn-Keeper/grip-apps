@@ -106,7 +106,7 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
                   {grade?.band && grade.ratio !== null && (
                     <Text style={{ fontSize: 11.5, color: bandColor }}>
                       {t(`scale.band${grade.band === "close" ? "Close" : grade.band === "order" ? "Order" : "Off"}`)}
-                      {" — "}
+                      {" · "}
                       {t("scale.actual", { value: formatCompact(Math.round(actual)) })}{" "}
                       {grade.ratio >= 1
                         ? t("scale.ratioHigh", { ratio: formatCompact(Math.round(grade.ratio * 10) / 10) })

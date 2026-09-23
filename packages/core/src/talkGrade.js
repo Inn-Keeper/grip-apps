@@ -131,7 +131,7 @@ export function createTalkGradeApi(getToken, baseUrl) {
   async function gradeTalkTrack({ boardId, facts, sections, selfRating = null, signal }) {
     const token = await getToken();
     if (!token) {
-      throw new TalkGradeError("talkGrade: no auth token — user must be signed in", {
+      throw new TalkGradeError("talkGrade: no auth token, user must be signed in", {
         code: "authentication_required",
       });
     }

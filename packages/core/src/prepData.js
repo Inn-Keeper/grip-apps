@@ -47,7 +47,7 @@ export const categories = [
       },
       {
         tech: "JavaScript",
-        oneliner: "The language of the web — event-driven, single-threaded, prototype-based.",
+        oneliner: "The language of the web: event-driven, single-threaded, prototype-based.",
         prep: [
           "Event loop: call stack, microtasks (Promises) drain before macrotasks (setTimeout)",
           "Closures and lexical scope; the classic loop-variable pitfall",
@@ -59,9 +59,9 @@ export const categories = [
           {
             question: "In the JavaScript event loop, which queue has higher priority?",
             options: [
-              "Microtasks (Promises) — drained fully before the next macrotask (setTimeout)",
-              "Macrotasks (setTimeout) — they were queued by the host first",
-              "Neither — tasks run strictly in the order they were queued",
+              "Microtasks (Promises): drained fully before the next macrotask (setTimeout)",
+              "Macrotasks (setTimeout): they were queued by the host first",
+              "Neither: tasks run strictly in the order they were queued",
               "Whichever queue currently holds more pending tasks",
             ],
             correct: 0,
@@ -96,7 +96,7 @@ export const categories = [
           "Interfaces (multiple, default methods) vs abstract classes (single, can hold state)",
           "Streams API and lambdas; generics and type erasure",
           "Concurrency: executors, synchronized vs volatile",
-          "Spring Boot: DI, auto-configuration, starters — if the role touches it",
+          "Spring Boot: DI, auto-configuration, starters (if the role touches it)",
         ],
         quiz: [
           {
@@ -225,10 +225,10 @@ export const categories = [
           {
             question: "What does RAII stand for and what problem does it solve?",
             options: [
-              "Resource Acquisition Is Initialization — ties resource lifetime to scope, preventing leaks",
-              "Runtime Allocation Is Implicit — heap allocation without explicit new",
-              "Reference Aliasing Is Invalid — a rule preventing dangling references",
-              "Resource Access Is Immediate — guarantees lock-free access to resources",
+              "Resource Acquisition Is Initialization: ties resource lifetime to scope, preventing leaks",
+              "Runtime Allocation Is Implicit: heap allocation without explicit new",
+              "Reference Aliasing Is Invalid: a rule preventing dangling references",
+              "Resource Access Is Immediate: guarantees lock-free access to resources",
             ],
             correct: 0,
           },
@@ -265,7 +265,7 @@ export const categories = [
         tech: "React",
         oneliner: "Component-based UI library built around declarative rendering and a virtual DOM.",
         prep: [
-          "Hooks: useState, useEffect, useCallback, useMemo, useRef — and when each matters",
+          "Hooks: useState, useEffect, useCallback, useMemo, useRef, and when each matters",
           "Reconciliation and keys; what actually triggers re-renders",
           "Lifting state vs context vs external stores",
           "Performance: memoization, list virtualization, avoiding effect misuse",
@@ -348,7 +348,7 @@ export const categories = [
       },
       {
         tech: "Next.js",
-        oneliner: "React framework for production — SSR, SSG, App Router, and edge rendering baked in.",
+        oneliner: "React framework for production: SSR, SSG, App Router, and edge rendering baked in.",
         prep: [
           "App Router vs Pages Router; file-based routing",
           "Server Components vs Client Components ('use client')",
@@ -390,9 +390,9 @@ export const categories = [
       },
       {
         tech: "TanStack",
-        oneliner: "Headless, framework-agnostic utilities — primarily React Query for server state.",
+        oneliner: "Headless, framework-agnostic utilities: primarily React Query for server state.",
         prep: [
-          "Server state vs client state — why they need different tools",
+          "Server state vs client state: why they need different tools",
           "Query keys drive caching and refetching",
           "stale-while-revalidate lifecycle: fresh, stale, refetch triggers",
           "Mutations with optimistic updates and invalidation",
@@ -422,7 +422,7 @@ export const categories = [
           {
             question: "When is React Query a better fit than Redux?",
             options: [
-              "For server state — it handles caching, deduplication, and refetching out of the box",
+              "For server state: it handles caching, deduplication, and refetching out of the box",
               "For complex synchronous state transitions shared across the app",
               "When you need time-travel debugging of state changes",
               "When state must persist across page reloads",
@@ -475,7 +475,7 @@ export const categories = [
       },
       {
         tech: "Tailwind",
-        oneliner: "Utility-first CSS framework — style directly in markup, no custom class names needed.",
+        oneliner: "Utility-first CSS framework: style directly in markup, no custom class names needed.",
         prep: [
           "JIT engine: only classes found in source files are generated",
           "Responsive prefixes (md:), dark mode, state variants (hover:)",
@@ -509,7 +509,7 @@ export const categories = [
               "Arbitrary values in square brackets, e.g. w-[347px]",
               "The closest scale value plus a calc() modifier",
               "A @layer utilities rule in the global stylesheet",
-              "The style attribute — Tailwind has no escape hatch for this",
+              "The style attribute: Tailwind has no escape hatch for this",
             ],
             correct: 0,
           },
@@ -520,7 +520,7 @@ export const categories = [
         oneliner: "Google's Material Design implemented as a rich React component library.",
         prep: [
           "Theme system: palette, typography, spacing tokens",
-          "sx prop vs styled() — quick overrides vs reusable components",
+          "sx prop vs styled(): quick overrides vs reusable components",
           "Global component overrides via theme.components",
           "Know when MUI accelerates you vs fights your design",
         ],
@@ -596,9 +596,9 @@ export const categories = [
       },
       {
         tech: "Rspack",
-        oneliner: "Webpack-compatible Rust-based bundler — drop-in replacement, 10× faster.",
+        oneliner: "Webpack-compatible Rust-based bundler: drop-in replacement, 10× faster.",
         prep: [
-          "Rust-based and parallel — roughly 10× Webpack build speed",
+          "Rust-based and parallel: roughly 10× Webpack build speed",
           "Drop-in Webpack API compatibility for most configs and loaders",
           "Migration consideration: when Webpack compatibility beats switching to Vite",
         ],
@@ -637,7 +637,7 @@ export const categories = [
       },
       {
         tech: "Webpack",
-        oneliner: "The veteran module bundler — highly configurable, powers most legacy frontends.",
+        oneliner: "The veteran module bundler: highly configurable, powers most legacy frontends.",
         prep: [
           "Loaders transform files; plugins hook the build lifecycle",
           "Code splitting, tree shaking, chunk strategy",
@@ -658,7 +658,7 @@ export const categories = [
           {
             question: "What is Module Federation in Webpack 5?",
             options: [
-              "Separate builds sharing code at runtime — the micro-frontend enabler",
+              "Separate builds sharing code at runtime: the micro-frontend enabler",
               "Splitting one bundle into chunks loaded on demand",
               "Deduplicating identical modules across entry points",
               "Composing multiple webpack configs into a single build",
@@ -682,7 +682,7 @@ export const categories = [
         oneliner: "Fast, disk-efficient package manager with strict node_modules and workspace support.",
         prep: [
           "Content-addressable global store; hard links save disk space",
-          "Strict, non-flat node_modules — no phantom dependencies",
+          "Strict, non-flat node_modules: no phantom dependencies",
           "Workspaces for monorepos",
           "Corepack pins the package manager via the packageManager field",
         ],
@@ -702,7 +702,7 @@ export const categories = [
             options: [
               "Strict non-flat layout: packages only see their declared dependencies",
               "Fully flat layout with conflicts resolved by version pinning",
-              "No node_modules at all — modules load from the global store path",
+              "No node_modules at all: modules load from the global store path",
               "Identical layout, but populated via symlinks for speed",
             ],
             correct: 0,
@@ -728,7 +728,7 @@ export const categories = [
     items: [
       {
         tech: "Node.js",
-        oneliner: "JavaScript runtime on the server — event-driven, non-blocking I/O.",
+        oneliner: "JavaScript runtime on the server: event-driven, non-blocking I/O.",
         prep: [
           "Event loop phases; microtasks vs timers vs I/O callbacks",
           "Streams and backpressure",
@@ -771,7 +771,7 @@ export const categories = [
       },
       {
         tech: "NestJS",
-        oneliner: "Opinionated Node.js framework using decorators and modules — Angular-inspired.",
+        oneliner: "Opinionated Node.js framework using decorators and modules: Angular-inspired.",
         prep: [
           "Modules, controllers, providers; the DI container",
           "Request lifecycle: guards → interceptors → pipes → handler → filters",
@@ -782,7 +782,7 @@ export const categories = [
           {
             question: "What is the role of a NestJS Guard?",
             options: [
-              "Decides whether a request may reach a route — typically auth checks",
+              "Decides whether a request may reach a route: typically auth checks",
               "Transforms and validates the request payload",
               "Catches exceptions and shapes the error response",
               "Wraps the handler to add logging or caching",
@@ -855,7 +855,7 @@ export const categories = [
       },
       {
         tech: "REST / OpenAPI",
-        oneliner: "Standard HTTP API paradigm — stateless, resource-based, documented with OpenAPI specs.",
+        oneliner: "Standard HTTP API paradigm: stateless, resource-based, documented with OpenAPI specs.",
         prep: [
           "REST constraints: statelessness, uniform interface, cacheability",
           "Correct verbs and status codes (201, 204, 409, 422)",
@@ -881,10 +881,10 @@ export const categories = [
           {
             question: "Which REST constraint most enables horizontal scaling?",
             options: [
-              "Statelessness — any server can handle any request without session affinity",
-              "Cacheability — responses can be stored by intermediaries",
-              "Layered system — proxies can be inserted transparently",
-              "Uniform interface — clients need no server-specific logic",
+              "Statelessness: any server can handle any request without session affinity",
+              "Cacheability: responses can be stored by intermediaries",
+              "Layered system: proxies can be inserted transparently",
+              "Uniform interface: clients need no server-specific logic",
             ],
             correct: 0,
           },
@@ -913,7 +913,7 @@ export const categories = [
           {
             question: "What is the main advantage of async messaging over synchronous HTTP between services?",
             options: [
-              "Temporal decoupling — producers don't wait on consumers, improving resilience",
+              "Temporal decoupling: producers don't wait on consumers, improving resilience",
               "Stronger delivery guarantees than HTTP can provide",
               "Lower end-to-end latency for individual requests",
               "Messages are automatically encrypted in transit",
@@ -934,19 +934,19 @@ export const categories = [
       },
       {
         tech: "Auth & Security",
-        oneliner: "OAuth2, OIDC, JWTs, and OWASP basics — where every API design interview eventually goes.",
+        oneliner: "OAuth2, OIDC, JWTs, and OWASP basics: where every API design interview eventually goes.",
         prep: [
           "OAuth2 flows: authorization code (+ PKCE) for users, client credentials for service-to-service",
           "OIDC adds an identity layer (ID token) on top of OAuth2",
-          "JWTs are signed, not encrypted — validate signature, expiry, issuer, audience; keep them short-lived",
+          "JWTs are signed, not encrypted: validate signature, expiry, issuer, audience; keep them short-lived",
           "Session vs token auth tradeoffs; refresh token rotation",
-          "OWASP top risks: injection, broken auth, XSS, CSRF — and the standard mitigations",
+          "OWASP top risks: injection, broken auth, XSS, CSRF, and the standard mitigations",
         ],
         quiz: [
           {
             question: "What is the relationship between OAuth2 and OIDC?",
             options: [
-              "OIDC is an identity layer on top of OAuth2 — it adds an ID token saying who the user is",
+              "OIDC is an identity layer on top of OAuth2: it adds an ID token saying who the user is",
               "OAuth2 handles authentication; OIDC adds authorization scopes",
               "OIDC is the successor protocol that replaces OAuth2",
               "OAuth2 is for web apps; OIDC is the mobile-only variant",
@@ -956,7 +956,7 @@ export const categories = [
           {
             question: "What must a server verify when accepting a JWT?",
             options: [
-              "Signature, expiry, issuer, and audience — decoding alone proves nothing",
+              "Signature, expiry, issuer, and audience: decoding alone proves nothing",
               "That the payload decrypts with the server's private key",
               "That the token ID exists in the server's session store",
               "That the claims match the user record in the database",
@@ -966,7 +966,7 @@ export const categories = [
           {
             question: "Which OAuth2 flow should a single-page app use today?",
             options: [
-              "Authorization code with PKCE — the implicit flow is deprecated",
+              "Authorization code with PKCE: the implicit flow is deprecated",
               "Implicit flow, since a SPA cannot keep a client secret",
               "Client credentials, since the SPA is the OAuth client",
               "Resource owner password flow with the user's credentials",
@@ -1015,7 +1015,7 @@ export const categories = [
           {
             question: "How do you gate a production deployment in Azure DevOps?",
             options: [
-              "Approvals on the Environment — the pipeline pauses for a reviewer",
+              "Approvals on the Environment: the pipeline pauses for a reviewer",
               "A manual queue-time variable the releaser must set",
               "Branch policies requiring a signed tag before deploy stages run",
               "A scheduled trigger that only fires in approved windows",
@@ -1036,10 +1036,10 @@ export const categories = [
           {
             question: "What is RBAC in Azure?",
             options: [
-              "Role-Based Access Control — permissions granted to identities at specific scopes",
-              "Resource Boundary Access Configuration — network rules between resource groups",
-              "Role-Bound Audit Compliance — logging of privileged operations",
-              "Regional Backup and Availability Control — failover policies",
+              "Role-Based Access Control: permissions granted to identities at specific scopes",
+              "Resource Boundary Access Configuration: network rules between resource groups",
+              "Role-Bound Audit Compliance: logging of privileged operations",
+              "Regional Backup and Availability Control: failover policies",
             ],
             correct: 0,
           },
@@ -1072,7 +1072,7 @@ export const categories = [
           "Fast feedback: cheap checks first, expensive checks later",
           "Reproducible builds; pinned dependencies",
           "Rollback strategies: blue-green, canary, feature flags",
-          "Secrets via vault/variable groups — never in code or logs",
+          "Secrets via vault/variable groups: never in code or logs",
           "Be ready to walk through a pipeline you designed",
         ],
         quiz: [
@@ -1089,7 +1089,7 @@ export const categories = [
           {
             question: "How should secrets be handled in a CI/CD pipeline?",
             options: [
-              "Injected at runtime from a secrets manager — never in source or logs",
+              "Injected at runtime from a secrets manager: never in source or logs",
               "Stored in a private .env file committed to a restricted repo",
               "Encrypted in the repository and decrypted by the build agent",
               "Set once on the build machine so pipelines never touch them",
@@ -1110,7 +1110,7 @@ export const categories = [
       },
       {
         tech: "Docker",
-        oneliner: "Container platform — package apps with their dependencies into portable, isolated images.",
+        oneliner: "Container platform: package apps with their dependencies into portable, isolated images.",
         prep: [
           "Image vs container: immutable template vs running instance",
           "Layer caching: order Dockerfile steps from least to most frequently changing",
@@ -1153,7 +1153,7 @@ export const categories = [
       },
       {
         tech: "Kubernetes",
-        oneliner: "Container orchestrator — schedules, scales, and heals containerized workloads across a cluster.",
+        oneliner: "Container orchestrator: schedules, scales, and heals containerized workloads across a cluster.",
         prep: [
           "Core objects: Pod → Deployment → Service → Ingress; ConfigMaps and Secrets",
           "Declarative model: describe desired state, controllers reconcile toward it",
@@ -1195,9 +1195,9 @@ export const categories = [
       },
       {
         tech: "Git",
-        oneliner: "Distributed version control — the backbone of every modern development workflow.",
+        oneliner: "Distributed version control: the backbone of every modern development workflow.",
         prep: [
-          "Trunk-based vs Gitflow — and why trunk-based won",
+          "Trunk-based vs Gitflow: and why trunk-based won",
           "Rebase vs merge; interactive rebase for history hygiene",
           "cherry-pick, bisect, reflog as recovery tools",
           "Conflict resolution strategy under pressure",
@@ -1244,12 +1244,12 @@ export const categories = [
     items: [
       {
         tech: "Application Insights",
-        oneliner: "Azure's APM service — traces, exceptions, performance metrics, and live telemetry.",
+        oneliner: "Azure's APM service: traces, exceptions, performance metrics, and live telemetry.",
         prep: [
           "Instrumenting Node/React apps; auto-collected vs custom telemetry",
           "Custom events and metrics (trackEvent, trackMetric)",
           "Availability tests and alert rules",
-          "Backed by Log Analytics workspaces — query with KQL",
+          "Backed by Log Analytics workspaces: query with KQL",
         ],
         quiz: [
           {
@@ -1286,7 +1286,7 @@ export const categories = [
       },
       {
         tech: "KQL",
-        oneliner: "Kusto Query Language — used to query Azure Monitor, Log Analytics, and App Insights.",
+        oneliner: "Kusto Query Language: used to query Azure Monitor, Log Analytics, and App Insights.",
         prep: [
           "Core operators: where, summarize, extend, project, join",
           "bin() for time bucketing; render timechart",
@@ -1306,7 +1306,7 @@ export const categories = [
           {
             question: "What is the bin() function used for?",
             options: [
-              "Rounding values into buckets — typically timestamps for time-series charts",
+              "Rounding values into buckets: typically timestamps for time-series charts",
               "Encoding values into binary for compact storage",
               "Partitioning a query across cluster nodes",
               "Sampling a fixed number of rows per group",
@@ -1322,7 +1322,7 @@ export const categories = [
       },
       {
         tech: "Datadog",
-        oneliner: "Full-stack observability platform — metrics, logs, traces, and dashboards in one.",
+        oneliner: "Full-stack observability platform: metrics, logs, traces, and dashboards in one.",
         prep: [
           "Infrastructure metrics vs APM spans and traces",
           "Log correlation via trace IDs",
@@ -1383,7 +1383,7 @@ export const categories = [
           {
             question: "What are Grafana dashboard variables used for?",
             options: [
-              "Dynamic dashboards — switch host or environment without editing queries",
+              "Dynamic dashboards: switch host or environment without editing queries",
               "Storing connection credentials per data source",
               "Passing thresholds from one panel's query into another",
               "Templating alert messages with runtime values",
@@ -1408,7 +1408,7 @@ export const categories = [
         prep: [
           "Targeting: users, segments, percentage rollouts",
           "Progressive delivery and kill switches",
-          "Flags enable trunk-based development — merge unfinished work safely",
+          "Flags enable trunk-based development: merge unfinished work safely",
           "Flag hygiene: clean up stale flags",
         ],
         quiz: [
@@ -1453,7 +1453,7 @@ export const categories = [
     items: [
       {
         tech: "GitHub Copilot",
-        oneliner: "AI pair programmer embedded in your editor — autocomplete, chat, and code review.",
+        oneliner: "AI pair programmer embedded in your editor: autocomplete, chat, and code review.",
         prep: [
           "Prompting: comments and signatures steer suggestions",
           "Trust but verify: review for security issues and subtle bugs",
@@ -1464,7 +1464,7 @@ export const categories = [
           {
             question: "What is the primary security risk when using Copilot?",
             options: [
-              "It can suggest insecure patterns — hardcoded secrets, injection-prone queries — that need review",
+              "It can suggest insecure patterns: hardcoded secrets or injection-prone queries that need review",
               "It uploads your proprietary code to public training datasets",
               "It can execute suggested code before you accept it",
               "It weakens branch protections by auto-approving its own PRs",
@@ -1484,7 +1484,7 @@ export const categories = [
           {
             question: "What is a key IP consideration with Copilot?",
             options: [
-              "Suggestions may resemble open-source code — review license implications before shipping",
+              "Suggestions may resemble open-source code: review license implications before shipping",
               "Copilot output is automatically licensed under Apache 2.0",
               "GitHub retains copyright over accepted suggestions",
               "Generated code cannot be patented in most jurisdictions",
@@ -1506,7 +1506,7 @@ export const categories = [
           {
             question: "What does temperature control in an LLM API call?",
             options: [
-              "Output randomness — lower is more deterministic, higher more varied",
+              "Output randomness: lower is more deterministic, higher more varied",
               "How long the model reasons before answering",
               "The penalty applied to repeated tokens",
               "The share of the context window reserved for the response",
@@ -1537,7 +1537,7 @@ export const categories = [
       },
       {
         tech: "RAG Pipelines",
-        oneliner: "Retrieval-Augmented Generation — ground LLM responses in your own data via vector search.",
+        oneliner: "Retrieval-Augmented Generation: ground LLM responses in your own data via vector search.",
         prep: [
           "Pipeline: chunk → embed → store → retrieve → assemble prompt",
           "Chunking tradeoffs: size vs context vs precision",
@@ -1548,7 +1548,7 @@ export const categories = [
           {
             question: "Why is chunking strategy important in a RAG pipeline?",
             options: [
-              "Too-large chunks lose precision; too-small lose context — size drives retrieval quality",
+              "Too-large chunks lose precision; too-small lose context: size drives retrieval quality",
               "Chunk count determines how many documents the store can hold",
               "Smaller chunks embed faster, so chunking is mainly a cost lever",
               "Chunk boundaries must align with the LLM's tokenizer blocks",
@@ -1588,7 +1588,7 @@ export const categories = [
         tech: "Playwright (E2E)",
         oneliner: "Modern browser automation framework for reliable end-to-end testing across all browsers.",
         prep: [
-          "Auto-waiting for actionability — no manual sleeps",
+          "Auto-waiting for actionability: no manual sleeps",
           "Locators: getByRole / getByText over CSS selectors and test IDs",
           "Network mocking and fixtures; Page Object Model",
           "CI: parallel workers, traces and videos on failure",
@@ -1607,7 +1607,7 @@ export const categories = [
           {
             question: "Why is getByRole the preferred locator strategy?",
             options: [
-              "It targets ARIA roles — how assistive tech sees the page — so tests survive style changes",
+              "It targets ARIA roles: how assistive tech sees the page, so tests survive style changes",
               "It is fastest because it maps directly to native browser queries",
               "It guarantees uniqueness, unlike text-based locators",
               "It works identically across all three browser engines",
@@ -1670,7 +1670,7 @@ export const categories = [
       },
       {
         tech: "React Testing Library",
-        oneliner: "Test React components the way users interact — via accessible queries, not implementation details.",
+        oneliner: "Test React components the way users interact: via accessible queries, not implementation details.",
         prep: [
           "Query priority: getByRole > getByText > getByTestId",
           "userEvent over fireEvent for realistic interaction",
@@ -1701,7 +1701,7 @@ export const categories = [
           {
             question: "When should you use findBy queries instead of getBy?",
             options: [
-              "For elements appearing asynchronously — findBy returns a promise and retries",
+              "For elements appearing asynchronously: findBy returns a promise and retries",
               "When several matches exist and you want the first",
               "When asserting an element is absent from the DOM",
               "When the element is rendered inside a portal",
@@ -1811,12 +1811,12 @@ export const categories = [
     items: [
       {
         tech: "App Store / Play Store",
-        oneliner: "Apple and Google's distribution pipelines — submission, review, versioning, and rollout.",
+        oneliner: "Apple and Google's distribution pipelines: submission, review, versioning, and rollout.",
         prep: [
           "iOS: certificates, provisioning profiles, TestFlight",
           "Android: keystore, build variants, app bundles",
           "Staged rollouts and post-release monitoring",
-          "OTA updates (Expo/CodePush) — JS only, never native changes",
+          "OTA updates (Expo/CodePush): JS only, never native changes",
           "Handling review rejections",
         ],
         quiz: [
@@ -1833,10 +1833,10 @@ export const categories = [
           {
             question: "What is an OTA update and its key limitation?",
             options: [
-              "Pushing JS bundle changes without a store release — works for JS/assets, not native code",
-              "Silent store updates that skip the user's approval — limited to minor versions",
-              "Streaming new features behind flags — limited to UI changes",
-              "Differential binary patches — limited by maximum download size",
+              "Pushing JS bundle changes without a store release: works for JS/assets, not native code",
+              "Silent store updates that skip the user's approval: limited to minor versions",
+              "Streaming new features behind flags: limited to UI changes",
+              "Differential binary patches: limited by maximum download size",
             ],
             correct: 0,
           },
@@ -1872,7 +1872,7 @@ export const categories = [
           {
             question: "When would you use a GIN index instead of a B-tree?",
             options: [
-              "Full-text search, JSONB containment, and arrays — values with multiple components per row",
+              "Full-text search, JSONB containment, and arrays: values with multiple components per row",
               "High-write tables where B-tree maintenance is too costly",
               "Range scans over timestamp columns",
               "Covering indexes that satisfy queries without heap access",
@@ -1903,7 +1903,7 @@ export const categories = [
       },
       {
         tech: "MySQL",
-        oneliner: "The most widely deployed open-source relational database — fast reads, huge ecosystem.",
+        oneliner: "The most widely deployed open-source relational database: fast reads, huge ecosystem.",
         prep: [
           "InnoDB vs MyISAM: transactions and row-level locking",
           "Indexing and query optimization (EXPLAIN)",
@@ -1956,7 +1956,7 @@ export const categories = [
           {
             question: "What is PL/SQL?",
             options: [
-              "Oracle's procedural extension to SQL — stored procedures, functions, triggers, packages",
+              "Oracle's procedural extension to SQL: stored procedures, functions, triggers, packages",
               "Oracle's parallel query language for data warehousing",
               "A portability layer translating ANSI SQL to Oracle dialect",
               "The scripting language of Oracle's administration tools",
@@ -1987,7 +1987,7 @@ export const categories = [
       },
       {
         tech: "MongoDB",
-        oneliner: "Document-oriented NoSQL database — flexible schema, horizontal scaling, JSON-native.",
+        oneliner: "Document-oriented NoSQL database: flexible schema, horizontal scaling, JSON-native.",
         prep: [
           "Embed vs reference: access patterns decide",
           "Aggregation pipeline stages",
@@ -2001,7 +2001,7 @@ export const categories = [
               "Embed for data read together in 1-to-few relations; reference for shared or independently updated data",
               "Embed only primitives; reference any nested object",
               "Embed for write-heavy data; reference for read-heavy data",
-              "Always reference — embedding is legacy practice from before $lookup",
+              "Always reference: embedding is legacy practice from before $lookup",
             ],
             correct: 0,
           },
@@ -2040,7 +2040,7 @@ export const categories = [
           {
             question: "What is N1QL in Couchbase?",
             options: [
-              "A SQL-like language for querying JSON documents — SELECT/JOIN/WHERE on fields",
+              "A SQL-like language for querying JSON documents: SELECT/JOIN/WHERE on fields",
               "The binary protocol used for key-value reads and writes",
               "A migration dialect for porting SQL schemas into Couchbase",
               "The replication language configuring cross-datacenter sync",
@@ -2071,7 +2071,7 @@ export const categories = [
       },
       {
         tech: "Redis",
-        oneliner: "In-memory data store — the default answer for caching, sessions, queues, and rate limiting.",
+        oneliner: "In-memory data store: the default answer for caching, sessions, queues, and rate limiting.",
         prep: [
           "Data structures: strings, hashes, lists, sets, sorted sets; per-key TTL",
           "Cache-aside pattern: check cache, fall back to DB, write back with TTL",
@@ -2114,7 +2114,7 @@ export const categories = [
       },
       {
         tech: "SQLite",
-        oneliner: "Embedded, serverless SQL database — the default choice for local and mobile storage.",
+        oneliner: "Embedded, serverless SQL database: the default choice for local and mobile storage.",
         prep: [
           "Right tool when: single writer, local/embedded/mobile data",
           "WAL mode: concurrent reads while writing",
@@ -2135,7 +2135,7 @@ export const categories = [
           {
             question: "What limitation makes SQLite unsuitable for high-concurrency servers?",
             options: [
-              "One writer at a time — concurrent writes serialize and bottleneck multi-user apps",
+              "One writer at a time: concurrent writes serialize and bottleneck multi-user apps",
               "No support for joins across attached databases",
               "A hard limit on database file size of a few gigabytes",
               "Readers block while any transaction is open",
@@ -2159,7 +2159,7 @@ export const categories = [
         oneliner: "CRM and marketing platform with an API for contacts, deals, workflows, and custom objects.",
         prep: [
           "Object model: contacts, companies, deals, custom objects",
-          "Associations link objects — the CRM's foreign keys",
+          "Associations link objects: the CRM's foreign keys",
           "Webhooks for CRM events; workflow automation",
           "API rate limits and batch endpoints",
         ],
@@ -2187,7 +2187,7 @@ export const categories = [
           {
             question: "What are HubSpot associations?",
             options: [
-              "Relationships between CRM objects — like foreign keys linking a contact to a company and deal",
+              "Relationships between CRM objects: like foreign keys linking a contact to a company and deal",
               "Mappings between HubSpot properties and external system fields",
               "Attribution links connecting marketing touches to closed deals",
               "Groupings of contacts into static and active lists",

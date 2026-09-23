@@ -140,7 +140,7 @@ export default function PrepScreen() {
       let questions = await fetchTierQuestions(difficulty, techs);
       if (questions.length === 0 && fallbackToAll) questions = await fetchTierQuestions(difficulty, allTechs);
       if (questions.length === 0) {
-        setDrillError(`No ${difficultyByKey(difficulty)?.label ?? difficulty} questions yet — more land soon.`);
+        setDrillError(`No ${difficultyByKey(difficulty)?.label ?? difficulty} questions yet. More land soon.`);
         return;
       }
       setDrill({
@@ -185,7 +185,7 @@ export default function PrepScreen() {
       let questions = await fetchTierQuestions(level, techs);
       if (questions.length === 0) questions = await fetchTierQuestions(level, allTechs);
       if (questions.length === 0) {
-        setDrillError(`No ${difficultyByKey(level)?.label ?? level} questions yet — more land soon.`);
+        setDrillError(`No ${difficultyByKey(level)?.label ?? level} questions yet. More land soon.`);
         return;
       }
       setDrill({

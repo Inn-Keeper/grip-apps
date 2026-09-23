@@ -44,7 +44,7 @@ export function createPipelineApi(getToken, baseUrl) {
 
   async function authHeaders() {
     const token = await getToken();
-    if (!token) throw new PipelineApiError("pipeline: no auth token — user must be signed in");
+    if (!token) throw new PipelineApiError("pipeline: no auth token, user must be signed in");
     return { Authorization: `Bearer ${token}` };
   }
 

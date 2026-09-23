@@ -377,7 +377,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
             }}
           >
             <Text style={{ color: colors.textBright, fontSize: 12, fontWeight: "600" }}>
-              Tap a target to connect — tap elsewhere to cancel
+              Tap a target to connect, tap elsewhere to cancel
             </Text>
           </View>
         )}
