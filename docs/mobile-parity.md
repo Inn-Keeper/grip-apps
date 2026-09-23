@@ -18,8 +18,7 @@ only; 2026-09-17 and earlier shipped on both.
 
 **Arch Board** (biggest gap)
 - Creating and deleting custom scenarios. (Picking and loading them, and a searchable picker, shipped in phase 1.)
-- The five-step workflow rail, Next Up coaching, and the graded verdict (thinnest section, the interviewer's question).
-- AI grading: "Grade my reasoning", quoted evidence per section, rate-limit handling (`@grip/core/talkGrade`).
+- Next Up coaching beyond the rail. (The five-step rail, AI grading and the graded verdict shipped in phase 4.)
 - Scale brief handing numbers to the talk track, and "Check my math".
 - Undo and redo, share links, full screen (mobile has its own Zen mode).
 
@@ -55,6 +54,6 @@ only; 2026-09-17 and earlier shipped on both.
 1. ~~Custom scenarios on the board: loading and picking them, and a searchable picker.~~ Done 2026-09-23.
 2. ~~Scoring parity: the speed bonus and unseen-first drawing.~~ Done 2026-09-23.
 3. ~~Story links: scenario and board on the story, story on the board.~~ Done 2026-09-23.
-4. AI grading and the workflow rail on the board.
+4. ~~AI grading and the workflow rail on the board.~~ Done 2026-09-23.
 5. Profile fields and GitHub prep, then the Prep extras (Mock loop, readiness, Auto-next).
 6. A SCREEN-GUIDELINES.md pass per screen, with the Maestro flows updated.
