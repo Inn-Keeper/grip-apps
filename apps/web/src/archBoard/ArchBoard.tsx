@@ -28,7 +28,7 @@ import { findPlacement } from "./boardGeometry.js";
 import { useBoardViewport } from "./useBoardViewport";
 import { ViewportControls } from "./ViewportControls";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
-import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "./gradeState.js";
+import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
 import { appendHandoff } from "./scaleHandoff.js";
 import { workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";

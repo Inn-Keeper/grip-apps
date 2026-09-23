@@ -9,6 +9,8 @@ import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
 import { workflowStep } from "@grip/core/workflowState";
+import { buildGradeFacts } from "@grip/core/talkGrade";
+import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
 import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch";
 import type { SavedBoard, Story } from "@grip/core/api";
@@ -26,7 +28,15 @@ import { ScenarioSheet } from "@/components/board/ScenarioSheet";
 import { StorySheet } from "@/components/board/StorySheet";
 import { BoardProgress } from "@/components/board/BoardProgress";
 import { useStoriesQuery } from "@/queries/stories";
-import { useDeleteBoardMutation, useSaveBoardMutation, useSavedBoardsQuery, useScenarioCatalog } from "@/queries/board";
+import {
+  talkGradeEnabled,
+  useDeleteBoardMutation,
+  useGradeTalkTrackMutation,
+  useGradingStatusQuery,
+  useSaveBoardMutation,
+  useSavedBoardsQuery,
+  useScenarioCatalog,
+} from "@/queries/board";
 
 export default function BoardScreen() {
   const locale = useLocale();
@@ -93,6 +103,27 @@ export default function BoardScreen() {
   const overBudget = liveCost > scenario.budget;
   const talkAnswered = scoreTalkTrack({ sections: talkSections, rating: talkRating }).answered.length;
   const step = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
+
+  const gradeMutation = useGradeTalkTrackMutation((graded) => setTalkGrade(graded.score));
+  const { data: gradingStatus } = useGradingStatusQuery(talkOpen);
+  // The grader checks the arithmetic against the design checks, so evaluate here if needed.
+  const gradeTalkTrack = () => {
+    if (!activeBoardId) return;
+    gradeMutation.mutate({
+      boardId: activeBoardId,
+      facts: buildGradeFacts(scenario, nodes, result ?? evaluate(scenario, nodes, edges)),
+      sections: talkSections,
+      selfRating: talkRating,
+    });
+  };
+  // Written, not "covered": the grader's floor is any text at all.
+  const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
+  const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
+  const blockedKey = gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
+  const talkDetail = gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId);
+  // Null for a board loaded from storage: the score persists, the breakdown does not.
+  const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
+  const weakestLabel = TALK_TRACK_SECTIONS.find((section) => section.id === verdict?.weakest?.section)?.label ?? "";
   // Steps 1 to 3 end in Evaluate, already in the toolbar; from 4 the action is the talk track.
   const stepCopy =
     step === 1
@@ -103,7 +134,14 @@ export default function BoardScreen() {
           ? { title: t("board.stepDescribeTitle"), sub: t("board.stepDescribeSubTouch") }
           : step === 4
             ? { title: t("board.stepExplainTitle"), sub: t("board.stepExplainSub") }
-            : { title: t("board.stepGradedTitle", { scenario: scenario.name }), sub: t("board.stepGradedSub") };
+            : {
+                title: t("board.stepGradedTitle", { scenario: scenario.name }),
+                sub: !verdict
+                  ? t("board.stepGradedSub")
+                  : verdict.weakest
+                    ? t("board.stepGradedDiagnosis", { covered: verdict.covered, total: verdict.total, section: weakestLabel, question: verdict.weakest.gap })
+                    : t("board.stepGradedClear", { total: verdict.total }),
+              };
   const evaluateBoard = () => {
     setResult(evaluate(scenario, nodes, edges));
     setResultOpen(true);
@@ -482,6 +520,12 @@ export default function BoardScreen() {
             setTalkGrade(null);
           }}
           onClose={() => setTalkOpen(false)}
+          grade={talkGrade}
+          gradeDetail={talkDetail}
+          grading={gradeMutation.isPending}
+          gradeError={gradeMutation.error}
+          gradeBlocked={blockedKey ? t(blockedKey, limit ? { time: resumeTime(limit.retry_after) } : undefined) : null}
+          onGrade={talkGradeEnabled ? gradeTalkTrack : null}
         />
 
         <ScenarioSheet

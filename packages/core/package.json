@@ -33,6 +33,7 @@
     "./talkGrade": "./src/talkGrade.js",
     "./designTimer": "./src/designTimer.js",
     "./workflowState": "./src/workflowState.js",
+    "./gradeState": "./src/gradeState.js",
     "./gamification": "./src/gamification.js",
     "./funnel": "./src/funnel.js",
     "./accuracy": "./src/accuracy.js",
