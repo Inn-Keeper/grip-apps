@@ -7,7 +7,7 @@ import { NextUpLink } from "../components/NextUpShell";
 import { quietText } from "../components/fieldStyles";
 
 // Phones get each feature's bullets folded behind "What's inside", so the page reads as five
-// short cards instead of a wall of 26 bullets. Wider screens start them open.
+// short cards instead of a wall of 31 bullets. Wider screens start them open.
 const wide = typeof window !== "undefined" && window.matchMedia("(min-width: 821px)").matches;
 
 type TKey = Parameters<typeof t>[0];
@@ -115,7 +115,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
     titleKey: "about.prep.title",
     taglineKey: "about.prep.tagline",
     page: "prep",
-    bulletKeys: ["about.prep.b1", "about.prep.b2", "about.prep.b3", "about.prep.b4", "about.prep.b5", "about.prep.b6"],
+    bulletKeys: ["about.prep.b1", "about.prep.b2", "about.prep.b3", "about.prep.b4", "about.prep.b5", "about.prep.b6", "about.prep.b7"],
   },
   {
     icon: "story",
@@ -123,7 +123,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
     titleKey: "about.stories.title",
     taglineKey: "about.stories.tagline",
     page: "stories",
-    bulletKeys: ["about.stories.b1", "about.stories.b2", "about.stories.b3", "about.stories.b4", "about.stories.b5"],
+    bulletKeys: ["about.stories.b1", "about.stories.b2", "about.stories.b3", "about.stories.b4", "about.stories.b5", "about.stories.b6"],
   },
   {
     icon: "board",
@@ -131,7 +131,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
     titleKey: "about.board.title",
     taglineKey: "about.board.tagline",
     page: "board",
-    bulletKeys: ["about.board.b1", "about.board.b2", "about.board.b3", "about.board.b4", "about.board.b5"],
+    bulletKeys: ["about.board.b1", "about.board.b2", "about.board.b3", "about.board.b4", "about.board.b5", "about.board.b6", "about.board.b7"],
   },
   {
     icon: "quest",
@@ -139,7 +139,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
     titleKey: "about.quest.title",
     taglineKey: "about.quest.tagline",
     page: "quest",
-    bulletKeys: ["about.quest.b1", "about.quest.b2", "about.quest.b3", "about.quest.b4", "about.quest.b5"],
+    bulletKeys: ["about.quest.b1", "about.quest.b2", "about.quest.b3", "about.quest.b4", "about.quest.b5", "about.quest.b6"],
   },
   {
     icon: "profile",
@@ -147,7 +147,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
     titleKey: "about.profile.title",
     taglineKey: "about.profile.tagline",
     page: "profile",
-    bulletKeys: ["about.profile.b1", "about.profile.b2", "about.profile.b3", "about.profile.b4", "about.profile.b5"],
+    bulletKeys: ["about.profile.b1", "about.profile.b2", "about.profile.b3", "about.profile.b4", "about.profile.b5", "about.profile.b6"],
   },
 ];
 
@@ -220,7 +220,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
 
         <aside
           style={{
-            padding: "20px",
+            padding: "30px",
             background: colors.surface,
             border: `1px solid ${colors.borderSoft}`,
             boxShadow: shadow.card,
@@ -288,10 +288,9 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
           }}
         >
           {[
-            { labelKey: "about.how.syncedLabel", detailKey: "about.how.syncedDetail" },
-            { labelKey: "about.how.offlineLabel", detailKey: "about.how.offlineDetail" },
             { labelKey: "about.how.adaptiveLabel", detailKey: "about.how.adaptiveDetail" },
             { labelKey: "about.how.privateLabel", detailKey: "about.how.privateDetail" },
+            { labelKey: "about.how.demoLabel", detailKey: "about.how.demoDetail" },
           ].map((item) => (
             <div key={item.labelKey}>
               <div style={{ fontSize: font.size.small, fontWeight: 800, color: colors.accent, marginBottom: 4 }}>{t(item.labelKey as Parameters<typeof t>[0])}</div>

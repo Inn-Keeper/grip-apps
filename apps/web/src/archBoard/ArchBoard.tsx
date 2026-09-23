@@ -162,6 +162,14 @@ export default function ArchBoard() {
   const nodesRef = useRef<BoardNode[]>([]);
   nodesRef.current = nodes;
   const { view, setView, toBoard, zoomStep, resetZoom, fit, consumePan } = useBoardViewport(canvasRef, nodesRef);
+  // Entering or leaving full screen resizes the canvas; frame the board for the new size.
+  const wasFullscreen = useRef(isFullscreen);
+  useEffect(() => {
+    if (wasFullscreen.current === isFullscreen) return;
+    wasFullscreen.current = isFullscreen;
+    const frame = window.requestAnimationFrame(() => fit(nodesRef.current));
+    return () => window.cancelAnimationFrame(frame);
+  }, [isFullscreen, fit]);
 
   const { allScenarios, scenarioOptions, error: scenariosError, isFetching: scenariosFetching } = useScenarioCatalog();
   const scenario: AugmentedScenario = allScenarios.find((s) => s.id === scenarioId) ?? (SCENARIOS[0] as AugmentedScenario);

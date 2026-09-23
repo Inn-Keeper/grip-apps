@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font, tints } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import {
   MAINT_LEAN_MAX,
@@ -11,11 +11,13 @@ import {
 import type { AugmentedScenario } from "./types";
 import { scrollBehavior } from "../lib/motion";
 
+type Check = { label: string; passed: boolean; points: number };
+
 type EvalResult = {
   score: number;
   cost: number;
   maint: number;
-  checks: { label: string; passed: boolean; points: number }[];
+  checks: Check[];
   warnings: string[];
 };
 
@@ -86,66 +88,32 @@ export function EvalResults({
         </span>
         )}
       </div>
-      <p style={{ margin: "-6px 0 14px", fontSize: font.size.small, color: colors.textFaint }}>
-        {t("board.eval.intro")}
-      </p>
+      <ChecklistSummary checks={result.checks} />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 18 }}>
-        <div>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
-              <BrandIcon name="check" color={colors.textDim} size={13} />
-            {t("board.designChecks")}
-          </div>
-          <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
-            {result.checks.map((check) => (
-              <li
-                key={check.label}
-                style={{
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 7,
-                  fontSize: font.size.body,
-                  lineHeight: 1.5,
-                  color: check.passed ? colors.successBright : colors.dangerBright,
-                }}
-              >
-                <BrandIcon
-                  name={check.passed ? "check" : "error"}
-                  color={check.passed ? colors.successBright : colors.dangerBright}
-                  size={14}
-                />
-                <span style={{ flex: 1 }}>
-                  {check.label} <span style={{ color: colors.textFaint }}>{t("board.eval.points", { points: check.points })}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 18, marginTop: 16 }}>
+        <Checklist checks={result.checks} />
         {result.warnings.length > 0 && (
-          <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
-              <BrandIcon name="warning" color={colors.textDim} size={13} />
-              {t("board.eval.warnings", { count: result.warnings.length })}
-            </div>
-            <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
+          <section>
+            <SectionHeading icon="warning" label={t("board.eval.warnings", { count: result.warnings.length })} />
+            <ul style={{ ...listStyle, gap: 8 }}>
               {result.warnings.map((warning) => (
                 <li
                   key={warning}
                   style={{
-                    display: "flex",
-                    alignItems: "flex-start",
-                    gap: 7,
+                    padding: "8px 12px",
+                    background: tints.warningSoft,
+                    borderLeft: `3px solid ${colors.warning}`,
+                    borderRadius: 6,
                     fontSize: font.size.body,
                     lineHeight: 1.5,
-                    color: colors.warningBright,
+                    color: colors.text,
                   }}
                 >
-                  <BrandIcon name="warning" color={colors.warningBright} size={14} />
-                  <span style={{ flex: 1 }}>{warning}</span>
+                  {warning}
                 </li>
               ))}
             </ul>
-          </div>
+          </section>
         )}
       </div>
 
@@ -166,5 +134,93 @@ export function EvalResults({
         </div>
       )}
     </div>
+  );
+}
+
+const listStyle = { margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column" } as const;
+
+function SectionHeading({ icon, label }: { icon: string; label: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+      <BrandIcon name={icon} color={colors.textDim} size={13} />
+      {label}
+    </div>
+  );
+}
+
+// How much of the scenario's checklist the design earns, as a count and a bar.
+function ChecklistSummary({ checks }: { checks: Check[] }) {
+  const passed = checks.filter((c) => c.passed);
+  const earned = passed.reduce((sum, c) => sum + c.points, 0);
+  const total = checks.reduce((sum, c) => sum + c.points, 0);
+  const pct = total ? Math.round((earned / total) * 100) : 0;
+  return (
+    <div>
+      <p style={{ margin: "0 0 6px", fontSize: font.size.small, color: colors.textDim }}>
+        {t("board.eval.summary", { passed: passed.length, total: checks.length, earned, points: total })}
+      </p>
+      <div role="presentation" style={{ height: 6, borderRadius: 3, background: colors.bgDeep, overflow: "hidden" }}>
+        <div style={{ width: `${pct}%`, height: "100%", borderRadius: 3, background: pct === 100 ? colors.success : colors.accent }} />
+      </div>
+    </div>
+  );
+}
+
+// Missing checks lead as a to-do list, biggest points first; earned ones fold away until everything passes.
+// A missing check is credit not yet earned, not an error, so nothing here is red.
+function Checklist({ checks }: { checks: Check[] }) {
+  const missing = checks.filter((c) => !c.passed).sort((a, b) => b.points - a.points);
+  const done = checks.filter((c) => c.passed);
+  return (
+    <section>
+      {missing.length > 0 && (
+        <>
+          <SectionHeading icon="evaluate" label={t("board.eval.missing", { count: missing.length })} />
+          <ul style={{ ...listStyle, gap: 4 }}>
+            {missing.map((check) => <CheckRow key={check.label} check={check} />)}
+          </ul>
+        </>
+      )}
+      {done.length > 0 && (
+        <details open={missing.length === 0} style={{ marginTop: missing.length > 0 ? 12 : 0 }}>
+          <summary style={{ cursor: "pointer", fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 8 }}>
+            {t("board.eval.done", { count: done.length })}
+          </summary>
+          <ul style={{ ...listStyle, gap: 4 }}>
+            {done.map((check) => <CheckRow key={check.label} check={check} />)}
+          </ul>
+        </details>
+      )}
+    </section>
+  );
+}
+
+function CheckRow({ check }: { check: Check }) {
+  return (
+    <li style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "7px 10px", borderRadius: 8, background: check.passed ? "transparent" : colors.bgDeep }}>
+      <span style={{ flex: "0 0 auto", display: "flex", marginTop: 3 }}>
+        {check.passed ? (
+          <BrandIcon name="check" color={colors.successBright} size={14} />
+        ) : (
+          <span aria-hidden="true" style={{ width: 12, height: 12, margin: 1, borderRadius: 6, border: `2px solid ${colors.textFaint}` }} />
+        )}
+      </span>
+      <span style={{ flex: 1, minWidth: 0, fontSize: font.size.body, lineHeight: 1.5, color: check.passed ? colors.textDim : colors.text }}>
+        {check.label}
+      </span>
+      <span
+        style={{
+          flex: "0 0 auto",
+          padding: "2px 8px",
+          borderRadius: 10,
+          fontSize: font.size.label,
+          fontWeight: 700,
+          background: check.passed ? "transparent" : tints.accentSoft,
+          color: check.passed ? colors.textFaint : colors.accentBright,
+        }}
+      >
+        {t(check.passed ? "board.eval.earnedPoints" : "board.eval.openPoints", { points: check.points })}
+      </span>
+    </li>
   );
 }

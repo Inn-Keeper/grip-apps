@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- Docs: `docs/mobile-parity.md` records what the web app has that mobile lacks or does differently, with a suggested order, for when mobile work resumes.
 - Arch Board and Story Bank (web): the scenario pickers search. Opening one puts a search field above the 100 scenarios; typing filters by name or by category ("fintech" shows the group), the arrow keys and Enter pick from what's left, and only a real scenario can be chosen. Escape leaves the choice as it was.
 - Story Bank (web): a story can link to the Arch Board scenario of the system behind it. The story form picks one of the built-in scenarios or your own, or drafts a new scenario from the story (its title as the name, situation and task as the brief). The story view names the scenario and opens the Arch Board on it. The link is optional, since many behavioral stories have no system behind them, and a story whose custom scenario was deleted says so.
 - Arch Board (web): a saved board can belong to the story it was designed for. A story's New board for this story opens a board already tied to it; the rail offers the stories linked to the scenario (or none) and shows the chosen one's STAR, so the situation you will actually talk about sits next to the design and the talk track. The story is part of the board's saved state, and the saved boards list names it.
@@ -15,6 +16,8 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Arch Board (web): the design checklist reads as a to-do list. A summary line and bar give checks and points earned; what is still missing comes first, biggest points first, with a points pill each, and nothing is red, because a missing check is credit not yet earned. Earned checks fold under Done until everything passes, and design warnings sit in their own amber block.
+- Fly Me (web): the page and the guided tour describe the app as it is now: readiness, the Thunderstorm clock, unseen questions first, Auto-next, Mock loop, story links to scenarios and boards, the five-step board with AI grading, scenario search, full screen and share links, Quest's Next Up, velocity and Drill these in Prep, and CV import. Counts are corrected (10 categories, about 50 technologies), the Synced and Offline-ready claims are gone while mobile is on hold, and Free demo joins What stays handled.
 - Story Bank and Arch Board (web): a story has one board, the design you tell for it, improved in place rather than redrawn. The story shows that board with its scores and offers New board for this story only until it exists; the board's story picker shows stories another board already holds as taken, and a save that would give a story a second board says so in words.
 - Arch Board (web): the scenario brief reads as the brief. It was an untitled card of its own below the scenario picker, dimmed, which made the one paragraph every check, figure and talk track section is judged against look like a caption. It now sits inside the scenario card it belongs to, labelled and marked with an icon, on the deep background behind a soft edge, in full-strength text, with the scenario actions below it rather than above. The left rail carries three cards instead of four.
 - Arch Board (web): the Edit arrow row has room above and below it. It wraps under the toolbar buttons at practically every width, where it sat flush against them and against the palette.
@@ -28,6 +31,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Arch Board (web): full screen opens framed. It kept the small canvas's zoom and pan, so the board sat off to one side or tiny; entering and leaving full screen now fit the board to the new size.
 - Arch Board (web): leaving the New scenario form no longer leaves a second copy of the Next Up action under the steps. The card's visibility watcher stayed on the card that was unmounted, so the board thought Next Up had scrolled away for the rest of the visit.
 - Quest (web): the stage-velocity panel is hidden when `VITE_PIPELINE_URL` is unset, instead of showing a red error. The client used to throw "pipeline: not configured" on every load, which surfaced as a failure even though nothing had been asked of the service — an unconfigured optional service now behaves like `VITE_AI_URL` does and simply offers nothing.
 - Quest (web): an empty velocity panel says which kind of empty it is. With no contact yet moved between stages it still says to move one; with transitions recorded but no averages returned it points at the pipeline service, because that is no longer something more data would fix.
