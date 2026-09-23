@@ -2,8 +2,10 @@ import { useState } from "react";
 import { ESTIMATE_TARGETS, deriveScale, formatCompact, gradeEstimate } from "@grip/core/estimation";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
+import { AbbrText } from "../components/AbbrText";
 import { BrandIcon } from "../components/BrandIcon";
 import { InfoTip } from "../components/InfoTip";
+import { scaleHandoff } from "./scaleHandoff.js";
 import type { AugmentedScenario } from "./types";
 
 const DAYS_PER_YEAR = 365;
@@ -19,7 +21,14 @@ const BAND_STYLE = {
   off: { color: () => colors.dangerBright, icon: "error", label: "scale.bandOff" },
 } as const;
 
-export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
+export function ScaleBrief({
+  scenario,
+  onUseInTalkTrack,
+}: {
+  scenario: AugmentedScenario;
+  /** Hands the givens and your own estimates to the Back-of-envelope section. */
+  onUseInTalkTrack: ((text: string) => void) | null;
+}) {
   const [guesses, setGuesses] = useState<Record<string, string>>({});
   const [checked, setChecked] = useState(false);
 
@@ -35,6 +44,17 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
     { label: t("scale.payloadLabel"), value: `${formatCompact(payloadKb)} KB` },
     { label: t("scale.retentionLabel"), value: formatRetention(retentionDays) },
   ];
+
+  const handoff = scaleHandoff({
+    givenLabel: t("scale.givenLabel"),
+    estimateLabel: t("scale.myEstimateLabel"),
+    givens,
+    estimates: ESTIMATE_TARGETS.map((target) => ({
+      label: target.label,
+      unit: target.unit,
+      value: guesses[target.id] ?? "",
+    })),
+  });
 
   return (
     <details open
@@ -53,18 +73,35 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
         <InfoTip>{t("scale.subtitle")}</InfoTip>
       </summary>
 
-      <div style={{ display: "flex", gap: 18, flexWrap: "wrap", margin: "12px 0 14px" }}>
-        {givens.map((given) => (
-          <div key={given.label} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.03em" }}>
-              {given.label.toUpperCase()}
-            </span>
-            <span style={{ fontSize: font.size.bodyLg, fontWeight: 700, color: colors.text, fontVariantNumeric: "tabular-nums" }}>
+      {/* Rows, not wrapped columns. In a narrow rail five stacked pairs broke
+          into ragged groups that read as unrelated numbers instead of one
+          brief; aligning label and value on a line makes it scannable. */}
+      <dl style={{ margin: "12px 0 16px" }}>
+        {givens.map((given, index) => (
+          <div
+            key={given.label}
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              gap: 12,
+              padding: "7px 0",
+              borderTop: index === 0 ? "none" : `1px solid ${colors.borderSoft}`,
+            }}
+          >
+            <dt style={{ fontSize: font.size.small, color: colors.textDim }}>{given.label}</dt>
+            <dd style={{ margin: 0, fontSize: font.size.body, fontWeight: 800, color: colors.textBright, fontVariantNumeric: "tabular-nums" }}>
               {given.value}
-            </span>
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
+
+      {/* The brief has two halves and only the first was labelled, so the
+          inputs read as another given rather than as the work. */}
+      <h3 style={{ margin: "0 0 10px", fontSize: font.size.label, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: colors.textFaint }}>
+        {t("scale.deriveHeading")}
+      </h3>
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
         {ESTIMATE_TARGETS.map((target) => {
@@ -75,10 +112,13 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
             <div key={target.id} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
                 <label style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>
-                  {target.label} <span style={{ color: colors.textFaint, fontWeight: 600 }}>({target.unit})</span>
+                  {target.label}{" "}
+                  <span style={{ color: colors.textFaint, fontWeight: 600, whiteSpace: "nowrap" }}>
+                    (<AbbrText>{target.unit}</AbbrText>)
+                  </span>
                 </label>
                 {/* The formula stays one tap away instead of printed under every field. */}
-                <InfoTip>{target.hint}</InfoTip>
+                <InfoTip><AbbrText>{target.hint}</AbbrText></InfoTip>
               </div>
               <input
                 type="number"
@@ -104,7 +144,7 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
               {band && grade?.ratio !== null && grade !== null && (
                 <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.small, color: band.color() }}>
                   <BrandIcon name={band.icon} color={band.color()} size={13} />
-                  {t(band.label)} — {t("scale.actual", { value: formatCompact(Math.round(actual)) })}{" "}
+                  {t(band.label)} · {t("scale.actual", { value: formatCompact(Math.round(actual)) })}{" "}
                   <span style={{ color: colors.textFaint }}>
                     {grade.ratio >= 1
                       ? t("scale.ratioHigh", { ratio: formatCompact(Math.round(grade.ratio * 10) / 10) })
@@ -117,22 +157,44 @@ export function ScaleBrief({ scenario }: { scenario: AugmentedScenario }) {
         })}
       </div>
 
-      <button
-        onClick={() => setChecked(true)}
-        style={{
-          marginTop: 12,
-          padding: "7px 16px",
-          background: "transparent",
-          border: `1px solid ${colors.accent}`,
-          borderRadius: 8,
-          color: colors.accentBright,
-          fontSize: font.size.small,
-          fontWeight: 600,
-          cursor: "pointer",
-        }}
-      >
-        {t("scale.check")}
-      </button>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
+        <button
+          onClick={() => setChecked(true)}
+          style={{
+            padding: "7px 16px",
+            background: "transparent",
+            border: `1px solid ${colors.accent}`,
+            borderRadius: 8,
+            color: colors.accentBright,
+            fontSize: font.size.small,
+            fontWeight: 600,
+            cursor: "pointer",
+          }}
+        >
+          {t("scale.check")}
+        </button>
+        {/* The arithmetic done here is exactly what the Back-of-envelope section
+            is graded on, so it should not have to be typed twice. */}
+        {onUseInTalkTrack && (
+          <button
+            type="button"
+            disabled={handoff === null}
+            onClick={() => handoff && onUseInTalkTrack(handoff)}
+            style={{
+              padding: "7px 0",
+              background: "transparent",
+              border: "none",
+              color: handoff === null ? colors.textFaint : colors.accentBright,
+              fontSize: font.size.small,
+              fontWeight: 600,
+              textDecoration: handoff === null ? "none" : "underline",
+              cursor: handoff === null ? "default" : "pointer",
+            }}
+          >
+            {t("scale.useInTalkTrack")}
+          </button>
+        )}
+      </div>
     </details>
   );
 }

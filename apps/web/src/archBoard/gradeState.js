@@ -32,3 +32,27 @@ export const resumeTime = (seconds, now = Date.now()) =>
  */
 export const gradeDetailFor = (grade, detail, boardId) =>
   grade === null || !detail || detail.board_id !== boardId ? null : detail;
+
+/**
+ * The verdict to state after grading: how much earned credit, and the one
+ * section to fix first.
+ *
+ * Missing sorts before thin because absent reasoning costs more in an
+ * interview than shallow reasoning. Returns null when no detail is on hand,
+ * which is the normal case for a board loaded from storage: the score is
+ * persisted but the per-section breakdown is not.
+ */
+export const gradeVerdict = (detail, sectionIds) => {
+  if (!detail) return null;
+  const byId = new Map(detail.suggestion.sections.map((item) => [item.section, item]));
+  const graded = sectionIds.map((id) => byId.get(id)).filter(Boolean);
+  if (graded.length === 0) return null;
+  return {
+    covered: graded.filter((item) => item.verdict === "covered").length,
+    total: sectionIds.length,
+    weakest:
+      graded.find((item) => item.verdict === "missing") ??
+      graded.find((item) => item.verdict === "thin") ??
+      null,
+  };
+};

@@ -1,8 +1,11 @@
+import { useEffect, useRef } from "react";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
+import { AbbrText } from "../components/AbbrText";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
+import styles from "./ArchBoard.module.css";
 import type { TalkGradeResult } from "./types";
 
 // Only an earned verdict carries colour. "missing" is the absence of credit,
@@ -24,6 +27,8 @@ export function TalkTrack({
   onGrade,
   onChangeSection,
   onChangeRating,
+  focusSection,
+  onFocused,
 }: {
   sections: Record<string, string>;
   rating: number | null;
@@ -38,7 +43,19 @@ export function TalkTrack({
   onGrade: (() => void) | null;
   onChangeSection: (id: string, value: string) => void;
   onChangeRating: (value: number | null) => void;
+  /** A section to put the cursor in, set when the verdict card points at it. */
+  focusSection: string | null;
+  onFocused: () => void;
 }) {
+  const fields = useRef<Record<string, HTMLTextAreaElement | null>>({});
+  // Focus rather than scroll: this panel lives in the right rail, so scrolling
+  // the main column would not reach it, and focus is what a screen reader
+  // announces (rule 43). The browser brings a focused field into view itself.
+  useEffect(() => {
+    if (!focusSection) return;
+    fields.current[focusSection]?.focus();
+    onFocused();
+  }, [focusSection, onFocused]);
   const { answered, completion } = scoreTalkTrack({ sections, rating });
   const meterColor =
     completion >= SHIP_SCORE ? colors.success : completion >= REVIEW_SCORE ? colors.warning : colors.danger;
@@ -94,8 +111,13 @@ export function TalkTrack({
                   </span>
                 )}
               </span>
-              <span style={{ fontSize: font.size.label, lineHeight: 1.5, color: colors.textFaint }}>{section.hint}</span>
+              <span style={{ fontSize: font.size.label, lineHeight: 1.5, color: colors.textFaint }}>
+                <AbbrText>{section.hint}</AbbrText>
+              </span>
               <textarea
+                ref={(el) => {
+                  fields.current[section.id] = el;
+                }}
                 value={value}
                 onChange={(e) => onChangeSection(section.id, e.target.value)}
                 rows={4}
@@ -166,6 +188,9 @@ export function TalkTrack({
               disabled={grading || gradeBlocked !== null}
               aria-busy={grading}
               style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 7,
                 padding: "8px 14px",
                 background: gradeBlocked ? "transparent" : colors.accent,
                 border: `1px solid ${gradeBlocked ? colors.borderSoft : colors.accent}`,
@@ -176,6 +201,7 @@ export function TalkTrack({
                 cursor: grading || gradeBlocked ? "default" : "pointer",
               }}
             >
+              {grading && <span aria-hidden="true" className={styles.gradeSpinner} />}
               {grading ? t("talk.grading") : t("talk.gradeAction")}
             </button>
             {/* Rule 13: the reason and the result sit next to the button that was clicked. */}

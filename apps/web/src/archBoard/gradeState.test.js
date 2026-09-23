@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { gradeBlockedKey, gradeDetailFor, resumeTime } from "./gradeState.js";
+import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "./gradeState.js";
 
 test("an unsaved board cannot be graded: the service takes its id", () => {
   assert.equal(gradeBlockedKey(null, 3), "talk.gradeNeedsSave");
@@ -36,4 +36,42 @@ test("editing clears the grade, which retires the verdicts with it", () => {
 
 test("another board's grade is never shown on this one", () => {
   assert.equal(gradeDetailFor(50, detail, "board-2"), null);
+});
+
+const verdictDetail = (...verdicts) => ({
+  suggestion: {
+    sections: verdicts.map(([section, verdict], i) => ({
+      section,
+      verdict,
+      evidence: "",
+      gap: `gap ${i}`,
+    })),
+  },
+});
+const IDS = ["a", "b", "c"];
+
+test("no detail means no verdict: a loaded board keeps its score, not its breakdown", () => {
+  assert.equal(gradeVerdict(null, IDS), null);
+});
+
+test("counts only the sections that earned credit", () => {
+  const v = gradeVerdict(verdictDetail(["a", "covered"], ["b", "thin"], ["c", "covered"]), IDS);
+  assert.equal(v.covered, 2);
+  assert.equal(v.total, 3);
+});
+
+test("a missing section is the one to fix first, even after a thin one", () => {
+  const v = gradeVerdict(verdictDetail(["a", "thin"], ["b", "missing"], ["c", "covered"]), IDS);
+  assert.equal(v.weakest.section, "b");
+});
+
+test("falls back to the first thin section when nothing is missing", () => {
+  const v = gradeVerdict(verdictDetail(["a", "covered"], ["b", "thin"], ["c", "thin"]), IDS);
+  assert.equal(v.weakest.section, "b");
+});
+
+test("all covered leaves nothing to fix", () => {
+  const v = gradeVerdict(verdictDetail(["a", "covered"], ["b", "covered"], ["c", "covered"]), IDS);
+  assert.equal(v.weakest, null);
+  assert.equal(v.covered, 3);
 });

@@ -65,3 +65,36 @@
 .zoomPercent { min-width: 52px; font-variant-numeric: tabular-nums; font-size: 12px; }
 .toolbarButton:focus-visible, .connectionSelect:focus-visible,
 .node:focus-visible, .handle:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 3px; }
+
+/* Grading takes a few seconds against a free-tier model, and a label change
+   alone left the button looking inert. Motion is the message here: something is
+   still running. */
+.gradeSpinner {
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: gradeSpin 0.7s linear infinite;
+  flex: 0 0 auto;
+}
+
+@keyframes gradeSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* Rule 35: no effect at all when the system asks for reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  .gradeSpinner { animation: none; border-top-color: currentColor; opacity: 0.5; }
+}
+
+/* Fullscreen paints the element on a black backdrop by default, which would
+   leave the board floating on an unbranded void. */
+.editor:fullscreen {
+  height: 100vh;
+  padding: 12px;
+  box-sizing: border-box;
+  background: var(--arch-page);
+  grid-template-rows: auto 1fr;
+  overflow: hidden;
+}

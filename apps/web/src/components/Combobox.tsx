@@ -29,6 +29,8 @@ type ComboboxProps = {
   triggerStyle?: CSSProperties;
   maxHeight?: number;
   searchable?: boolean;
+  /** Greys the trigger and refuses to open it, like a native select's disabled. */
+  disabled?: boolean;
 };
 
 /**
@@ -48,6 +50,7 @@ export function Combobox({
   triggerStyle: triggerOverrides,
   maxHeight = DEFAULT_MAX_HEIGHT,
   searchable = false,
+  disabled = false,
 }: ComboboxProps) {
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
@@ -127,9 +130,15 @@ export function Combobox({
             role="combobox"
             aria-expanded={open}
             aria-controls={listboxId}
-            onClick={() => setOpen((v) => !v)}
+            disabled={disabled}
+            onClick={() => !disabled && setOpen((v) => !v)}
             onKeyDown={handleKeyDown}
-            style={{ ...controlStyle, cursor: "pointer", ...triggerOverrides }}
+            style={{
+              ...controlStyle,
+              cursor: disabled ? "default" : "pointer",
+              color: disabled ? colors.textFaint : controlStyle.color,
+              ...triggerOverrides,
+            }}
           >
             <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
               {selected?.color && <span style={{ width: 8, height: 8, borderRadius: 4, background: selected.color, flex: "0 0 auto" }} />}

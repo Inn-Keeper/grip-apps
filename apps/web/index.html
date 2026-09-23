@@ -21,7 +21,8 @@
       input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 1px; }
       /* Scroll targets clear the sticky header; App.tsx measures it into --header-h. At
          500px tall and below the header scrolls away (App.module.css), so only the gap stays. */
-      html { scroll-padding-top: calc(var(--header-h, 0px) + 16px); }
+      /* --rail-h: the Arch Board's sticky step rail, which sits under the header. */
+      html { --rail-h: 0px; scroll-padding-top: calc(var(--header-h, 0px) + var(--rail-h) + 16px); }
       @media (max-height: 500px) { html { scroll-padding-top: 16px; } }
       /* Tap targets: every button, select and disclosure is at least 24px tall (WCAG 2.5.8),
          so the small outline buttons (Edit, Delete, Drill, All…) stay easy to hit on touch. */

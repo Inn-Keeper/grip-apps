@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { TYPE_COLORS, meta, SCENARIOS, SCENARIO_CATEGORIES, STATEFUL_TYPES, evaluate } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
@@ -27,8 +27,10 @@ import { findPlacement } from "./boardGeometry.js";
 import { useBoardViewport } from "./useBoardViewport";
 import { ViewportControls } from "./ViewportControls";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
-import { gradeBlockedKey, gradeDetailFor, resumeTime } from "./gradeState.js";
+import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "./gradeState.js";
+import { appendHandoff } from "./scaleHandoff.js";
 import { workflowStep } from "./workflowState.js";
+import { WorkflowSteps } from "./WorkflowSteps";
 import styles from "./ArchBoard.module.css";
 import {
   useCustomScenariosQuery,
@@ -59,6 +61,24 @@ export default function ArchBoard() {
   const [result, setResult] = useState<ReturnType<typeof evaluate> | null>(null);
   const [savedOpen, setSavedOpen] = useState(false);
   const [talkOpen, setTalkOpen] = useState(false);
+  const editorRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // The whole editor goes fullscreen, palette included: a board you cannot add
+  // to is a picture, not a workspace.
+  useEffect(() => {
+    const sync = () => setIsFullscreen(document.fullscreenElement === editorRef.current);
+    document.addEventListener("fullscreenchange", sync);
+    return () => document.removeEventListener("fullscreenchange", sync);
+  }, []);
+
+  const canFullscreen = typeof document !== "undefined" && document.fullscreenEnabled;
+  const toggleFullscreen = () => {
+    if (document.fullscreenElement) void document.exitFullscreen();
+    else void editorRef.current?.requestFullscreen().catch(() => setIsFullscreen(false));
+  };
+  // The section the verdict card sends you to; cleared once the cursor lands.
+  const [focusSection, setFocusSection] = useState<string | null>(null);
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
   const [talkGrade, setTalkGrade] = useState<number | null>(null);
@@ -99,7 +119,7 @@ export default function ArchBoard() {
     savedSnapshotRef.current = snapshot();
   }
   const isDirty = !sameSnapshot(snapshot(), savedSnapshotRef.current);
-  const activeWorkflowStep = workflowStep(nodes.length, edges.length);
+  const activeWorkflowStep = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
 
   useEffect(() => {
     if (!isDirty) return;
@@ -396,18 +416,52 @@ export default function ArchBoard() {
   // On an empty, unsaved canvas, the one main action is picking up where you left off.
   const latestBoard = nodes.length === 0 && !activeBoardId && !isDirty ? savedBoards[0] : undefined;
   // Next Up coaches the current workflow step; evaluating is the one main action (rule 1).
+  const talkDetail = gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId);
+  // Null on a board loaded from storage: the score persists, the breakdown does not.
+  const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
+  const weakestLabel = verdict?.weakest
+    ? TALK_TRACK_SECTIONS.find((section) => section.id === verdict.weakest.section)?.label ?? ""
+    : "";
+  const clearFocusSection = useCallback(() => setFocusSection(null), []);
+  const answerWeakest = () => {
+    setTalkOpen(true);
+    if (verdict?.weakest) setFocusSection(verdict.weakest.section);
+  };
   const stepCopy =
     activeWorkflowStep === 1
       ? { title: t("board.stepAddTitle"), sub: t("board.stepAddSub") }
       : activeWorkflowStep === 2
         ? { title: t("board.stepConnectTitle"), sub: connectFrom ? t("board.stepConnectTarget", { name: nodeName(connectFrom) }) : t("board.stepConnectSub") }
-        : { title: t("board.stepDescribeTitle"), sub: t("board.stepDescribeSub") };
+        : activeWorkflowStep === 3
+          ? { title: t("board.stepDescribeTitle"), sub: t("board.stepDescribeSub") }
+          : activeWorkflowStep === 4
+            ? { title: t("board.stepExplainTitle"), sub: t("board.stepExplainSub") }
+            : {
+                title: t("board.stepGradedTitle", { scenario: scenario.name }),
+                // The design score stays the screen's one headline in the right
+                // rail (rule 17); coverage is stated in words instead (rule 19).
+                sub: !verdict
+                  ? t("board.stepGradedSub")
+                  : verdict.weakest
+                    ? t("board.stepGradedDiagnosis", {
+                        covered: verdict.covered,
+                        total: verdict.total,
+                        section: weakestLabel,
+                        question: verdict.weakest.gap,
+                      })
+                    : t("board.stepGradedClear", { total: verdict.total }),
+              };
+  // Past step 3 the design is scored and the unscored half is the talk track,
+  // so the one main action becomes writing it rather than evaluating again.
+  const explaining = activeWorkflowStep >= 4;
   const statusText = saveBoardMutation.isPending ? t("board.statusSaving") : isDirty ? t("board.statusDirty") : activeBoardId ? t("board.saved") : t("board.statusNew");
   const cssVars = {
     ["--arch-border" as string]: colors.borderSoft,
     ["--arch-text-dim" as string]: colors.textDim,
     ["--arch-surface" as string]: colors.surface,
     ["--arch-canvas" as string]: colors.bgDeep,
+    // The surround when the editor goes fullscreen, so it is not a black void.
+    ["--arch-page" as string]: colors.bg,
     ["--arch-text" as string]: colors.text,
     ["--arch-accent" as string]: colors.accentBright,
   } as React.CSSProperties;
@@ -455,7 +509,21 @@ export default function ArchBoard() {
             </WorkspacePanel>
           )}
 
-          <ScaleBrief key={scenario.id} scenario={scenario} />
+          <ScaleBrief
+            key={scenario.id}
+            scenario={scenario}
+            onUseInTalkTrack={(text) => {
+              // Same commit shape as typing in the section: the grade belongs to
+              // the text that earned it, so it clears.
+              commit({
+                ...snapshot(),
+                talkSections: { ...talkSections, scale: appendHandoff(talkSections.scale ?? "", text) },
+                talkGrade: null,
+              });
+              setTalkOpen(true);
+              setFocusSection("scale");
+            }}
+          />
 
           {/* Saved boards load only once this is opened. */}
           <details className={styles.savedBoards} open={savedOpen} onToggle={(event) => setSavedOpen(event.currentTarget.open)}>
@@ -532,7 +600,7 @@ export default function ArchBoard() {
               sections={talkSections}
               rating={talkRating}
               grade={talkGrade}
-              gradeDetail={gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId)}
+              gradeDetail={talkDetail}
               grading={gradeMutation.isPending}
               gradeError={gradeMutation.error}
               gradeBlocked={blockedKey ? t(blockedKey, limit ? { time: resumeTime(limit.retry_after) } : undefined) : null}
@@ -543,6 +611,8 @@ export default function ArchBoard() {
               onChangeRating={(value) => {
                 commit({ ...snapshot(), talkRating: value, talkGrade: null });
               }}
+              focusSection={focusSection}
+              onFocused={clearFocusSection}
             />
           )}
         </>
@@ -564,6 +634,9 @@ export default function ArchBoard() {
           </div>
         ) : (
           <>
+            {/* Above both branches: the journey must stay on screen even when
+                the card is offering to resume an earlier board. */}
+            <WorkflowSteps activeStep={activeWorkflowStep} />
             {latestBoard ? (
               <NextUpShell
                 title={t("board.continueTitle", { title: latestBoard.title })}
@@ -577,21 +650,23 @@ export default function ArchBoard() {
                 onAction={() => requestBoard(latestBoard)}
               />
             ) : (
-            <NextUpShell
-              title={stepCopy.title}
-              sub={stepCopy.sub}
-              tone={colors.accent ?? ""}
-              actionLabel={t("board.evaluateDesign")}
-              actionIcon="evaluate"
-              onAction={evaluateDesign}
-              disabled={nodes.length === 0}
-              links={
-                <>
-                  <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} />
-                  <NextUpLink label={t("board.orTalk")} onClick={() => setTalkOpen(true)} />
-                </>
-              }
-            />
+              <NextUpShell
+                title={stepCopy.title}
+                sub={stepCopy.sub}
+                tone={colors.accent ?? ""}
+                actionLabel={
+                  verdict?.weakest ? t("board.answerAction") : explaining ? t("board.explainAction") : t("board.evaluateDesign")
+                }
+                actionIcon={explaining ? "spark" : "evaluate"}
+                onAction={verdict?.weakest ? answerWeakest : explaining ? () => setTalkOpen(true) : evaluateDesign}
+                disabled={nodes.length === 0}
+                links={
+                  <>
+                    <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} />
+                    {explaining && <NextUpLink label={t("board.evaluateDesign")} onClick={evaluateDesign} />}
+                  </>
+                }
+              />
             )}
 
             {/* Slim toolbar: editing controls for the canvas right under it. */}
@@ -617,19 +692,32 @@ export default function ArchBoard() {
               <button type="button" className={styles.toolbarButton} onClick={() => commit({ ...snapshot(), nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null })}>
                 {t("board.clear")}
               </button>
-              <label className={styles.connectionRow} style={{ marginLeft: "auto", marginBottom: 0, color: colors.textDim }}>
-                {t("board.editArrow")}{" "}
-                <select className={styles.connectionSelect} disabled={edges.length === 0} value={inspectingEdgeId ?? ""} onChange={(event) => setInspectingEdgeId(event.target.value || null)}>
-                  <option value="">{edges.length === 0 ? t("board.edgeNone") : t("board.edgeSelect")}</option>
-                  {edges.map((edge) => <option key={edge.id} value={edge.id}>{nodeName(edge.from)} → {nodeName(edge.to)}{edge.protocol ? ` · ${edge.protocol}` : ""}</option>)}
-                </select>
-              </label>
+              {/* Combobox, not a native select: the OS dropdown ignores the app's
+                  palette, so this one control rendered light on a dark board. */}
+              <div className={styles.connectionRow} style={{ marginLeft: "auto", marginBottom: 0, color: colors.textDim }}>
+                <span>{t("board.editArrow")}</span>
+                <Combobox
+                  value={inspectingEdgeId ?? ""}
+                  onChange={(value) => setInspectingEdgeId(value || null)}
+                  disabled={edges.length === 0}
+                  placeholder={edges.length === 0 ? t("board.edgeNone") : t("board.edgeSelect")}
+                  options={[
+                    { label: edges.length === 0 ? t("board.edgeNone") : t("board.edgeSelect"), value: "" },
+                    ...edges.map((edge) => ({
+                      label: `${nodeName(edge.from)} → ${nodeName(edge.to)}${edge.protocol ? ` · ${edge.protocol}` : ""}`,
+                      value: edge.id,
+                    })),
+                  ]}
+                  style={{ minWidth: 240 }}
+                  triggerStyle={{ minHeight: 32, padding: "5px 9px", fontSize: font.size.small }}
+                />
+              </div>
             </div>
             {saveBoardMutation.error && (
               <p role="alert" style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.dangerBright }}>{`${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</p>
             )}
 
-            <div className={styles.editor}>
+            <div className={styles.editor} ref={editorRef} data-fullscreen={isFullscreen || undefined}>
               <NodePalette onAddNode={addNode} />
           {/* Canvas */}
           <div
@@ -649,10 +737,10 @@ export default function ArchBoard() {
               if ((e.target as HTMLElement).dataset.boardSurface === "true") cancelConnection();
             }}
             style={{
-              position: "relative", minWidth: 0, height: "calc(100svh - 430px)",
+              position: "relative", minWidth: 0, height: isFullscreen ? "100%" : "calc(100svh - 430px)",
               // Never taller than the screen minus a strip of page: the canvas eats swipes
               // (touch-action: none), so there must always be room outside it to scroll.
-              minHeight: "clamp(220px, calc(100svh - 160px), 420px)",
+              minHeight: isFullscreen ? 0 : "clamp(220px, calc(100svh - 160px), 420px)",
               background: colors.bgDeep,
               // The dot grid belongs to the board, so it pans and scales with it.
               backgroundImage: `radial-gradient(${colors.borderSoft} ${Math.max(0.6, view.scale)}px, transparent ${Math.max(0.6, view.scale)}px)`,
@@ -890,6 +978,8 @@ export default function ArchBoard() {
               onZoomOut={() => zoomStep(-1)}
               onReset={resetZoom}
               onFit={() => fit(nodes)}
+              isFullscreen={isFullscreen}
+              onToggleFullscreen={canFullscreen ? toggleFullscreen : null}
             />
           </div>
             </div>

@@ -4,13 +4,14 @@ import { brand, colors, font } from "@grip/core/tokens";
 import { BrandMark } from "./components/BrandMark";
 import { quietText } from "./components/fieldStyles";
 
-type FooterLink = { label: string; action: (() => void) | null; href?: never } | { label: string; href: string; action?: never };
+type FooterLink = { label: string; action: () => void; href?: never } | { label: string; href: string; action?: never };
 
 export function Footer({ pages, onNavigate }: { pages: { id: string; label: string }[]; onNavigate: ((page: string) => void) | null }) {
-  const productLinks: FooterLink[] = pages.map((page) => ({
-    label: page.label,
-    action: onNavigate ? () => onNavigate(page.id) : null,
-  }));
+  // Signed out there is nowhere to go, so the menu is left out rather than
+  // rendered as dead text. The mark, promise and byline still show.
+  const productLinks: FooterLink[] = onNavigate
+    ? pages.map((page) => ({ label: page.label, action: () => onNavigate(page.id) }))
+    : [];
 
   return (
     <footer
@@ -45,7 +46,7 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
           </p>
         </div>
 
-        <FooterLinkGroup title={t("footer.menu")} links={productLinks} />
+        {productLinks.length > 0 && <FooterLinkGroup title={t("footer.menu")} links={productLinks} />}
       </div>
 
       <div
@@ -111,17 +112,7 @@ function FooterLinkGroup({ title, links }: { title: string; links: FooterLink[] 
               {link.label}
             </a>
           ) : (
-            <button
-              key={link.label}
-              type="button"
-              onClick={link.action ?? undefined}
-              disabled={!link.action}
-              style={{
-                ...linkStyle,
-                color: link.action ? colors.textDim : colors.textFaint,
-                cursor: link.action ? "pointer" : "default",
-              }}
-            >
+            <button key={link.label} type="button" onClick={link.action} style={linkStyle}>
               {link.label}
             </button>
           )

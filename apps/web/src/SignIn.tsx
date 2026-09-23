@@ -97,7 +97,8 @@ export function SignIn() {
         <h1 style={{ margin: "0 0 8px", fontSize: font.size.heading, fontWeight: 700, color: colors.textBright }}>
           {brand.productName}
         </h1>
-        <p style={{ margin: "0 0 24px", fontSize: font.size.body, color: colors.textFaint, lineHeight: 1.6 }}>
+        {/* The promise, not brand flavour, so it reads at the same weight as the form labels. */}
+        <p style={{ margin: "0 0 24px", fontSize: font.size.body, color: colors.textDim, lineHeight: 1.6 }}>
           {t("auth.subtitle")}
         </p>
 
@@ -211,6 +212,25 @@ export function SignIn() {
         >
           {mode === "signin" ? t("auth.switchToSignUp") : t("auth.switchToSignIn")}
         </button>
+
+        {/* Under the form on purpose: the main action stays at the top (rule 1).
+            The spark is the same icon the Arch Board uses for grading. */}
+        <p
+          style={{
+            display: "flex",
+            gap: 8,
+            margin: "18px 0 0",
+            textAlign: "left",
+            fontSize: font.size.small,
+            lineHeight: 1.55,
+            color: colors.textFaint,
+          }}
+        >
+          <span style={{ flex: "0 0 auto", marginTop: 2 }}>
+            <BrandIcon name="spark" color={colors.accentBright} size={14} />
+          </span>
+          {t("auth.aiProof")}
+        </p>
       </div>
     </main>
   );

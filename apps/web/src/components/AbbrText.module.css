@@ -1,0 +1,34 @@
+/* The abbreviation itself is the trigger: no extra icon in the sentence. */
+.term {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  cursor: help;
+  /* Dotted underline says "there is more here" without shouting like a link. */
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+  min-height: 0; /* index.html floors buttons at 24px; inline text must not grow. */
+}
+
+.term:focus-visible {
+  outline: 2px solid var(--abbr-focus);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.popover {
+  margin: 0;
+  padding: 7px 10px;
+  max-width: 260px;
+  border: 1px solid var(--abbr-border);
+  border-radius: 8px;
+  background: var(--abbr-bg);
+  color: var(--abbr-text);
+  font-size: 12px;
+  line-height: 1.45;
+  position-area: block-end;
+  position-try-fallbacks: block-start, inline-end, inline-start;
+  margin-block: 6px;
+}
