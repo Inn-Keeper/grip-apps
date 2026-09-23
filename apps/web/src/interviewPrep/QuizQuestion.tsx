@@ -8,6 +8,8 @@ import { srOnly } from "../components/fieldStyles";
 type OptionState = "idle" | "correct" | "wrong" | "dimmed";
 
 const letterFor = (i: number) => String.fromCharCode(65 + i);
+// The A-D keys only help with a keyboard: desktops with a precise pointer and hover.
+const hasKeyboardHint = typeof window !== "undefined" && window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
 function optionState(i: number, answered: number | null, correct: number): OptionState {
   if (answered === null) return "idle";
@@ -143,7 +145,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
       <div className={styles.footer}>
         {answered === null ? (
           <span style={{ fontSize: font.size.small, color: colors.textFaint }}>
-            {t("prep.pickAnswerKeys", { last: letterFor(optionCount - 1) })}
+            {hasKeyboardHint ? t("prep.pickAnswerKeys", { last: letterFor(optionCount - 1) }) : t("prep.pickAnswer")}
           </span>
         ) : (
           <>
