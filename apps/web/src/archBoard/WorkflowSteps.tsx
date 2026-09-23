@@ -16,29 +16,16 @@ export type RailAction = {
   highlight: boolean;
 };
 
-/**
- * The whole journey, always on screen. Finished steps stay visible and marked
- * done: a rail that shows only the current step is as opaque as no rail, since
- * you cannot reason about where you are without seeing where you have been.
- */
+/** The whole journey. Finished steps stay on screen, marked done. */
 export function WorkflowSteps({
   activeStep,
   action,
   round,
 }: {
   activeStep: number;
-  /**
-   * The step's main action, carried only while the Next Up card is off screen.
-   * Knowing which step you are on is useless if the button for it scrolled
-   * away, but showing it in both places would put one action twice on a screen
-   * that allows it once (rules 1 and 6).
-   */
+  /** The step's action, only while the Next Up card is off screen (rules 1, 6). */
   action: RailAction | null;
-  /**
-   * The running round, passed only while its panel is off screen. The rail is
-   * where the journey lives, so the clock joins it rather than starting a
-   * second progress display of its own.
-   */
+  /** The running round, only while its panel is off screen. One progress surface. */
   round: DesignRound | null;
 }) {
   const rail = useRef<HTMLDivElement>(null);

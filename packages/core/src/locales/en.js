@@ -155,6 +155,7 @@ export const en = {
   "profile.signOut": "Sign out",
   "board.title": "Arch Board",
   "board.context": "Scenario",
+  "board.briefLabel": "The brief",
   "board.scenarioCount": "{count} scenarios",
   "board.newScenario": "New scenario",
   "board.deleteScenarioConfirm": "Delete scenario \"{name}\"?",

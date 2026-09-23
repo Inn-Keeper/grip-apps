@@ -92,7 +92,8 @@ export function EvalResults({
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: 18 }}>
         <div>
-          <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+              <BrandIcon name="check" color={colors.textDim} size={13} />
             {t("board.designChecks")}
           </div>
           <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
@@ -122,7 +123,8 @@ export function EvalResults({
         </div>
         {result.warnings.length > 0 && (
           <div>
-            <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+              <BrandIcon name="warning" color={colors.textDim} size={13} />
               {t("board.eval.warnings", { count: result.warnings.length })}
             </div>
             <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 6 }}>
@@ -149,7 +151,8 @@ export function EvalResults({
 
       {pushback.length > 0 && (
         <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${colors.borderSoft}` }}>
-          <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+              <BrandIcon name="prompt" color={colors.textDim} size={13} />
             {t("board.pushback").toUpperCase()}
           </div>
           <p style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.textFaint }}>{t("board.pushbackHint")}</p>

@@ -155,6 +155,7 @@ export const pt = {
   "profile.signOut": "Sair",
   "board.title": "Arch Board",
   "board.context": "Cenário",
+  "board.briefLabel": "O enunciado",
   "board.scenarioCount": "{count} cenários",
   "board.newScenario": "Novo cenário",
   "board.deleteScenarioConfirm": "Excluir o cenário \"{name}\"?",

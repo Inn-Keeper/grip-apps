@@ -99,7 +99,8 @@ export function ScaleBrief({
 
       {/* The brief has two halves and only the first was labelled, so the
           inputs read as another given rather than as the work. */}
-      <h3 style={{ margin: "0 0 10px", fontSize: font.size.label, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: colors.textFaint }}>
+      <h3 style={{ display: "flex", alignItems: "center", gap: 6, margin: "0 0 10px", fontSize: font.size.label, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: colors.textFaint }}>
+        <BrandIcon name="drill" color={colors.textFaint} size={13} />
         {t("scale.deriveHeading")}
       </h3>
 
@@ -158,17 +159,19 @@ export function ScaleBrief({
       </div>
 
       <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
+        {/* Nothing estimated means nothing to grade: the same test the handoff uses. */}
         <button
           onClick={() => setChecked(true)}
+          disabled={handoff === null}
           style={{
             padding: "7px 16px",
             background: "transparent",
-            border: `1px solid ${colors.accent}`,
+            border: `1px solid ${handoff === null ? colors.borderSoft : colors.accent}`,
             borderRadius: 8,
-            color: colors.accentBright,
+            color: handoff === null ? colors.textFaint : colors.accentBright,
             fontSize: font.size.small,
             fontWeight: 600,
-            cursor: "pointer",
+            cursor: handoff === null ? "default" : "pointer",
           }}
         >
           {t("scale.check")}

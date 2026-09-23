@@ -4,12 +4,7 @@ import { ROUND_MINUTES, phaseAt, roundProgress } from "@grip/core/designTimer";
 // One tick per second is all a MM:SS clock can show.
 const TICK_MS = 1000;
 
-/**
- * The 40-minute practice round.
- *
- * Lifted out of the panel so the sticky rail can show the clock while the panel
- * is scrolled away: two views of one round, never two rounds.
- */
+/** The 40-minute round. Out of the panel so the rail can show the same clock. */
 export function useDesignRound() {
   const [running, setRunning] = useState(false);
   const [elapsedMs, setElapsedMs] = useState(0);

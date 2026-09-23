@@ -155,6 +155,7 @@ export const sv = {
   "profile.signOut": "Logga ut",
   "board.title": "Arch Board",
   "board.context": "Scenario",
+  "board.briefLabel": "Uppdraget",
   "board.scenarioCount": "{count} scenarier",
   "board.newScenario": "Nytt scenario",
   "board.deleteScenarioConfirm": "Radera scenariot \"{name}\"?",

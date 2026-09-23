@@ -5,12 +5,8 @@ import { colors } from "@grip/core/tokens";
 import styles from "./AbbrText.module.css";
 
 /**
- * Renders text with its known abbreviations explained on hover.
- *
- * The term itself is the trigger, so a sentence does not fill with ⓘ icons.
- * Hover covers the mouse, focus covers the keyboard, and the native popover's
- * own click handling covers touch, where hover does not exist. That is why this
- * is not a plain `title` attribute, which reaches none of the last two.
+ * Text with its abbreviations explained on hover, focus and tap.
+ * Not `title`, which reaches neither keyboard nor touch.
  */
 export function AbbrText({ children }: { children: string }) {
   const segments = splitAbbreviations(children);

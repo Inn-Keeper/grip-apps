@@ -103,10 +103,7 @@ export default function ArchBoard() {
   // ref, because the panel mounts and unmounts as the step changes.
   const [ctaVisible, setCtaVisible] = useState(false);
   const ctaObserver = useRef<IntersectionObserver | null>(null);
-  // Watches wherever the writing happens: the call to action before the panel
-  // is open, the panel itself after. The rail repeats the action only when that
-  // place is off screen, which on a sticky desktop rail is rarely, and on a
-  // phone is as soon as you scroll.
+  // Watches wherever the writing happens: the button, then the panel.
   const ctaRef = useCallback((node: HTMLDivElement | null) => {
     ctaObserver.current?.disconnect();
     if (!node) {
@@ -568,6 +565,20 @@ export default function ArchBoard() {
             <div style={{ marginTop: 12 }}>
               <Combobox value={scenario.id} options={scenarioOptions} onChange={switchScenario} style={{ width: "100%" }} triggerStyle={{ fontWeight: 600 }} />
             </div>
+            {/* The problem every check and figure is judged against; recessed inside its card (rule 24). */}
+            {scenario.brief && (
+              <div style={{ display: "flex", gap: 10, marginTop: 12, padding: "11px 12px", background: colors.bgDeep, border: `1px solid ${colors.borderSoft}`, borderRadius: 8 }}>
+                <span style={{ flex: "0 0 auto", marginTop: 1 }}>
+                  <BrandIcon name="prompt" color={colors.accentBright} size={15} />
+                </span>
+                <div style={{ minWidth: 0 }}>
+                  <h3 style={{ margin: "0 0 5px", fontSize: font.size.label, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: colors.textFaint }}>
+                    {t("board.briefLabel")}
+                  </h3>
+                  <p style={{ margin: 0, fontSize: font.size.body, lineHeight: 1.6, color: colors.text }}>{scenario.brief}</p>
+                </div>
+              </div>
+            )}
             <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
               <button type="button" className={styles.toolbarButton} onClick={() => setCreatorOpen(true)} style={{ display: "flex", alignItems: "center", gap: 5, color: colors.accentBright }}>
                 <BrandIcon name="board" color={colors.accentBright} size={13} />
@@ -587,12 +598,6 @@ export default function ArchBoard() {
             {deleteScenarioMutation.error && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{t("board.deleteFailed", { message: deleteScenarioMutation.error.message })}</p>}
             {scenariosError && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{t("board.scenariosError")}</p>}
           </WorkspacePanel>
-
-          {scenario.brief && (
-            <WorkspacePanel>
-              <p style={{ margin: 0, fontSize: font.size.body, lineHeight: 1.6, color: colors.textDim }}>{scenario.brief}</p>
-            </WorkspacePanel>
-          )}
 
           <ScaleBrief
             key={scenario.id}
@@ -859,7 +864,7 @@ export default function ArchBoard() {
               </button>
               {/* Combobox, not a native select: the OS dropdown ignores the app's
                   palette, so this one control rendered light on a dark board. */}
-              <div className={styles.connectionRow} style={{ marginLeft: "auto", marginBottom: 0, color: colors.textDim }}>
+              <div className={styles.connectionRow} style={{ marginLeft: "auto", color: colors.textDim }}>
                 <span>{t("board.editArrow")}</span>
                 <Combobox
                   value={inspectingEdgeId ?? ""}
