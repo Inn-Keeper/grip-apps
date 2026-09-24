@@ -46,6 +46,7 @@ because they have to be applied by hand.
 ### Fixed
 
 - Prep (mobile): opening the app no longer celebrates a rank you already had. The rank check started from the empty score shown before yours loaded, so any account past the first rank saw an unlock every launch.
+- Question bank: completed the remaining 500-question monitoring review, rewriting distractors and correcting sampling, query semantics, alerting, telemetry privacy, and feature-flag behavior. Together with the earlier category work, all 5,140 questions are preserved and pass the structural, padding, and answer-length checks. These automated checks do not certify factual accuracy. The live database has not been reseeded.
 - Prep (mobile): a card quiz can be left before its last question. It had no Exit, so a 30-question run could only be abandoned by switching tabs; it now carries the drill's header, the tier and Exit. The drill's Exit label is translated too.
 - Arch Board (mobile): the scenario sheet rides above the keyboard. Typing a search hid the results behind it on a phone.
 - Stories and Quest (mobile): after saving an edit, a card could stay invisible and leave a gap in the list. The cards' staggered entrance animation restarted when the list remounted and was cut off by the refetch; the lists now render without it.
@@ -90,6 +91,12 @@ because they have to be applied by hand.
 ### Changed
 
 - Arch Board (web): only earned verdicts carry colour. `missing` is the absence of credit, not an error, so it no longer renders as a red badge plus a red error icon on every ungraded section; the interviewer's follow-up question is now the prominent line instead of the faintest one. A section holding text but graded `missing` reads "Too thin" rather than contradicting itself.
+
+## 2026-09-20
+
+### Fixed
+
+- Question bank: corrected misleading React Actions, Kubernetes resource/rollout, mobile OTA and reproducible-build answers, and made their distractors less obvious by length.
 
 ## 2026-09-19
 

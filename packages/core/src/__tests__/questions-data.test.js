@@ -11,8 +11,8 @@ const loadAll = () =>
     .filter((f) => f.endsWith(".json") && !f.startsWith("._"))
     .flatMap((f) => JSON.parse(readFileSync(join(DATA_DIR, f), "utf8")));
 
-// Content trust gate: the question bank is hand-authored data shipped to a tool
-// people interview against, so a wrong/duplicate/malformed entry must fail CI.
+// These checks catch malformed data and wording cues, not factual mistakes.
+// Answers and distractors still need a human content review.
 describe("question bank content", () => {
   const questions = loadAll();
 
@@ -28,6 +28,39 @@ describe("question bank content", () => {
   it("only uses known difficulty tiers", () => {
     for (const q of questions) expect(DIFFICULTY_KEYS).toContain(q.difficulty);
   });
+
+  it("does not contain generic padding in answer options", () => {
+    for (const q of questions) {
+      for (const option of q.options) {
+        expect(option).not.toMatch(
+          /\b(?:syntax|behavior|configuration) in this context\b|\bin this context(?: in \w+)?$|\bas the relevant .+ concept$|\bfor mobile release management$|\bfor every application context$|\bfor application telemetry analysis$|\bin a Kusto Query Language pipeline$|\bin Grafana dashboard analysis$|\bfor Datadog observability analysis$|\bin feature-flag delivery$|\bunder the provider configuration$|\bas the recommended (?:cloud|CI\/CD) approach$|\bas the primary pipeline reason$/i,
+        );
+      }
+    }
+  });
+
+  it.each([...new Set(questions.map((q) => q.tech))])(
+    "%s does not reveal answers through systematically longer or shorter wording",
+    (tech) => {
+      const bank = questions.filter((q) => q.tech === tech);
+      const uniquelyLongestCorrect = bank.filter((q) => {
+        const correctLength = q.options[q.correct].trim().length;
+        return q.options.every((option, index) => index === q.correct || correctLength > option.trim().length);
+      });
+      const uniquelyShortestCorrect = bank.filter((q) => {
+        const correctLength = q.options[q.correct].trim().length;
+        return q.options.every((option, index) => index === q.correct || correctLength < option.trim().length);
+      });
+      const extremeLengthGaps = bank.filter((q) => {
+        const lengths = q.options.map((option) => option.trim().length);
+        return Math.min(...lengths) < Math.ceil(Math.max(...lengths) * 0.2);
+      });
+
+      expect(uniquelyLongestCorrect.length).toBeLessThanOrEqual(Math.floor(bank.length * 0.6));
+      expect(uniquelyShortestCorrect.length).toBeLessThanOrEqual(Math.floor(bank.length * 0.6));
+      expect(extremeLengthGaps.map((q) => q.prompt)).toEqual([]);
+    },
+  );
 });
 
 describe("validateQuestionSet duplicate rules", () => {
