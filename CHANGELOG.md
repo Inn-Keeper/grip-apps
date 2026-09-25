@@ -14,6 +14,7 @@ because they have to be applied by hand.
 - Streaming category in Prep with a "Streaming & Playback" tech: 100 questions on HLS, DASH, ABR, MSE/EME, DRM, ads, live latency and playback quality.
 - Kotlin (with coroutines, Compose and Media3) and Swift (with concurrency, SwiftUI, UIKit and AVFoundation) in Languages, 100 questions each. The bank now has 5,440 questions across 54 technologies.
 - Arch Board palette tooltips: every node explains what it does, with its cost and maintenance, in a styled hover and focus tooltip (en, sv, pt).
+- Mobile Arch Board: long press a palette chip to see what the node does and its cost.
 
 ### Changed
 

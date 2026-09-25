@@ -60,6 +60,7 @@ export default function BoardScreen() {
   const [talkOpen, setTalkOpen] = useState(false);
   const [scaleOpen, setScaleOpen] = useState(false);
   const [inspectingId, setInspectingId] = useState<string | null>(null);
+  const [tipType, setTipType] = useState<string | null>(null);
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
   const [talkGrade, setTalkGrade] = useState<number | null>(null);
@@ -463,11 +464,41 @@ export default function BoardScreen() {
             borderRadius: 12,
           }}
         >
+          {/* Long press shows what a node is; releasing hides it (the web shows this on hover). */}
+          {tipType && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: "absolute",
+                bottom: "100%",
+                left: 0,
+                right: 0,
+                marginBottom: 6,
+                padding: 10,
+                backgroundColor: colors.bgDeep,
+                borderWidth: 1,
+                borderColor: colors.borderSoft,
+                borderRadius: 8,
+                boxShadow: shadow.card,
+              }}
+            >
+              <Text style={{ fontSize: 12, fontWeight: "700", color: colors.text }}>{meta(tipType).label}</Text>
+              <Text style={{ fontSize: 12, color: colors.text, marginTop: 2, lineHeight: 17 }}>
+                {t(`node.desc.${tipType}` as Parameters<typeof t>[0])}
+              </Text>
+              <Text style={{ fontSize: 11, color: colors.textFaint, marginTop: 4 }}>
+                {t("node.costMaint", { cost: meta(tipType).cost, maint: meta(tipType).maint })}
+              </Text>
+            </View>
+          )}
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, padding: 6 }}>
             {NODE_TYPES.map((spec) => (
               <TouchableOpacity
                 key={spec.type}
                 onPress={() => addNode(spec.type)}
+                onLongPress={() => setTipType(spec.type)}
+                onPressOut={() => setTipType(null)}
+                accessibilityHint={t(`node.desc.${spec.type}` as Parameters<typeof t>[0])}
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
