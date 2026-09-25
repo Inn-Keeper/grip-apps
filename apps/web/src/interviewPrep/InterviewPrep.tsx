@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { categories } from "@grip/core/prepData";
 import { techLinks } from "@grip/core/techLinks";
-import { buildGithubTechCategory, githubUsernameFromUrl } from "@grip/core/githubTechs";
-import { mergeTechSignals } from "@grip/core/cvTechs";
+import { githubUsernameFromUrl } from "@grip/core/githubTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
-import { buildDrillFromQuestions, selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
-import { difficultyByKey, speedBonusXp } from "@grip/core/difficulty";
-import { computeReadiness } from "@grip/core/readiness";
+import { selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
+import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState } from "@grip/core/drillSession";
+import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
 import { useScores } from "./useScores";
@@ -42,14 +41,6 @@ import {
 import { clearPrepPlan, readPrepPlan, type StoredPrepPlan } from "../lib/prepPlanHandoff";
 import { summarizeScores } from "./summarizeScores";
 import { scrollBehavior } from "../lib/motion";
-
-const DRILL_SIZE = 10;
-
-// Map every tech to its category color so a fetched question can be themed.
-const colorByTech = Object.fromEntries(
-  categories.flatMap((c) => c.items.map((item) => [item.tech, c.color]))
-);
-const allTechs = Object.keys(colorByTech);
 
 export default function InterviewPrep() {
   // Track the selected category by name, not list index: the "From GitHub techs"
@@ -134,26 +125,8 @@ export default function InterviewPrep() {
     sessionRef.current?.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
   }, [drill?.questions]);
 
-  const allItems = categories.flatMap((c) =>
-    c.items.map((item) => ({ ...item, category: c.name, color: c.color, emoji: c.emoji }))
-  );
-
-  // CV techs (string[], saved on the profile) join GitHub signals into one
-  // "from your profile" category — merge/dedupe logic lives in core.
-  const cvTechs = profile?.cvTechs ?? [];
-  const combinedSignals = mergeTechSignals(githubTechs, cvTechs);
-
-  const techCategoryLabel =
-    cvTechs.length && githubTechs.length
-      ? t("prep.profileTechsCategory")
-      : cvTechs.length
-        ? t("prep.cvTechsCategory")
-        : undefined; // undefined -> keep the GitHub default in core
-  const githubCategory = buildGithubTechCategory(allItems, combinedSignals, {
-    color: colors.accentBright,
-    name: techCategoryLabel,
-  });
-  const displayCategories = githubCategory ? [githubCategory, ...categories] : categories;
+  // CV techs (saved on the profile) join GitHub signals into one "from your profile" category.
+  const { allItems, signals, profileCategory: githubCategory, displayCategories } = profileCategories({ githubTechs, cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
 
   const filtered = search.trim()
     ? allItems.filter(
@@ -163,19 +136,7 @@ export default function InterviewPrep() {
       )
     : null;
 
-  // Readiness scope: the prep plan's techs, else the profile stack, else what's been practiced.
-  // Only techs Prep can drill count, so the number can always be moved.
-  const practicable = (techs: string[]) => techs.filter((tech) => colorByTech[tech]);
-  const planTechs = practicable(prepPlan?.techs ?? []);
-  const stackTechs = practicable(combinedSignals.map((s) => s.tech));
-  const practicedTechs = practicable(Object.keys(scores.answers));
-  const [readinessTechs, readinessLabel] = planTechs.length
-    ? [planTechs, t("prep.readinessPlan", { name: prepPlan?.name ?? "" })]
-    : stackTechs.length
-      ? [stackTechs, t("prep.readinessStack")]
-      : [practicedTechs, t("prep.readinessPracticed")];
-  const readinessPct = computeReadiness({ postingTechs: readinessTechs, answers: scores.answers }).prep;
-  const readiness = readinessPct === null ? null : { pct: readinessPct, label: readinessLabel, count: readinessTechs.length };
+  const readiness = readinessFor({ plan: prepPlan, stackTechs: signals.map((s) => s.tech), answers: scores.answers });
 
   const displayCategory = displayCategories.find((c) => c.name === activeCategoryName) ?? displayCategories[0]!;
   const summary = summarizeScores(scores);
@@ -198,8 +159,8 @@ export default function InterviewPrep() {
         ?? (shuffle(item.quiz) as QuizQuestion[]).map(shuffleOptions as (q: QuizQuestion) => QuizQuestion);
       const color = item.color ?? colors.accent ?? "";
       setDrill({
-        questions: questions.map((q) => ({ tech: item.tech, color, link: techLinks[item.tech], q })),
-        index: 0, answered: null, correctCount: 0, done: false, difficulty: level, source: "card", shownAt: Date.now(), lastBonus: 0, bonusXp: 0,
+        ...startDrillState(questions.map((q) => ({ tech: item.tech, color, link: techLinks[item.tech], q })), level, Date.now()),
+        source: "card",
       });
     } finally {
       setPending(null);
@@ -214,24 +175,15 @@ export default function InterviewPrep() {
     restartRef.current = () => runDrill(difficulty, techs, { fallbackToAll, source });
     setPending(source);
     setDrillError(null);
-    try {
-      let questions = await fetchTierQuestions(difficulty, techs);
-      if (questions.length === 0 && fallbackToAll) questions = await fetchTierQuestions(difficulty, allTechs);
-      if (questions.length === 0) {
-        setDrillError({ source, message: t("prep.noQuestionsYet", { tier: difficultyByKey(difficulty)?.label ?? difficulty }) });
-        return false;
-      }
-      const entries = buildDrillFromQuestions(questions, { colorByTech, fallbackColor: colors.accent, size: DRILL_SIZE }).map(
-        (entry) => ({ ...entry, link: techLinks[entry.tech] })
-      );
-      setDrill({ questions: entries, index: 0, answered: null, correctCount: 0, done: false, difficulty, shownAt: Date.now(), lastBonus: 0, bonusXp: 0 });
-      return true;
-    } catch {
-      setDrillError({ source, message: t("prep.drillLoadError") });
+    const loaded = await loadDrill(fetchTierQuestions, difficulty, techs, { fallbackToAll, fallbackColor: colors.accent });
+    setPending(null);
+    if ("error" in loaded) {
+      setDrillError({ source, message: loaded.error });
       return false;
-    } finally {
-      setPending(null);
     }
+    const entries = loaded.entries.map((entry) => ({ ...entry, link: techLinks[entry.tech] }));
+    setDrill(startDrillState(entries, difficulty, Date.now()));
+    return true;
   };
 
   const weakestTechs = () =>
@@ -264,31 +216,13 @@ export default function InterviewPrep() {
   };
 
   const startCategoryDrill = async (categoryName: string) => {
-    if (sessionBusy) return;
     const cat = displayCategories.find((c) => c.name === categoryName);
     if (!cat) return;
-    const source = `cat:${categoryName}`;
-    setPending(source);
-    setDrillError(null);
-    try {
-      const techs = selectCategoryDrillTechs(cat.items, scores.answers, { techCount: cat.items.length });
-      // "Drill again" repeats this category, not the last weakest-drill.
+    const techs = selectCategoryDrillTechs(cat.items, scores.answers, { techCount: cat.items.length });
+    // "Drill again" repeats this category, not the last weakest-drill.
+    if (await runDrill(level, techs, { fallbackToAll: true, source: `cat:${categoryName}` })) {
       restartRef.current = () => startCategoryDrill(categoryName);
-      let questions = await fetchTierQuestions(level, techs);
-      if (questions.length === 0) questions = await fetchTierQuestions(level, Object.keys(colorByTech));
-      if (questions.length === 0) {
-        setDrillError({ source, message: t("prep.noQuestionsYet", { tier: difficultyByKey(level)?.label ?? level }) });
-        return;
-      }
-      const entries = buildDrillFromQuestions(questions, { colorByTech, fallbackColor: colors.accent, size: DRILL_SIZE }).map(
-        (entry) => ({ ...entry, link: techLinks[entry.tech] })
-      );
       setActiveCategoryName(categoryName);
-      setDrill({ questions: entries, index: 0, answered: null, correctCount: 0, done: false, difficulty: level, shownAt: Date.now(), lastBonus: 0, bonusXp: 0 });
-    } catch {
-      setDrillError({ source, message: t("prep.drillLoadError") });
-    } finally {
-      setPending(null);
     }
   };
 
@@ -303,38 +237,32 @@ export default function InterviewPrep() {
     setNotice({ id: Date.now(), text: t("prep.levelNotice", { tier: tier?.label ?? key, xp: tier?.xp ?? 0 }) });
   };
 
-  const answerDrill = (optionIndex: number) => {
-    if (!drill || drill.answered !== null) return;
-    const cur = drill.questions[drill.index];
-    if (!cur) return;
-    const isCorrect = optionIndex === cur.q.correct;
+  const answer = (optionIndex: number) => {
+    if (!drill) return;
     // Mock loop runs untimed, so only quizzes and drills can earn the speed bonus.
-    const bonus = isCorrect && !mockActive ? speedBonusXp(drill.difficulty, Date.now() - drill.shownAt) : 0;
-    setDrill({ ...drill, answered: optionIndex, correctCount: drill.correctCount + (isCorrect ? 1 : 0), lastBonus: bonus, bonusXp: drill.bonusXp + bonus });
-    setPoeCue({ type: isCorrect ? "correct" : "wrong", id: Date.now() });
-    record(cur.tech, isCorrect, drill.source ?? "drill", drill.difficulty);
+    const result = answerDrill(drill, optionIndex, { now: Date.now(), timed: !mockActive });
+    if (!result) return;
+    setDrill(result.drill);
+    setPoeCue({ type: result.isCorrect ? "correct" : "wrong", id: Date.now() });
+    record(result.tech, result.isCorrect, drill.source ?? "drill", drill.difficulty);
     // ponytail: add_xp isn't retry-safe like record_answer (0014); fine while mutations
     // don't retry. Move the bonus into record_answer if that changes.
-    if (bonus) addXp(bonus);
+    if (result.bonus) addXp(result.bonus);
   };
 
   const nextDrill = () => {
     if (!drill) return;
-    const nextIndex = drill.index + 1;
-    if (nextIndex >= drill.questions.length) {
-      if (drill.correctCount === drill.questions.length) {
-        addXp(PERFECT_QUIZ_BONUS);
-        setCelebration({
-          title: t(drill.source === "card" ? "celebration.perfectCardTitle" : "celebration.perfectTitle"),
-          subtitle: t("celebration.perfectSubtitle", { bonus: PERFECT_QUIZ_BONUS }),
-          accent: colors.success ?? "",
-        });
-        setPoeCue({ type: "levelUp", id: Date.now() });
-      }
-      setDrill({ ...drill, done: true });
-    } else {
-      setDrill({ ...drill, index: nextIndex, answered: null, shownAt: Date.now(), lastBonus: 0 });
+    const { drill: next, perfect } = advanceDrill(drill, Date.now());
+    if (perfect) {
+      addXp(PERFECT_QUIZ_BONUS);
+      setCelebration({
+        title: t(drill.source === "card" ? "celebration.perfectCardTitle" : "celebration.perfectTitle"),
+        subtitle: t("celebration.perfectSubtitle", { bonus: PERFECT_QUIZ_BONUS }),
+        accent: colors.success ?? "",
+      });
+      setPoeCue({ type: "levelUp", id: Date.now() });
     }
+    setDrill(next);
   };
 
   return (
@@ -419,11 +347,11 @@ export default function InterviewPrep() {
       {drill ? (
         <div ref={sessionRef} style={workspaceFocusStyle}>
           {mockActive ? (
-            <MockLoop drill={drill} onAnswer={answerDrill} onNextQuestion={nextDrill} onExit={exitSession} />
+            <MockLoop drill={drill} onAnswer={answer} onNextQuestion={nextDrill} onExit={exitSession} />
           ) : (
             <DrillSession
               drill={drill}
-              onAnswer={answerDrill}
+              onAnswer={answer}
               autoNext={autoNext}
               onNext={nextDrill}
               onExit={exitSession}

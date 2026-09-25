@@ -8,6 +8,7 @@
     "./auth": "./src/auth.js",
     "./authCache": "./src/authCache.js",
     "./quiz": "./src/quiz.js",
+    "./drillSession": "./src/drillSession.js",
     "./nextUp": "./src/nextUp.js",
     "./quizPrefs": "./src/quizPrefs.js",
     "./difficulty": "./src/difficulty.js",
