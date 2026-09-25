@@ -3,7 +3,7 @@ import { STATUSES, todayDDMMYYYY, isDue } from "@grip/core/contacts";
 import { SCENARIOS, evaluate } from "@grip/core/arch";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
 import { ContactCard } from "./ContactCard";
@@ -29,6 +29,7 @@ import {
 } from "./queries";
 import type { Contact, Retro, ScoredBoard } from "./types";
 import { scrollBehavior } from "../lib/motion";
+import { ErrorBanner, ErrorText } from "../components/ErrorText";
 
 // The focused view (rule 8): a contact's detail, a form, or a retro, in place of the list.
 type Focus = { mode: "detail" | "edit" | "retro"; id: string } | { mode: "new" } | null;
@@ -159,9 +160,9 @@ export default function Quest() {
       right={<QuestRightRail funnel={funnel} velocity={velocity} velocityError={velocityError} velocityLoading={velocityLoading} velocityEnabled={pipelineConfigured} statusEvents={statusEvents} />}
     >
       {loadError && (
-        <div role="alert" style={{ marginBottom: 16, padding: "10px 14px", background: tints.dangerSoft, border: `1px solid ${colors.danger}60`, borderRadius: 8, color: colors.dangerBright, fontSize: font.size.body }}>
+        <ErrorBanner>
           {t("contacts.loadError", { message: loadError.message })}
-        </div>
+        </ErrorBanner>
       )}
 
       {focus ? (
@@ -177,7 +178,7 @@ export default function Quest() {
           {focus.mode === "new" && (
             <>
               <ContactForm initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }} onSave={handleSave} onCancel={() => setFocus(null)} />
-              {errorFor("new") && <p role="alert" style={{ color: colors.dangerBright, fontSize: font.size.small }}>{errorFor("new")}</p>}
+              {errorFor("new") && <ErrorText>{errorFor("new")}</ErrorText>}
             </>
           )}
           {focused && focus.mode === "edit" && (

@@ -5,7 +5,7 @@ import { STATUSES, isDue, todayDDMMYYYY } from "@grip/core/contacts";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { colors, layout, tints } from "@/theme";
+import { colors, font, layout, tints } from "@/theme";
 import { HeaderAction, Screen, ScreenHeader } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
 import { ContactCard } from "@/components/contacts/ContactCard";
@@ -83,7 +83,7 @@ export default function QuestScreen() {
         contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: insets.bottom + layout.tabBarClearance }}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
-            {error && <Text style={{ color: colors.dangerBright, fontSize: 13 }}>{t("contacts.loadError", { message: error.message })}</Text>}
+            {error && <Text style={{ color: colors.dangerBright, fontSize: font.size.body }}>{t("contacts.loadError", { message: error.message })}</Text>}
 
             <QuestFunnel summary={funnel} />
 
@@ -97,7 +97,7 @@ export default function QuestScreen() {
                   borderRadius: 10,
                 }}
               >
-                <Text style={{ color: colors.dangerBright, fontSize: 13, fontWeight: "600" }}>
+                <Text style={{ color: colors.dangerBright, fontSize: font.size.body, fontWeight: "600" }}>
                   {t("contacts.dueBanner", { count: dueCount, plural: dueCount > 1 ? "s" : "" })}
                 </Text>
               </View>

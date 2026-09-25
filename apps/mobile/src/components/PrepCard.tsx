@@ -4,7 +4,7 @@ import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier, speedBonusXp } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
@@ -133,10 +133,10 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         }}
       >
         <BrandIcon name={perfect ? "rank" : "spark"} color={tone} size={24} />
-        <Text style={{ fontSize: 18, fontWeight: "800", color: colors.textBright }}>
+        <Text style={{ fontSize: font.size.titleLg, fontWeight: "800", color: colors.textBright }}>
           {t("prep.cardResult", { correct: result.correct, total: result.total, xp: result.xp })}
         </Text>
-        <Text style={{ fontSize: 11.5, color: colors.textFaint }}>{item.tech}</Text>
+        <Text style={{ fontSize: font.size.labelLg, color: colors.textFaint }}>{item.tech}</Text>
       </Animated.View>
     );
   }
@@ -159,12 +159,12 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           {tier ? (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}60` }}>
               <DifficultyIcon tier={tier} size={11} />
-              <Text style={{ fontSize: 9.5, fontWeight: "700", color: tier.color, letterSpacing: 0.3 }}>{tier.label.toUpperCase()}</Text>
+              <Text style={{ fontSize: font.size.tier, fontWeight: "700", color: tier.color, letterSpacing: 0.3 }}>{tier.label.toUpperCase()}</Text>
             </View>
           ) : <View />}
           <TouchableOpacity onPress={backToCard} accessibilityRole="button" hitSlop={10}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-              <Text style={{ fontSize: 11, color: colors.textFaint }}>{t("prep.exit")}</Text>
+              <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("prep.exit")}</Text>
               <BrandIcon name="close" color={colors.textFaint} size={11} />
             </View>
           </TouchableOpacity>
@@ -206,20 +206,20 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
       >
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
           <View style={{ paddingHorizontal: 10, paddingVertical: 3, backgroundColor: `${item.color}20`, borderRadius: 20 }}>
-            <Text style={{ color: item.color, fontSize: 11, fontWeight: "700", letterSpacing: 0.4 }}>{item.tech}</Text>
+            <Text style={{ color: item.color, fontSize: font.size.label, fontWeight: "700", letterSpacing: 0.4 }}>{item.tech}</Text>
           </View>
           {tier && (
             <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}55` }}>
               <DifficultyIcon tier={tier} size={11} />
-              <Text style={{ fontSize: 9.5, fontWeight: "800", color: tier.color }}>{tier.label}</Text>
+              <Text style={{ fontSize: font.size.tier, fontWeight: "800", color: tier.color }}>{tier.label}</Text>
             </View>
           )}
         </View>
-        <Text style={{ fontSize: 14, lineHeight: 21, color: colors.text }}>{item.oneliner}</Text>
+        <Text style={{ fontSize: font.size.bodyMd, lineHeight: 21, color: colors.text }}>{item.oneliner}</Text>
         {/* Quiet reference text: smaller and dimmer than the one-liner, as on web. */}
         <View style={{ gap: 4, marginTop: 10 }}>
           {item.prep.map((point) => (
-            <Text key={point} style={{ fontSize: 12, lineHeight: 17, color: `${colors.textDim}CC` }}>
+            <Text key={point} style={{ fontSize: font.size.small, lineHeight: 17, color: `${colors.textDim}CC` }}>
               {"•"} {point}
             </Text>
           ))}
@@ -231,11 +231,11 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           </View>
         )}
         <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: 10 }}>
-          <Text style={{ fontSize: 11, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
+          <Text style={{ fontSize: font.size.label, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
             {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
           </Text>
           <View style={{ paddingHorizontal: 14, paddingVertical: 7, backgroundColor: `${item.color}25`, borderWidth: 1, borderColor: `${item.color}60`, borderRadius: 8, opacity: quizLoading ? 0.6 : 1 }}>
-            <Text style={{ fontSize: 12, fontWeight: "700", color: item.color }}>{quizLoading ? t("common.loading") : t("prep.takeQuiz")}</Text>
+            <Text style={{ fontSize: font.size.small, fontWeight: "700", color: item.color }}>{quizLoading ? t("common.loading") : t("prep.takeQuiz")}</Text>
           </View>
         </View>
       </Pressable>

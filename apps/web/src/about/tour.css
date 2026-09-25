@@ -2,33 +2,33 @@
    Scoped to .grip-tour so nothing bleeds into driver's default styles. */
 
 .grip-tour.driver-popover {
-  background: #1E222D;
-  border: 1px solid #262A36;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-soft);
   border-radius: 14px;
   box-shadow:
-    0 0 0 1px #262A3640,
+    0 0 0 1px color-mix(in srgb, var(--c-border-soft) 25.1%, transparent),
     0 8px 32px #00000066,
     0 24px 64px #00000044;
   padding: 28px 30px 22px;
   min-width: 380px;
   max-width: 480px;
-  color: #E8ECF4;
+  color: var(--c-text);
   font-family: inherit;
 }
 
 .grip-tour .driver-popover-title {
-  font-size: 17px;
+  font-size: var(--fs-title);
   font-weight: 800;
-  color: #F4F7FC;
+  color: var(--c-text-bright);
   line-height: 1.3;
   margin-bottom: 10px;
   padding-right: 28px; /* clear the close button */
 }
 
 .grip-tour .driver-popover-description {
-  font-size: 14px;
+  font-size: var(--fs-body-md);
   line-height: 1.7;
-  color: #9AA5BC;
+  color: var(--c-text-dim);
   margin-top: 0;
   margin-bottom: 0;
 }
@@ -46,11 +46,11 @@
   min-height: 104px;
   margin-top: 20px;
   padding: 12px 14px 10px 8px;
-  border: 1px solid #262A36;
+  border: 1px solid var(--c-border-soft);
   border-radius: 12px;
   background:
-    radial-gradient(circle at 18% 24%, #2DD4BF18, transparent 28%),
-    linear-gradient(135deg, #191D27 0%, #14171F 100%);
+    radial-gradient(circle at 18% 24%, color-mix(in srgb, var(--c-accent-bright) 9.4%, transparent), transparent 28%),
+    linear-gradient(135deg, var(--c-well) 0%, var(--c-bg) 100%);
   overflow: hidden;
 }
 
@@ -59,7 +59,7 @@
   position: absolute;
   inset: 8px;
   border-radius: 10px;
-  border: 1px solid #F4F7FC0D;
+  border: 1px solid color-mix(in srgb, var(--c-text-bright) 5.1%, transparent);
   pointer-events: none;
 }
 
@@ -87,8 +87,8 @@
   height: 78px;
   min-width: 0;
   border-radius: 10px;
-  background: #10131A;
-  border: 1px solid #262A36;
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border-soft);
   box-shadow: inset 0 1px 0 #FFFFFF08;
   overflow: hidden;
 }
@@ -102,14 +102,14 @@
 }
 
 .grip-tour .grip-tour-poe-mark {
-  background: #2DD4BF;
-  box-shadow: 0 0 12px #14B8A633;
+  background: var(--c-accent-bright);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--c-accent) 20%, transparent);
 }
 
 .grip-tour .grip-tour-poe-welcome .grip-tour-poe-stage {
   background:
-    linear-gradient(145deg, transparent 0 55%, #14B8A61C 56% 58%, transparent 59%),
-    #10131A;
+    linear-gradient(145deg, transparent 0 55%, color-mix(in srgb, var(--c-accent) 11%, transparent) 56% 58%, transparent 59%),
+    var(--c-bg-deep);
 }
 
 .grip-tour .grip-tour-poe-welcome .grip-tour-poe-mark {
@@ -145,7 +145,7 @@
 .grip-tour .grip-tour-poe-welcome .grip-tour-poe-mark:nth-child(5) {
   left: 82%;
   bottom: 58px;
-  background: #D4A574;
+  background: var(--brand-gold);
   animation-delay: 480ms;
 }
 
@@ -154,9 +154,9 @@
   top: 16px;
   width: 46px;
   height: 48px;
-  border: 1px solid #2DD4BF;
+  border: 1px solid var(--c-accent-bright);
   border-radius: 8px;
-  background: linear-gradient(180deg, #272C3A, #191D27);
+  background: linear-gradient(180deg, var(--c-surface-hi), var(--c-well));
   transform-origin: center;
   animation: gripTourCardFlip 2.4s ease-in-out infinite;
 }
@@ -167,7 +167,7 @@
   right: 14%;
   height: 8px;
   border-radius: 999px;
-  background: #262A36;
+  background: var(--c-border-soft);
 }
 
 .grip-tour .grip-tour-poe-prep .grip-tour-poe-mark:nth-child(2) {
@@ -183,7 +183,7 @@
 .grip-tour .grip-tour-poe-prep .grip-tour-poe-mark:nth-child(4) {
   top: 52px;
   width: 38%;
-  background: #14B8A6;
+  background: var(--c-accent);
   animation: gripTourAnswerGlow 2.4s ease-in-out infinite;
 }
 
@@ -193,7 +193,7 @@
   width: 10px;
   height: 10px;
   border-radius: 999px;
-  background: #D4A574;
+  background: var(--brand-gold);
   animation: gripTourSpark 2.4s ease-in-out infinite;
 }
 
@@ -203,8 +203,8 @@
   width: 58%;
   height: 50px;
   border-radius: 8px;
-  background: #1E222D;
-  border: 1px solid #262A36;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-soft);
 }
 
 .grip-tour .grip-tour-poe-stories .grip-tour-poe-stage::after {
@@ -213,10 +213,10 @@
   width: 44%;
   height: 6px;
   border-radius: 999px;
-  background: #2DD4BF;
+  background: var(--c-accent-bright);
   box-shadow:
-    0 14px 0 #D4A574,
-    0 28px 0 #262A36;
+    0 14px 0 var(--brand-gold),
+    0 28px 0 var(--c-border-soft);
   animation: gripTourWrite 2.6s ease-in-out infinite;
 }
 
@@ -225,8 +225,8 @@
   width: 10px;
   height: 10px;
   border-radius: 3px;
-  background: #272C3A;
-  border: 1px solid #14B8A6;
+  background: var(--c-surface-hi);
+  border: 1px solid var(--c-accent);
   animation: gripTourStamp 2.6s ease-in-out infinite;
 }
 
@@ -252,8 +252,8 @@
 .grip-tour .grip-tour-poe-board .grip-tour-poe-stage::before {
   inset: 18px 28px;
   background:
-    linear-gradient(18deg, transparent 0 47%, #6B7690 48% 52%, transparent 53%),
-    linear-gradient(150deg, transparent 0 47%, #6B7690 48% 52%, transparent 53%);
+    linear-gradient(18deg, transparent 0 47%, var(--c-text-faint) 48% 52%, transparent 53%),
+    linear-gradient(150deg, transparent 0 47%, var(--c-text-faint) 48% 52%, transparent 53%);
   opacity: 0.8;
 }
 
@@ -261,8 +261,8 @@
   width: 26px;
   height: 18px;
   border-radius: 7px;
-  background: #272C3A;
-  border: 1px solid #14B8A6;
+  background: var(--c-surface-hi);
+  border: 1px solid var(--c-accent);
   animation: gripTourNode 2.8s ease-in-out infinite;
 }
 
@@ -294,16 +294,16 @@
   top: 37px;
   height: 2px;
   border-radius: 999px;
-  background: #262A36;
+  background: var(--c-border-soft);
 }
 
 .grip-tour .grip-tour-poe-quest .grip-tour-poe-mark {
   top: 29px;
   width: 18px;
   height: 18px;
-  border: 2px solid #262A36;
+  border: 2px solid var(--c-border-soft);
   border-radius: 999px;
-  background: #10131A;
+  background: var(--c-bg-deep);
   animation: gripTourPipeline 2.7s ease-in-out infinite;
 }
 
@@ -328,7 +328,7 @@
 
 .grip-tour .grip-tour-poe-quest .grip-tour-poe-mark:nth-child(5) {
   left: 82%;
-  border-color: #D4A574;
+  border-color: var(--brand-gold);
   animation-delay: 560ms;
 }
 
@@ -338,9 +338,9 @@
   width: 42px;
   height: 42px;
   border-radius: 999px;
-  border: 7px solid #262A36;
-  border-top-color: #14B8A6;
-  border-right-color: #D4A574;
+  border: 7px solid var(--c-border-soft);
+  border-top-color: var(--c-accent);
+  border-right-color: var(--brand-gold);
   animation: gripTourRing 3s ease-in-out infinite;
 }
 
@@ -348,7 +348,7 @@
   right: 16%;
   height: 8px;
   border-radius: 999px;
-  background: #262A36;
+  background: var(--c-border-soft);
 }
 
 .grip-tour .grip-tour-poe-profile .grip-tour-poe-mark:nth-child(1) {
@@ -359,7 +359,7 @@
 .grip-tour .grip-tour-poe-profile .grip-tour-poe-mark:nth-child(2) {
   top: 34px;
   width: 30%;
-  background: #14B8A6;
+  background: var(--c-accent);
 }
 
 .grip-tour .grip-tour-poe-profile .grip-tour-poe-mark:nth-child(3) {
@@ -377,7 +377,7 @@
   top: 23px;
   width: 54%;
   height: 30px;
-  border: 2px solid #14B8A6;
+  border: 2px solid var(--c-accent);
   border-left-color: transparent;
   border-radius: 999px;
 }
@@ -387,8 +387,8 @@
   top: 19px;
   width: 12px;
   height: 12px;
-  border-top: 2px solid #14B8A6;
-  border-right: 2px solid #14B8A6;
+  border-top: 2px solid var(--c-accent);
+  border-right: 2px solid var(--c-accent);
   transform: rotate(45deg);
   animation: gripTourArrow 2s ease-in-out infinite;
 }
@@ -399,7 +399,7 @@
   width: 12px;
   height: 12px;
   border-radius: 999px;
-  background: #D4A574;
+  background: var(--brand-gold);
   animation: gripTourPulse 2s ease-in-out infinite;
 }
 
@@ -410,23 +410,23 @@
 .grip-tour .driver-popover-footer {
   margin-top: 22px;
   padding-top: 16px;
-  border-top: 1px solid #262A36;
+  border-top: 1px solid var(--c-border-soft);
 }
 
 .grip-tour .driver-popover-progress-text {
-  font-size: 12px;
+  font-size: var(--fs-small);
   font-weight: 700;
-  color: #6B7690;
+  color: var(--c-text-faint);
   letter-spacing: 0.02em;
 }
 
 /* Navigation buttons */
 .grip-tour .driver-popover-footer button {
-  background: #272C3A;
-  border: 1px solid #262A36;
+  background: var(--c-surface-hi);
+  border: 1px solid var(--c-border-soft);
   border-radius: 8px;
-  color: #9AA5BC;
-  font-size: 13px;
+  color: var(--c-text-dim);
+  font-size: var(--fs-body);
   font-weight: 700;
   padding: 7px 14px;
   cursor: pointer;
@@ -437,29 +437,29 @@
 
 .grip-tour .driver-popover-footer button:hover,
 .grip-tour .driver-popover-footer button:focus {
-  background: #262A36;
-  border-color: #4A5268;
-  color: #F4F7FC;
+  background: var(--c-border-soft);
+  border-color: var(--c-border-strong);
+  color: var(--c-text-bright);
 }
 
 /* Next button gets accent treatment */
 .grip-tour .driver-popover-next-btn {
-  background: #14B8A6;
-  border-color: #14B8A6;
-  color: #0F141C;
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+  color: var(--c-on-accent);
 }
 
 .grip-tour .driver-popover-next-btn:hover,
 .grip-tour .driver-popover-next-btn:focus {
-  background: #2DD4BF;
-  border-color: #2DD4BF;
-  color: #0F141C;
+  background: var(--c-accent-bright);
+  border-color: var(--c-accent-bright);
+  color: var(--c-on-accent);
 }
 
 /* Close button */
 .grip-tour .driver-popover-close-btn {
-  color: #6B7690;
-  font-size: 20px;
+  color: var(--c-text-faint);
+  font-size: var(--fs-heading);
   width: 28px;
   height: 28px;
   line-height: 28px;
@@ -469,13 +469,13 @@
 
 .grip-tour .driver-popover-close-btn:hover,
 .grip-tour .driver-popover-close-btn:focus {
-  color: #F4F7FC;
-  background: #272C3A;
+  color: var(--c-text-bright);
+  background: var(--c-surface-hi);
 }
 
 /* Arrow — match popover background and border */
 .grip-tour .driver-popover-arrow {
-  border-color: #1E222D;
+  border-color: var(--c-surface);
 }
 
 .grip-tour .driver-popover-arrow-side-top {
@@ -573,11 +573,11 @@
 @keyframes gripTourAnswerGlow {
   0%,
   100% {
-    box-shadow: 0 0 0 #14B8A600;
+    box-shadow: 0 0 0 color-mix(in srgb, var(--c-accent) 0%, transparent);
   }
 
   55% {
-    box-shadow: 0 0 16px #14B8A655;
+    box-shadow: 0 0 16px color-mix(in srgb, var(--c-accent) 33.3%, transparent);
   }
 }
 
@@ -623,26 +623,26 @@
   0%,
   100% {
     transform: translateY(0);
-    box-shadow: 0 0 0 #14B8A600;
+    box-shadow: 0 0 0 color-mix(in srgb, var(--c-accent) 0%, transparent);
   }
 
   50% {
     transform: translateY(-2px);
-    box-shadow: 0 0 14px #14B8A633;
+    box-shadow: 0 0 14px color-mix(in srgb, var(--c-accent) 20%, transparent);
   }
 }
 
 @keyframes gripTourPipeline {
   0%,
   100% {
-    background: #10131A;
-    border-color: #262A36;
+    background: var(--c-bg-deep);
+    border-color: var(--c-border-soft);
   }
 
   45%,
   70% {
-    background: #14B8A6;
-    border-color: #2DD4BF;
+    background: var(--c-accent);
+    border-color: var(--c-accent-bright);
   }
 }
 

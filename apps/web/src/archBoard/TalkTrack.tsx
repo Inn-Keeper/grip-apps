@@ -7,6 +7,7 @@ import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 import styles from "./ArchBoard.module.css";
 import type { TalkGradeResult } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 // Only an earned verdict carries colour. "missing" is the absence of credit,
 // not a failure, and six red badges made an empty talk track look broken.
@@ -215,9 +216,9 @@ export function TalkTrack({
 
           {/* A 429 is already explained by the blocked line above. */}
           {gradeError && gradeError.status !== 429 && (
-            <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>
+            <ErrorText margin="10px 0 0">
               {`${t("talk.gradeFailed")}: ${gradeError.message}`}
-            </p>
+            </ErrorText>
           )}
 
           {gradeDetail && (

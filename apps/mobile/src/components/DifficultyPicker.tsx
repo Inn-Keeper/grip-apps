@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { DIFFICULTIES, difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 
 type Props = {
@@ -25,8 +25,8 @@ export function DifficultyPicker({ level, onLevel }: Props) {
       }}
     >
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
-        <Text style={{ fontSize: 11, fontWeight: "700", color: colors.textDim, letterSpacing: 0.6 }}>DIFFICULTY</Text>
-        {tier && <Text style={{ fontSize: 10.5, color: colors.textFaint }}>{t(tier.blurbKey as Parameters<typeof t>[0])}</Text>}
+        <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim, letterSpacing: 0.6 }}>DIFFICULTY</Text>
+        {tier && <Text style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>{t(tier.blurbKey as Parameters<typeof t>[0])}</Text>}
       </View>
       <View style={{ flexDirection: "row", gap: 6 }}>
         {DIFFICULTIES.map((d) => {
@@ -47,10 +47,10 @@ export function DifficultyPicker({ level, onLevel }: Props) {
               }}
             >
               <DifficultyIcon tier={d} size={19} />
-              <Text style={{ fontSize: 9.5, fontWeight: "700", color: active ? d.color : colors.textDim, marginTop: 2 }} numberOfLines={1}>
+              <Text style={{ fontSize: font.size.tier, fontWeight: "700", color: active ? d.color : colors.textDim, marginTop: 2 }} numberOfLines={1}>
                 {d.label}
               </Text>
-              <Text style={{ fontSize: 8.5, fontWeight: "700", color: active ? d.color : colors.textFaint, marginTop: 1 }}>+{d.xp}</Text>
+              <Text style={{ fontSize: font.size.tierSub, fontWeight: "700", color: active ? d.color : colors.textFaint, marginTop: 1 }}>+{d.xp}</Text>
             </TouchableOpacity>
           );
         })}

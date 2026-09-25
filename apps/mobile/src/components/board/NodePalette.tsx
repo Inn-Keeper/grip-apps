@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NODE_TYPES, TYPE_COLORS, meta } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 
 type DescKey = Parameters<typeof t>[0];
@@ -43,11 +43,11 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
             boxShadow: shadow.card,
           }}
         >
-          <Text style={{ fontSize: 12, fontWeight: "700", color: colors.text }}>{meta(tipType).label}</Text>
-          <Text style={{ fontSize: 12, color: colors.text, marginTop: 2, lineHeight: 17 }}>
+          <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.text }}>{meta(tipType).label}</Text>
+          <Text style={{ fontSize: font.size.small, color: colors.text, marginTop: 2, lineHeight: 17 }}>
             {t(`node.desc.${tipType}` as DescKey)}
           </Text>
-          <Text style={{ fontSize: 11, color: colors.textFaint, marginTop: 4 }}>
+          <Text style={{ fontSize: font.size.label, color: colors.textFaint, marginTop: 4 }}>
             {t("node.costMaint", { cost: meta(tipType).cost, maint: meta(tipType).maint })}
           </Text>
         </View>
@@ -81,8 +81,8 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
               color={TYPE_COLORS[spec.type]}
               size={16}
             />
-            <Text style={{ fontSize: 11, fontWeight: "600", color: colors.text }}>{spec.label}</Text>
-            <Text style={{ fontSize: 9, color: colors.textFaint }}>{"$".repeat(spec.cost) || "free"}</Text>
+            <Text style={{ fontSize: font.size.label, fontWeight: "600", color: colors.text }}>{spec.label}</Text>
+            <Text style={{ fontSize: font.size.micro, color: colors.textFaint }}>{"$".repeat(spec.cost) || "free"}</Text>
           </TouchableOpacity>
         ))}
       </ScrollView>

@@ -31,6 +31,7 @@ import {
   githubUrlFromMetadata,
 } from "./githubUtils";
 import type { ProfileForm } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 const GITHUB_LINKED_KEY = "grip.githubLinked";
 
@@ -194,7 +195,7 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
               onTechsExtracted={(techs) => cvTechsMutation.mutate(techs)}
               onClear={() => cvTechsMutation.mutate([])}
             />
-            {cvTechsMutation.error && <p role="alert" style={{ margin: "12px 0 0", color: colors.dangerBright, fontSize: font.size.small }}>{(cvTechsMutation.error as Error).message}</p>}
+            {cvTechsMutation.error && <ErrorText margin="12px 0 0">{(cvTechsMutation.error as Error).message}</ErrorText>}
           </WorkspacePanel>
         )}
         {section === "connections" && (
@@ -208,7 +209,7 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
               onLinkGitHub={() => linkGitHubMutation.mutate()}
               onGithubPrepChange={(checked) => githubPrepMutation.mutate(checked)}
             />
-            {connectionsError && <p role="alert" style={{ margin: "12px 0 0", color: colors.dangerBright, fontSize: font.size.small }}>{connectionsError.message}</p>}
+            {connectionsError && <ErrorText margin="12px 0 0">{connectionsError.message}</ErrorText>}
           </>
         )}
         {section === "preferences" && (
@@ -223,7 +224,7 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
               onLocaleChange={(code) => { if (onLocaleChange) onLocaleChange(code); else setLocale(code); }}
               onResetScores={resetScores}
             />
-            {resetMutation.error && <p role="alert" style={{ margin: "12px 0 0", color: colors.dangerBright, fontSize: font.size.small }}>{(resetMutation.error as Error).message}</p>}
+            {resetMutation.error && <ErrorText margin="12px 0 0">{(resetMutation.error as Error).message}</ErrorText>}
           </>
         )}
       </div>

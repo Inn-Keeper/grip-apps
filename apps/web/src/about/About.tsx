@@ -111,7 +111,7 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
 const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
   {
     icon: "layers",
-    color: "#818CF8",
+    color: colors.deco7 ?? "",
     titleKey: "about.prep.title",
     taglineKey: "about.prep.tagline",
     page: "prep",
@@ -119,7 +119,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
   },
   {
     icon: "story",
-    color: "#4ADE80",
+    color: colors.deco2 ?? "",
     titleKey: "about.stories.title",
     taglineKey: "about.stories.tagline",
     page: "stories",
@@ -127,7 +127,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
   },
   {
     icon: "board",
-    color: "#FBBF24",
+    color: colors.deco3 ?? "",
     titleKey: "about.board.title",
     taglineKey: "about.board.tagline",
     page: "board",
@@ -135,7 +135,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
   },
   {
     icon: "quest",
-    color: "#38BDF8",
+    color: colors.deco5 ?? "",
     titleKey: "about.quest.title",
     taglineKey: "about.quest.tagline",
     page: "quest",
@@ -143,7 +143,7 @@ const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
   },
   {
     icon: "profile",
-    color: "#A78BFA",
+    color: colors.deco6 ?? "",
     titleKey: "about.profile.title",
     taglineKey: "about.profile.tagline",
     page: "profile",

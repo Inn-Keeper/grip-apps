@@ -13,17 +13,17 @@
   border-radius: 8px;
   background: var(--tip-bg);
   color: var(--tip-text);
-  font-size: 12px;
+  font-size: var(--fs-small);
   font-weight: 500;
   line-height: 1.45;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+  box-shadow: var(--shadow-popover);
   pointer-events: none;
   opacity: 0;
   transform: translateY(2px);
   transition: opacity 140ms ease, transform 140ms ease;
 }
 
-.meta { display: block; margin-top: 4px; color: var(--tip-faint); font-size: 11px; }
+.meta { display: block; margin-top: 4px; color: var(--tip-faint); font-size: var(--fs-label); }
 
 .chip:has(button:focus-visible) .tip { opacity: 1; transform: none; }
 

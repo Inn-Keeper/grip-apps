@@ -3,7 +3,7 @@ import { colors, font } from "@grip/core/tokens";
 
 const DISMISS_MS = 2100;
 
-const PARTICLE_COLORS = ["#2DD4BF", "#4ADE80", "#FBBF24", "#F472B6", "#38BDF8", "#A78BFA"];
+const PARTICLE_COLORS = [colors.deco1, colors.deco2, colors.deco3, colors.deco4, colors.deco5, colors.deco6];
 const PARTICLES = Array.from({ length: 36 }, (_, index) => ({
   angle: (Math.PI * 2 * index) / 36 + (index % 5) * 0.1,
   distance: 90 + (index % 9) * 22,

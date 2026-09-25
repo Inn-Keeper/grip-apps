@@ -28,11 +28,11 @@
   border-radius: 8px;
   background: var(--tip-bg);
   color: var(--tip-text);
-  font-size: 12px;
+  font-size: var(--fs-small);
   font-weight: 500;
   line-height: 1.45;
   text-align: left;
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+  box-shadow: var(--shadow-popover);
 }
 
 @supports (position-area: bottom) {

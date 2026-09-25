@@ -6,6 +6,7 @@ import { BrandIcon } from "../components/BrandIcon";
 import hover from "../components/HoverCard.module.css";
 import { ActionButton } from "./shared";
 import type { Contact } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 export type ContactActions = {
   onAdvance: () => void;
@@ -109,7 +110,7 @@ export function ContactSummary({ contact: c, error, onOpen, onAdvance, onRetro, 
       )}
 
       {/* Errors land on the contact they belong to (rule 13). */}
-      {error && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{error}</p>}
+      {error && <ErrorText margin="10px 0 0">{error}</ErrorText>}
     </>
   );
 }

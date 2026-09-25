@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 
 type Props = {
   title: string;
@@ -17,9 +17,9 @@ export function ProfileNextUp({ title, sub, action, disabled }: Props) {
       accessibilityLabel={t("nextUp.label")}
       style={{ padding: 14, gap: 6, borderRadius: 14, borderWidth: 1, borderColor: `${colors.accent}60`, boxShadow: shadow.card, backgroundColor: colors.surface }}
     >
-      <Text style={{ fontSize: 10.5, fontWeight: "800", letterSpacing: 0.8, color: colors.accent }}>{t("nextUp.label").toUpperCase()}</Text>
-      <Text style={{ fontSize: 15, fontWeight: "800", color: colors.textBright }}>{title}</Text>
-      <Text style={{ fontSize: 12, lineHeight: 17, color: colors.textDim }}>{sub}</Text>
+      <Text style={{ fontSize: font.size.captionLg, fontWeight: "800", letterSpacing: 0.8, color: colors.accent }}>{t("nextUp.label").toUpperCase()}</Text>
+      <Text style={{ fontSize: font.size.bodyLg, fontWeight: "800", color: colors.textBright }}>{title}</Text>
+      <Text style={{ fontSize: font.size.small, lineHeight: 17, color: colors.textDim }}>{sub}</Text>
       {action && (
         <TouchableOpacity
           onPress={action.onPress}
@@ -27,7 +27,7 @@ export function ProfileNextUp({ title, sub, action, disabled }: Props) {
           accessibilityRole="button"
           style={{ alignItems: "center", marginTop: 6, paddingVertical: 11, borderRadius: 10, backgroundColor: colors.accent, opacity: disabled ? 0.6 : 1 }}
         >
-          <Text style={{ fontSize: 14, fontWeight: "800", color: colors.onAccent }}>{action.label}</Text>
+          <Text style={{ fontSize: font.size.bodyMd, fontWeight: "800", color: colors.onAccent }}>{action.label}</Text>
         </TouchableOpacity>
       )}
     </View>

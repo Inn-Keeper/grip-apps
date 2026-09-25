@@ -19,7 +19,7 @@ const NODE_SIZE = { width: NODE_W, height: NODE_H };
 const edgeGeometry = (a: BoardNode, b: BoardNode) => geometryFor(a, b, NODE_SIZE);
 type EdgeGeometry = ReturnType<typeof edgeGeometry>;
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { NODE_H, NODE_W, NodeView } from "./NodeView";
 
@@ -324,7 +324,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
 
         {nodes.length === 0 && (
           <View pointerEvents="none" style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-            <Text style={{ color: colors.textFaint, fontSize: 13, textAlign: "center", paddingHorizontal: 24 }}>
+            <Text style={{ color: colors.textFaint, fontSize: font.size.body, textAlign: "center", paddingHorizontal: 24 }}>
               Add components below, drag to arrange,{"\n"}tap a node's ● handle then a target to wire them up.
               {"\n"}Pinch to zoom · drag empty space to pan.
             </Text>
@@ -346,7 +346,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
               borderRadius: 20,
             }}
           >
-            <Text style={{ color: colors.textBright, fontSize: 12, fontWeight: "600" }}>
+            <Text style={{ color: colors.textBright, fontSize: font.size.small, fontWeight: "600" }}>
               Tap a target to connect, tap elsewhere to cancel
             </Text>
           </View>
@@ -369,7 +369,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
           }}
         >
           <ZoomButton label="−" accessibilityLabel={t("board.zoomOut")} onPress={() => zoomBy(1 / ZOOM_STEP)} />
-          <Text style={{ minWidth: 44, textAlign: "center", color: colors.textDim, fontSize: 12, fontWeight: "700", fontVariant: ["tabular-nums"] }}>
+          <Text style={{ minWidth: 44, textAlign: "center", color: colors.textDim, fontSize: font.size.small, fontWeight: "700", fontVariant: ["tabular-nums"] }}>
             {zoomPercent}%
           </Text>
           <ZoomButton label="+" accessibilityLabel={t("board.zoomIn")} onPress={() => zoomBy(ZOOM_STEP)} />
@@ -380,7 +380,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
             style={{ flexDirection: "row", alignItems: "center", gap: 5, paddingHorizontal: 10, paddingVertical: 6 }}
           >
             <BrandIcon name="fit" color={colors.textDim} size={13} />
-            <Text style={{ color: colors.textDim, fontSize: 12, fontWeight: "600" }}>{t("board.fit")}</Text>
+            <Text style={{ color: colors.textDim, fontSize: font.size.small, fontWeight: "600" }}>{t("board.fit")}</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -397,7 +397,7 @@ function ZoomButton({ label, accessibilityLabel, onPress }: { label: string; acc
       hitSlop={6}
       style={{ width: 32, height: 30, alignItems: "center", justifyContent: "center" }}
     >
-      <Text style={{ color: colors.textBright, fontSize: 18, fontWeight: "600" }}>{label}</Text>
+      <Text style={{ color: colors.textBright, fontSize: font.size.titleLg, fontWeight: "600" }}>{label}</Text>
     </TouchableOpacity>
   );
 }

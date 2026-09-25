@@ -5,6 +5,7 @@ import hover from "../components/HoverCard.module.css";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { StoryLinks } from "./StoryLinks";
 import type { Story } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 function StarSection({ label, text }: { label: string; text: string }) {
   if (!text) return null;
@@ -64,7 +65,7 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
       </div>
       {readOnly && <StarSections story={s} />}
       {/* Errors land on the story they belong to (rule 13). */}
-      {error && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{error}</p>}
+      {error && <ErrorText margin="10px 0 0">{error}</ErrorText>}
     </div>
   );
 }
@@ -83,7 +84,7 @@ export function StoryDetail({ story, onEdit, onDelete, error }: { story: Story; 
       <h2 style={{ margin: "12px 0 0", fontSize: font.size.title, fontWeight: 800, color: colors.textBright }}>{story.title}</h2>
       <StarSections story={story} />
       <StoryLinks story={story} />
-      {error && <p role="alert" style={{ margin: "12px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{error}</p>}
+      {error && <ErrorText margin="12px 0 0">{error}</ErrorText>}
     </div>
   );
 }

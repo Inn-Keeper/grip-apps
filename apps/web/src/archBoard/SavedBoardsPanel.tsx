@@ -4,6 +4,7 @@ import { BrandIcon } from "../components/BrandIcon";
 import { SavedBoards } from "./SavedBoards";
 import styles from "./ArchBoard.module.css";
 import type { AugmentedScenario, BoardSummary } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 type Props = {
   open: boolean;
@@ -32,14 +33,14 @@ export function SavedBoardsPanel({ open, onToggle, boards, loading, error, onRet
         {loading ? (
           <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.small }}>{t("board.boardsLoading")}</p>
         ) : error ? (
-          <p role="alert" style={{ margin: 0, color: colors.dangerBright, fontSize: font.size.small }}>
+          <ErrorText>
             {t("board.boardsError", { message: error.message })}{" "}
             <button type="button" className={styles.toolbarButton} onClick={onRetry}>{t("board.retry")}</button>
-          </p>
+          </ErrorText>
         ) : (
           <SavedBoards activeBoardId={activeBoardId} allScenarios={allScenarios} boards={boards} onDelete={onDelete} onLoad={onLoad} />
         )}
-        {deleteError && <p role="alert" style={{ margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright }}>{t("board.deleteFailed", { message: deleteError.message })}</p>}
+        {deleteError && <ErrorText margin="10px 0 0">{t("board.deleteFailed", { message: deleteError.message })}</ErrorText>}
       </div>
     </details>
   );

@@ -55,6 +55,7 @@ import {
   talkGradeEnabled,
 } from "./queries";
 import type { AugmentedScenario, BoardEdge, BoardNode, BoardSummary, SavedBoard } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 
 export default function ArchBoard() {
@@ -558,10 +559,10 @@ export default function ArchBoard() {
             />
             {/* The one-board-per-story index gets words of its own; the story picker normally prevents it. */}
             {saveBoardMutation.error && (
-              <p role="alert" style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.dangerBright }}>
+              <ErrorText margin="0 0 10px">
                 {saveBoardMutation.error.message.includes("arch_boards_one_per_story")
                   ? t("board.storyTakenError")
-                  : `${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</p>
+                  : `${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</ErrorText>
             )}
 
             <div className={styles.editor} ref={editorRef} data-fullscreen={isFullscreen || undefined}>

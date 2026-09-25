@@ -84,7 +84,7 @@ export function SignIn() {
         // Fills the page area (App), so the form stays centered and the footer stays in view.
         flex: 1,
         // Darker than the app shell so the mark and form stand out.
-        background: `radial-gradient(ellipse at 50% 20%, ${colors.bgDeep}, #07090D 70%)`,
+        background: `radial-gradient(ellipse at 50% 20%, ${colors.bgDeep}, ${colors.bgVoid} 70%)`,
         display: "grid",
         placeItems: "center",
         padding: "32px 24px",

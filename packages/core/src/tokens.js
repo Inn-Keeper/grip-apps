@@ -7,6 +7,7 @@
 /** @type {Record<string, string>} */
 export const colors = {
   // Elevation ladder — each step a visible luminance lift.
+  bgVoid: "#07090D", // darkest edge of the sign-in backdrop
   bgDeep: "#10131A", // sunken: web header, board canvas
   bg: "#14171F", // page background
   well: "#191D27", // inset: inputs, tracks, nested sub-cards
@@ -14,6 +15,7 @@ export const colors = {
   surfaceHi: "#272C3A", // raised interactive: quiz options, pressed states
   border: "#353C4D", // hairlines on controls: inputs, buttons, options
   borderSoft: "#262A36", // card and panel edges: one step above surface, close to the page
+  borderStrong: "#4A5268", // hover edges: one step above border
 
   // Text
   textBright: "#F4F7FC", // headings, emphasized values
@@ -42,6 +44,7 @@ export const colors = {
   deco4: "#F472B6", // pink
   deco5: "#38BDF8", // blue
   deco6: "#A78BFA", // purple
+  deco7: "#818CF8", // indigo
 };
 
 /** Pre-baked translucent tints (8-digit hex). @type {Record<string, string>} */
@@ -79,7 +82,31 @@ export const brand = {
  * No loose @type here: the inferred shape keeps `font.size.body` a plain number.
  */
 export const font = {
-  size: { caption: 10, label: 11, small: 12, body: 13, bodyLg: 15, title: 17, heading: 20, display: 28, hero: 40 },
+  size: {
+    nano: 8,
+    tierSub: 8.5, // difficulty picker sub-line
+    micro: 9,
+    tier: 9.5, // difficulty tier badges
+    caption: 10,
+    captionLg: 10.5,
+    label: 11,
+    labelLg: 11.5,
+    small: 12,
+    smallLg: 12.5,
+    body: 13,
+    bodyMd: 14,
+    bodyLg: 15,
+    lead: 16,
+    title: 17,
+    titleLg: 18,
+    heading: 20,
+    headingLg: 22,
+    stat: 26, // big numbers in cards
+    display: 28,
+    statLg: 30,
+    hero: 40,
+    heroLg: 44,
+  },
 };
 
 /**
@@ -95,6 +122,10 @@ export const radius = { sm: 8, md: 12, lg: 16, pill: 999 };
 export const shadow = {
   card: "inset 0 1px 0 #FFFFFF0A, 0 8px 20px -12px #000000B3",
   cardHover: "inset 0 1px 0 #FFFFFF0D, 0 10px 24px -12px #000000C2",
+  // Floating layers: tooltips and popovers, then controls resting over the canvas.
+  popover: "0 14px 28px rgba(0, 0, 0, 0.34)",
+  floating: "0 8px 24px rgba(0, 0, 0, 0.25)",
+  header: "0 14px 38px rgba(0, 0, 0, 0.18)",
 };
 
 export const layout = {

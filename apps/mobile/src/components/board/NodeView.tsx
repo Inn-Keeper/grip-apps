@@ -10,7 +10,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { TYPE_COLORS, meta } from "@grip/core/arch";
 import type { BoardNode } from "@grip/core/arch";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 
 export const NODE_W = 124;
@@ -156,7 +156,7 @@ export function NodeView({
           style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 6 }}
         >
           <BrandIcon name={nodeIconName(node.type)} color={color} size={18} />
-          <Text style={{ flex: 1, fontSize: 10, fontWeight: "600", color: colors.text, lineHeight: 13 }}>
+          <Text style={{ flex: 1, fontSize: font.size.caption, fontWeight: "600", color: colors.text, lineHeight: 13 }}>
             {spec.label}
           </Text>
         </View>

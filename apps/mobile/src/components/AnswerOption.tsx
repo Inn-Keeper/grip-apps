@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
-import { colors, tints } from "@/theme";
+import { colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 // idle: not answered yet · correct/wrong: the right answer and a wrong pick · dimmed: other options after answering.
@@ -76,10 +76,10 @@ export function AnswerOption({ letter, text, state, color, onPress }: Props) {
           {state === "correct" || state === "wrong" ? (
             <BrandIcon name={state === "correct" ? "check" : "close"} color={look.text} size={12} />
           ) : (
-            <Text style={{ fontSize: 11, fontWeight: "700", color: answered ? look.text : color }}>{letter}</Text>
+            <Text style={{ fontSize: font.size.label, fontWeight: "700", color: answered ? look.text : color }}>{letter}</Text>
           )}
         </View>
-        <Text style={{ flex: 1, fontSize: 13, lineHeight: 18, color: look.text }}>{text}</Text>
+        <Text style={{ flex: 1, fontSize: font.size.body, lineHeight: 18, color: look.text }}>{text}</Text>
       </Pressable>
     </Animated.View>
   );

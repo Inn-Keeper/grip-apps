@@ -375,7 +375,7 @@ export default function ProfileScreen() {
             <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("about.profileLinkTitle")}</Text>
             <Text style={{ color: colors.textFaint, fontSize: font.size.small, marginTop: 2 }}>{t("about.profileLinkSubtitle")}</Text>
           </View>
-          <Text style={{ color: colors.textFaint, fontSize: 18 }}>›</Text>
+          <Text style={{ color: colors.textFaint, fontSize: font.size.titleLg }}>›</Text>
         </TouchableOpacity>
       </ScrollView>
     </Screen>

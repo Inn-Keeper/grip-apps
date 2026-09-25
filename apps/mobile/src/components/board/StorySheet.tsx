@@ -2,7 +2,7 @@ import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "reac
 import type { Story } from "@grip/core/api";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, Section } from "@/components/ui";
 
@@ -42,7 +42,7 @@ export function StorySheet({ visible, candidates, current, taken, onPick, onClos
           gap: 10,
         }}
       >
-        <Text style={{ fontSize: 15, fontWeight: "700", color: colors.textBright }}>{t("board.storyLabel")}</Text>
+        <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright }}>{t("board.storyLabel")}</Text>
         <ScrollView style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 12, paddingBottom: 12 }}>
           {current && (
             <View style={{ gap: 8, padding: 12, borderRadius: 10, backgroundColor: colors.bgDeep, borderWidth: 1, borderColor: colors.borderSoft }}>
@@ -77,7 +77,7 @@ export function StorySheet({ visible, candidates, current, taken, onPick, onClos
                     backgroundColor: active ? tints.accentSoft : "transparent",
                   }}
                 >
-                  <Text numberOfLines={1} style={{ flex: 1, fontSize: 14, fontWeight: active ? "700" : "500", color: active ? colors.accentBright : colors.text }}>
+                  <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.bodyMd, fontWeight: active ? "700" : "500", color: active ? colors.accentBright : colors.text }}>
                     {option.label}
                   </Text>
                   {active && <BrandIcon name="check" color={colors.accentBright} size={14} />}

@@ -5,6 +5,7 @@ import { useAuthUserQuery } from "../profile/queries";
 import { useStoriesQuery } from "../storyBank/queries";
 import { useShareBoardMutation } from "./queries";
 import type { AugmentedScenario, BoardSummary } from "./types";
+import { ErrorText } from "../components/ErrorText";
 
 const COPIED_RESET_MS = 1500;
 
@@ -87,11 +88,11 @@ export function SavedBoards({
                 </span>
               )}
               {copyErrorId === board.id && board.shareToken && (
-                <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>
+                <ErrorText size="label">
                   {t("board.saved.copyFailed")} <span style={{ userSelect: "all" }}>{shareUrl(board.shareToken)}</span>
-                </p>
+                </ErrorText>
               )}
-              {shareMutation.error && shareMutation.variables?.id === board.id && <p role="alert" style={{ margin: 0, fontSize: font.size.label, color: colors.dangerBright }}>{shareMutation.error.message}</p>}
+              {shareMutation.error && shareMutation.variables?.id === board.id && <ErrorText size="label">{shareMutation.error.message}</ErrorText>}
               <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
                 {board.shareToken ? (
                   <>

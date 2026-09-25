@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { buildPrepPlan } from "@grip/core/prepPlan";
 import { computeReadiness } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors, font, tints } from "@/theme";
 import { setPrepPlan } from "@/lib/uiStore";
 import type { Contact } from "@grip/core/api";
 import type { StoryItem } from "./StoryMatchSection";
@@ -47,15 +47,15 @@ export function PrepPlanSection({
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-        <Text style={{ fontSize: 11, fontWeight: "800", color: colors.accentBright, letterSpacing: 0.5 }}>
+        <Text style={{ fontSize: font.size.label, fontWeight: "800", color: colors.accentBright, letterSpacing: 0.5 }}>
           {t("plan.title").toUpperCase()}
         </Text>
-        <Text style={{ fontSize: 11, color: colors.textDim, flex: 1 }}>
+        <Text style={{ fontSize: font.size.label, color: colors.textDim, flex: 1 }}>
           {contact.nextActionDate
             ? t("plan.deadline", { date: contact.nextActionDate, days: plan.daysLeft ?? 0 })
             : t("plan.noDeadline")}
         </Text>
-        <Text style={{ fontSize: 11, color: colors.textDim }}>
+        <Text style={{ fontSize: font.size.label, color: colors.textDim }}>
           {t("plan.readiness")}{" "}
           <Text style={{ fontWeight: "800", color: colors.text }}>
             {readiness.overall === null ? "--" : `${readiness.overall}%`}
@@ -78,10 +78,10 @@ export function PrepPlanSection({
               backgroundColor: colors.well,
             }}
           >
-            <Text style={{ fontSize: 11, color: colors.text }}>{item.tech}</Text>
+            <Text style={{ fontSize: font.size.label, color: colors.text }}>{item.tech}</Text>
             <Text
               style={{
-                fontSize: 11,
+                fontSize: font.size.label,
                 fontWeight: "800",
                 color: item.accuracy === null ? colors.warningBright : colors.textDim,
               }}
@@ -100,7 +100,7 @@ export function PrepPlanSection({
             borderRadius: 8,
           }}
         >
-          <Text style={{ fontSize: 11, fontWeight: "700", color: colors.onAccent }}>{t("plan.drillCta")}</Text>
+          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.onAccent }}>{t("plan.drillCta")}</Text>
         </TouchableOpacity>
       </View>
     </View>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import { linkGitHubIdentity } from "@/lib/oauth";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 
 // Shown to anonymous (demo) sessions. Linking GitHub upgrades the same user, so demo progress is kept.
 export function DemoBanner() {
@@ -38,11 +38,11 @@ export function DemoBanner() {
         borderBottomColor: `${colors.accent}40`,
       }}
     >
-      <Text style={{ fontSize: 11.5, color: colors.textDim }}>{t("demo.bar")}</Text>
+      <Text style={{ fontSize: font.size.labelLg, color: colors.textDim }}>{t("demo.bar")}</Text>
       <TouchableOpacity onPress={keepProgress} disabled={busy} accessibilityRole="link" hitSlop={8}>
-        <Text style={{ fontSize: 11.5, fontWeight: "700", color: colors.accentBright, opacity: busy ? 0.6 : 1 }}>{t("auth.github")}</Text>
+        <Text style={{ fontSize: font.size.labelLg, fontWeight: "700", color: colors.accentBright, opacity: busy ? 0.6 : 1 }}>{t("auth.github")}</Text>
       </TouchableOpacity>
-      {error && <Text style={{ width: "100%", textAlign: "center", fontSize: 11.5, color: colors.dangerBright }}>{error}</Text>}
+      {error && <Text style={{ width: "100%", textAlign: "center", fontSize: font.size.labelLg, color: colors.dangerBright }}>{error}</Text>}
     </View>
   );
 }

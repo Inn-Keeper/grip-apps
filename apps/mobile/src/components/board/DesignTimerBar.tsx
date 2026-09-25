@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { DESIGN_PHASES, ROUND_MINUTES, ROUND_MS, formatClock, phaseAt, roundProgress } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { MiniButton } from "@/components/ui";
 
@@ -74,11 +74,11 @@ export function DesignTimerBar({ timer }: Props) {
         style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
       >
         <BrandIcon name={running ? "close" : "spark"} color={running ? colors.textDim : colors.accentBright} size={14} />
-        <Text style={{ fontSize: 16, fontWeight: "700", color: clockColor, fontVariant: ["tabular-nums"] }}>{clock}</Text>
+        <Text style={{ fontSize: font.size.lead, fontWeight: "700", color: clockColor, fontVariant: ["tabular-nums"] }}>{clock}</Text>
       </TouchableOpacity>
 
       <View style={{ flex: 1, gap: 3 }}>
-        <Text numberOfLines={1} style={{ fontSize: 11, fontWeight: "700", color: overrun ? colors.dangerBright : colors.accentBright }}>
+        <Text numberOfLines={1} style={{ fontSize: font.size.label, fontWeight: "700", color: overrun ? colors.dangerBright : colors.accentBright }}>
           {overrun ? t("timer.overtime") : started ? phase.label : t("timer.round", { minutes: ROUND_MINUTES })}
         </Text>
         {/* Phase strip: each segment proportional to its minutes. */}

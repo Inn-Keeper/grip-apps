@@ -6,7 +6,7 @@ import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 import { Turnstile } from "@/components/Turnstile";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 
 // Email + password with in-app account creation. No email delivery anywhere:
 // requires "Confirm email" to be disabled in Supabase so signUp returns a
@@ -90,10 +90,10 @@ export function SignIn() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
       style={{ flex: 1, backgroundColor: colors.bg, justifyContent: "center", padding: 32 }}
     >
-      <Text style={{ color: colors.textBright, fontSize: 22, fontWeight: "700", textAlign: "center", marginBottom: 6 }}>
+      <Text style={{ color: colors.textBright, fontSize: font.size.headingLg, fontWeight: "700", textAlign: "center", marginBottom: 6 }}>
         {t("auth.appName")}
       </Text>
-      <Text style={{ color: colors.textFaint, fontSize: 13, textAlign: "center", marginBottom: 28 }}>
+      <Text style={{ color: colors.textFaint, fontSize: font.size.body, textAlign: "center", marginBottom: 28 }}>
         {t("auth.promise")}
       </Text>
 
@@ -109,7 +109,7 @@ export function SignIn() {
           opacity: busy ? 0.6 : 1,
         }}
       >
-        <Text style={{ color: colors.textBright, fontWeight: "700", textAlign: "center", fontSize: 15 }}>
+        <Text style={{ color: colors.textBright, fontWeight: "700", textAlign: "center", fontSize: font.size.bodyLg }}>
           Continue with GitHub
         </Text>
       </TouchableOpacity>
@@ -128,15 +128,15 @@ export function SignIn() {
           opacity: busy || waitingForCaptcha ? 0.6 : 1,
         }}
       >
-        <Text style={{ color: colors.accentBright, fontWeight: "700", textAlign: "center", fontSize: 15 }}>
+        <Text style={{ color: colors.accentBright, fontWeight: "700", textAlign: "center", fontSize: font.size.bodyLg }}>
           {t("demo.try")}
         </Text>
-        <Text style={{ color: colors.textFaint, textAlign: "center", fontSize: 11, marginTop: 2 }}>{t("demo.trySub")}</Text>
+        <Text style={{ color: colors.textFaint, textAlign: "center", fontSize: font.size.label, marginTop: 2 }}>{t("demo.trySub")}</Text>
       </TouchableOpacity>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10, marginVertical: 14 }}>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
-        <Text style={{ color: colors.textFaint, fontSize: 11, fontWeight: "700" }}>or</Text>
+        <Text style={{ color: colors.textFaint, fontSize: font.size.label, fontWeight: "700" }}>or</Text>
         <View style={{ flex: 1, height: 1, backgroundColor: colors.border }} />
       </View>
 
@@ -173,7 +173,7 @@ export function SignIn() {
           opacity: busy || !canSubmit || waitingForCaptcha ? 0.6 : 1,
         }}
       >
-        <Text style={{ color: colors.onAccent, fontWeight: "600", textAlign: "center", fontSize: 15 }}>
+        <Text style={{ color: colors.onAccent, fontWeight: "600", textAlign: "center", fontSize: font.size.bodyLg }}>
           {busy ? "…" : mode === "signin" ? t("auth.signIn") : t("auth.createAccount")}
         </Text>
       </TouchableOpacity>
@@ -186,16 +186,16 @@ export function SignIn() {
         }}
         style={{ marginTop: 18 }}
       >
-        <Text style={{ color: colors.textDim, fontSize: 13, textAlign: "center" }}>
+        <Text style={{ color: colors.textDim, fontSize: font.size.body, textAlign: "center" }}>
           {mode === "signin" ? t("auth.switchToSignUp") : t("auth.switchToSignIn")}
         </Text>
       </TouchableOpacity>
 
       {error && (
-        <Text style={{ color: colors.dangerBright, fontSize: 13, textAlign: "center", marginTop: 16 }}>{error}</Text>
+        <Text style={{ color: colors.dangerBright, fontSize: font.size.body, textAlign: "center", marginTop: 16 }}>{error}</Text>
       )}
       {notice && (
-        <Text style={{ color: colors.warningBright, fontSize: 13, textAlign: "center", marginTop: 16, lineHeight: 19 }}>
+        <Text style={{ color: colors.warningBright, fontSize: font.size.body, textAlign: "center", marginTop: 16, lineHeight: 19 }}>
           {notice}
         </Text>
       )}
@@ -210,5 +210,5 @@ const inputStyle = {
   borderRadius: 12,
   padding: 14,
   color: colors.text,
-  fontSize: 15,
+  fontSize: font.size.bodyLg,
 } as const;

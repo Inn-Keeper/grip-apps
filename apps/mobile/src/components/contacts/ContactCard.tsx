@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, tints, shadow } from "@/theme";
+import { colors, font, shadow, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, MiniButton, Section } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
@@ -56,7 +56,7 @@ export function ContactCard({
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
         <Badge label={t(`enum.status.${contact.status}` as Parameters<typeof t>[0])} color={status.color} />
-        {!!contact.date && <Text style={{ fontSize: 11, color: colors.textFaint }}>{contact.date}</Text>}
+        {!!contact.date && <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{contact.date}</Text>}
         <View style={{ flexDirection: "row", gap: 6, marginLeft: "auto" }}>
           {nextStatus && (
             <MiniButton label={`→ ${t(`enum.status.${nextStatus}` as Parameters<typeof t>[0])}`} color={STATUS_STYLES[nextStatus].color} onPress={onAdvance} />
@@ -65,18 +65,18 @@ export function ContactCard({
         </View>
       </View>
 
-      <Text style={{ fontSize: 15, fontWeight: "600", color: colors.textBright }}>{contact.name}</Text>
+      <Text style={{ fontSize: font.size.bodyLg, fontWeight: "600", color: colors.textBright }}>{contact.name}</Text>
 
       {!!contact.role &&
         (contact.link ? (
           <TouchableOpacity onPress={() => Linking.openURL(contact.link)}>
-            <Text style={{ fontSize: 13, color: colors.accentBright }}>{contact.role} ↗</Text>
+            <Text style={{ fontSize: font.size.body, color: colors.accentBright }}>{contact.role} ↗</Text>
           </TouchableOpacity>
         ) : (
-          <Text style={{ fontSize: 13, color: colors.text }}>{contact.role}</Text>
+          <Text style={{ fontSize: font.size.body, color: colors.text }}>{contact.role}</Text>
         ))}
 
-      {!!contact.note && <Text style={{ fontSize: 12.5, color: colors.textDim }}>{contact.note}</Text>}
+      {!!contact.note && <Text style={{ fontSize: font.size.smallLg, color: colors.textDim }}>{contact.note}</Text>}
 
       {!!contact.nextAction && (
         <View
@@ -92,7 +92,7 @@ export function ContactCard({
           }}
         >
           <BrandIcon name={due ? "warning" : "calendar"} color={due ? colors.dangerBright : colors.warningBright} size={15} />
-          <Text style={{ flex: 1, fontSize: 12.5, color: due ? colors.dangerBright : colors.warningBright }}>
+          <Text style={{ flex: 1, fontSize: font.size.smallLg, color: due ? colors.dangerBright : colors.warningBright }}>
             {due ? "DUE · " : ""}
             {contact.nextAction}
             {!!contact.nextActionDate && ` · ${contact.nextActionDate}`}
@@ -133,10 +133,10 @@ export function ContactCard({
             }}
           >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <Text style={{ fontSize: 12, fontWeight: "700", color: colors.text, flex: 1 }}>
+              <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.text, flex: 1 }}>
                 {retro.round || t("retro.round")}
               </Text>
-              <Text style={{ fontSize: 11, color: colors.textFaint }}>{retro.date}</Text>
+              <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{retro.date}</Text>
               <MiniButton label={t("contacts.removeRetro")} color={colors.textFaint} onPress={() => onDeleteRetro(retro.id)} />
             </View>
             <Section label={t("contacts.questionsAsked")} text={retro.questions} />

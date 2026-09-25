@@ -21,6 +21,8 @@ because they have to be applied by hand.
 - The live-ingest and streaming-platform scenarios accept the new streaming nodes, and the streaming-platform scenario also checks for DRM licensing.
 - Arch Board: board edits (add, remove, connect) now share one set of rules across web and mobile; the web board is split into smaller hooks and components.
 - Prep: drill loading, answering, advancing, the profile category and readiness now share one module across web and mobile.
+- Styling: every mobile font size and every web stylesheet colour, font size and shadow now comes from the shared tokens (new size, shadow and colour tokens so nothing moves); web errors use one ErrorText and ErrorBanner.
+- Arch Board: the remove and inspect circles on a node are smaller (24px).
 
 ### Fixed
 

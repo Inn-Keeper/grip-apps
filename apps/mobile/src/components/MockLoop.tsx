@@ -4,7 +4,7 @@ import { SCENARIOS } from "@grip/core/arch";
 import { COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, tints } from "@/theme";
+import { colors, font, shadow, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button, inputStyle } from "@/components/ui";
 import { DrillSession, type Drill } from "./DrillSession";
@@ -57,15 +57,15 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
   if (stage === "arch") {
     return (
       <StageCard label={t("mock.stageArch")} onExit={onExit}>
-        <Text style={{ fontSize: 17, fontWeight: "800", color: colors.textBright }}>{scenario.name}</Text>
-        <Text style={{ fontSize: 13, lineHeight: 19, color: colors.text }}>{scenario.brief}</Text>
+        <Text style={{ fontSize: font.size.title, fontWeight: "800", color: colors.textBright }}>{scenario.name}</Text>
+        <Text style={{ fontSize: font.size.body, lineHeight: 19, color: colors.text }}>{scenario.brief}</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
           <BrandIcon name="cost" color={colors.textDim} size={13} />
-          <Text style={{ fontSize: 12, color: colors.textDim }}>{t("mock.archBudget", { budget: scenario.budget })}</Text>
+          <Text style={{ fontSize: font.size.small, color: colors.textDim }}>{t("mock.archBudget", { budget: scenario.budget })}</Text>
         </View>
-        <Text style={{ fontSize: 13, lineHeight: 19, color: colors.textDim }}>{t("mock.archInstruction")}</Text>
+        <Text style={{ fontSize: font.size.body, lineHeight: 19, color: colors.textDim }}>{t("mock.archInstruction")}</Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-          <Text style={{ flex: 1, fontSize: 12, color: colors.textDim }}>{t("mock.archScoreLabel")}</Text>
+          <Text style={{ flex: 1, fontSize: font.size.small, color: colors.textDim }}>{t("mock.archScoreLabel")}</Text>
           <TextInput
             value={archScore}
             onChangeText={(value) => setArchScore(value.replace(/\D/g, "").slice(0, 3))}
@@ -86,12 +86,12 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
     const competencyColor = COMPETENCY_COLORS[prompt.competency as keyof typeof COMPETENCY_COLORS] ?? colors.accent;
     return (
       <StageCard label={t("mock.stageStory")} onExit={onExit}>
-        <Text style={{ alignSelf: "flex-start", paddingHorizontal: 10, paddingVertical: 3, borderRadius: 999, overflow: "hidden", backgroundColor: `${competencyColor}20`, color: competencyColor, fontSize: 11, fontWeight: "700" }}>
+        <Text style={{ alignSelf: "flex-start", paddingHorizontal: 10, paddingVertical: 3, borderRadius: 999, overflow: "hidden", backgroundColor: `${competencyColor}20`, color: competencyColor, fontSize: font.size.label, fontWeight: "700" }}>
           {t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0])}
         </Text>
-        <Text style={{ fontSize: 15, fontWeight: "700", lineHeight: 22, color: colors.text }}>{prompt.text}</Text>
-        <Text style={{ fontSize: 13, color: colors.textDim }}>{t("mock.storyInstruction")}</Text>
-        <Text style={{ fontSize: 12, color: colors.textDim }}>{t("mock.storyRateLabel")}</Text>
+        <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", lineHeight: 22, color: colors.text }}>{prompt.text}</Text>
+        <Text style={{ fontSize: font.size.body, color: colors.textDim }}>{t("mock.storyInstruction")}</Text>
+        <Text style={{ fontSize: font.size.small, color: colors.textDim }}>{t("mock.storyRateLabel")}</Text>
         <View style={{ flexDirection: "row", gap: 8 }}>
           {Array.from({ length: STORY_RATING_MAX }, (_, i) => i + 1).map((rating) => {
             const active = storyRating === rating;
@@ -103,7 +103,7 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
                 accessibilityState={{ selected: active }}
                 style={{ width: 40, height: 40, borderRadius: 8, alignItems: "center", justifyContent: "center", borderWidth: 1, borderColor: active ? colors.accent : colors.borderSoft, backgroundColor: active ? tints.accentSoft : "transparent" }}
               >
-                <Text style={{ fontSize: 14, fontWeight: "700", color: active ? colors.accentBright : colors.textDim }}>{rating}</Text>
+                <Text style={{ fontSize: font.size.bodyMd, fontWeight: "700", color: active ? colors.accentBright : colors.textDim }}>{rating}</Text>
               </TouchableOpacity>
             );
           })}
@@ -128,8 +128,8 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
   return (
     <View style={{ ...cardStyle, alignItems: "center" }}>
       <StageLabel text={t("mock.summaryTitle")} />
-      <Text style={{ fontSize: 44, fontWeight: "800", color: colors.textBright }}>{result.overall === null ? "--" : `${result.overall}%`}</Text>
-      <Text style={{ fontSize: 12, color: colors.textFaint }}>{t("mock.elapsed", { minutes, seconds })}</Text>
+      <Text style={{ fontSize: font.size.heroLg, fontWeight: "800", color: colors.textBright }}>{result.overall === null ? "--" : `${result.overall}%`}</Text>
+      <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>{t("mock.elapsed", { minutes, seconds })}</Text>
       <View style={{ flexDirection: "row", gap: 22 }}>
         {[
           { label: t("mock.summaryQuiz"), value: result.quiz },
@@ -137,8 +137,8 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
           { label: t("mock.summaryStory"), value: result.story },
         ].map(({ label, value }) => (
           <View key={label} style={{ alignItems: "center", gap: 2 }}>
-            <Text style={{ fontSize: 11, fontWeight: "700", color: colors.textFaint }}>{label}</Text>
-            <Text style={{ fontSize: 16, fontWeight: "800", color: value === null ? colors.textFaint : colors.text }}>{value === null ? "--" : `${value}%`}</Text>
+            <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textFaint }}>{label}</Text>
+            <Text style={{ fontSize: font.size.lead, fontWeight: "800", color: value === null ? colors.textFaint : colors.text }}>{value === null ? "--" : `${value}%`}</Text>
           </View>
         ))}
       </View>
@@ -158,7 +158,7 @@ const cardStyle = {
 } as const;
 
 function StageLabel({ text }: { text: string }) {
-  return <Text style={{ fontSize: 11, fontWeight: "800", letterSpacing: 0.9, color: colors.accentBright }}>{text.toUpperCase()}</Text>;
+  return <Text style={{ fontSize: font.size.label, fontWeight: "800", letterSpacing: 0.9, color: colors.accentBright }}>{text.toUpperCase()}</Text>;
 }
 
 function StageCard({ label, onExit, children }: { label: string; onExit: () => void; children: ReactNode }) {
@@ -167,7 +167,7 @@ function StageCard({ label, onExit, children }: { label: string; onExit: () => v
       <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
         <StageLabel text={label} />
         <TouchableOpacity onPress={onExit} accessibilityRole="button" hitSlop={8} style={{ paddingHorizontal: 10, paddingVertical: 3, borderRadius: 8, borderWidth: 1, borderColor: colors.borderSoft }}>
-          <Text style={{ fontSize: 11, fontWeight: "600", color: colors.textFaint }}>{t("prep.exit")}</Text>
+          <Text style={{ fontSize: font.size.label, fontWeight: "600", color: colors.textFaint }}>{t("prep.exit")}</Text>
         </TouchableOpacity>
       </View>
       {children}

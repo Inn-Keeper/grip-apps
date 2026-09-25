@@ -3,7 +3,7 @@ import { Switch, Text, TouchableOpacity, View } from "react-native";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { AUTO_NEXT_MS } from "@grip/core/quizPrefs";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 import { DifficultyPicker } from "@/components/DifficultyPicker";
 import { QuizSizePicker } from "@/components/QuizSizePicker";
@@ -35,11 +35,11 @@ export function PrepSettings({ level, onLevel, quizSize, poolSize, onQuizSize, a
         }}
       >
         {tier && <DifficultyIcon tier={tier} size={15} />}
-        <Text style={{ flex: 1, fontSize: 12.5, fontWeight: "700", color: colors.text }}>
+        <Text style={{ flex: 1, fontSize: font.size.smallLg, fontWeight: "700", color: colors.text }}>
           {t("prep.settingsSummary", { level: tier?.label ?? level, size: quizSize ?? "All" })}
           {autoNext ? ` · ${t("prep.autoNext")}` : ""}
         </Text>
-        <Text style={{ fontSize: 12, color: colors.textFaint }}>{open ? "▴" : "▾"}</Text>
+        <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>{open ? "▴" : "▾"}</Text>
       </TouchableOpacity>
       {open && (
         <>
@@ -47,8 +47,8 @@ export function PrepSettings({ level, onLevel, quizSize, poolSize, onQuizSize, a
           <QuizSizePicker quizSize={quizSize} poolSize={poolSize} onQuizSize={onQuizSize} />
           <View style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 4 }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: 12.5, fontWeight: "700", color: colors.text }}>{t("prep.autoNext")}</Text>
-              <Text style={{ fontSize: 11, color: colors.textFaint, marginTop: 2 }}>{t("prep.autoNextHint", { seconds: AUTO_NEXT_MS / 1000 })}</Text>
+              <Text style={{ fontSize: font.size.smallLg, fontWeight: "700", color: colors.text }}>{t("prep.autoNext")}</Text>
+              <Text style={{ fontSize: font.size.label, color: colors.textFaint, marginTop: 2 }}>{t("prep.autoNextHint", { seconds: AUTO_NEXT_MS / 1000 })}</Text>
             </View>
             <Switch
               value={autoNext}

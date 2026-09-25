@@ -19,35 +19,35 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     icon: "layers",
-    color: "#818CF8",
+    color: colors.deco7,
     titleKey: "about.prep.title",
     taglineKey: "about.prep.tagline",
     bulletKeys: ["about.prep.b1", "about.prep.b2", "about.prep.b3", "about.prep.b4", "about.prep.b5", "about.prep.b6"],
   },
   {
     icon: "story",
-    color: "#4ADE80",
+    color: colors.deco2,
     titleKey: "about.stories.title",
     taglineKey: "about.stories.tagline",
     bulletKeys: ["about.stories.b1", "about.stories.b2", "about.stories.b3", "about.stories.b4", "about.stories.b5"],
   },
   {
     icon: "board",
-    color: "#FBBF24",
+    color: colors.deco3,
     titleKey: "about.board.title",
     taglineKey: "about.board.tagline",
     bulletKeys: ["about.board.b1", "about.board.b2", "about.board.b3", "about.board.b4", "about.board.b5"],
   },
   {
     icon: "contact",
-    color: "#38BDF8",
+    color: colors.deco5,
     titleKey: "about.quest.title",
     taglineKey: "about.quest.tagline",
     bulletKeys: ["about.quest.b1", "about.quest.b2", "about.quest.b3", "about.quest.b4", "about.quest.b5"],
   },
   {
     icon: "rank",
-    color: "#A78BFA",
+    color: colors.deco6,
     titleKey: "about.profile.title",
     taglineKey: "about.profile.tagline",
     bulletKeys: ["about.profile.b1", "about.profile.b2", "about.profile.b3", "about.profile.b4", "about.profile.b5"],
@@ -80,7 +80,7 @@ export default function AboutScreen() {
         }}
       >
         <TouchableOpacity onPress={() => router.back()} style={{ padding: 4, marginLeft: -4 }}>
-          <Text style={{ color: colors.accentBright, fontSize: 22, lineHeight: 24, fontWeight: "300" }}>‹</Text>
+          <Text style={{ color: colors.accentBright, fontSize: font.size.headingLg, lineHeight: 24, fontWeight: "300" }}>‹</Text>
         </TouchableOpacity>
         <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800", flex: 1 }}>
           {t("about.title")}

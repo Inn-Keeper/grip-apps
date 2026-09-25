@@ -2,7 +2,7 @@ import { Modal, Pressable, Text, View } from "react-native";
 import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip/core/arch";
 import type { BoardEdge, BoardNode } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors, font, tints } from "@/theme";
 import { Button, MiniButton } from "@/components/ui";
 
 type Props = {
@@ -32,14 +32,14 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
         }}
       >
         <View style={{ gap: 3 }}>
-          <Text style={{ fontSize: 11, fontWeight: "700", color: colors.textDim }}>{t("edge.title")}</Text>
-          <Text style={{ fontSize: 15, fontWeight: "700", color: colors.textBright }}>
+          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("edge.title")}</Text>
+          <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright }}>
             {from ? meta(from.type).label : "?"} → {to ? meta(to.type).label : "?"}
           </Text>
         </View>
 
         <View style={{ gap: 6 }}>
-          <Text style={{ fontSize: 11, fontWeight: "700", color: colors.textDim }}>{t("edge.mode")}</Text>
+          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("edge.mode")}</Text>
           <View style={{ flexDirection: "row", gap: 8 }}>
             {EDGE_MODES.map((mode: string) => (
               <MiniButton
@@ -53,7 +53,7 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
         </View>
 
         <View style={{ gap: 6 }}>
-          <Text style={{ fontSize: 11, fontWeight: "700", color: colors.textDim }}>{t("edge.protocol")}</Text>
+          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("edge.protocol")}</Text>
           <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
             {EDGE_PROTOCOLS.map((protocol: string) => (
               <MiniButton

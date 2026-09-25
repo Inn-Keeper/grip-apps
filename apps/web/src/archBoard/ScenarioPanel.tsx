@@ -6,6 +6,7 @@ import { Combobox } from "../components/Combobox";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { BoardStory } from "./BoardStory";
 import { CATEGORY_ICONS } from "./constants";
+import { ErrorText } from "../components/ErrorText";
 import styles from "./ArchBoard.module.css";
 import type { AugmentedScenario } from "./types";
 
@@ -19,8 +20,6 @@ type Props = {
   onDeleteScenario: () => void;
   errors: (string | null)[];
 };
-
-const errorStyle = { margin: "10px 0 0", fontSize: font.size.small, color: colors.dangerBright };
 
 // Left rail: the scenario you are designing for and its brief (rule 4).
 export function ScenarioPanel({ scenario, scenarioCount, scenarioOptions, onSwitch, board, onNewScenario, onDeleteScenario, errors }: Props) {
@@ -61,7 +60,7 @@ export function ScenarioPanel({ scenario, scenarioCount, scenarioOptions, onSwit
         )}
       </div>
       {errors.filter(Boolean).map((message) => (
-        <p key={message} role="alert" style={errorStyle}>{message}</p>
+        <ErrorText key={message} margin="10px 0 0">{message}</ErrorText>
       ))}
     </WorkspacePanel>
   );

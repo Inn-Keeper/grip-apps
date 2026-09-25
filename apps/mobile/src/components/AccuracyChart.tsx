@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { Canvas, Circle, Path } from "@shopify/react-native-skia";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 
 type Point = { date: string; accuracy: number; total: number };
 
@@ -43,17 +43,17 @@ export function AccuracyChart({ points }: Props) {
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 12, fontWeight: "700", color: colors.textBright }}>{t("accuracy.title")}</Text>
-          <Text style={{ fontSize: 10.5, color: colors.textFaint }}>{t("accuracy.subtitle")}</Text>
+          <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.textBright }}>{t("accuracy.title")}</Text>
+          <Text style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>{t("accuracy.subtitle")}</Text>
         </View>
-        <Text style={{ fontSize: 13, fontWeight: "800", color: latest && latest.accuracy >= 0.7 ? colors.success : colors.warning }}>
+        <Text style={{ fontSize: font.size.body, fontWeight: "800", color: latest && latest.accuracy >= 0.7 ? colors.success : colors.warning }}>
           {latest ? `${Math.round(latest.accuracy * 100)}%` : "--"}
         </Text>
       </View>
 
       {points.length < 2 ? (
         <View style={{ height: HEIGHT, alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ color: colors.textFaint, fontSize: 11 }}>{t("accuracy.empty")}</Text>
+          <Text style={{ color: colors.textFaint, fontSize: font.size.label }}>{t("accuracy.empty")}</Text>
         </View>
       ) : (
         <Canvas style={{ width: "100%", height: HEIGHT }}>

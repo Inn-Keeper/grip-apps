@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { WORKFLOW_STEPS, stepState } from "@grip/core/workflowState";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors, font, tints } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
 type Props = {
@@ -35,22 +35,22 @@ export function BoardProgress({ step, title, sub, action }: Props) {
                 borderColor: colors.borderSoft,
               }}
             >
-              <Text style={{ fontSize: 10, fontWeight: "800", color: state === "todo" ? colors.textFaint : colors.onAccent }}>
+              <Text style={{ fontSize: font.size.caption, fontWeight: "800", color: state === "todo" ? colors.textFaint : colors.onAccent }}>
                 {state === "done" ? "✓" : item.step}
               </Text>
             </View>
           );
         })}
         {current && (
-          <Text style={{ marginLeft: 4, fontSize: 11, fontWeight: "800", letterSpacing: 0.6, color: colors.accentBright }}>
+          <Text style={{ marginLeft: 4, fontSize: font.size.label, fontWeight: "800", letterSpacing: 0.6, color: colors.accentBright }}>
             {t(current.labelKey as Parameters<typeof t>[0]).toUpperCase()}
           </Text>
         )}
       </View>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ fontSize: 13, fontWeight: "700", color: colors.textBright }}>{title}</Text>
-          <Text style={{ fontSize: 11.5, lineHeight: 16, color: colors.textDim }}>{sub}</Text>
+          <Text style={{ fontSize: font.size.body, fontWeight: "700", color: colors.textBright }}>{title}</Text>
+          <Text style={{ fontSize: font.size.labelLg, lineHeight: 16, color: colors.textDim }}>{sub}</Text>
         </View>
         {action && <MiniButton label={action.label} color={colors.accentBright} onPress={action.onPress} />}
       </View>

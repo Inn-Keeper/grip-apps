@@ -3,7 +3,7 @@ import { Text, TextInput, View } from "react-native";
 import { extractTechsFromText } from "@grip/core/cvTechs";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 import { Button, Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
 
 const ALL_TECHS: string[] = categories.flatMap((c: { items: { tech: string }[] }) =>
@@ -74,7 +74,7 @@ export function RetroForm({ onSave, onCancel }: RetroFormProps) {
               <Pill key={tech} label={tech} active={!excluded.includes(tech)} onPress={() => toggleTech(tech)} />
             ))}
           </View>
-          <Text style={{ fontSize: 11, color: colors.textFaint, marginTop: 4 }}>{t("retro.struggledHint")}</Text>
+          <Text style={{ fontSize: font.size.label, color: colors.textFaint, marginTop: 4 }}>{t("retro.struggledHint")}</Text>
         </Field>
       )}
       <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>

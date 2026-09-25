@@ -116,10 +116,6 @@ export default function App() {
       style={{
         fontFamily: "'Inter', system-ui, sans-serif",
         minHeight: "100svh",
-        // Card lift and page width for stylesheets (CSS modules can't import tokens).
-        "--shadow-card": shadow.card,
-        "--page-max": `${layout.webPageMax}px`,
-        "--shadow-card-hover": shadow.cardHover,
         background: colors.bg,
         color: colors.text,
         display: "flex",
@@ -150,7 +146,7 @@ export default function App() {
           background: `linear-gradient(180deg, ${colors.bgDeep}, ${colors.bg}F2)`,
           zIndex: 10,
           backdropFilter: "blur(14px)",
-          boxShadow: "0 14px 38px rgba(0, 0, 0, 0.18)",
+          boxShadow: shadow.header,
           overflow: "hidden",
         }}
       >

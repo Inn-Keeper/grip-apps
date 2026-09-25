@@ -4,7 +4,7 @@ import Animated, { Easing, FadeInRight, useAnimatedStyle, useReducedMotion, useS
 import * as Haptics from "expo-haptics";
 import { techLinks } from "@grip/core/techLinks";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 import { AnswerOption, type OptionState } from "./AnswerOption";
 import { SpeedClock } from "./SpeedClock";
 
@@ -55,12 +55,12 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
   return (
     <View style={{ gap: 10 }}>
       <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
-        <Text style={{ flexShrink: 1, fontSize: 10, fontWeight: "700", color, letterSpacing: 0.8 }}>
+        <Text style={{ flexShrink: 1, fontSize: font.size.caption, fontWeight: "700", color, letterSpacing: 0.8 }}>
           {tech.toUpperCase()} · QUIZ
         </Text>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           {timedFrom !== undefined && answered === null && <SpeedClock key={questionNumber} shownAt={timedFrom} />}
-          <Text style={{ fontSize: 10, color: colors.textFaint }}>
+          <Text style={{ fontSize: font.size.caption, color: colors.textFaint }}>
             {questionNumber} / {total}
           </Text>
         </View>
@@ -69,7 +69,7 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
 
       {/* Keyed by question so each new question slides in. */}
       <Animated.View key={questionNumber} entering={FadeInRight.springify().damping(18)} style={{ gap: 10 }}>
-        <Text style={{ fontSize: 14, lineHeight: 20, color: colors.text, fontWeight: "500" }}>{question.question}</Text>
+        <Text style={{ fontSize: font.size.bodyMd, lineHeight: 20, color: colors.text, fontWeight: "500" }}>{question.question}</Text>
         <View style={{ gap: 7 }}>
           {question.options.map((opt, i) => (
             <AnswerOption
@@ -87,19 +87,19 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
       {/* Fixed-height footer: a hint before answering, feedback + next step after — no layout jump. */}
       <View style={{ minHeight: 34, flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 2 }}>
         {answered === null ? (
-          <Text style={{ fontSize: 11.5, color: colors.textFaint }}>{t("prep.pickAnswer")}</Text>
+          <Text style={{ fontSize: font.size.labelLg, color: colors.textFaint }}>{t("prep.pickAnswer")}</Text>
         ) : (
           <>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flexShrink: 1 }}>
               <View>
-                <Text style={{ fontSize: 12, fontWeight: "600", color: isCorrect ? colors.success : colors.danger }}>
+                <Text style={{ fontSize: font.size.small, fontWeight: "600", color: isCorrect ? colors.success : colors.danger }}>
                   {feedbackFor(isCorrect)}
                 </Text>
                 {isCorrect && <XpFloat key={questionNumber} xp={xp} />}
               </View>
               {link && (
                 <TouchableOpacity onPress={() => Linking.openURL(link)} accessibilityRole="link">
-                  <Text style={{ fontSize: 12, color: colors.accentBright, fontWeight: "500" }}>{t("prep.docs")}</Text>
+                  <Text style={{ fontSize: font.size.small, color: colors.accentBright, fontWeight: "500" }}>{t("prep.docs")}</Text>
                 </TouchableOpacity>
               )}
             </View>
@@ -117,7 +117,7 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
               }}
             >
               {autoNextMs !== undefined && <AutoNextFill ms={autoNextMs} color={color} />}
-              <Text style={{ fontSize: 12, fontWeight: "600", color }}>{isLast ? t("prep.finish") : t("common.next")}</Text>
+              <Text style={{ fontSize: font.size.small, fontWeight: "600", color }}>{isLast ? t("prep.finish") : t("common.next")}</Text>
             </TouchableOpacity>
           </>
         )}
@@ -161,7 +161,7 @@ function XpFloat({ xp }: { xp: number }) {
   }));
   return (
     <Animated.View pointerEvents="none" style={[{ position: "absolute", right: -4, top: -14 }, style]}>
-      <Text style={{ fontSize: 11, fontWeight: "800", color: colors.successBright }}>+{xp}</Text>
+      <Text style={{ fontSize: font.size.label, fontWeight: "800", color: colors.successBright }}>+{xp}</Text>
     </Animated.View>
   );
 }

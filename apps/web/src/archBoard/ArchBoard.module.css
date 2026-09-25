@@ -7,7 +7,7 @@
   background: transparent;
   color: var(--arch-text-dim);
   font: inherit;
-  font-size: 12px;
+  font-size: var(--fs-small);
   font-weight: 600;
   cursor: pointer;
 }
@@ -20,25 +20,25 @@
   background: var(--arch-surface);
   color: var(--arch-text);
   font: inherit;
-  font-size: 12px;
+  font-size: var(--fs-small);
   color-scheme: dark;
 }
 /* Room above and below: this row wraps under the toolbar buttons at almost
    every width, and sat flush against them and the palette. */
-.connectionRow { display: flex; align-items: center; gap: 6px; font-size: 12px; margin-block: 12px 6px; }
+.connectionRow { display: flex; align-items: center; gap: 6px; font-size: var(--fs-small); margin-block: 12px 6px; }
 /* Saved boards: a native disclosure dressed as a rail panel; the list loads when opened. */
 .savedBoards {
-  background: var(--card-bg, #1E222D);
-  border: 1px solid var(--card-border, #262A36);
+  background: var(--card-bg, var(--c-surface));
+  border: 1px solid var(--card-border, var(--c-border-soft));
   border-radius: 8px;
   box-shadow: var(--shadow-card);
 }
 .savedSummary {
   display: flex; align-items: center; gap: 10px; padding: 14px;
-  list-style: none; cursor: pointer; color: #F4F7FC; font-size: 13px; font-weight: 800;
+  list-style: none; cursor: pointer; color: var(--c-text-bright); font-size: var(--fs-body); font-weight: 800;
 }
 .savedSummary::-webkit-details-marker { display: none; }
-.savedSummary:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 2px; border-radius: 8px; }
+.savedSummary:focus-visible { outline: 2px solid var(--c-accent-bright); outline-offset: 2px; border-radius: 8px; }
 .handle::after {
   content: "";
   position: absolute;
@@ -55,16 +55,16 @@
   position: absolute; right: 12px; bottom: 12px; z-index: 2;
   display: flex; align-items: center; gap: 2px; padding: 3px;
   border: 1px solid var(--arch-border); border-radius: 10px;
-  background: var(--arch-surface); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); cursor: default;
+  background: var(--arch-surface); box-shadow: var(--shadow-floating); cursor: default;
 }
 .zoomButton {
   min-width: 30px; height: 30px; padding: 0 8px; border: none; border-radius: 7px;
-  background: transparent; color: var(--arch-text-dim); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer;
+  background: transparent; color: var(--arch-text-dim); font: inherit; font-size: var(--fs-body); font-weight: 700; cursor: pointer;
 }
 .zoomButton:hover:not(:disabled) { background: color-mix(in srgb, var(--arch-accent) 14%, transparent); color: var(--arch-text); }
 .zoomButton:disabled { opacity: .4; cursor: default; }
 .zoomButton:focus-visible { outline: 2px solid var(--arch-accent); outline-offset: 1px; }
-.zoomPercent { min-width: 52px; font-variant-numeric: tabular-nums; font-size: 12px; }
+.zoomPercent { min-width: 52px; font-variant-numeric: tabular-nums; font-size: var(--fs-small); }
 .toolbarButton:focus-visible, .connectionSelect:focus-visible,
 .node:focus-visible, .handle:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 3px; }
 
@@ -133,7 +133,7 @@
      also renders in the right rail, which is outside that wrapper, and one
      unresolvable var voids the whole box-shadow and the twinkle silently
      vanishes. */
-  0% { box-shadow: 0 0 0 0 var(--twinkle-color, #2DD4BF); }
+  0% { box-shadow: 0 0 0 0 var(--twinkle-color, var(--c-accent-bright)); }
   35%, 100% { box-shadow: 0 0 0 7px transparent; }
 }
 

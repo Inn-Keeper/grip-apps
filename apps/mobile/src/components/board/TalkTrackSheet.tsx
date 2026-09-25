@@ -1,7 +1,7 @@
 import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { colors, tints } from "@/theme";
+import { colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button, MiniButton } from "@/components/ui";
 import type { TalkGradeResult } from "@/queries/board";
@@ -56,12 +56,12 @@ export function TalkTrackSheet({
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <BrandIcon name="spark" color={colors.accentBright} size={16} />
-            <Text style={{ fontSize: 15, fontWeight: "700", color: colors.textBright, flex: 1 }}>{t("talk.title")}</Text>
-            <Text style={{ fontSize: 11, fontWeight: "600", color: colors.textFaint }}>
+            <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright, flex: 1 }}>{t("talk.title")}</Text>
+            <Text style={{ fontSize: font.size.label, fontWeight: "600", color: colors.textFaint }}>
               {t("talk.covered", { answered: answered.length, total: TALK_TRACK_SECTIONS.length })}
             </Text>
           </View>
-          <Text style={{ fontSize: 12, lineHeight: 17, color: colors.textFaint, marginBottom: 12 }}>
+          <Text style={{ fontSize: font.size.small, lineHeight: 17, color: colors.textFaint, marginBottom: 12 }}>
             {t("talk.intro")}
           </Text>
 
@@ -81,12 +81,12 @@ export function TalkTrackSheet({
                       color={covered ? colors.successBright : colors.textFaint}
                       size={13}
                     />
-                    <Text style={{ fontSize: 12, fontWeight: "700", color: colors.text, flex: 1 }}>{section.label}</Text>
+                    <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.text, flex: 1 }}>{section.label}</Text>
                     {verdict && verdictKey && (
-                      <Text style={{ fontSize: 11, fontWeight: "700", color: verdict.color }}>{t(verdictKey)}</Text>
+                      <Text style={{ fontSize: font.size.label, fontWeight: "700", color: verdict.color }}>{t(verdictKey)}</Text>
                     )}
                   </View>
-                  <Text style={{ fontSize: 11, lineHeight: 16, color: colors.textFaint }}>{section.hint}</Text>
+                  <Text style={{ fontSize: font.size.label, lineHeight: 16, color: colors.textFaint }}>{section.hint}</Text>
                   <TextInput
                     value={value}
                     onChangeText={(value) => onChangeSection(section.id, value)}
@@ -100,25 +100,25 @@ export function TalkTrackSheet({
                       borderColor: covered ? `${colors.success}55` : colors.border,
                       borderRadius: 8,
                       color: colors.text,
-                      fontSize: 12.5,
+                      fontSize: font.size.smallLg,
                       lineHeight: 18,
                     }}
                   />
                   {/* The quoted span the credit was given for: the grade's evidence. */}
                   {!!graded?.evidence && (
-                    <Text style={{ borderLeftWidth: 2, borderLeftColor: verdict?.color ?? colors.borderSoft, paddingLeft: 8, fontSize: 11, lineHeight: 16, fontStyle: "italic", color: colors.textDim }}>
+                    <Text style={{ borderLeftWidth: 2, borderLeftColor: verdict?.color ?? colors.borderSoft, paddingLeft: 8, fontSize: font.size.label, lineHeight: 16, fontStyle: "italic", color: colors.textDim }}>
                       {`\u201C${graded.evidence}\u201D`}
                     </Text>
                   )}
                   {/* Grading by absence: what an interviewer would still ask here. */}
-                  {graded && <Text style={{ fontSize: 11, lineHeight: 16, color: colors.text }}>{graded.gap}</Text>}
+                  {graded && <Text style={{ fontSize: font.size.label, lineHeight: 16, color: colors.text }}>{graded.gap}</Text>}
                 </View>
               );
             })}
 
             <View style={{ gap: 6 }}>
-              <Text style={{ fontSize: 12, fontWeight: "700", color: colors.text }}>{t("talk.ratingLabel")}</Text>
-              <Text style={{ fontSize: 11, color: colors.textFaint }}>{t("talk.ratingHint")}</Text>
+              <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.text }}>{t("talk.ratingLabel")}</Text>
+              <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("talk.ratingHint")}</Text>
               <View style={{ flexDirection: "row", gap: 8, marginTop: 4 }}>
                 {Array.from({ length: SELF_RATING_MAX }, (_, i) => i + 1).map((value) => (
                   <MiniButton
@@ -136,22 +136,22 @@ export function TalkTrackSheet({
             <View style={{ marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.borderSoft, gap: 6 }}>
               {/* A 429 is already explained by the blocked line. */}
               {gradeError && gradeError.status !== 429 && (
-                <Text accessibilityRole="alert" style={{ fontSize: 12, color: colors.dangerBright }}>
+                <Text accessibilityRole="alert" style={{ fontSize: font.size.small, color: colors.dangerBright }}>
                   {`${t("talk.gradeFailed")}: ${gradeError.message}`}
                 </Text>
               )}
               {gradeDetail?.divergence != null && gradeDetail.divergence > 0 && (
-                <Text style={{ fontSize: 12, color: colors.warningBright }}>
+                <Text style={{ fontSize: font.size.small, color: colors.warningBright }}>
                   {t("talk.gradeDivergence", { points: gradeDetail.divergence })}
                 </Text>
               )}
               {gradeDetail && (
-                <Text style={{ fontSize: 12, lineHeight: 17, color: colors.text }}>
+                <Text style={{ fontSize: font.size.small, lineHeight: 17, color: colors.text }}>
                   <Text style={{ fontWeight: "700", color: colors.textDim }}>{`${t("talk.gradeFollowup")} `}</Text>
                   {gradeDetail.suggestion.hardest_followup}
                 </Text>
               )}
-              <Text accessibilityLiveRegion="polite" style={{ fontSize: 11, lineHeight: 16, color: colors.textFaint }}>
+              <Text accessibilityLiveRegion="polite" style={{ fontSize: font.size.label, lineHeight: 16, color: colors.textFaint }}>
                 {gradeBlocked ?? (grade === null ? t("talk.gradeHint") : t("talk.gradeScore"))}
               </Text>
             </View>
@@ -162,7 +162,7 @@ export function TalkTrackSheet({
               <>
                 <Button label={grading ? t("talk.grading") : t("talk.gradeAction")} onPress={onGrade} disabled={grading || gradeBlocked !== null} />
                 {grading && <ActivityIndicator color={colors.accent} />}
-                {grade !== null && <Text style={{ fontSize: 15, fontWeight: "700", color: gradeColor }}>{grade}%</Text>}
+                {grade !== null && <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: gradeColor }}>{grade}%</Text>}
               </>
             )}
             <View style={{ marginLeft: "auto" }}>

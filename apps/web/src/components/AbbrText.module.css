@@ -26,7 +26,7 @@
   border-radius: 8px;
   background: var(--abbr-bg);
   color: var(--abbr-text);
-  font-size: 12px;
+  font-size: var(--fs-small);
   line-height: 1.45;
   position-area: block-end;
   position-try-fallbacks: block-start, inline-end, inline-start;

@@ -17,7 +17,7 @@ import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, read
 import { getAutoNext, getQuizSize, setAutoNext, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
-import { colors, layout } from "@/theme";
+import { colors, font, layout } from "@/theme";
 import { PrepCard } from "@/components/PrepCard";
 import { StatsBar } from "@/components/StatsBar";
 import { NextUpCard } from "@/components/NextUpCard";
@@ -276,7 +276,7 @@ export default function PrepScreen() {
             )}
             {!searchResults && <StatsBar scores={scores} />}
             {!drill && searchResults && (
-              <Text style={{ fontSize: 12, fontWeight: "700", color: colors.textDim }}>
+              <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.textDim }}>
                 {`${t("prep.searchResults")} · ${searchResults.length}`}
               </Text>
             )}
@@ -294,7 +294,7 @@ export default function PrepScreen() {
                   opacity: drillLoading ? 0.5 : 1,
                 }}
               >
-                <Text style={{ fontSize: 12, fontWeight: "700", color: category.color }}>
+                <Text style={{ fontSize: font.size.small, fontWeight: "700", color: category.color }}>
                   Drill {category.name}
                 </Text>
               </TouchableOpacity>
@@ -311,7 +311,7 @@ export default function PrepScreen() {
               />
             )}
             {drillError && !drill && (
-              <Text style={{ fontSize: 11, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
+              <Text style={{ fontSize: font.size.label, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
             )}
 
             {drill && mockActive && (

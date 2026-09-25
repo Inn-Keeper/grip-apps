@@ -23,8 +23,9 @@ type Props = {
   onToggleInspect: () => void;
 };
 
+// 24px: the smallest tap target (rule 45), and small enough not to crowd the label.
 const cornerButton: React.CSSProperties = {
-  position: "absolute", right: -16, width: 32, height: 32, borderRadius: "50%", border: "none",
+  position: "absolute", right: -12, width: 24, height: 24, borderRadius: "50%", border: "none",
   cursor: "pointer", padding: 0, display: "flex", alignItems: "center", justifyContent: "center",
 };
 
@@ -89,7 +90,7 @@ export function BoardNodeCard({ node: n, isSource, inspecting, drag, connect, on
           onPointerDown={(ev) => ev.stopPropagation()}
           onClick={(ev) => { ev.stopPropagation(); onToggleInspect(); }}
           title={t("node.inspect")}
-          style={{ ...cornerButton, bottom: -16, background: inspecting ? colors.accent : colors.borderSoft }}
+          style={{ ...cornerButton, bottom: -12, background: inspecting ? colors.accent : colors.borderSoft }}
         >
           <BrandIcon name="maintenance" color={inspecting ? colors.onAccent : colors.textDim} size={10} />
         </button>
@@ -98,7 +99,7 @@ export function BoardNodeCard({ node: n, isSource, inspecting, drag, connect, on
         onPointerDown={(ev) => ev.stopPropagation()}
         onClick={(ev) => { ev.stopPropagation(); onRemove(); }}
         title={t("board.remove")}
-        style={{ ...cornerButton, top: -16, background: colors.borderSoft }}
+        style={{ ...cornerButton, top: -12, background: colors.borderSoft }}
       >
         <BrandIcon name="close" color={colors.textDim} size={10} />
       </button>

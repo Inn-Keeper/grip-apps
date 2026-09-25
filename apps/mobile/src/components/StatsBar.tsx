@@ -3,7 +3,7 @@ import { Text, View } from "react-native";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSequence, withTiming } from "react-native-reanimated";
 import { RANKS, CORRECT_XP, PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import type { Scores } from "@/lib/useScores";
 
@@ -52,10 +52,10 @@ export function StatsBar({ scores }: Props) {
       }}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}><BrandIcon name="rank" color={colors.accentBright} size={16} /><Text style={{ fontSize: 14, fontWeight: "700", color: colors.textBright }}>{t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}</Text></View>
-        <Text style={{ fontSize: 12, fontWeight: "600", color: colors.textDim }}>{scores.xp} XP</Text>
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}><BrandIcon name="rank" color={colors.accentBright} size={16} /><Text style={{ fontSize: font.size.bodyMd, fontWeight: "700", color: colors.textBright }}>{t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}</Text></View>
+        <Text style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>{scores.xp} XP</Text>
         {accuracy !== null && (
-          <Text style={{ fontSize: 12, fontWeight: "600", color: accuracy >= 70 ? colors.success : colors.warning }}>
+          <Text style={{ fontSize: font.size.small, fontWeight: "600", color: accuracy >= 70 ? colors.success : colors.warning }}>
             {t("prep.accuracySummary", { pct: accuracy, count: attempts })}
           </Text>
         )}
@@ -65,7 +65,7 @@ export function StatsBar({ scores }: Props) {
         <Animated.View style={[{ height: "100%", backgroundColor: colors.accent, borderRadius: 3 }, fillStyle]} />
       </View>
 
-      <Text style={{ fontSize: 10.5, color: colors.textFaint }}>
+      <Text style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>
         {next ? `${t("prep.xpToNext", { xp: next.min - scores.xp, rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) })} · ` : ""}
         {t("prep.xpRules", { correct: CORRECT_XP, bonus: PERFECT_QUIZ_BONUS })}
       </Text>

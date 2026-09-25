@@ -3,11 +3,11 @@ import { useRouter } from "expo-router";
 import type { Story } from "@grip/core/api";
 import { evaluate } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 import { MiniButton } from "@/components/ui";
 import { useSavedBoardsQuery, useScenarioCatalog } from "@/queries/board";
 
-const captionStyle = { fontSize: 10, fontWeight: "700", letterSpacing: 0.8, color: colors.textFaint } as const;
+const captionStyle = { fontSize: font.size.caption, fontWeight: "700", letterSpacing: 0.8, color: colors.textFaint } as const;
 
 // The system behind a story, as on web: its Arch Board scenario and the one board designed for it.
 export function StoryLinks({ story }: { story: Story }) {
@@ -26,12 +26,12 @@ export function StoryLinks({ story }: { story: Story }) {
 
   return (
     <View style={{ gap: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: colors.borderSoft }}>
-      {scenarioMissing && <Text style={{ fontSize: 12, color: colors.textFaint }}>{t("stories.scenarioMissing")}</Text>}
+      {scenarioMissing && <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>{t("stories.scenarioMissing")}</Text>}
       {scenario && (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={captionStyle}>{t("stories.scenario").toUpperCase()}</Text>
-            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.text }}>{scenario.name}</Text>
+            <Text style={{ fontSize: font.size.body, fontWeight: "600", color: colors.text }}>{scenario.name}</Text>
           </View>
           {/* One board per story: once it exists, its Open below is the way in. */}
           {!board && (
@@ -48,8 +48,8 @@ export function StoryLinks({ story }: { story: Story }) {
           <Text style={captionStyle}>{t("stories.board").toUpperCase()}</Text>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10, padding: 10, borderRadius: 8, borderWidth: 1, borderColor: colors.borderSoft }}>
             <View style={{ flex: 1, gap: 2 }}>
-              <Text style={{ fontSize: 13, fontWeight: "600", color: colors.text }}>{board.title}</Text>
-              <Text style={{ fontSize: 11.5, color: colors.textFaint }}>
+              <Text style={{ fontSize: font.size.body, fontWeight: "600", color: colors.text }}>{board.title}</Text>
+              <Text style={{ fontSize: font.size.labelLg, color: colors.textFaint }}>
                 {[
                   score !== null && t("stories.boardScore", { score }),
                   board.talkGrade != null && t("stories.boardTalkGrade", { grade: board.talkGrade }),

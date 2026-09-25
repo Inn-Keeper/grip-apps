@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
 import type { PrepPlan } from "@/lib/uiStore";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = {
@@ -43,9 +43,9 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onMo
       accessibilityLabel={t("nextUp.label")}
       style={{ padding: 14, gap: 6, borderRadius: 14, borderWidth: 1, borderColor: `${copy.tone}60`, boxShadow: shadow.card, backgroundColor: colors.surface }}
     >
-      <Text style={{ fontSize: 10.5, fontWeight: "800", letterSpacing: 0.8, color: copy.tone }}>{t("nextUp.label").toUpperCase()}</Text>
-      <Text style={{ fontSize: 15, fontWeight: "800", color: colors.textBright }}>{copy.title}</Text>
-      <Text style={{ fontSize: 12, lineHeight: 17, color: colors.textDim }}>{copy.sub}</Text>
+      <Text style={{ fontSize: font.size.captionLg, fontWeight: "800", letterSpacing: 0.8, color: copy.tone }}>{t("nextUp.label").toUpperCase()}</Text>
+      <Text style={{ fontSize: font.size.bodyLg, fontWeight: "800", color: colors.textBright }}>{copy.title}</Text>
+      <Text style={{ fontSize: font.size.small, lineHeight: 17, color: colors.textDim }}>{copy.sub}</Text>
 
       <TouchableOpacity
         onPress={() => onStart(primary)}
@@ -57,26 +57,26 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onMo
         }}
       >
         <BrandIcon name="drill" color={colors.onAccent} size={14} />
-        <Text style={{ fontSize: 14, fontWeight: "800", color: colors.onAccent }}>{busy ? t("common.loading") : copy.action}</Text>
+        <Text style={{ fontSize: font.size.bodyMd, fontWeight: "800", color: colors.onAccent }}>{busy ? t("common.loading") : copy.action}</Text>
       </TouchableOpacity>
 
       {/* The mock loop is always on offer, as on web. */}
       <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "center", gap: 12, marginTop: 4 }}>
         {alternatives.map((kind) => (
           <TouchableOpacity key={kind} onPress={() => onStart(kind)} disabled={busy} accessibilityRole="button">
-            <Text style={{ fontSize: 12, color: colors.textFaint }}>
+            <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>
               {t("nextUp.or")} <Text style={{ color: colors.accentBright, fontWeight: "600" }}>{t(ALT_LABEL[kind])}</Text>
             </Text>
           </TouchableOpacity>
         ))}
         <TouchableOpacity onPress={onMock} disabled={busy} accessibilityRole="button">
-          <Text style={{ fontSize: 12, color: colors.textFaint }}>
+          <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>
             {t("nextUp.or")} <Text style={{ color: colors.accentBright, fontWeight: "600" }}>{t("nextUp.altMock")}</Text>
           </Text>
         </TouchableOpacity>
         {primary === "plan" && (
           <TouchableOpacity onPress={onDismissPlan} accessibilityRole="button">
-            <Text style={{ fontSize: 12, color: colors.textFaint, textDecorationLine: "underline" }}>{t("prep.planDismiss")}</Text>
+            <Text style={{ fontSize: font.size.small, color: colors.textFaint, textDecorationLine: "underline" }}>{t("prep.planDismiss")}</Text>
           </TouchableOpacity>
         )}
       </View>

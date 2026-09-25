@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@/theme";
+import { colors, font, shadow } from "@/theme";
 import { Badge } from "@/components/ui";
 
 type FunnelSummary = ReturnType<typeof buildFunnelSummary>;
@@ -25,8 +25,8 @@ function Metric({ label, value, color }: { label: string; value: string; color: 
         justifyContent: "center",
       }}
     >
-      <Text style={{ fontSize: 18, fontWeight: "800", color }}>{value}</Text>
-      <Text numberOfLines={1} style={{ fontSize: 10, color: colors.textFaint }}>
+      <Text style={{ fontSize: font.size.titleLg, fontWeight: "800", color }}>{value}</Text>
+      <Text numberOfLines={1} style={{ fontSize: font.size.caption, color: colors.textFaint }}>
         {label}
       </Text>
     </View>
@@ -37,9 +37,9 @@ function ConversionRow({ label, value, detail, color }: { label: string; value: 
   return (
     <View style={{ gap: 4 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-        <Text style={{ flex: 1, fontSize: 11.5, fontWeight: "600", color: colors.textDim }}>{label}</Text>
-        <Text style={{ fontSize: 11, color: colors.textFaint }}>{detail}</Text>
-        <Text style={{ width: 38, textAlign: "right", fontSize: 11.5, fontWeight: "700", color }}>
+        <Text style={{ flex: 1, fontSize: font.size.labelLg, fontWeight: "600", color: colors.textDim }}>{label}</Text>
+        <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{detail}</Text>
+        <Text style={{ width: 38, textAlign: "right", fontSize: font.size.labelLg, fontWeight: "700", color }}>
           {percent(value)}%
         </Text>
       </View>
@@ -64,8 +64,8 @@ export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: 15, fontWeight: "700", color: colors.textBright }}>{t("funnel.title")}</Text>
-          <Text style={{ fontSize: 11, color: colors.textFaint }}>{t("funnel.subtitle")}</Text>
+          <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright }}>{t("funnel.title")}</Text>
+          <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("funnel.subtitle")}</Text>
         </View>
         <Badge label={t("funnel.active", { count: summary.active })} color={colors.accent} />
       </View>
@@ -105,7 +105,7 @@ export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
 
       <View style={{ gap: 5 }}>
         {summary.signals.slice(0, 2).map((signal: string) => (
-          <Text key={signal} style={{ fontSize: 11.5, lineHeight: 16, color: colors.textDim }}>
+          <Text key={signal} style={{ fontSize: font.size.labelLg, lineHeight: 16, color: colors.textDim }}>
             - {signal}
           </Text>
         ))}

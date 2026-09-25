@@ -3,7 +3,7 @@ import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { t } from "@grip/core/i18n";
 import { useTabBarHidden } from "@/lib/uiStore";
 import { useLocale } from "@/lib/useLocale";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 
 const { Icon, Label } = NativeTabs.Trigger;
 const tabChrome = `${colors.bgDeep}E6`;
@@ -30,8 +30,8 @@ export default function TabLayout() {
       minimizeBehavior="onScrollDown"
       iconColor={{ default: colors.textFaint, selected: colors.accentBright }}
       labelStyle={{
-        default: { color: colors.textFaint, fontSize: 10.5, fontWeight: "600" },
-        selected: { color: colors.accentBright, fontSize: 10.5, fontWeight: "700" },
+        default: { color: colors.textFaint, fontSize: font.size.captionLg, fontWeight: "600" },
+        selected: { color: colors.accentBright, fontSize: font.size.captionLg, fontWeight: "700" },
       }}
       indicatorColor={colors.accent}
       rippleColor={`${colors.accent}22`}

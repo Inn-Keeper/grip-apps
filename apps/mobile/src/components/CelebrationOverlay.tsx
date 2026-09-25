@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from "react-native-reanimated";
-import { colors } from "@/theme";
+import { colors, font } from "@/theme";
 
 type Props = {
   title: string;
@@ -120,13 +120,13 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.textBright,
-    fontSize: 22,
+    fontSize: font.size.headingLg,
     fontWeight: "800",
     textAlign: "center",
   },
   subtitle: {
     color: colors.textDim,
-    fontSize: 13,
+    fontSize: font.size.body,
     lineHeight: 18,
     textAlign: "center",
   },

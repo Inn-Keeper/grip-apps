@@ -15,7 +15,7 @@ import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip
 import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch";
 import type { SavedBoard, Story } from "@grip/core/api";
-import { colors, layout, shadow } from "@/theme";
+import { colors, font, layout, shadow } from "@/theme";
 import { Button, MiniButton, Screen, ScreenHeader } from "@/components/ui";
 import { BrandIcon } from "@/components/BrandIcon";
 import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
@@ -274,7 +274,7 @@ export default function BoardScreen() {
               onPress={() => setPickerOpen(true)}
               style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface }}
             >
-              <Text numberOfLines={1} style={{ flex: 1, fontSize: 14, fontWeight: "600", color: colors.textBright }}>{scenario.name}</Text>
+              <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.bodyMd, fontWeight: "600", color: colors.textBright }}>{scenario.name}</Text>
               <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
             </TouchableOpacity>
             {storyCandidates.length > 0 && (
@@ -286,7 +286,7 @@ export default function BoardScreen() {
                 style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 40, marginTop: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface }}
               >
                 <BrandIcon name="story" color={currentStory ? colors.accentBright : colors.textFaint} size={14} />
-                <Text numberOfLines={1} style={{ flex: 1, fontSize: 13, fontWeight: "600", color: currentStory ? colors.text : colors.textFaint }}>
+                <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.body, fontWeight: "600", color: currentStory ? colors.text : colors.textFaint }}>
                   {currentStory?.title ?? t("board.noStory")}
                 </Text>
                 <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
@@ -326,19 +326,19 @@ export default function BoardScreen() {
           />
           <MiniButton label={t("board.zen")} color={colors.textDim} onPress={() => setChrome("zen")} />
           {chrome === "compact" && (
-            <Text numberOfLines={1} style={{ fontSize: 12, fontWeight: "600", color: colors.textDim, flexShrink: 1 }}>
+            <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim, flexShrink: 1 }}>
               {scenario.name}
             </Text>
           )}
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <BrandIcon name="cost" color={overBudget ? colors.danger : colors.textDim} size={14} />
-            <Text style={{ fontSize: 12, fontWeight: "600", color: overBudget ? colors.danger : colors.textDim }}>
+            <Text style={{ fontSize: font.size.small, fontWeight: "600", color: overBudget ? colors.danger : colors.textDim }}>
               {liveCost}/{scenario.budget}
             </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
             <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-            <Text style={{ fontSize: 12, fontWeight: "600", color: colors.textDim }}>{liveMaint}</Text>
+            <Text style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>{liveMaint}</Text>
           </View>
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginLeft: "auto", alignItems: "center" }}>
             <MiniButton
@@ -375,7 +375,7 @@ export default function BoardScreen() {
       )}
 
       {boardsError && chrome !== "zen" && (
-        <Text style={{ fontSize: 12, color: colors.dangerBright }}>
+        <Text style={{ fontSize: font.size.small, color: colors.dangerBright }}>
           {t("board.boardsError", { message: boardsError.message })}
         </Text>
       )}
@@ -411,7 +411,7 @@ export default function BoardScreen() {
                 borderRadius: 16,
               }}
             >
-              <Text numberOfLines={1} style={{ fontSize: 12, fontWeight: "600", color: colors.textDim }}>
+              <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>
                 {scenario.name} · {liveCost}/{scenario.budget}
                 {timer.started ? ` · ${timer.clock}` : ""}
               </Text>
@@ -521,12 +521,12 @@ function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelet
   return (
     <Animated.View entering={FadeInDown.duration(180)} style={{ gap: 8 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-        <Text style={{ flex: 1, fontSize: 12, fontWeight: "700", color: colors.textDim }}>{t("board.savedBoards")}</Text>
-        <Text style={{ fontSize: 11, color: colors.textFaint }}>{t("board.savedTotal", { count: boards.length })}</Text>
+        <Text style={{ flex: 1, fontSize: font.size.small, fontWeight: "700", color: colors.textDim }}>{t("board.savedBoards")}</Text>
+        <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("board.savedTotal", { count: boards.length })}</Text>
       </View>
       {boards.length === 0 ? (
         <View style={{ padding: 10, backgroundColor: colors.well, borderWidth: 1, borderColor: colors.border, borderRadius: 8 }}>
-          <Text style={{ fontSize: 12, color: colors.textFaint }}>{t("board.savedEmpty")}</Text>
+          <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>{t("board.savedEmpty")}</Text>
         </View>
       ) : (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 8 }}>
@@ -546,14 +546,14 @@ function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelet
                   borderRadius: 8,
                 }}
               >
-                <Text numberOfLines={1} style={{ fontSize: 12, fontWeight: "700", color: colors.textBright }}>
+                <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "700", color: colors.textBright }}>
                   {board.title}
                 </Text>
-                <Text numberOfLines={1} style={{ fontSize: 10.5, color: colors.textFaint }}>
+                <Text numberOfLines={1} style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>
                   {t("board.boardMeta", { scenario: scenario?.name ?? board.scenarioId, nodes: board.nodes.length, edges: board.edges.length })}
                 </Text>
                 {board.storyId && stories.some((story) => story.id === board.storyId) && (
-                  <Text numberOfLines={1} style={{ fontSize: 10.5, color: colors.accentBright }}>
+                  <Text numberOfLines={1} style={{ fontSize: font.size.captionLg, color: colors.accentBright }}>
                     {t("board.saved.story", { title: stories.find((story) => story.id === board.storyId)?.title ?? "" })}
                   </Text>
                 )}

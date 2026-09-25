@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { COMPETENCIES } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@grip/core/tokens";
+import { colors, font } from "@grip/core/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
@@ -14,6 +14,7 @@ import { EMPTY_FORM } from "./types";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "./queries";
 import type { Story, StoryForm as StoryFormType } from "./types";
 import { scrollBehavior } from "../lib/motion";
+import { ErrorBanner, ErrorText } from "../components/ErrorText";
 
 // The focused view (rule 8): writing, editing or reading one story in place of the list.
 type Focus = { mode: "detail" | "edit"; id: string } | { mode: "new"; competency?: string } | null;
@@ -92,9 +93,9 @@ export default function StoryBank() {
       right={<StoryCoverage stories={storyList} />}
     >
       {loadError && (
-        <div role="alert" style={{ marginBottom: 16, padding: "10px 14px", background: tints.dangerSoft, border: `1px solid ${colors.danger}60`, borderRadius: 8, color: colors.dangerBright, fontSize: font.size.body }}>
+        <ErrorBanner>
           {t("stories.loadError", { message: loadError.message })}
-        </div>
+        </ErrorBanner>
       )}
 
       {focus ? (
@@ -106,7 +107,7 @@ export default function StoryBank() {
           {focus.mode === "new" && (
             <>
               <StoryForm initial={{ ...EMPTY_FORM, competency: focus.competency ?? EMPTY_FORM.competency }} onSave={handleSave} onCancel={() => setFocus(null)} />
-              {errorFor("new") && <p role="alert" style={{ color: colors.dangerBright, fontSize: font.size.small }}>{errorFor("new")}</p>}
+              {errorFor("new") && <ErrorText>{errorFor("new")}</ErrorText>}
             </>
           )}
           {focused && focus.mode === "edit" && <StoryForm initial={focused} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />}

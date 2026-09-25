@@ -5,7 +5,7 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { COMPETENCIES, COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { colors, layout, shadow } from "@/theme";
+import { colors, font, layout, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, Button, Field, HeaderAction, MiniButton, Pill, Screen, ScreenHeader, Section, SegmentedPills, inputStyle, multilineStyle } from "@/components/ui";
 import type { Story } from "@grip/core/api";
@@ -67,12 +67,12 @@ export default function StoriesScreen() {
         contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: insets.bottom + layout.tabBarClearance }}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
-            {error && <Text style={{ color: colors.dangerBright, fontSize: 13 }}>{t("stories.loadError", { message: error.message })}</Text>}
+            {error && <Text style={{ color: colors.dangerBright, fontSize: font.size.body }}>{t("stories.loadError", { message: error.message })}</Text>}
 
             {mode === "drill" && <PromptDrill stories={stories ?? []} />}
 
             {mode === "stories" && stories?.length === 0 && (
-              <Text style={{ color: colors.textFaint, fontSize: 13, textAlign: "center", marginTop: 16 }}>
+              <Text style={{ color: colors.textFaint, fontSize: font.size.body, textAlign: "center", marginTop: 16 }}>
                 {t("stories.empty")}
               </Text>
             )}
@@ -101,7 +101,7 @@ function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
         style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
       >
         <Badge label={t(`enum.competency.${story.competency}` as Parameters<typeof t>[0])} color={color} />
-        <Text style={{ flex: 1, color: colors.textBright, fontSize: 14, fontWeight: "600" }}>{story.title}</Text>
+        <Text style={{ flex: 1, color: colors.textBright, fontSize: font.size.bodyMd, fontWeight: "600" }}>{story.title}</Text>
         <BrandIcon name={expanded ? "arrowUp" : "arrowDown"} color={colors.textFaint} size={13} />
       </TouchableOpacity>
 
@@ -178,7 +178,7 @@ function StoryForm({ initial, onSave, onCancel }: StoryFormProps) {
             onPress={() => setScenarioOpen(true)}
             style={[inputStyle, { flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }]}
           >
-            <Text numberOfLines={1} style={{ flex: 1, fontSize: 14, color: scenario ? colors.text : colors.textFaint }}>
+            <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.bodyMd, color: scenario ? colors.text : colors.textFaint }}>
               {scenario?.name ?? t("stories.noScenario")}
             </Text>
             <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
@@ -232,10 +232,10 @@ function PromptDrill({ stories }: { stories: Story[] }) {
         }}
       >
         <Badge label={t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0])} color={COMPETENCY_COLORS[prompt.competency]} />
-        <Text style={{ color: colors.textBright, fontSize: 16, fontWeight: "600", lineHeight: 23, textAlign: "center" }}>
+        <Text style={{ color: colors.textBright, fontSize: font.size.lead, fontWeight: "600", lineHeight: 23, textAlign: "center" }}>
           "{prompt.text}"
         </Text>
-        <Text style={{ color: colors.textFaint, fontSize: 12, textAlign: "center" }}>
+        <Text style={{ color: colors.textFaint, fontSize: font.size.small, textAlign: "center" }}>
           {t("stories.answerOutLoud")}
         </Text>
         <View style={{ flexDirection: "row", gap: 8 }}>
@@ -246,7 +246,7 @@ function PromptDrill({ stories }: { stories: Story[] }) {
 
       {revealed &&
         (matching.length === 0 ? (
-          <Text style={{ color: colors.warningBright, fontSize: 13, textAlign: "center" }}>
+          <Text style={{ color: colors.warningBright, fontSize: font.size.body, textAlign: "center" }}>
             {t("stories.noStoryFor", { competency: t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0]) })}
           </Text>
         ) : (
