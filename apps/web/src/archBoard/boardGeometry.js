@@ -11,3 +11,10 @@ export function findPlacement(nodes, viewport, nodeSize) {
     if (!nodes.some((node) => Math.abs(node.x - point.x) < nodeSize.width && Math.abs(node.y - point.y) < nodeSize.height)) return point;
   }
 }
+
+// Where a drag-to-connect line leaves its source: the side facing the pointer.
+export function nodeAxisPoint(node, target, nodeSize) {
+  const targetX = target?.x ?? node.x + nodeSize.width;
+  const useRight = targetX >= node.x + nodeSize.width / 2;
+  return { x: node.x + (useRight ? nodeSize.width : 0), y: node.y + nodeSize.height / 2 };
+}

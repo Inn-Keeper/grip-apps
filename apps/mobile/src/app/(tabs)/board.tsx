@@ -4,9 +4,10 @@ import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { setTabBarHidden } from "@/lib/uiStore";
-import { NODE_TYPES, SCENARIOS, TYPE_COLORS, evaluate, meta } from "@grip/core/arch";
+import { SCENARIOS, evaluate, meta } from "@grip/core/arch";
 import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
+import * as boardEdits from "@grip/core/boardEdits";
 import { t } from "@grip/core/i18n";
 import { workflowStep } from "@grip/core/workflowState";
 import { buildGradeFacts } from "@grip/core/talkGrade";
@@ -16,7 +17,7 @@ import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch
 import type { SavedBoard, Story } from "@grip/core/api";
 import { colors, layout, shadow } from "@/theme";
 import { Button, MiniButton, Screen, ScreenHeader } from "@/components/ui";
-import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
+import { BrandIcon } from "@/components/BrandIcon";
 import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
 import { DesignTimerBar, useDesignTimer } from "@/components/board/DesignTimerBar";
 import { ResultSheet } from "@/components/board/ResultSheet";
@@ -27,6 +28,7 @@ import { TalkTrackSheet } from "@/components/board/TalkTrackSheet";
 import { ScenarioSheet } from "@/components/board/ScenarioSheet";
 import { StorySheet } from "@/components/board/StorySheet";
 import { BoardProgress } from "@/components/board/BoardProgress";
+import { NodePalette } from "@/components/board/NodePalette";
 import { useStoriesQuery } from "@/queries/stories";
 import {
   talkGradeEnabled,
@@ -60,7 +62,6 @@ export default function BoardScreen() {
   const [talkOpen, setTalkOpen] = useState(false);
   const [scaleOpen, setScaleOpen] = useState(false);
   const [inspectingId, setInspectingId] = useState<string | null>(null);
-  const [tipType, setTipType] = useState<string | null>(null);
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
   const [talkGrade, setTalkGrade] = useState<number | null>(null);
@@ -167,30 +168,28 @@ export default function BoardScreen() {
   };
 
   // New nodes land in the visible part of the canvas, wherever the user has panned.
+  // Structural edits follow core's rules (shared with web) and invalidate the score.
+  const edit = (next: { nodes: BoardNode[]; edges: BoardEdge[] }) => {
+    setNodes(next.nodes);
+    setEdges(next.edges);
+    setResult(null);
+  };
+
   const addNode = (type: string) => {
     const index = nodes.length;
     const origin = canvasRef.current?.visibleOrigin() ?? { x: 0, y: 0 };
-    setNodes((current) => [
-      ...current,
-      { id: `${Date.now()}-${index}`, type, x: origin.x + 20 + (index % 2) * 150, y: origin.y + 20 + Math.floor(index / 2) * 80 },
-    ]);
-    setResult(null);
+    edit(boardEdits.addNode({ nodes, edges }, type, { x: origin.x + 20 + (index % 2) * 150, y: origin.y + 20 + Math.floor(index / 2) * 80 }));
   };
 
   const moveNode = (id: string, x: number, y: number) =>
     setNodes((current) => current.map((node) => (node.id === id ? { ...node, x, y } : node)));
 
   const removeNode = (id: string) => {
-    setNodes((current) => current.filter((node) => node.id !== id));
-    setEdges((current) => current.filter((edge) => edge.from !== id && edge.to !== id));
+    edit(boardEdits.removeNode({ nodes, edges }, id));
     if (inspectingId === id) setInspectingId(null);
-    setResult(null);
   };
 
-  const patchNode = (id: string, patch: Partial<BoardNode>) => {
-    setNodes((current) => current.map((node) => (node.id === id ? { ...node, ...patch } : node)));
-    setResult(null);
-  };
+  const patchNode = (id: string, patch: Partial<BoardNode>) => edit(boardEdits.patchNode({ nodes, edges }, id, patch));
 
   const loadBoard = (board: SavedBoard) => {
     if (!allScenarios.some((item) => item.id === board.scenarioId)) {
@@ -252,27 +251,16 @@ export default function BoardScreen() {
     if (handoffRef.current()) router.setParams({ scenarioId: undefined, storyId: undefined, boardId: undefined });
   }, [params.boardId, params.scenarioId, params.storyId, savedBoards, scenariosFetching, router]);
 
-  const addEdge = (from: string, to: string) => {
-    setEdges((current) =>
-      current.some((edge) => edge.from === from && edge.to === to)
-        ? current
-        : [...current, { id: `${from}->${to}`, from, to }]
-    );
-    setResult(null);
-  };
+  const addEdge = (from: string, to: string) => edit(boardEdits.addEdge({ nodes, edges }, from, to));
 
   // Tapping an arrow opens its inspector (label it, or remove it from there)
   // rather than deleting on contact.
   const removeEdge = (id: string) => {
-    setEdges((current) => current.filter((edge) => edge.id !== id));
+    edit(boardEdits.removeEdge({ nodes, edges }, id));
     setInspectingEdgeId(null);
-    setResult(null);
   };
 
-  const patchEdge = (id: string, patch: Partial<BoardEdge>) => {
-    setEdges((current) => current.map((edge) => (edge.id === id ? { ...edge, ...patch } : edge)));
-    setResult(null);
-  };
+  const patchEdge = (id: string, patch: Partial<BoardEdge>) => edit(boardEdits.patchEdge({ nodes, edges }, id, patch));
 
   return (
     <Screen key={locale}>
@@ -450,74 +438,7 @@ export default function BoardScreen() {
           </>
         )}
 
-        {/* Floating palette: the canvas extends underneath, so this row costs
-            no layout height — translucent so the board reads through it. */}
-        <View
-          style={{
-            position: "absolute",
-            bottom: 8,
-            left: 8,
-            right: 8,
-            backgroundColor: `${colors.bgDeep}d9`,
-            borderWidth: 1,
-            borderColor: colors.border,
-            borderRadius: 12,
-          }}
-        >
-          {/* Long press shows what a node is; releasing hides it (the web shows this on hover). */}
-          {tipType && (
-            <View
-              pointerEvents="none"
-              style={{
-                position: "absolute",
-                bottom: "100%",
-                left: 0,
-                right: 0,
-                marginBottom: 6,
-                padding: 10,
-                backgroundColor: colors.bgDeep,
-                borderWidth: 1,
-                borderColor: colors.borderSoft,
-                borderRadius: 8,
-                boxShadow: shadow.card,
-              }}
-            >
-              <Text style={{ fontSize: 12, fontWeight: "700", color: colors.text }}>{meta(tipType).label}</Text>
-              <Text style={{ fontSize: 12, color: colors.text, marginTop: 2, lineHeight: 17 }}>
-                {t(`node.desc.${tipType}` as Parameters<typeof t>[0])}
-              </Text>
-              <Text style={{ fontSize: 11, color: colors.textFaint, marginTop: 4 }}>
-                {t("node.costMaint", { cost: meta(tipType).cost, maint: meta(tipType).maint })}
-              </Text>
-            </View>
-          )}
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 6, padding: 6 }}>
-            {NODE_TYPES.map((spec) => (
-              <TouchableOpacity
-                key={spec.type}
-                onPress={() => addNode(spec.type)}
-                onLongPress={() => setTipType(spec.type)}
-                onPressOut={() => setTipType(null)}
-                accessibilityHint={t(`node.desc.${spec.type}` as Parameters<typeof t>[0])}
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 6,
-                  paddingHorizontal: 10,
-                  paddingVertical: 7,
-                  backgroundColor: colors.surface,
-                  borderWidth: 1,
-                  borderColor: `${TYPE_COLORS[spec.type]}40`,
-                  borderRadius: 8,
-                }}
-              >
-                <BrandIcon name={nodeIconName(spec.type)} color={TYPE_COLORS[spec.type]} size={16} />
-                <Text style={{ fontSize: 11, fontWeight: "600", color: colors.text }}>{spec.label}</Text>
-                <Text style={{ fontSize: 9, color: colors.textFaint }}>{"$".repeat(spec.cost) || "free"}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
+        <NodePalette onAddNode={addNode} />
       </View>
 
         <EdgeInspectorSheet

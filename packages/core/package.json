@@ -20,6 +20,7 @@
     "./cvTechs": "./src/cvTechs.js",
     "./githubUrl": "./src/githubUrl.js",
     "./arch": "./src/arch.js",
+    "./boardEdits": "./src/boardEdits.js",
     "./scenarioCatalog": "./src/scenarioCatalog.js",
     "./abbreviations": "./src/abbreviations.js",
     "./review": "./src/review.js",
