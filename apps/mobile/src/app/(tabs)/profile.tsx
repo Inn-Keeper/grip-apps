@@ -8,7 +8,9 @@ import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm 
 import { supabase } from "@/lib/supabase";
 import { changeLocale, useLocale } from "@/lib/useLocale";
 import { colors, font, layout, radius, space, tints, shadow } from "@/theme";
-import { Button, Field, HeaderAction, Screen, ScreenHeader, inputStyle } from "@/components/ui";
+import { Button, Card, Field, HeaderAction, Screen, ScreenHeader, inputStyle } from "@/components/ui";
+import { Switch } from "@/components/Switch";
+import { ConnectionBadge } from "@/components/profile/ConnectionBadge";
 import {
   useAuthIdentitiesQuery,
   useGithubPrepMutation,
@@ -131,7 +133,7 @@ export default function ProfileScreen() {
 
         <ProfileNextUp title={nextUp.title} sub={nextUp.sub} action={nextUp.action} disabled={!profile} />
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <Card>
           <View style={{ flexDirection: "row", alignItems: "center", gap: space.md }}>
             <View
               style={{
@@ -185,9 +187,9 @@ export default function ProfileScreen() {
               {t("profile.fields", { filled: completionItems, total: PROFILE_FIELDS.length })}
             </Text>
           </View>
-        </View>
+        </Card>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <Card>
           <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
             <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>GitHub</Text>
             <ConnectionBadge connected={githubConnected} />
@@ -229,9 +231,9 @@ export default function ProfileScreen() {
               onChange={(checked) => githubPrepMutation.mutate(checked)}
             />
           </View>
-        </View>
+        </Card>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <Card>
           <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>{t("profile.cvSection")}</Text>
           <Text style={{ color: colors.textFaint, fontSize: font.size.small, lineHeight: 18 }}>
             {t("profile.cvSubtitleMobile")}
@@ -268,9 +270,9 @@ export default function ProfileScreen() {
               </View>
             </View>
           )}
-        </View>
+        </Card>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <Card>
           <Field label={t("profile.email")}>
             <TextInput editable={false} value={profile?.email ?? ""} style={[inputStyle, { color: colors.textDim }]} />
           </Field>
@@ -301,9 +303,9 @@ export default function ProfileScreen() {
               )}
             </Field>
           ))}
-        </View>
+        </Card>
 
-        <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+        <Card>
           <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>{t("profile.preferences")}</Text>
           <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("profile.language")}</Text>
           <View style={{ flexDirection: "row", gap: space.sm, flexWrap: "wrap" }}>
@@ -354,7 +356,7 @@ export default function ProfileScreen() {
               <Text style={{ color: colors.successBright, fontSize: font.size.small, fontWeight: "700" }}>{t("profile.scoreReset")}</Text>
             )}
           </View>
-        </View>
+        </Card>
 
         <TouchableOpacity
           onPress={() => router.push("/about")}
@@ -387,58 +389,4 @@ function githubUrlFromIdentities(identities: { provider?: string; identity_data?
     (value): value is string => typeof value === "string" && value.trim().length > 0
   );
   return username ? `https://github.com/${username}` : "";
-}
-
-function ConnectionBadge({ connected }: { connected: boolean }) {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 6,
-        paddingHorizontal: 8,
-        paddingVertical: 5,
-        borderRadius: radius.pill,
-        backgroundColor: connected ? tints.successSoft : colors.surfaceHi,
-        borderWidth: 1,
-        borderColor: connected ? colors.success : colors.border,
-      }}
-    >
-      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: connected ? colors.successBright : colors.textFaint }} />
-      <Text style={{ color: connected ? colors.successBright : colors.textFaint, fontSize: font.size.label, fontWeight: "800" }}>
-        {connected ? t("profile.connectionLinked") : t("profile.connectionOptional")}
-      </Text>
-    </View>
-  );
-}
-
-function Switch({ checked, disabled, onChange }: { checked: boolean; disabled: boolean; onChange: (checked: boolean) => void }) {
-  return (
-    <TouchableOpacity
-      accessibilityRole="switch"
-      accessibilityState={{ checked, disabled }}
-      onPress={() => onChange(!checked)}
-      disabled={disabled}
-      style={{
-        width: 48,
-        height: 28,
-        padding: 3,
-        borderRadius: radius.pill,
-        borderWidth: 1,
-        borderColor: checked ? colors.accent : colors.border,
-        backgroundColor: checked ? colors.accent : colors.bgDeep,
-        opacity: disabled ? 0.5 : 1,
-      }}
-    >
-      <View
-        style={{
-          width: 20,
-          height: 20,
-          borderRadius: 10,
-          backgroundColor: checked ? colors.onAccent : colors.textFaint,
-          transform: [{ translateX: checked ? 20 : 0 }],
-        }}
-      />
-    </TouchableOpacity>
-  );
 }

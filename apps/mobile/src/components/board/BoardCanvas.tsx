@@ -13,6 +13,11 @@ import Animated, {
   withTiming,
 } from "react-native-reanimated";
 import type { BoardEdge, BoardNode } from "@grip/core/arch";
+import { arrowheadPath, bezierPath, distanceToEdge, edgeGeometry as geometryFor } from "@grip/core/edgeGeometry";
+
+const NODE_SIZE = { width: NODE_W, height: NODE_H };
+const edgeGeometry = (a: BoardNode, b: BoardNode) => geometryFor(a, b, NODE_SIZE);
+type EdgeGeometry = ReturnType<typeof edgeGeometry>;
 import { t } from "@grip/core/i18n";
 import { colors } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
@@ -55,41 +60,6 @@ type Props = {
   fitKey: number;
   ref?: Ref<BoardCanvasHandle>;
 };
-
-type EdgeGeometry = { sx: number; sy: number; tx: number; ty: number; mx: number };
-
-function edgeGeometry(a: BoardNode, b: BoardNode): EdgeGeometry {
-  const sx = a.x + (b.x >= a.x ? NODE_W : 0);
-  const sy = a.y + NODE_H / 2;
-  const tx = b.x + (b.x >= a.x ? 0 : NODE_W);
-  const ty = b.y + NODE_H / 2;
-  return { sx, sy, tx, ty, mx: (sx + tx) / 2 };
-}
-
-function bezierPath({ sx, sy, tx, ty, mx }: EdgeGeometry): string {
-  return `M ${sx} ${sy} C ${mx} ${sy} ${mx} ${ty} ${tx} ${ty}`;
-}
-
-function arrowheadPath({ tx, ty, mx }: EdgeGeometry): string {
-  const direction = tx >= mx ? 1 : -1;
-  const back = tx - 9 * direction;
-  return `M ${tx} ${ty} L ${back} ${ty - 5} L ${back} ${ty + 5} Z`;
-}
-
-/** Distance from a tap to the closest of `samples` points along the bezier. */
-function distanceToEdge(geometry: EdgeGeometry, px: number, py: number, samples = 16): number {
-  const { sx, sy, tx, ty, mx } = geometry;
-  let min = Infinity;
-  for (let i = 0; i <= samples; i++) {
-    const t = i / samples;
-    const u = 1 - t;
-    // Cubic bezier with control points (mx, sy) and (mx, ty).
-    const bx = u ** 3 * sx + 3 * u ** 2 * t * mx + 3 * u * t ** 2 * mx + t ** 3 * tx;
-    const by = u ** 3 * sy + 3 * u ** 2 * t * sy + 3 * u * t ** 2 * ty + t ** 3 * ty;
-    min = Math.min(min, Math.hypot(bx - px, by - py));
-  }
-  return min;
-}
 
 export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge, onTapEdge, onInspectNode, fitKey, ref }: Props) {
   const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });

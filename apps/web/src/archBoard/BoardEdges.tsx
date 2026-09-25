@@ -1,8 +1,11 @@
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
+import { bezierPath, edgeGeometry } from "@grip/core/edgeGeometry";
 import { NODE_H, NODE_W } from "./constants";
 import { nodeAxisPoint } from "./boardGeometry.js";
 import type { BoardEdge, BoardNode, ConnectDrag } from "./types";
+
+const NODE_SIZE = { width: NODE_W, height: NODE_H };
 
 type Props = {
   edges: BoardEdge[];
@@ -26,12 +29,9 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
         const a = nodeById[e.from];
         const b = nodeById[e.to];
         if (!a || !b) return null;
-        const sx = a.x + (b.x >= a.x ? NODE_W : 0);
-        const sy = a.y + NODE_H / 2;
-        const tx = b.x + (b.x >= a.x ? 0 : NODE_W);
-        const ty = b.y + NODE_H / 2;
-        const mx = (sx + tx) / 2;
-        const d = `M ${sx} ${sy} C ${mx} ${sy}, ${mx} ${ty}, ${tx} ${ty}`;
+        const g = edgeGeometry(a, b, NODE_SIZE);
+        const { mx, sy, ty } = g;
+        const d = bezierPath(g);
         const selected = selectedId === e.id;
         const modeLabel = e.mode === "sync" ? t("edge.sync") : e.mode === "async" ? t("edge.async") : null;
         const label = [e.protocol, modeLabel].filter(Boolean).join(" · ");
@@ -58,7 +58,7 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
         );
       })}
       {connectDrag && nodeById[connectDrag.from] && (() => {
-        const start = nodeAxisPoint(nodeById[connectDrag.from]!, connectDrag, { width: NODE_W, height: NODE_H });
+        const start = nodeAxisPoint(nodeById[connectDrag.from]!, connectDrag, NODE_SIZE);
         const mx = (start.x + connectDrag.x) / 2;
         const d = `M ${start.x} ${start.y} C ${mx} ${start.y}, ${mx} ${connectDrag.y}, ${connectDrag.x} ${connectDrag.y}`;
         return <path d={d} fill="none" stroke={colors.accentBright} strokeWidth="2" strokeDasharray="5 5" markerEnd="url(#arrow)" />;

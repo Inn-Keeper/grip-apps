@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, font, radius, space, tints } from "@/theme";
+import { colors, font, radius, shadow, space, tints } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useIsDemo } from "@/lib/useIsDemo";
@@ -222,6 +222,15 @@ export function Section({ label, text }: SectionProps) {
         {label.toUpperCase()}
       </Text>
       <Text style={{ fontSize: font.size.body, lineHeight: 19, color: colors.text }}>{text}</Text>
+    </View>
+  );
+}
+
+/** A raised panel: the standard section container on long screens such as Profile. */
+export function Card({ children }: { children: ReactNode }) {
+  return (
+    <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+      {children}
     </View>
   );
 }

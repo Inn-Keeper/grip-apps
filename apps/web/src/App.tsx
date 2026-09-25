@@ -1,10 +1,12 @@
-import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Analytics } from "@vercel/analytics/react";
 import type { Session } from "@supabase/supabase-js";
 import { useQueryClient } from "@tanstack/react-query";
 import { identityChanged } from "@grip/core/authCache";
 import { setLocale, t } from "@grip/core/i18n";
-import { guardHistoryNavigation, isAuthReturn, isFreshSignIn } from "./lib/navigation.js";
+import { isFreshSignIn } from "./lib/navigation.js";
+import { ACTIVE_PAGE_KEY, GITHUB_LINK_PENDING_KEY, PAGE_DEFS, usePageRoute } from "./lib/usePageRoute";
+import { useHeaderHeightVar, useNavPill } from "./lib/useNavMeasures";
 import { supabase } from "./lib/supabase";
 import { useLocale } from "./lib/useLocale";
 import InterviewPrep from "./interviewPrep/InterviewPrep";
@@ -23,54 +25,18 @@ import { Footer } from "./Footer";
 import { SignIn } from "./SignIn";
 import styles from "./App.module.css";
 
-const PAGE_DEFS = [
-  { id: "prep", icon: "layers", labelKey: "tabs.prep" },
-  { id: "stories", icon: "story", labelKey: "tabs.stories" },
-  { id: "board", icon: "board", labelKey: "tabs.board" },
-  { id: "quest", icon: "quest", labelKey: "tabs.quest" },
-  { id: "about", icon: "fly", labelKey: "tabs.about" },
-  { id: "profile", icon: "profile", labelKey: "tabs.profile" },
-] as const;
-
-const GITHUB_LINK_PENDING_KEY = "grip.githubLinkPending";
 const GITHUB_LINKED_KEY = "grip.githubLinked";
-const ACTIVE_PAGE_KEY = "grip.activePage";
-
-const DEFAULT_PAGE = "prep";
-const PAGE_IDS = PAGE_DEFS.map((p) => p.id);
 const LOCALE_STORAGE_KEY = "grip.locale";
 
 // Restore persisted locale before first render so all t() calls use it.
 const savedLocale = typeof window !== "undefined" ? window.localStorage.getItem(LOCALE_STORAGE_KEY) : null;
 if (savedLocale) setLocale(savedLocale);
 
-// Read once at module load: Supabase clears the OAuth hash/code from the URL once it has
-// exchanged it, which can happen before React's first render.
-const returningFromSignIn = typeof window !== "undefined" && isAuthReturn(window.location.search, window.location.hash);
-
-// Resolves which page to show on load from the URL path, falling back to
-// stored preference. A GitHub OAuth return (?linked=github) overrides both.
-const initialPage = () => {
-  if (typeof window === "undefined") return DEFAULT_PAGE;
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("linked") === "github" || window.localStorage.getItem(GITHUB_LINK_PENDING_KEY) === "1") {
-    return "profile";
-  }
-  // Signing in always opens Prep.
-  if (returningFromSignIn) return DEFAULT_PAGE;
-  const fromPath = window.location.pathname.replace(/^\//, "");
-  if (fromPath === "contacts") return "quest";
-  if (fromPath && (PAGE_IDS as readonly string[]).includes(fromPath)) return fromPath;
-  const saved = window.localStorage.getItem(ACTIVE_PAGE_KEY);
-  if (saved === "contacts") return "quest";
-  return saved && (PAGE_IDS as readonly string[]).includes(saved) ? saved : DEFAULT_PAGE;
-};
-
 const reduceMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 export default function App() {
   const queryClient = useQueryClient();
-  const [page, setPage] = useState(initialPage);
+  const { page, selectPage, resetToDefault } = usePageRoute();
   const locale = useLocale();
   const [githubLinked, setGithubLinked] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -81,8 +47,6 @@ export default function App() {
   const previousUserId = useRef<string | null | undefined>(undefined);
   const navRef = useRef<HTMLElement | null>(null);
   const headerRef = useRef<HTMLElement | null>(null);
-  // The active tab's box; one teal pill slides between tabs instead of each tab painting its own.
-  const [navPill, setNavPill] = useState<{ left: number; width: number } | null>(null);
 
   const pages = PAGE_DEFS.map((p) => ({ ...p, label: t(p.labelKey as Parameters<typeof t>[0]) }));
 
@@ -90,38 +54,6 @@ export default function App() {
     setLocale(code);
     window.localStorage.setItem(LOCALE_STORAGE_KEY, code);
   };
-
-  const selectPage = (id: string) => {
-    if (!window.dispatchEvent(new CustomEvent("grip:navigate", { cancelable: true }))) return;
-    setPage(id);
-    window.localStorage.setItem(ACTIVE_PAGE_KEY, id);
-    window.history.pushState({ page: id }, "", `/${id}`);
-    // A new page starts at its top, not at the scroll offset of the one we left.
-    window.scrollTo(0, 0);
-  };
-
-  // Sync state with browser back/forward, behind the same unsaved-changes guard as the tabs.
-  useEffect(() => {
-    const onPop = () => {
-      if (!guardHistoryNavigation(window, page)) return;
-      const fromPath = window.location.pathname.replace(/^\//, "");
-      const next = fromPath === "contacts" ? "quest" : fromPath;
-      // No scrollTo here: the browser restores where you were on that page.
-      setPage((PAGE_IDS as readonly string[]).includes(next) ? next : DEFAULT_PAGE);
-    };
-    window.addEventListener("popstate", onPop);
-    return () => window.removeEventListener("popstate", onPop);
-  }, [page]);
-
-  // Cross-tab hops from feature components (e.g. Quest's "Drill these in Prep").
-  useEffect(() => {
-    const onNavigate = (event: Event) => {
-      const id = (event as CustomEvent<string>).detail;
-      if ((PAGE_IDS as readonly string[]).includes(id)) selectPage(id);
-    };
-    window.addEventListener("grip:navigate", onNavigate);
-    return () => window.removeEventListener("grip:navigate", onNavigate);
-  }, []);
 
   useEffect(() => {
     const applySession = (nextSession: Session | null) => {
@@ -131,11 +63,7 @@ export default function App() {
         clearSeenQuestions();
       }
       // Signing in from the sign-in screen always opens Prep (a reload keeps the current page).
-      if (isFreshSignIn(previousUserId.current, nextUserId)) {
-        setPage(DEFAULT_PAGE);
-        window.localStorage.setItem(ACTIVE_PAGE_KEY, DEFAULT_PAGE);
-        window.history.replaceState({ page: DEFAULT_PAGE }, "", `/${DEFAULT_PAGE}`);
-      }
+      if (isFreshSignIn(previousUserId.current, nextUserId)) resetToDefault();
       previousUserId.current = nextUserId;
       setSession(nextSession);
     };
@@ -144,37 +72,14 @@ export default function App() {
       applySession(nextSession)
     );
     return () => sub.subscription.unsubscribe();
-  }, [queryClient]);
+  }, [queryClient, resetToDefault]);
 
   useEffect(() => {
     navRef.current?.querySelector<HTMLElement>("[aria-current='page']")?.scrollIntoView({ block: "nearest", inline: "nearest" });
   }, [locale, page, session]);
 
-  useLayoutEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-    const measure = () => {
-      const active = nav.querySelector<HTMLElement>("[aria-current='page']");
-      if (active) setNavPill({ left: active.offsetLeft, width: active.offsetWidth });
-    };
-    measure();
-    // Labels change width with the locale and the font loading in; re-measure on resize.
-    const observer = new ResizeObserver(measure);
-    observer.observe(nav);
-    return () => observer.disconnect();
-  }, [locale, page, session]);
-
-  // The sticky header wraps to two rows on narrow screens (73px → 123px), so
-  // scrollIntoView targets clear its live height: index.html turns --header-h into
-  // scroll-padding (and skips it where the header isn't sticky).
-  useLayoutEffect(() => {
-    const header = headerRef.current;
-    if (!header) return;
-    const root = document.documentElement;
-    const observer = new ResizeObserver(() => root.style.setProperty("--header-h", `${header.offsetHeight}px`));
-    observer.observe(header);
-    return () => { observer.disconnect(); root.style.removeProperty("--header-h"); };
-  }, []);
+  const navPill = useNavPill(navRef, [locale, page, session]);
+  useHeaderHeightVar(headerRef);
 
   useEffect(() => {
     const activeLabel = pages.find((p) => p.id === page)?.label ?? brand.productName;
