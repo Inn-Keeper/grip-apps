@@ -18,15 +18,12 @@ because they have to be applied by hand.
 
 ### Changed
 
+- The live-ingest and streaming-platform scenarios accept the new streaming nodes, and the streaming-platform scenario also checks for DRM licensing.
 - Arch Board: board edits (add, remove, connect) now share one set of rules across web and mobile; the web board is split into smaller hooks and components.
 
 ### Fixed
 
 - Mobile Arch Board no longer lets a node connect to itself.
-
-### Changed
-
-- The live-ingest and streaming-platform scenarios accept the new streaming nodes, and the streaming-platform scenario also checks for DRM licensing.
 
 ## 2026-09-24
 
