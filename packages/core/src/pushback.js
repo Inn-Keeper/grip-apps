@@ -78,6 +78,26 @@ export const NODE_PROBES = {
     "Why a log rather than a queue here? Who needs to replay, and how far back?",
     "What's your partition key, and what happens to ordering when one partition gets hot?",
   ],
+  encoder: [
+    "What does your ABR ladder look like, and which rung does a viewer on a train actually get?",
+    "The encoder for a live channel dies. How many seconds until a standby is on air, and what do viewers see?",
+  ],
+  packager: [
+    "Do you package HLS and DASH ahead of time or just in time, and what does that cost in storage versus CPU?",
+    "A million players request the same live manifest every two seconds. What stops that reaching origin?",
+  ],
+  drm: [
+    "The license server is slow at kickoff. Does playback wait, and how long is a license valid once issued?",
+    "How do you cover Widevine, FairPlay and PlayReady without three separate pipelines?",
+  ],
+  ssai: [
+    "Stitched ads make every viewer's manifest unique. What happens to your CDN hit rate?",
+    "The ad decision server times out. What plays in the break?",
+  ],
+  adserver: [
+    "Ten thousand players ask for ads at the same second when a break starts. What does the ad server see, and what do you prefetch?",
+    "The ad server returns nothing for a break. What does the viewer watch instead?",
+  ],
   monitor: [
     "Which metric pages someone at 3am, and which one just goes on a dashboard?",
     "What's the SLO here, and how would you know you'd broken it before a customer told you?",

@@ -104,6 +104,12 @@ export const NODE_TYPES = [
   { type: "search", label: "Search Index", emoji: "🔎", cost: 2, maint: 3 },
   { type: "stream", label: "Event Stream", emoji: "🌊", cost: 2, maint: 3 },
   { type: "psp", label: "Payment Provider", emoji: "💳", cost: 3, maint: 1 },
+  // Video pipeline: encoding is compute-heavy; DRM and ad insertion are usually bought, like a PSP.
+  { type: "encoder", label: "Encoder / Transcoder", emoji: "🎞️", cost: 3, maint: 2 },
+  { type: "packager", label: "Packager / Origin", emoji: "🎬", cost: 2, maint: 2 },
+  { type: "drm", label: "DRM License Server", emoji: "🔑", cost: 2, maint: 1 },
+  { type: "ssai", label: "Ad Insertion (SSAI)", emoji: "📺", cost: 2, maint: 2 },
+  { type: "adserver", label: "Ad Server", emoji: "📣", cost: 2, maint: 1 },
   { type: "monitor", label: "Monitoring", emoji: "📊", cost: 1, maint: 1 },
 ];
 
@@ -115,6 +121,7 @@ export const TYPE_COLORS = {
   auth: "#A78BFA", service: "#4ADE80", worker: "#818CF8", queue: "#FACC15",
   cache: "#F472B6", sql: "#94A3B8", nosql: "#A3E635", psp: "#E879F9", monitor: "#C084FC",
   blob: "#A8A29E", search: "#60A5FA", stream: "#FB7185",
+  encoder: "#34D399", packager: "#FDBA74", drm: "#C4B5FD", ssai: "#FCD34D", adserver: "#F9A8D4",
 };
 
 /**

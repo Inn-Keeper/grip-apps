@@ -1,4 +1,4 @@
-// Arch Board scenario library. 100 default scenarios grouped by category,
+// Arch Board scenario library. 104 default scenarios grouped by category,
 // all solvable with the NODE_TYPES palette in arch.js (see Scenario typedef there).
 // Variety comes from domain framing, budgets, and check weighting — the same
 // way real interviews re-skin a dozen core topologies.
@@ -967,10 +967,10 @@ const CONTENT = [
       edge(["client"], ["gateway"], "Ingest terminates at an edge gateway", 10),
       edge(["gateway"], ["service"], "An ingest service accepts streams", 10),
       edge(["service"], ["queue"], "Segmenting jobs flow through a queue", 10),
-      biEdge(["queue"], ["worker"], "Segmenters consume continuously", 10),
-      edge(["worker"], ["nosql", "sql", "blob"], "Segments and manifests are stored", 10),
+      biEdge(["queue"], ["worker", "encoder"], "Segmenters consume continuously", 10),
+      edge(["worker", "packager"], ["nosql", "sql", "blob"], "Segments and manifests are stored", 10),
       node(["cdn"], "Viewers pull segments from the edge", 15),
-      edge(["worker", "service"], ["cdn"], "Origin feeds the CDN", 10),
+      edge(["worker", "service", "packager"], ["cdn"], "Origin feeds the CDN", 10),
       edge(["client"], ["cdn"], "Playback comes off the CDN", 10),
       node(["monitor"], "Glass-to-glass latency is measured", 10),
     ],
@@ -1071,6 +1071,114 @@ const CONTENT = [
       edge(["service"], ["sql", "nosql", "blob"], "Release metadata lives in a database", 10),
       node(["cache"], "Hot metadata is cached", 10),
       node(["monitor"], "Release-day bandwidth is watched", 10),
+    ],
+  },
+  {
+    id: "ott-platform",
+    category: "Content & Media",
+    name: "Live + VOD streaming platform",
+    brief:
+      "A subscription streaming service with live channels and a VOD library. A live sports final brings 20× normal concurrency in five minutes. Enforce entitlements and device limits, keep rebuffering low, and see quality of experience as it happens.",
+    budget: 16,
+    checks: [
+      node(["client"], "Viewers watch on TV, web and mobile", 5),
+      node(["cdn"], "Live and VOD segments ship from the edge", 10),
+      edge(["client"], ["cdn"], "Playback pulls segments from the CDN, not origin", 10),
+      edge(["client"], ["gateway", "lb"], "Playback and entitlement calls enter via API", 5),
+      node(["auth"], "Entitlement and concurrent-stream limits gate every play", 10),
+      edge(["gateway", "lb", "auth"], ["service"], "A playback service issues signed manifests", 10),
+      edge(["service"], ["cache"], "Entitlements and active sessions live in a fast store", 5),
+      edge(["client", "service"], ["drm"], "Players fetch a DRM license before decrypting", 5),
+      edge(["service"], ["sql", "nosql"], "Subscriptions and catalog live in a database", 10),
+      edge(["encoder", "worker"], ["packager"], "Encoders feed a packager that builds the ABR ladder", 5),
+      edge(["packager"], ["cdn"], "The CDN pulls live and VOD segments from the packaging origin", 5),
+      edge(["client", "gateway", "service"], ["stream"], "Player QoE telemetry streams into an event log", 10),
+      node(["monitor"], "Start time and rebuffer ratio are watched live", 10),
+    ],
+    warnings: [
+      {
+        when: ({ hasNode }) => !hasNode(["cache"]),
+        text: "Every play at kickoff checks entitlements in the database. That is a thundering herd on your source of truth.",
+      },
+    ],
+  },
+  {
+    id: "playback-bff",
+    category: "Content & Media",
+    name: "Playback backend-for-frontend",
+    brief:
+      "Before a single frame plays, the player needs entitlement, a manifest URL, DRM details, ad config and a resume position. Web, mobile and TV players should make one call to a backend-for-frontend that composes it all fast.",
+    budget: 15,
+    checks: [
+      node(["client"], "Players on every platform press play", 5),
+      edge(["client"], ["gateway", "lb"], "Players make one playback call through the edge", 10),
+      edge(["gateway", "lb"], ["service"], "A playback BFF composes the response", 10),
+      node(["auth"], "Entitlement is checked before anything is returned", 10),
+      edge(["service"], ["cache"], "Per-title playback config is cached", 10),
+      edge(["service"], ["sql", "nosql"], "Resume positions and entitlements live in a store", 10),
+      edge(["service", "client"], ["drm"], "The player gets DRM license details from the playback response", 10),
+      edge(["service", "client"], ["adserver", "ssai"], "Ad configuration comes from the ad stack", 10),
+      edge(["client"], ["cdn"], "Media never passes through the BFF, only through the CDN", 10),
+      node(["monitor"], "Per-dependency latency and the BFF error budget are watched", 15),
+    ],
+    warnings: [
+      {
+        when: ({ hasNode }) => !hasNode(["cache"]),
+        text: "Every play fans out to every dependency live. At a big premiere that turns one slow dependency into a slow start for everyone.",
+      },
+    ],
+  },
+  {
+    id: "qoe-telemetry",
+    category: "Content & Media",
+    name: "Player quality telemetry",
+    brief:
+      "Millions of player sessions send startup, rebuffer, bitrate and error events. Turn them into a flawless-stream rate you can alert on, and let support find one viewer's session when they call in.",
+    budget: 14,
+    checks: [
+      node(["client"], "Players emit session events", 5),
+      edge(["client"], ["gateway", "lb"], "Events arrive through a collection endpoint", 10),
+      edge(["gateway", "lb"], ["service"], "A thin collector validates and timestamps events", 5),
+      edge(["service"], ["stream"], "Events land in a durable log keyed by session", 15),
+      biEdge(["stream"], ["worker"], "Aggregators compute per-session quality", 15),
+      edge(["worker"], ["nosql", "sql"], "Session summaries are stored", 10),
+      edge(["worker"], ["cache"], "Live rollups feed dashboards", 10),
+      edge(["worker", "service"], ["search"], "Support can find one viewer's session", 10),
+      edge(["worker"], ["monitor"], "Aggregates feed alerting", 5),
+      node(["monitor"], "Flawless-stream rate and rebuffer ratio page someone when they drop", 15),
+    ],
+    warnings: [
+      {
+        when: ({ hasNode, hasEdge }) => hasEdge(["service"], ["sql", "nosql"]) && !hasNode(["stream"]),
+        text: "Every heartbeat goes straight into a database. Buffer through a log so a traffic spike never costs you events.",
+      },
+    ],
+  },
+  {
+    id: "ad-live",
+    category: "Content & Media",
+    name: "Ad-supported live channel",
+    brief:
+      "A free live channel with ad breaks. Breaks must land cleanly for a million concurrent viewers, ad blockers shouldn't skip them, and advertisers need independent viewing measurement. Decide where ads are inserted.",
+    budget: 18,
+    checks: [
+      node(["client"], "Viewers watch live", 5),
+      edge(["encoder"], ["packager"], "A live encoder feeds a packager", 10),
+      edge(["packager"], ["cdn"], "The CDN pulls segments from the packaging origin", 10),
+      edge(["client"], ["cdn"], "Content and ad segments play from the edge", 10),
+      edge(["client", "cdn"], ["ssai"], "Players fetch manifests through the ad stitcher", 10),
+      edge(["ssai", "client"], ["adserver"], "Each break asks an ad server what to play", 15),
+      edge(["client"], ["gateway", "lb"], "Session calls go through the edge", 5),
+      edge(["gateway", "lb"], ["service"], "A session service starts playback", 5),
+      edge(["client", "ssai", "service"], ["stream"], "Ad and viewing beacons flow to measurement", 10),
+      edge(["packager", "service"], ["ssai"], "Break markers reach the stitcher", 10),
+      node(["monitor"], "Ad fill rate and break errors are watched", 10),
+    ],
+    warnings: [
+      {
+        when: ({ hasNode }) => hasNode(["adserver"]) && !hasNode(["ssai"]),
+        text: "Client-side ads only. Ad blockers can skip them, and switching from content to ad can stall on some TVs.",
+      },
     ],
   },
 ];

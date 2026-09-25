@@ -1,0 +1,37 @@
+/* Styled hover/focus tooltip; a click popover would fight the chip's add action. */
+.chip { position: relative; min-width: 0; }
+
+.tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  z-index: 20;
+  width: max-content;
+  max-width: min(260px, calc(100vw - 32px));
+  padding: 8px 10px;
+  border: 1px solid var(--tip-border);
+  border-radius: 8px;
+  background: var(--tip-bg);
+  color: var(--tip-text);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.45;
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.34);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+.meta { display: block; margin-top: 4px; color: var(--tip-faint); font-size: 11px; }
+
+.chip:has(button:focus-visible) .tip { opacity: 1; transform: none; }
+
+/* Touch has no hover: a tap adds the node, so the tip stays hidden there. */
+@media (hover: hover) {
+  .chip:hover .tip { opacity: 1; transform: none; transition-delay: 250ms; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tip { transition: none; transform: none; }
+}

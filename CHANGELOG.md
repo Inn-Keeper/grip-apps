@@ -4,6 +4,27 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-09-25
+
+### Added
+
+- Arch Board scenario "Live + VOD streaming platform" (Content & Media): live and VOD delivery, entitlement and device limits, a kickoff concurrency spike and QoE telemetry.
+- Arch Board streaming nodes: Encoder / Transcoder, Packager / Origin, DRM License Server and Ad Insertion (SSAI), each with its own follow-up probes. The palette now has 20 node types.
+- Arch Board scenarios "Playback backend-for-frontend", "Player quality telemetry" and "Ad-supported live channel", plus an Ad Server node for client-side ads. 104 scenarios, 21 node types.
+- Streaming category in Prep with a "Streaming & Playback" tech: 100 questions on HLS, DASH, ABR, MSE/EME, DRM, ads, live latency and playback quality.
+- Kotlin (with coroutines, Compose and Media3) and Swift (with concurrency, SwiftUI, UIKit and AVFoundation) in Languages, 100 questions each. The bank now has 5,440 questions across 54 technologies.
+- Arch Board palette tooltips: every node explains what it does, with its cost and maintenance, in a styled hover and focus tooltip (en, sv, pt).
+
+### Changed
+
+- The live-ingest and streaming-platform scenarios accept the new streaming nodes, and the streaming-platform scenario also checks for DRM licensing.
+
+## 2026-09-24
+
+### Fixed
+
+- Question bank README: updated category counts, validation scope, seed command and the non-transactional reseed warning.
+
 ## 2026-09-23
 
 ### Added

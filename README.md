@@ -12,8 +12,8 @@ Six tabs, shared between web and mobile:
 
 | Tab | What you do there |
 | --- | --- |
-| **Prep** | Quiz cards for 51 technologies, 5,140 questions across four difficulty tiers. Drills target your weakest techs; techs detected from your CV or GitHub get their own category. XP and ranks (Hatchling → Nevermore). |
-| **Arch Board** | A full system-design round: draw the boxes, write the six-beat talk track, estimate QPS and storage, then defend it against interviewer follow-ups. 100 scenarios, 16 component types, a 40-minute phased timer. |
+| **Prep** | Quiz cards for 54 technologies, 5,440 questions across four difficulty tiers. Drills target your weakest techs; techs detected from your CV or GitHub get their own category. XP and ranks (Hatchling → Nevermore). |
+| **Arch Board** | A full system-design round: draw the boxes, write the six-beat talk track, estimate QPS and storage, then defend it against interviewer follow-ups. 104 scenarios, 21 component types, a 40-minute phased timer. |
 | **Stories** | STAR stories across eight competencies, with randomized behavioral prompts. |
 | **Quest** | Pipeline tracker (Contacted → Applied → Interviewing → Offer → Rejected) with stage velocity and due follow-ups from the Java pipeline service. |
 | **Fly Me** | What the product is and why each piece exists. |
@@ -149,4 +149,4 @@ MIT. Personal project, open sourced for learning.
 
 ---
 
-**Last updated:** September 20, 2026 · **Status:** Phase 5 (polish and delivery; EAS/OTA parked). Pipeline analytics live, CV import shipped on both clients, question bank at 5,140 questions.
+**Last updated:** September 20, 2026 · **Status:** Phase 5 (polish and delivery; EAS/OTA parked). Pipeline analytics live, CV import shipped on both clients, question bank at 5,440 questions.

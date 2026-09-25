@@ -133,6 +133,11 @@ export const nodeIconName = (type: string): BrandIconName => {
     search: "search",
     stream: "arrowRight",
     psp: "payment",
+    encoder: "maintenance",
+    packager: "layers",
+    drm: "shield",
+    ssai: "spark",
+    adserver: "rank",
     monitor: "monitor",
   };
   return map[type] ?? "service";
@@ -150,6 +155,7 @@ export const categoryIconName = (name: string): BrandIconName => {
     Mobile: "client",
     Databases: "database",
     Engineering: "maintenance",
+    Streaming: "client",
   };
   // Keyed by the first word: category names are "Frontend & Mobile", "AI Tooling", ...
   return map[name.split(" ")[0] ?? name] ?? "spark";

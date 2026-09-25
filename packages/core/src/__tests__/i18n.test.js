@@ -103,3 +103,10 @@ describe("LOCALE_LABELS", () => {
     expect(LOCALE_LABELS.sv).toBeDefined();
   });
 });
+
+describe("node descriptions", () => {
+  it("describes every palette node type", async () => {
+    const { NODE_TYPES } = await import("../arch.js");
+    for (const { type } of NODE_TYPES) expect(en[`node.desc.${type}`]).toBeTruthy();
+  });
+});

@@ -65,7 +65,7 @@ describe("buildPushback", () => {
 });
 
 describe("scenario pushback data", () => {
-  it("gives all 100 scenarios their own hard prompt", () => {
+  it("gives all 104 scenarios their own hard prompt", () => {
     for (const s of SCENARIOS) {
       if (!s.pushback?.trim()) throw new Error(`Scenario "${s.id}" has no pushback prompt`);
       // Questions or imperatives both count — "Walk me through..." and "Prove

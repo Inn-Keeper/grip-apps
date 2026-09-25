@@ -46,6 +46,94 @@ export const categories = [
         ],
       },
       {
+        tech: "Kotlin",
+        oneliner: "Concise, null-safe JVM language and Google's preferred choice for Android.",
+        prep: [
+          "Null safety: ?, ?., ?:, and why !! is a smell",
+          "Data and sealed classes; exhaustive when",
+          "Coroutines: suspend, scopes, dispatchers, structured concurrency, cancellation",
+          "Flow vs StateFlow vs SharedFlow; stateIn with WhileSubscribed",
+          "Compose: state hoisting, remember vs rememberSaveable, effects and cleanup",
+          "Media3: one application thread, release(), MediaSession, track selection",
+        ],
+        quiz: [
+          {
+            question: "What does the Elvis operator ?: do?",
+            options: [
+              "Supplies a fallback value when the left side is null",
+              "Checks whether both sides are equal and non-null",
+              "Casts the left side to the type written on the right",
+              "Throws an exception when the left side is null",
+            ],
+            correct: 0,
+          },
+          {
+            question: "Why might a CPU-heavy loop ignore coroutine cancellation?",
+            options: [
+              "Cancellation is cooperative, so the loop must check isActive",
+              "Cancellation only works on coroutines running on Dispatchers.Main",
+              "Loops always run outside of the coroutine's Job hierarchy",
+              "The dispatcher blocks cancellation while its thread is busy",
+            ],
+            correct: 0,
+          },
+          {
+            question: "What is DisposableEffect for in Compose?",
+            options: [
+              "Registering something and cleaning it up in onDispose",
+              "Deleting saved state when a screen is closed",
+              "Running a coroutine that can never be cancelled",
+              "Skipping recomposition for expensive composables",
+            ],
+            correct: 0,
+          },
+        ],
+      },
+      {
+        tech: "Swift",
+        oneliner: "Apple's safe, fast language for iOS, tvOS and macOS apps.",
+        prep: [
+          "Optionals: if let, guard let, ??, and when force unwrapping is acceptable",
+          "Value vs reference types; copy-on-write; ARC with weak and unowned",
+          "Protocols, extensions, some vs any, and static vs dynamic dispatch",
+          "Concurrency: async/await, actors, @MainActor, Sendable, cancellation",
+          "SwiftUI state: @State, @Binding, @Observable, view identity; UIKit lifecycle",
+          "AVFoundation: AVPlayer and AVPlayerItem, time observers, access and error logs",
+        ],
+        quiz: [
+          {
+            question: "Why write [weak self] in a stored closure?",
+            options: [
+              "To avoid a retain cycle between the object and its closure",
+              "To make the closure always run on the main thread",
+              "To make self optional everywhere in the class",
+              "To let the closure outlive the app's process",
+            ],
+            correct: 0,
+          },
+          {
+            question: "What is actor reentrancy?",
+            options: [
+              "State can change while an actor method is suspended at an await",
+              "An actor is allowed to call its own methods synchronously",
+              "Two different actors can share mutable state safely",
+              "An actor can be recreated after it has been freed",
+            ],
+            correct: 0,
+          },
+          {
+            question: "How do you cap bitrate for an AVPlayerItem?",
+            options: [
+              "Set preferredPeakBitRate on the item",
+              "Edit the HLS manifest on the device",
+              "Set the player's rate below 1.0",
+              "Use a smaller AVPlayerLayer frame",
+            ],
+            correct: 0,
+          },
+        ],
+      },
+      {
         tech: "JavaScript",
         oneliner: "The language of the web: event-driven, single-threaded, prototype-based.",
         prep: [
@@ -2191,6 +2279,58 @@ export const categories = [
               "Mappings between HubSpot properties and external system fields",
               "Attribution links connecting marketing touches to closed deals",
               "Groupings of contacts into static and active lists",
+            ],
+            correct: 0,
+          },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Streaming",
+    emoji: "📺",
+    color: "#FB7185",
+    items: [
+      {
+        tech: "Streaming & Playback",
+        oneliner: "How video reaches the screen: HLS and DASH, adaptive bitrate, DRM, ads and playback quality.",
+        prep: [
+          "Multivariant vs media playlists; DASH MPD; CMAF shared by both",
+          "ABR: throughput vs buffer-based decisions, and why stalls beat resolution",
+          "MSE feeds bytes to the video element; EME talks to the platform CDM",
+          "DRM: Widevine, FairPlay, PlayReady; cbcs lets one asset serve all three",
+          "Live: live edge, DVR window, LL-HLS parts, catching up to target latency",
+          "SSAI vs CSAI; SCTE-35 cues; VAST; ad beacons",
+          "QoE: startup time, rebuffer ratio, failures, measured over all attempts",
+        ],
+        quiz: [
+          {
+            question: "What does an HLS multivariant playlist describe?",
+            options: [
+              "The available variant streams with their bandwidth, resolution and codecs",
+              "The ordered list of segments for a single rendition of the content",
+              "The DRM license server address and its key rotation schedule",
+              "The ad breaks in the stream and their SCTE-35 cue positions",
+            ],
+            correct: 0,
+          },
+          {
+            question: "What does EME let a web player do?",
+            options: [
+              "Negotiate licenses with the platform's decryption module",
+              "Append downloaded media bytes to the video element's buffer",
+              "Encrypt media in the browser before uploading it to origin",
+              "Run a JavaScript implementation of a DRM system",
+            ],
+            correct: 0,
+          },
+          {
+            question: "Why can always picking the highest bitrate make viewing worse?",
+            options: [
+              "The buffer drains and stalls hurt more than a lower resolution",
+              "High bitrates trigger more DRM license renewals per session",
+              "CDNs will not cache segments above a certain bitrate",
+              "Browsers throttle high-bitrate playback in foreground tabs",
             ],
             correct: 0,
           },

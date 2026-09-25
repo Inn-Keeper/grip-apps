@@ -65,6 +65,10 @@ export const SCENARIO_PUSHBACK = {
   "ugc-gallery": "Storage grows 27TB a day. What's your tiering plan, and when does old content stop being instantly available?",
   subtitles: "Transcription takes twelve minutes for a ten-minute video. Does the video publish before subtitles exist?",
   downloads: "A release goes out and a million clients pull 2GB at once. How do you not pay for all of that bandwidth?",
+  "ott-platform": "Two million viewers press play in the minute before kickoff. Which component melts first, and what did you pre-warm?",
+  "playback-bff": "The ad config dependency takes three seconds to answer. Does the viewer wait, get no ads, or get a default?",
+  "qoe-telemetry": "A viewer calls support saying the match froze. What do you type to find their session, and how old can that data be?",
+  "ad-live": "The break marker arrives two seconds late. What do viewers see at the start and end of the break?",
 
   // ── Data & Analytics ────────────────────────────────────────────────────
   clickstream: "You are dropping 2% of events under load. Is that acceptable, and how would you even know?",

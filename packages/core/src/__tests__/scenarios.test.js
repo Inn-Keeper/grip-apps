@@ -7,9 +7,9 @@ import { ESTIMATE_TARGETS, deriveScale } from "../estimation.js";
 const VALID_TYPES = new Set(NODE_TYPES.map((t) => t.type));
 
 describe("scenario library", () => {
-  it("ships exactly 100 scenarios with unique ids", () => {
-    expect(SCENARIOS).toHaveLength(100);
-    expect(new Set(SCENARIOS.map((s) => s.id)).size).toBe(100);
+  it("ships exactly 104 scenarios with unique ids", () => {
+    expect(SCENARIOS).toHaveLength(104);
+    expect(new Set(SCENARIOS.map((s) => s.id)).size).toBe(104);
   });
 
   it("assigns every scenario to a known category", () => {
