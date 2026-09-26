@@ -1,5 +1,7 @@
 # Grip
 
+[Live Demo](https://grip-platform-web.vercel.app)
+
 Get a grip. Code up.
 
 Interview prep and a hiring-pipeline tracker: a **web app and a React Native mobile app** sharing one Postgres database through Supabase. Built as a study case, where each layer maps to a topic you get asked about in interviews.

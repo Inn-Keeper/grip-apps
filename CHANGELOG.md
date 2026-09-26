@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-09-26
+
+### Added
+
+- Live Demo link at the top of the README.
+
 ## 2026-09-25
 
 ### Added
