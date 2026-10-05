@@ -1,6 +1,8 @@
 // Hiring pipeline domain: status lifecycle and DD-MM-YYYY date rules.
 
 export const STATUSES = ["Contacted", "Applied", "Interviewing", "Offer", "Rejected"];
+// Stages that need no further follow-up (the pipeline service uses the same pair).
+export const TERMINAL_STATUSES = ["Offer", "Rejected"];
 
 export const ROLE_POSITIONS = [
   "Frontend Engineer",

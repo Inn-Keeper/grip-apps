@@ -3,6 +3,7 @@ import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import type { VelocityReport } from "@grip/core/pipeline";
 import { velocityEmptyKey } from "./velocityState.js";
+import { ActivityHeatmap } from "./ActivityHeatmap";
 import { BrandIcon } from "../components/BrandIcon";
 import { CountUp, GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";
@@ -16,7 +17,7 @@ type FunnelSummary = {
 };
 
 // Right rail: status (application pace, then conversion), then insights (rule 5).
-export function QuestRightRail({ funnel, velocity, velocityError, velocityLoading, velocityEnabled, statusEvents }: {
+export function QuestRightRail({ funnel, velocity, velocityError, velocityLoading, velocityEnabled, statusEvents, statusEventsLoading, statusEventsError }: {
   funnel: FunnelSummary;
   velocity?: VelocityReport;
   velocityError?: Error | null;
@@ -24,8 +25,10 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
   // False when no pipeline service is configured. The panel is dropped rather
   // than shown empty, which would claim you have no data when nothing asked.
   velocityEnabled: boolean;
-  // Only to tell "nothing to average yet" apart from "the service found none".
-  statusEvents: { contactId: string }[];
+  // Velocity's empty message and the activity heatmap.
+  statusEvents: { contactId: string; createdAt: string }[];
+  statusEventsLoading: boolean;
+  statusEventsError: Error | null;
 }) {
   const pace = funnel.applicationsPerWeek;
   const conversions = [
@@ -98,6 +101,8 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
           </div>
         </WorkspacePanel>
       )}
+
+      <ActivityHeatmap statusEvents={statusEvents} loading={statusEventsLoading} error={statusEventsError} />
     </>
   );
 }

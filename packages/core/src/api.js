@@ -121,6 +121,7 @@ export { dateToDb, dateToUi } from "./api/shared.js";
  * @returns {{
  *   listContacts(): Promise<Contact[]>,
  *   upsertContact(contact: Contact): Promise<void>,
+ *   importContacts(contacts: (Contact & { id: string, stageReachedOn?: string })[]): Promise<void>,
  *   deleteContact(id: string | undefined): Promise<void>,
  *   addRetro(contactId: string, retro: Omit<Retro, "id" | "date"> & { date?: string }): Promise<void>,
  *   deleteRetro(id: string): Promise<void>,

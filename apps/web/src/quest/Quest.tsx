@@ -5,7 +5,8 @@ import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
-import { workspaceFocusStyle } from "../components/fieldStyles";
+import { miniBtn, workspaceFocusStyle } from "../components/fieldStyles";
+import { ledgerImport } from "../lib/api";
 import { ContactCard } from "./ContactCard";
 import { ContactDetail } from "./ContactDetail";
 import { ContactForm } from "./ContactForm";
@@ -14,6 +15,7 @@ import { QuestNextUp } from "./QuestNextUp";
 import { QuestRightRail } from "./QuestRightRail";
 import { RetroForm } from "./RetroForm";
 import { EMPTY_FORM } from "./types";
+import { ImportModal } from "./import/ImportModal";
 import {
   useAddRetroMutation,
   useBoardsQuery,
@@ -37,13 +39,15 @@ type Focus = { mode: "detail" | "edit" | "retro"; id: string } | { mode: "new" }
 export default function Quest() {
   const [focus, setFocus] = useState<Focus>(null);
   const [filter, setFilter] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
   // Confirmation after a change (rule 14); the contact a failed save belongs to (rule 13).
   const [notice, setNotice] = useState<{ id: number; text: string } | null>(null);
   const [touched, setTouched] = useState<string | null>(null);
 
   const { data: contacts = null, error: loadError } = useContactsQuery();
   const { data: stories = [] } = useContactStoriesQuery();
-  const { data: statusEvents = [] } = useStatusEventsQuery();
+  // The funnel falls back to contacts when events are missing; the heatmap needs the real state.
+  const { data: statusEvents = [], isPending: statusEventsLoading, error: statusEventsError } = useStatusEventsQuery();
   const { data: velocity, error: velocityError, isFetching: velocityLoading } = usePipelineVelocityQuery();
   const { data: scores } = useScoresQuery();
   const { data: boards = [] } = useBoardsQuery();
@@ -156,8 +160,8 @@ export default function Quest() {
     <WorkspaceLayout
       mainLabel={t("quest.title")}
       lockedHint={focus ? t("quest.lockedHint") : null}
-      left={<QuestLeftRail contacts={contacts ?? []} filter={filter} onFilter={setFilter} />}
-      right={<QuestRightRail funnel={funnel} velocity={velocity} velocityError={velocityError} velocityLoading={velocityLoading} velocityEnabled={pipelineConfigured} statusEvents={statusEvents} />}
+      left={<QuestLeftRail contacts={contacts ?? []} filter={filter} onFilter={setFilter} agendaContacts={contacts} agendaError={loadError} onOpen={(id) => setFocus({ mode: "detail", id })} />}
+      right={<QuestRightRail funnel={funnel} velocity={velocity} velocityError={velocityError} velocityLoading={velocityLoading} velocityEnabled={pipelineConfigured} statusEvents={statusEvents} statusEventsLoading={statusEventsLoading} statusEventsError={statusEventsError} />}
     >
       {loadError && (
         <ErrorBanner>
@@ -210,7 +214,20 @@ export default function Quest() {
             <span style={{ marginLeft: "auto", fontSize: font.size.small, color: colors.textFaint, fontWeight: 600 }}>
               {visible ? t("quest.inPipeline", { count: visible.length }) : t("common.loading")}
             </span>
+            {/* Hidden without VITE_AI_URL, like grading: a button that can only fail is worse than none. */}
+            {ledgerImport && contacts && (
+              <button type="button" onClick={() => setImporting(true)} style={miniBtn(colors.accentBright ?? "")}>
+                {t("quest.importButton")}
+              </button>
+            )}
           </div>
+          {importing && contacts && (
+            <ImportModal
+              contacts={contacts}
+              onClose={() => setImporting(false)}
+              onImported={(count) => announce(t("quest.importDone", { count }))}
+            />
+          )}
           {/* The pipeline speaks for itself; this slot only carries save/delete notices. */}
           {noticeLine}
 

@@ -37,6 +37,8 @@ export function contactsApi(supabase) {
     next_action: c.nextAction || null,
     next_action_date: dateToDb(c.nextActionDate),
     posting_techs: c.postingTechs ?? [],
+    // Only import sets it; the status trigger dates the first event by it.
+    ...(c.stageReachedOn !== undefined && { stage_reached_on: dateToDb(c.stageReachedOn) }),
   });
 
   async function listContacts() {
@@ -54,6 +56,13 @@ export function contactsApi(supabase) {
       ? supabase.from("contacts").update(row).eq("id", c.id)
       : supabase.from("contacts").insert(row);
     const { error } = await q;
+    if (error) fail(error);
+  }
+
+  /** Saves imported contacts in one request, so they all land or none do. Client ids make a retry a no-op. */
+  async function importContacts(contacts) {
+    const rows = contacts.map((c) => ({ id: c.id, ...contactToDb(c) }));
+    const { error } = await supabase.from("contacts").upsert(rows, { onConflict: "id", ignoreDuplicates: true });
     if (error) fail(error);
   }
 
@@ -90,5 +99,5 @@ export function contactsApi(supabase) {
     return data.map((row) => ({ contactId: row.contact_id, status: row.status, createdAt: row.created_at }));
   }
 
-  return { listContacts, upsertContact, deleteContact, addRetro, deleteRetro, listStatusEvents };
+  return { listContacts, upsertContact, importContacts, deleteContact, addRetro, deleteRetro, listStatusEvents };
 }

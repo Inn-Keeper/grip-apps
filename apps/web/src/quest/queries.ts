@@ -62,6 +62,12 @@ export function useSaveContactMutation() {
   return useMutation({ mutationFn: api.upsertContact, onSettled: invalidate });
 }
 
+export function useImportContactsMutation() {
+  const invalidate = useInvalidateContacts();
+  // onSettled, not onSuccess: a timed-out save may still have landed, so refetch either way.
+  return useMutation({ mutationFn: api.importContacts, onSettled: invalidate });
+}
+
 export function useDeleteContactMutation() {
   const invalidate = useInvalidateContacts();
   return useMutation({ mutationFn: api.deleteContact, onSettled: invalidate });

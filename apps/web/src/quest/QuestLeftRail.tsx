@@ -1,15 +1,20 @@
 import { STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
+import { QuestAgenda } from "./QuestAgenda";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Contact } from "./types";
 
 // Left rail = navigate and filter (rule 4): each stage filters the pipeline list.
-export function QuestLeftRail({ contacts, filter, onFilter }: {
+export function QuestLeftRail({ contacts, filter, onFilter, agendaContacts, agendaError, onOpen }: {
   contacts: Contact[];
   filter: string | null;
   onFilter: (status: string | null) => void;
+  // Null while loading, so the agenda can tell loading apart from empty.
+  agendaContacts: Contact[] | null;
+  agendaError: Error | null;
+  onOpen: (id: string) => void;
 }) {
   const counts = Object.fromEntries(STATUSES.map((status) => [status, contacts.filter((c) => c.status === status).length]));
   const rows: { key: string | null; label: string; count: number; color: string }[] = [
@@ -24,6 +29,7 @@ export function QuestLeftRail({ contacts, filter, onFilter }: {
 
   return (
     <>
+      <QuestAgenda contacts={agendaContacts} error={agendaError} onOpen={onOpen} />
       <WorkspacePanel>
         <WorkspaceTitle
           icon={<BrandIcon name="contact" color={colors.accentBright} size={17} />}

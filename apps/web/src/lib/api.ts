@@ -1,6 +1,7 @@
 // Thin binding of the shared data layer to this app's Supabase client.
 import { createApi, dateToUi, dateToDb } from "@grip/core/api";
 import { createPipelineApi } from "@grip/core/pipeline";
+import { createLedgerImportApi } from "@grip/core/ledgerImport";
 import { createTalkGradeApi } from "@grip/core/talkGrade";
 import { supabase } from "./supabase";
 
@@ -22,10 +23,12 @@ const pipeline = pipelineUrl ? createPipelineApi(getToken, pipelineUrl) : null;
 // Null when VITE_AI_URL is unset: grading is optional, and the board hides the
 // action rather than offering a button that can only fail.
 const talkGrade = aiUrl ? createTalkGradeApi(getToken, aiUrl) : null;
+// Same service and same rule: no AI URL, no import button.
+const ledgerImport = aiUrl ? createLedgerImportApi(getToken, aiUrl) : null;
 
 const api = createApi(supabase);
 
-export { dateToUi, dateToDb, pipeline, talkGrade };
+export { dateToUi, dateToDb, pipeline, talkGrade, ledgerImport };
 export const {
   listBoards,
   listBoardSummaries,
@@ -42,6 +45,7 @@ export const {
   getAccuracyTimeline,
   listContacts,
   upsertContact,
+  importContacts,
   deleteContact,
   addRetro,
   deleteRetro,

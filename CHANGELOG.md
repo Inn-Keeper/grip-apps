@@ -4,6 +4,18 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-10-05
+
+### Added
+
+- Quest Activity panel: a 26-week heatmap of pipeline updates per day in the right rail, with a legend, localized weekday and month labels, and a "Show daily counts" list for keyboard and screen reader users (en, sv, pt).
+- Quest Agenda panel at the top of the left rail: today's follow-ups, overdue items with days late, interview prep (posting techs and the last retro's note) and the week ahead. Each line opens its contact (en, sv, pt).
+- Quest ledger import: "Import list" reads a messy .docx or .md list (or pasted text) through grip-ai-api, shows each application for review with plain warnings and duplicates unchecked, and saves the confirmed ones in one request. Links, emails, phones and salaries are removed before the AI reads the list. Applied and Contacted rows are dated by their application date, so older applications land on their own day in the Activity heatmap (en, sv, pt).
+
+### Database
+
+- `0020_import_stage_date.sql`: adds the nullable `contacts.stage_reached_on` and dates a new contact's first status event by it (noon UTC), falling back to now. Prepares ledger import so old applications keep their real dates in the heatmap and velocity. Apply by hand.
+
 ## 2026-09-26
 
 ### Added
