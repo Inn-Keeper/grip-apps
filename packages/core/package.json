@@ -43,6 +43,7 @@
     "./activity": "./src/activity.js",
     "./agenda": "./src/agenda.js",
     "./ledgerImport": "./src/ledgerImport.js",
+    "./importReview": "./src/importReview.js",
     "./duplicates": "./src/duplicates.js",
     "./postingReader": "./src/postingReader.js",
     "./accuracy": "./src/accuracy.js",

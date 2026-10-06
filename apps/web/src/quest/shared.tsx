@@ -21,11 +21,12 @@ export function ActionButton({
   );
 }
 
-export function DateInput({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+export function DateInput({ value, onChange, invalid }: { value: string; onChange: (v: string) => void; invalid?: boolean }) {
   return (
     <input
       style={inputStyle}
       value={value}
+      aria-invalid={invalid}
       inputMode="numeric"
       maxLength={10}
       onChange={(e) => onChange(formatDateEntry(e.target.value))}

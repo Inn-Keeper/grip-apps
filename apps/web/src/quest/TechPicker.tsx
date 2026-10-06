@@ -1,6 +1,7 @@
 import { categories } from "@grip/core/prepData";
 import { addTech } from "@grip/core/techList";
 import { t } from "@grip/core/i18n";
+import { colors, font } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { TechChips } from "./TechChips";
 
@@ -28,6 +29,7 @@ export function TechPicker({
     <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
       <TechChips label={label} techs={techs} onRemove={(tech) => onChange(techs.filter((item) => item !== tech))} />
       <Combobox
+        label={t("contacts.addTech")}
         value=""
         options={groups}
         filterable
@@ -35,6 +37,7 @@ export function TechPicker({
         placeholder={t("contacts.addTech")}
         onChange={(tech) => onChange(addTech(techs, tech, limit))}
       />
+      {limit === 5 && <span style={{ fontSize: font.size.small, color: colors.textDim }}>{t("quest.importTechLimit")}</span>}
     </div>
   );
 }

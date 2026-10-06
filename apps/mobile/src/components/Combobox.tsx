@@ -57,6 +57,7 @@ export function Combobox({
 
       {searchable ? (
         <TextInput
+          accessibilityLabel={label}
           style={inputStyle}
           value={value}
           onChangeText={(next) => {
@@ -69,6 +70,7 @@ export function Combobox({
         />
       ) : (
         <TouchableOpacity
+          accessibilityLabel={label}
           accessibilityRole="button"
           onPress={() => setOpen((current) => !current)}
           style={[inputStyle, { flexDirection: "row", alignItems: "center", gap: space.sm }]}

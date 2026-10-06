@@ -17,7 +17,7 @@ export function TechChips({
 }) {
   return (
     <div>
-      <div style={{ fontSize: font.size.caption, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.06em", marginBottom: 6 }}>
+      <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.06em", marginBottom: 6 }}>
         {label.toUpperCase()}
       </div>
       <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
@@ -30,6 +30,7 @@ export function TechChips({
               onClick={() => (onToggle ? onToggle(tech) : onRemove?.(tech))}
               style={{
                 display: "inline-flex",
+                minHeight: 24,
                 alignItems: "center",
                 gap: 5,
                 padding: "3px 10px",

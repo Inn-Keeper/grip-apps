@@ -1,0 +1,135 @@
+.dialog {
+  margin: auto;
+  width: min(92vw, 760px);
+  max-width: none;
+  max-height: 90dvh;
+  padding: 0;
+  overflow: hidden;
+}
+
+.dialog::backdrop {
+  background: #00000090;
+}
+.layout {
+  display: flex;
+  flex-direction: column;
+  max-height: 90dvh;
+}
+.header,
+.footer {
+  flex-shrink: 0;
+  padding: var(--import-lg) var(--import-xl);
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--import-lg);
+}
+.body {
+  overflow: auto;
+  min-height: 0;
+  padding: 0 var(--import-xl) var(--import-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--import-lg);
+  overflow-wrap: anywhere;
+}
+.body p,
+.footer p {
+  margin: 0;
+}
+.body {
+  font-size: var(--import-body);
+  line-height: 1.5;
+  color: var(--import-secondary);
+}
+.hint,
+.field > span {
+  font-size: var(--import-small);
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--import-xs);
+  min-width: 0;
+}
+.fileChoice {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--import-sm);
+  padding: var(--import-lg);
+}
+.textButton {
+  border: none;
+  background: none;
+  padding: 0;
+  min-height: 24px;
+  font: inherit;
+  cursor: pointer;
+  align-self: flex-start;
+}
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--import-sm);
+  min-height: 24px;
+  cursor: pointer;
+}
+.checkbox input {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  margin: 0;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--import-sm);
+}
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--import-sm);
+}
+.summary {
+  margin: 0;
+  padding-left: var(--import-xl);
+}
+.summary:empty {
+  display: none;
+}
+.dialog button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.dialog summary {
+  cursor: pointer;
+  min-height: 24px;
+}
+.rowFields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(260px, 1fr));
+  gap: var(--import-lg);
+}
+@media (max-width: 680px) {
+  .rowFields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .header,
+  .footer {
+    padding: var(--import-md) var(--import-lg);
+  }
+  .body {
+    padding: 0 var(--import-lg) var(--import-lg);
+  }
+  .actions > button {
+    flex: 1 1 auto;
+  }
+}
+
+.dialog [aria-invalid="true"] {
+  outline: 1px solid var(--import-error);
+}

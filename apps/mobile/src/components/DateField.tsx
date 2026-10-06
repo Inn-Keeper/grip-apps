@@ -38,7 +38,7 @@ export function DateField({ label, value, onChange, clearable = false }: Props) 
   return (
     <Field label={label}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <TouchableOpacity onPress={openPicker} style={[inputStyle, { flex: 1 }]}>
+        <TouchableOpacity accessibilityRole="button" accessibilityLabel={label} onPress={openPicker} style={[inputStyle, { flex: 1 }]}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <BrandIcon name="calendar" color={value ? colors.accentBright : colors.textFaint} size={16} />
             <Text style={{ color: value ? colors.text : colors.textFaint, fontSize: font.size.body }}>

@@ -35,6 +35,11 @@ export function useSaveContactMutation() {
   return useMutation({ mutationFn: api.upsertContact, onSettled: invalidate });
 }
 
+export function useImportContactsMutation() {
+  const invalidate = useInvalidateContacts();
+  return useMutation({ mutationFn: api.importContacts, onSettled: invalidate });
+}
+
 export function useDeleteContactMutation() {
   const invalidate = useInvalidateContacts();
   return useMutation({ mutationFn: api.deleteContact, onSettled: invalidate });

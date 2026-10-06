@@ -6,11 +6,13 @@ import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
 import { colors, font, layout, tints } from "@/theme";
-import { HeaderAction, Screen, ScreenHeader } from "@/components/ui";
+import { Button, HeaderAction, Screen, ScreenHeader } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
 import { ContactCard } from "@/components/contacts/ContactCard";
 import { ContactForm, EMPTY_CONTACT_FORM } from "@/components/contacts/ContactForm";
 import { QuestFunnel } from "@/components/contacts/QuestFunnel";
+import { ImportModal } from "@/components/contacts/import/ImportModal";
+import { ledgerImport } from "@/lib/api";
 import {
   useAddRetroMutation,
   useContactStoriesQuery,
@@ -27,6 +29,8 @@ export default function QuestScreen() {
   const insets = useSafeAreaInsets();
   const [editing, setEditing] = useState<Contact | null>(null);
   const [retroFor, setRetroFor] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importMessage, setImportMessage] = useState("");
 
   const { data: contacts, error } = useContactsQuery();
   const saveMutation = useSaveContactMutation();
@@ -72,11 +76,15 @@ export default function QuestScreen() {
 
   return (
     <Screen key={locale}>
+      {importOpen && <ImportModal contacts={contacts ?? []} onClose={() => setImportOpen(false)} onImported={(count) => setImportMessage(t("quest.importDone", { count }))} />}
       <ScreenHeader
         title={t("tabs.quest")}
         subtitle={t("screen.questSubtitle")}
         right={<HeaderAction icon="contact" label={t("contacts.addContact")} onPress={() => setEditing({ ...EMPTY_CONTACT_FORM, date: todayDDMMYYYY() })} />}
-      />
+      >
+        {ledgerImport && <Button label={t("quest.importButton")} variant="ghost" onPress={() => { setImportMessage(""); setImportOpen(true); }} />}
+        {!!importMessage && <Text accessibilityLiveRegion="polite" style={{ color: colors.accentBright, fontSize: font.size.body }}>{importMessage}</Text>}
+      </ScreenHeader>
       <FlatList
         data={sorted}
         keyExtractor={(contact) => contact.id!}

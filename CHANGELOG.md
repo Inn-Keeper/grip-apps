@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- Mobile Quest list import: native file selection or pasted text, editable application review and final confirmation, with posting-link tech detection and safe retries (en, sv, pt).
 - Posting techs can be added or removed by hand, from the Prep catalog, in each row of the import review and in the contact form (en, sv, pt).
 - Ledger import reads each posting link (on by default, can be turned off in the review) and fills the row's techs from the posting, through a guarded grip-ai-api endpoint that only opens public https pages and stores nothing. Rows edited by hand keep their techs. Pages built with JavaScript (such as Ashby) are read through their schema.org JobPosting data (en, sv, pt).
 
@@ -19,6 +20,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Import review and confirmation: responsive fields and persistent actions, distinct review/save labels, warnings that update after edits, validation for selected rows, and unrecognized lines included in the final summary. Posting links finish reading before review so confirmed details cannot change in the background (web and mobile; en, sv, pt).
 - Imported contacts get a prep plan: ledger import now saves up to 5 must-have techs per application (named in the list, matched to the Prep catalog) as posting techs, shown as chips in the review list. Before, imported Interviewing contacts had no plan until edited (en, sv, pt).
 
 ## 2026-10-05
