@@ -6,7 +6,6 @@ import { buildPushback } from "@grip/core/pushback";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { colors, font } from "@grip/core/tokens";
-import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
 import { NODE_H, NODE_W, WORLD } from "./constants";
@@ -28,17 +27,19 @@ import { useFullscreen } from "./useFullscreen";
 import { useInView } from "./useInView";
 import { ViewportControls } from "./ViewportControls";
 import { BoardSurface } from "./BoardSurface";
+import { BoardNextUp } from "./BoardNextUp";
 import { BoardToolbar } from "./BoardToolbar";
 import { RailActionButton } from "./RailActionButton";
-import { boardStepCopy } from "./stepCopy";
 import { useCanvasPointer } from "./useCanvasPointer";
 import { BoardEdges } from "./BoardEdges";
 import { BoardNodeCard } from "./BoardNodeCard";
 import { useBoardDocument, type BoardDoc } from "./useBoardDocument";
 import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
 import { appendHandoff } from "./scaleHandoff.js";
-import { workflowStep } from "@grip/core/workflowState";
+import { primaryActionKind } from "./primaryAction.js";
+import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
+import { useBoardShortcuts } from "./useBoardShortcuts";
 import { useDesignRound } from "./useDesignRound";
 import { useScenarioCatalog } from "./useScenarioCatalog";
 import { clearBoardHandoff, readBoardHandoff } from "../lib/boardHandoff";
@@ -127,29 +128,7 @@ export default function ArchBoard() {
   const nodeById = Object.fromEntries(nodes.map((n) => [n.id, n]));
   const activeWorkflowStep = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
 
-  useEffect(() => {
-    if (!isDirty) return;
-    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
-    const guardNavigation = (event: Event) => { if (!window.confirm(t("board.discardConfirm"))) event.preventDefault(); };
-    window.addEventListener("beforeunload", warn);
-    window.addEventListener("grip:navigate", guardNavigation);
-    return () => { window.removeEventListener("beforeunload", warn); window.removeEventListener("grip:navigate", guardNavigation); };
-  }, [isDirty]);
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      const editable = event.target instanceof HTMLElement && (event.target.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName));
-      if (editable) return;
-      if (event.key === "Escape") cancelConnection();
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z") {
-        event.preventDefault();
-        if (event.shiftKey) board.redo();
-        else board.undo();
-      }
-    };
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  });
+  useBoardShortcuts(board, isDirty, cancelConnection);
 
   // Fetched up front: Next Up offers to continue the latest saved board (e.g. the demo sample).
   const { data: savedBoards = [], error: boardsError, isLoading: boardsLoading, refetch: retryBoards } = useSavedBoardsQuery();
@@ -334,21 +313,19 @@ export default function ArchBoard() {
   const actionInRightRail = activeWorkflowStep >= 4 && !talkOpen;
   // One definition of the step's main action. The Next Up card renders it, and
   // the sticky rail repeats it only once that card has scrolled away.
-  const primaryAction: RailAction = latestBoard
-    ? { label: t("board.continueAction"), icon: "story", onClick: () => requestBoard(latestBoard), disabled: false, highlight: true }
-    : {
-        label: verdict?.weakest
-          ? t("board.answerAction")
-          : explaining
-            ? t("board.explainAction")
-            : t("board.evaluateDesign"),
-        icon: explaining ? "spark" : "evaluate",
-        onClick: verdict?.weakest ? answerWeakest : explaining ? writeTalkTrack : evaluateDesign,
-        disabled: nodes.length === 0,
-        // The shine asks you to act. Once the panel is open the asking is done,
-        // and continuing would be nagging while you type.
-        highlight: !(explaining && talkOpen),
-      };
+  const kind = primaryActionKind({ hasLatestBoard: Boolean(latestBoard), hasWeakest: Boolean(verdict?.weakest), explaining });
+  const primaryAction: RailAction =
+    kind === "continue" && latestBoard
+      ? { label: t("board.continueAction"), icon: "story", onClick: () => requestBoard(latestBoard), disabled: false, highlight: true }
+      : {
+          label: t(kind === "answer" ? "board.answerAction" : kind === "explain" ? "board.explainAction" : "board.evaluateDesign"),
+          icon: explaining ? "spark" : "evaluate",
+          onClick: kind === "answer" ? answerWeakest : kind === "explain" ? writeTalkTrack : evaluateDesign,
+          disabled: nodes.length === 0,
+          // The shine asks you to act. Once the panel is open the asking is done,
+          // and continuing would be nagging while you type.
+          highlight: !(explaining && talkOpen),
+        };
 
   const statusText = saveBoardMutation.isPending ? t("board.statusSaving") : isDirty ? t("board.statusDirty") : activeBoardId ? t("board.saved") : t("board.statusNew");
   const cssVars = {
@@ -504,37 +481,17 @@ export default function ArchBoard() {
               round={round.started && !timerVisible ? round : null}
             />
             <div ref={nextUpRef}>
-              {latestBoard ? (
-                <NextUpShell
-                  title={t("board.continueTitle", { title: latestBoard.title })}
-                  sub={t("board.continueSub", {
-                    scenario: allScenarios.find((item) => item.id === latestBoard.scenarioId)?.name ?? latestBoard.scenarioId,
-                    date: new Date(latestBoard.updatedAt).toLocaleDateString(),
-                  })}
-                  tone={colors.accent ?? ""}
-                  actionLabel={primaryAction.label}
-                  actionIcon={primaryAction.icon}
-                  onAction={primaryAction.onClick}
-                />
-              ) : (
-                <NextUpShell
-                  title={stepCopy.title}
-                  sub={stepCopy.sub}
-                  tone={colors.accent ?? ""}
-                  actionLabel={primaryAction.label}
-                  actionIcon={primaryAction.icon}
-                  onAction={actionInRightRail ? null : primaryAction.onClick}
-                  disabled={primaryAction.disabled}
-                  links={
-                    <>
-                      {/* The leading "or" answers a button beside it. With the action in the
-                          right rail there is nothing for it to answer. */}
-                      <NextUpLink label={t("board.orSave")} onClick={saveBoard} disabled={saveBoardMutation.isPending} withOr={!actionInRightRail} />
-                      {explaining && <NextUpLink label={t("board.evaluateDesign")} onClick={evaluateDesign} />}
-                    </>
-                  }
-                />
-              )}
+              <BoardNextUp
+                latestBoard={latestBoard}
+                allScenarios={allScenarios}
+                stepCopy={stepCopy}
+                action={primaryAction}
+                actionInRightRail={actionInRightRail}
+                explaining={explaining}
+                saving={saveBoardMutation.isPending}
+                onSave={saveBoard}
+                onEvaluate={evaluateDesign}
+              />
             </div>
 
             <BoardToolbar

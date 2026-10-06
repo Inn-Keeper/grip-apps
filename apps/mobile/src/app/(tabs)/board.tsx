@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Text, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { setTabBarHidden } from "@/lib/uiStore";
@@ -9,14 +9,14 @@ import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import * as boardEdits from "@grip/core/boardEdits";
 import { t } from "@grip/core/i18n";
-import { workflowStep } from "@grip/core/workflowState";
+import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
 import { useLocale } from "@/lib/useLocale";
-import type { BoardEdge, BoardNode, EvalResult, Scenario } from "@grip/core/arch";
-import type { SavedBoard, Story } from "@grip/core/api";
-import { colors, font, layout, shadow } from "@/theme";
-import { Button, MiniButton, Screen, ScreenHeader } from "@/components/ui";
+import type { BoardEdge, BoardNode, EvalResult } from "@grip/core/arch";
+import type { SavedBoard } from "@grip/core/api";
+import { colors, font, layout } from "@/theme";
+import { Screen, ScreenHeader } from "@/components/ui";
 import { BrandIcon } from "@/components/BrandIcon";
 import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
 import { DesignTimerBar, useDesignTimer } from "@/components/board/DesignTimerBar";
@@ -29,6 +29,9 @@ import { ScenarioSheet } from "@/components/board/ScenarioSheet";
 import { StorySheet } from "@/components/board/StorySheet";
 import { BoardProgress } from "@/components/board/BoardProgress";
 import { NodePalette } from "@/components/board/NodePalette";
+import { BoardToolbar, type Chrome } from "@/components/board/BoardToolbar";
+import { SavedBoardsTray } from "@/components/board/SavedBoardsTray";
+import { ZenOverlay } from "@/components/board/ZenOverlay";
 import { useStoriesQuery } from "@/queries/stories";
 import {
   talkGradeEnabled,
@@ -69,7 +72,7 @@ export default function BoardScreen() {
   const [activeBoardTitle, setActiveBoardTitle] = useState<string | null>(null);
   // Chrome levels: full (pills + brief), compact (slim row), zen (board only,
   // translucent title overlaid on the canvas).
-  const [chrome, setChrome] = useState<"full" | "compact" | "zen">("full");
+  const [chrome, setChrome] = useState<Chrome>("full");
 
   // Zen also hides the native tab bar; restore it when leaving the screen.
   useEffect(() => {
@@ -102,7 +105,6 @@ export default function BoardScreen() {
   );
   const liveCost = nodes.reduce((sum, node) => sum + meta(node.type).cost, 0);
   const liveMaint = nodes.reduce((sum, node) => sum + meta(node.type).maint, 0);
-  const overBudget = liveCost > scenario.budget;
   const talkAnswered = scoreTalkTrack({ sections: talkSections, rating: talkRating }).answered.length;
   const step = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
 
@@ -127,27 +129,23 @@ export default function BoardScreen() {
   const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
   const weakestLabel = TALK_TRACK_SECTIONS.find((section) => section.id === verdict?.weakest?.section)?.label ?? "";
   // Steps 1 to 3 end in Evaluate, already in the toolbar; from 4 the action is the talk track.
-  const stepCopy =
-    step === 1
-      ? { title: t("board.stepAddTitle"), sub: t("board.stepAddSubTouch") }
-      : step === 2
-        ? { title: t("board.stepConnectTitle"), sub: t("board.stepConnectSubTouch") }
-        : step === 3
-          ? { title: t("board.stepDescribeTitle"), sub: t("board.stepDescribeSubTouch") }
-          : step === 4
-            ? { title: t("board.stepExplainTitle"), sub: t("board.stepExplainSub") }
-            : {
-                title: t("board.stepGradedTitle", { scenario: scenario.name }),
-                sub: !verdict
-                  ? t("board.stepGradedSub")
-                  : verdict.weakest
-                    ? t("board.stepGradedDiagnosis", { covered: verdict.covered, total: verdict.total, section: weakestLabel, question: verdict.weakest.gap })
-                    : t("board.stepGradedClear", { total: verdict.total }),
-              };
+  const stepCopy = boardStepCopy({ step, scenarioName: scenario.name, verdict, weakestLabel, touch: true });
   const evaluateBoard = () => {
     setResult(evaluate(scenario, nodes, edges));
     setResultOpen(true);
   };
+
+  const saveBoard = () =>
+    saveBoardMutation.mutate({
+      id: activeBoardId ?? undefined,
+      title: activeBoardTitle ?? t("board.draftTitle", { scenario: scenario.name }),
+      scenarioId: scenario.id,
+      storyId,
+      nodes,
+      edges,
+      talkTrack: { sections: talkSections, rating: talkRating },
+      talkGrade,
+    });
 
   const clearBoard = () => {
     setNodes([]);
@@ -317,61 +315,26 @@ export default function BoardScreen() {
       {chrome !== "zen" && <DesignTimerBar timer={timer} />}
 
       {chrome !== "zen" && (
-        // Wraps onto a second line on narrow screens so every action stays reachable.
-        <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", columnGap: 10, rowGap: 6 }}>
-          <MiniButton
-            label={chrome === "full" ? t("board.chromeHide") : t("board.chromeShow")}
-            color={colors.textDim}
-            onPress={() => setChrome(chrome === "full" ? "compact" : "full")}
-          />
-          <MiniButton label={t("board.zen")} color={colors.textDim} onPress={() => setChrome("zen")} />
-          {chrome === "compact" && (
-            <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim, flexShrink: 1 }}>
-              {scenario.name}
-            </Text>
-          )}
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <BrandIcon name="cost" color={overBudget ? colors.danger : colors.textDim} size={14} />
-            <Text style={{ fontSize: font.size.small, fontWeight: "600", color: overBudget ? colors.danger : colors.textDim }}>
-              {liveCost}/{scenario.budget}
-            </Text>
-          </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-            <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-            <Text style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>{liveMaint}</Text>
-          </View>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginLeft: "auto", alignItems: "center" }}>
-            <MiniButton
-              label={t("scale.check")}
-              color={scaleOpen ? colors.accent : colors.textDim}
-              onPress={() => setScaleOpen(true)}
-            />
-            <MiniButton
-              label={`${t("talk.title")} ${talkAnswered}/${TALK_TRACK_SECTIONS.length}`}
-              color={talkOpen ? colors.accent : colors.textDim}
-              onPress={() => setTalkOpen(true)}
-            />
-            <MiniButton label={t("board.saved")} color={savedOpen ? colors.accent : colors.textDim} onPress={() => setSavedOpen((value) => !value)} />
-            <MiniButton
-              label={saveBoardMutation.isPending ? t("common.saving") : t("common.save")}
-              color={colors.success}
-              onPress={() =>
-                saveBoardMutation.mutate({
-                  id: activeBoardId ?? undefined,
-                  title: activeBoardTitle ?? t("board.draftTitle", { scenario: scenario.name }),
-                  scenarioId: scenario.id,
-                  storyId,
-                  nodes,
-                  edges,
-                  talkTrack: { sections: talkSections, rating: talkRating },
-                  talkGrade,
-                })
-              }
-            />
-            <MiniButton label={t("common.clear")} color={colors.textDim} onPress={clearBoard} />
-            <Button label={t("board.evaluate")} onPress={evaluateBoard} disabled={nodes.length === 0} />
-          </View>
-        </View>
+        <BoardToolbar
+          chrome={chrome}
+          onChrome={setChrome}
+          scenarioName={scenario.name}
+          cost={liveCost}
+          budget={scenario.budget}
+          maint={liveMaint}
+          talkAnswered={talkAnswered}
+          scaleOpen={scaleOpen}
+          talkOpen={talkOpen}
+          savedOpen={savedOpen}
+          saving={saveBoardMutation.isPending}
+          canEvaluate={nodes.length > 0}
+          onOpenScale={() => setScaleOpen(true)}
+          onOpenTalk={() => setTalkOpen(true)}
+          onToggleSaved={() => setSavedOpen((value) => !value)}
+          onSave={saveBoard}
+          onClear={clearBoard}
+          onEvaluate={evaluateBoard}
+        />
       )}
 
       {boardsError && chrome !== "zen" && (
@@ -397,46 +360,10 @@ export default function BoardScreen() {
           onInspectNode={(id) => setInspectingId(id)}
         />
 
-        {chrome === "zen" && (
-          <>
-            <View
-              pointerEvents="none"
-              style={{
-                position: "absolute",
-                top: 8,
-                left: 8,
-                paddingHorizontal: 12,
-                paddingVertical: 6,
-                backgroundColor: `${colors.bgDeep}b8`,
-                borderRadius: 16,
-              }}
-            >
-              <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>
-                {scenario.name} · {liveCost}/{scenario.budget}
-                {timer.started ? ` · ${timer.clock}` : ""}
-              </Text>
-            </View>
-            <TouchableOpacity
-              onPress={() => setChrome("compact")}
-              hitSlop={8}
-              accessibilityRole="button"
-              accessibilityLabel={t("board.exitZen")}
-              style={{
-                position: "absolute",
-                top: 8,
-                right: 8,
-                width: 30,
-                height: 30,
-                borderRadius: 15,
-                backgroundColor: `${colors.bgDeep}b8`,
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <BrandIcon name="close" color={colors.textDim} size={14} />
-            </TouchableOpacity>
-          </>
-        )}
+          <ZenOverlay
+            label={`${scenario.name} · ${liveCost}/${scenario.budget}${timer.started ? ` · ${timer.clock}` : ""}`}
+            onExit={() => setChrome("compact")}
+          />
 
         <NodePalette onAddNode={addNode} />
       </View>
@@ -505,67 +432,5 @@ export default function BoardScreen() {
         />
       </View>
     </Screen>
-  );
-}
-
-type SavedBoardsTrayProps = {
-  boards: SavedBoard[];
-  scenarios: Scenario[];
-  stories: Story[];
-  activeId: string | null;
-  onLoad: (board: SavedBoard) => void;
-  onDelete: (board: SavedBoard) => void;
-};
-
-function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelete }: SavedBoardsTrayProps) {
-  return (
-    <Animated.View entering={FadeInDown.duration(180)} style={{ gap: 8 }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-        <Text style={{ flex: 1, fontSize: font.size.small, fontWeight: "700", color: colors.textDim }}>{t("board.savedBoards")}</Text>
-        <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("board.savedTotal", { count: boards.length })}</Text>
-      </View>
-      {boards.length === 0 ? (
-        <View style={{ padding: 10, backgroundColor: colors.well, borderWidth: 1, borderColor: colors.border, borderRadius: 8 }}>
-          <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>{t("board.savedEmpty")}</Text>
-        </View>
-      ) : (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 8 }}>
-          {boards.map((board) => {
-            const scenario = scenarios.find((item) => item.id === board.scenarioId);
-            const active = board.id === activeId;
-            return (
-              <View
-                key={board.id}
-                style={{
-                  width: 210,
-                  padding: 10,
-                  gap: 8,
-                  backgroundColor: colors.surface,
-                  borderWidth: 1,
-                  borderColor: active ? colors.accent : colors.borderSoft, boxShadow: shadow.card,
-                  borderRadius: 8,
-                }}
-              >
-                <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "700", color: colors.textBright }}>
-                  {board.title}
-                </Text>
-                <Text numberOfLines={1} style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>
-                  {t("board.boardMeta", { scenario: scenario?.name ?? board.scenarioId, nodes: board.nodes.length, edges: board.edges.length })}
-                </Text>
-                {board.storyId && stories.some((story) => story.id === board.storyId) && (
-                  <Text numberOfLines={1} style={{ fontSize: font.size.captionLg, color: colors.accentBright }}>
-                    {t("board.saved.story", { title: stories.find((story) => story.id === board.storyId)?.title ?? "" })}
-                  </Text>
-                )}
-                <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
-                  <MiniButton label={t("common.load")} color={colors.accent} onPress={() => onLoad(board)} />
-                  <MiniButton label={t("common.delete")} color={colors.danger} onPress={() => onDelete(board)} />
-                </View>
-              </View>
-            );
-          })}
-        </ScrollView>
-      )}
-    </Animated.View>
   );
 }

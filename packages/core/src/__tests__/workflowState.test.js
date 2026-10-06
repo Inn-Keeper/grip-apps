@@ -1,4 +1,5 @@
-import { stepState, workflowStep } from "../workflowState.js";
+import { t } from "../i18n.js";
+import { boardStepCopy, stepState, workflowStep } from "../workflowState.js";
 
 describe("workflowStep", () => {
   it("starts by asking for components", () => expect(workflowStep(0, 0)).toBe(1));
@@ -17,5 +18,14 @@ describe("stepState", () => {
     expect(stepState(1, 3)).toBe("done");
     expect(stepState(3, 3)).toBe("current");
     expect(stepState(4, 3)).toBe("todo");
+  });
+});
+
+describe("boardStepCopy", () => {
+  const base = { scenarioName: "S", verdict: null, weakestLabel: "" };
+  it("uses the tap wording on touch", () => expect(boardStepCopy({ ...base, step: 1, touch: true }).sub).toBe(t("board.stepAddSubTouch")));
+  it("names the source node only off touch", () => {
+    expect(boardStepCopy({ ...base, step: 2, connectFromName: "API" }).sub).toBe(t("board.stepConnectTarget", { name: "API" }));
+    expect(boardStepCopy({ ...base, step: 2, connectFromName: "API", touch: true }).sub).toBe(t("board.stepConnectSubTouch"));
   });
 });
