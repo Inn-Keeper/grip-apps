@@ -14,6 +14,9 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Arch Board: keyboard shortcuts and the unsaved work guard, the choice of the main action, and the Next Up card moved out of `ArchBoard.tsx` into their own files. No behavior change.
+- Mobile board: the toolbar, zen overlay and saved boards tray moved out of the screen into `components/board`. The Next Up step text now comes from `@grip/core/workflowState` on web and mobile alike. No behavior change.
+
 - Duplicate check for new entries: the same posting link, or the same company and role, counts as already in Quest, ignoring case, brackets, markdown and suffixes like AB or Inc. In import such rows stay unchecked; the same company with another role stays checked with a note. The contact form warns (without blocking) when a new or edited contact matches one already in Quest (en, sv, pt).
 
 - Tech detection (CV, pasted postings, posting links) knows common short names (TS, RN, Postgres, k8s, GraphQL and more, matched case sensitively) and breaks ties by first mention instead of alphabetically, so a posting's lead stack ranks first.
