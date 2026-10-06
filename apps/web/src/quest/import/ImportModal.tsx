@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import { t } from "@grip/core/i18n";
-import { importRowToContact, importSummary, markDuplicates } from "@grip/core/ledgerImport";
+import { markDuplicates } from "@grip/core/duplicates";
+import { importRowToContact, importSummary } from "@grip/core/ledgerImport";
+import { linksToRead, mergeTechs } from "@grip/core/postingReader";
 import { colors, font, radius, space, tints } from "@grip/core/tokens";
 import { textareaFieldStyle } from "../../components/fieldStyles";
-import { ledgerImport } from "../../lib/api";
+import { ledgerImport, postingReader } from "../../lib/api";
 import { useImportContactsMutation } from "../queries";
 import type { Contact } from "../types";
 import { ReviewList, type ReviewRow } from "./ReviewList";
@@ -42,6 +44,9 @@ function readBase64(file: File): Promise<string> {
   });
 }
 
+// Matches the API's per request cap; rows past it keep the model's techs.
+const MAX_LINKS = 10;
+
 // Quest import: upload or paste, AI reads it, the user reviews and confirms. Nothing is
 // saved before the confirm step.
 export function ImportModal({ contacts, onClose, onImported }: { contacts: Contact[]; onClose: () => void; onImported: (count: number) => void }) {
@@ -54,11 +59,43 @@ export function ImportModal({ contacts, onClose, onImported }: { contacts: Conta
   const [text, setText] = useState("");
   const [rows, setRows] = useState<ReviewRow[]>([]);
   const [unplaced, setUnplaced] = useState<string[]>([]);
+  const [readLinks, setReadLinks] = useState(true);
+  const [readingLinks, setReadingLinks] = useState(false);
+  // Bumped on each successful parse, so links are read once per parse, not per step change.
+  const [parseId, setParseId] = useState(0);
   const save = useImportContactsMutation();
 
   useEffect(() => {
     dialog.current?.showModal();
   }, []);
+  // Unchecking or closing aborts the request, so late results never land.
+  useEffect(() => {
+    if (!parseId || !readLinks || !postingReader) return;
+    const urls = linksToRead(rows, MAX_LINKS);
+    if (urls.length === 0) return;
+    const controller = new AbortController();
+    setReadingLinks(true);
+    postingReader
+      .readPostings(urls, { signal: controller.signal })
+      .then((postings: { url: string; status: string; text: string | null }[]) => setRows((current) => mergeTechs(current, postings)))
+      .catch((cause: Error) => {
+        if (cause.name === "AbortError") return;
+        setRows((current) => current.map((row) => (urls.includes(row.link) && !row.linkStatus ? { ...row, linkStatus: "unreachable" } : row)));
+      })
+      .finally(() => setReadingLinks(false));
+    return () => {
+      controller.abort();
+      setReadingLinks(false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once per parse and toggle, not on every row edit
+  }, [parseId, readLinks]);
+  // Shown before parsing, so opting out happens before any link is opened.
+  const readLinksToggle = postingReader && (
+    <label style={{ display: "flex", gap: space.sm, alignItems: "flex-start", fontSize: font.size.label, color: colors.textDim }}>
+      <input type="checkbox" checked={readLinks} onChange={(e) => setReadLinks(e.target.checked)} />
+      {t("quest.importReadLinks")}
+    </label>
+  );
   // Each step announces itself by moving focus to its heading.
   useEffect(() => {
     heading.current?.focus();
@@ -84,8 +121,15 @@ export function ImportModal({ contacts, onClose, onImported }: { contacts: Conta
         warnings: row.warnings,
       }));
       const duplicates = markDuplicates(parsed, contacts);
-      setRows(parsed.map((row) => duplicates.has(row.id) ? { ...row, included: false, warnings: [...row.warnings, "duplicate"] } : row));
+      // A duplicate is unchecked; a possible one (same company, other role) stays in with a note.
+      setRows(parsed.map((row) => {
+        const kind = duplicates.get(row.id);
+        if (kind === "duplicate") return { ...row, included: false, warnings: [...row.warnings, "duplicate"] };
+        if (kind === "possible") return { ...row, warnings: [...row.warnings, "possibleDuplicate"] };
+        return row;
+      }));
       setUnplaced(result.unplaced);
+      setParseId((id) => id + 1);
       setStep("review");
     } catch (cause) {
       const failure = cause as Error & { code?: string };
@@ -105,7 +149,7 @@ export function ImportModal({ contacts, onClose, onImported }: { contacts: Conta
   const confirm = () => {
     const chosen = rows.filter((row) => row.included);
     // Same client ids on every retry, so a resend after a timeout cannot duplicate.
-    save.mutate(chosen.map(({ included: _i, source: _s, warnings: _w, ...contact }) => contact), {
+    save.mutate(chosen.map(({ included: _i, source: _s, warnings: _w, techsEdited: _e, linkStatus: _l, ...contact }) => contact), {
       onSuccess: () => {
         onImported(chosen.length);
         onClose();
@@ -137,6 +181,7 @@ export function ImportModal({ contacts, onClose, onImported }: { contacts: Conta
       {step === "upload" && (
         <div style={{ display: "flex", flexDirection: "column", gap: space.md, marginTop: space.md }}>
           <p style={{ margin: 0, color: colors.textDim, fontSize: font.size.body, lineHeight: 1.5 }}>{t("quest.importIntro")}</p>
+          {readLinksToggle}
           {pasting ? (
             <label style={{ display: "flex", flexDirection: "column", gap: space.xs }}>
               <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("quest.importPasteLabel")}</span>
@@ -174,6 +219,10 @@ export function ImportModal({ contacts, onClose, onImported }: { contacts: Conta
 
       {step === "review" && (
         <div style={{ marginTop: space.md, display: "flex", flexDirection: "column", gap: space.md }}>
+          {readLinksToggle}
+          {readingLinks && (
+            <p role="status" style={{ margin: 0, fontSize: font.size.label, color: colors.textFaint }}>{t("quest.importReadingLinks")}</p>
+          )}
           <ReviewList rows={rows} onChange={(id, patch) => setRows((current) => current.map((row) => row.id === id ? { ...row, ...patch } : row))} />
           {unplaced.length > 0 && (
             <details style={{ fontSize: font.size.small, color: colors.textDim }}>

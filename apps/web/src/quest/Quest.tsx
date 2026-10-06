@@ -181,12 +181,12 @@ export default function Quest() {
           {noticeLine}
           {focus.mode === "new" && (
             <>
-              <ContactForm initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }} onSave={handleSave} onCancel={() => setFocus(null)} />
+              <ContactForm initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }} contacts={contacts ?? []} onSave={handleSave} onCancel={() => setFocus(null)} />
               {errorFor("new") && <ErrorText>{errorFor("new")}</ErrorText>}
             </>
           )}
           {focused && focus.mode === "edit" && (
-            <ContactForm initial={focused} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
+            <ContactForm initial={focused} contacts={contacts ?? []} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
           )}
           {focused && focus.mode === "retro" && (
             <RetroForm onSave={(retro) => handleAddRetro(focused, retro)} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />

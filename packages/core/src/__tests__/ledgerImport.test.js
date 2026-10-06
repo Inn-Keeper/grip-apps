@@ -1,5 +1,5 @@
 import { contactsApi } from "../api/contacts.js";
-import { createLedgerImportApi, importRowToContact, importSummary, markDuplicates } from "../ledgerImport.js";
+import { createLedgerImportApi, importRowToContact, importSummary } from "../ledgerImport.js";
 
 const parsed = {
   name: "Acme",
@@ -11,6 +11,7 @@ const parsed = {
   next_action_date: "2026-10-12",
   link: "https://jobs.acme.com/1",
   note: "Recruiter: jane@acme.com",
+  must_have_techs: [],
   source: "applied to acme",
   warnings: [],
 };
@@ -32,23 +33,21 @@ describe("importRowToContact", () => {
     });
   });
 
+  test("must-have techs map to drillable catalog names in the model's order", () => {
+    const row = { ...parsed, must_have_techs: ["postgresql", "TypeScript", "Underwater Basket Weaving", "typescript"] };
+    expect(importRowToContact(row, "id-3").postingTechs).toEqual(["PostgreSQL", "TypeScript"]);
+  });
+
+  test("an API without must_have_techs still maps to no techs", () => {
+    const { must_have_techs: _m, ...row } = parsed;
+    expect(importRowToContact(row, "id-4").postingTechs).toEqual([]);
+  });
+
   test("nulls become empty strings", () => {
     const row = { ...parsed, role: null, date: null, stage_date: null, next_action: null, next_action_date: null, link: null, note: null };
     expect(importRowToContact(row, "id-2")).toMatchObject({
       role: "", date: "", stageReachedOn: "", nextAction: "", nextActionDate: "", link: "", note: "",
     });
-  });
-});
-
-describe("markDuplicates", () => {
-  test("matches existing contacts and earlier rows, ignoring case and spaces", () => {
-    const rows = [
-      { id: "a", name: " acme " },
-      { id: "b", name: "Globex" },
-      { id: "c", name: "GLOBEX" },
-      { id: "d", name: "Initech" },
-    ];
-    expect([...markDuplicates(rows, [{ name: "Acme" }])].sort()).toEqual(["a", "c"]);
   });
 });
 

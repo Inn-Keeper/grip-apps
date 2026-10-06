@@ -65,3 +65,35 @@ describe("mergeTechSignals", () => {
     expect(mergeTechSignals(undefined, ["Go"])).toEqual([{ tech: "Go", score: 1 }]);
   });
 });
+
+describe("extractTechsFromText aliases", () => {
+  const known = ["TypeScript", "PostgreSQL", "React Native", "GraphQL (Relay)", "Node.js", "Kubernetes"];
+
+  test("short and common names count toward the catalog tech", () => {
+    const text = "TS everywhere, Postgres, RN app, GraphQL API, Node backend on k8s. Typescript again.";
+    expect(extractTechsFromText(text, known)).toEqual([
+      { tech: "TypeScript", score: 2 },
+      { tech: "PostgreSQL", score: 1 },
+      { tech: "React Native", score: 1 },
+      { tech: "GraphQL (Relay)", score: 1 },
+      { tech: "Node.js", score: 1 },
+      { tech: "Kubernetes", score: 1 },
+    ]);
+  });
+
+  test("aliases still need word boundaries", () => {
+    expect(extractTechsFromText("tsunami nodes postgresql", ["TypeScript", "Node.js"])).toEqual([]);
+  });
+
+  test("aliases are case sensitive, so plain words do not count", () => {
+    expect(extractTechsFromText("the rest of the team, ts and rn", ["REST / OpenAPI", "TypeScript", "React Native"])).toEqual([]);
+  });
+
+  test("ties rank by first mention", () => {
+    expect(extractTechsFromText("Stack: TypeScript, React. Also Java.", ["Java", "React", "TypeScript"]).map((d) => d.tech)).toEqual([
+      "TypeScript",
+      "React",
+      "Java",
+    ]);
+  });
+});

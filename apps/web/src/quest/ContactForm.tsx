@@ -1,33 +1,35 @@
 import React, { useState } from "react";
 import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { extractTechsFromText } from "@grip/core/cvTechs";
-import { categories } from "@grip/core/prepData";
+import { findDuplicate } from "@grip/core/duplicates";
+import { PREP_TECHS } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { DateInput, Field } from "./shared";
 import { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "../components/fieldStyles";
-import { TechChips } from "./TechChips";
+import { TechPicker } from "./TechPicker";
 import type { Contact } from "./types";
 import { EMPTY_FORM } from "./types";
 
-const ALL_TECHS: string[] = categories.flatMap((c: { items: { tech: string }[] }) =>
-  c.items.map((item) => item.tech)
-);
 const POSTING_TECH_LIMIT = 12;
 
 export function ContactForm({
   initial,
+  contacts,
   onSave,
   onCancel,
 }: {
   initial: Partial<Contact>;
+  contacts: Contact[];
   onSave: (form: Omit<Contact, "id" | "retros">) => void;
   onCancel: () => void;
 }) {
   const [form, setForm] = useState<Omit<Contact, "id" | "retros">>({ ...EMPTY_FORM, ...initial });
   // The pasted posting is parsed locally and never stored — only detected techs persist.
   const [posting, setPosting] = useState("");
+  // Warns, never blocks: a second application to the same company can be real.
+  const duplicate = findDuplicate({ ...form, id: initial.id }, contacts);
   const set = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) =>
     setForm((current) => ({ ...current, [field]: event.target.value }));
 
@@ -35,7 +37,7 @@ export function ContactForm({
     const text = event.target.value;
     setPosting(text);
     if (!text.trim()) return; // keep saved chips when the paste box is cleared
-    const detected = extractTechsFromText(text, ALL_TECHS, POSTING_TECH_LIMIT);
+    const detected = extractTechsFromText(text, PREP_TECHS, POSTING_TECH_LIMIT);
     setForm((current) => ({ ...current, postingTechs: detected.map((d: { tech: string }) => d.tech) }));
   };
 
@@ -67,6 +69,11 @@ export function ContactForm({
           onChange={(status) => setForm((current) => ({ ...current, status }))}
         />
       </div>
+      {duplicate && (
+        <p role="status" style={{ margin: 0, fontSize: font.size.label, color: colors.warningBright }}>
+          {t(duplicate.kind === "duplicate" ? "contacts.duplicateWarn" : "contacts.possibleDuplicateWarn", { name: duplicate.contact.name })}
+        </p>
+      )}
       <Combobox
         label={t("contacts.fieldRole")}
         searchable
@@ -86,18 +93,12 @@ export function ContactForm({
           placeholder={t("contacts.postingPlaceholder")}
         />
       </Field>
-      {form.postingTechs.length > 0 && (
-        <TechChips
-          label={t("contacts.postingDetected")}
-          techs={form.postingTechs}
-          onRemove={(tech) =>
-            setForm((current) => ({
-              ...current,
-              postingTechs: current.postingTechs.filter((item) => item !== tech),
-            }))
-          }
-        />
-      )}
+      <TechPicker
+        label={t("contacts.postingDetected")}
+        techs={form.postingTechs}
+        limit={POSTING_TECH_LIMIT}
+        onChange={(postingTechs) => setForm((current) => ({ ...current, postingTechs }))}
+      />
       <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
         <Field label={t("contacts.fieldNote")}>
           <input style={inputStyle} value={form.note} onChange={set("note")} />

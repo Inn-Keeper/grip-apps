@@ -2339,3 +2339,6 @@ export const categories = [
     ],
   },
 ];
+
+// Every drillable tech name, for pickers and posting detection.
+export const PREP_TECHS = categories.flatMap((c) => c.items.map((item) => item.tech));

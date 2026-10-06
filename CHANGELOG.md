@@ -4,6 +4,23 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-10-06
+
+### Added
+
+- Posting techs can be added or removed by hand, from the Prep catalog, in each row of the import review and in the contact form (en, sv, pt).
+- Ledger import reads each posting link (on by default, can be turned off in the review) and fills the row's techs from the posting, through a guarded grip-ai-api endpoint that only opens public https pages and stores nothing. Rows edited by hand keep their techs. Pages built with JavaScript (such as Ashby) are read through their schema.org JobPosting data (en, sv, pt).
+
+### Changed
+
+- Duplicate check for new entries: the same posting link, or the same company and role, counts as already in Quest, ignoring case, brackets, markdown and suffixes like AB or Inc. In import such rows stay unchecked; the same company with another role stays checked with a note. The contact form warns (without blocking) when a new or edited contact matches one already in Quest (en, sv, pt).
+
+- Tech detection (CV, pasted postings, posting links) knows common short names (TS, RN, Postgres, k8s, GraphQL and more, matched case sensitively) and breaks ties by first mention instead of alphabetically, so a posting's lead stack ranks first.
+
+### Fixed
+
+- Imported contacts get a prep plan: ledger import now saves up to 5 must-have techs per application (named in the list, matched to the Prep catalog) as posting techs, shown as chips in the review list. Before, imported Interviewing contacts had no plan until edited (en, sv, pt).
+
 ## 2026-10-05
 
 ### Added

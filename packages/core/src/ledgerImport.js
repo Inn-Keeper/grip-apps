@@ -1,8 +1,17 @@
 // Ledger import: grip-ai-api parses a messy list of applications, the user reviews
 // the rows, and the confirmed ones are saved as Quest contacts in one request.
 import { dateToUi } from "./api/shared.js";
+import { extractTechsFromText } from "./cvTechs.js";
+import { PREP_TECHS } from "./prepData.js";
 
-const normalize = (name) => (name ?? "").trim().toLowerCase();
+/**
+ * The model's must-have techs as drillable catalog names, keeping its order.
+ * @param {string[]} techs
+ */
+export function toPrepTechs(techs = []) {
+  const found = techs.map((tech) => extractTechsFromText(tech, PREP_TECHS, 1)[0]?.tech).filter(Boolean);
+  return [...new Set(found)];
+}
 
 /**
  * One parsed row (snake_case, ISO dates) in the UI contact shape upsertContact and
@@ -22,24 +31,8 @@ export function importRowToContact(row, id) {
     nextActionDate: dateToUi(row.next_action_date),
     link: row.link ?? "",
     note: row.note ?? "",
-    postingTechs: [],
+    postingTechs: toPrepTechs(row.must_have_techs),
   };
-}
-
-/**
- * Ids of rows whose name is already in Quest or appeared earlier in the import.
- * @param {{ id: string, name: string }[]} rows
- * @param {{ name: string }[]} contacts
- */
-export function markDuplicates(rows, contacts) {
-  const seen = new Set(contacts.map((c) => normalize(c.name)));
-  const duplicates = new Set();
-  for (const row of rows) {
-    const key = normalize(row.name);
-    if (seen.has(key)) duplicates.add(row.id);
-    seen.add(key);
-  }
-  return duplicates;
 }
 
 /** Counts for the confirm dialog. @param {{ included: boolean, nextActionDate: string }[]} rows */

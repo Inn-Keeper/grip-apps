@@ -3,11 +3,14 @@ import { t } from "@grip/core/i18n";
 import { colors, font, radius, space } from "@grip/core/tokens";
 import { fieldStyle } from "../../components/fieldStyles";
 import { DateInput } from "../shared";
+import { TechPicker } from "../TechPicker";
 import type { Contact } from "../types";
 
-export type ReviewRow = Contact & { id: string; stageReachedOn: string; included: boolean; source: string; warnings: string[] };
+export type ReviewRow = Contact & { id: string; stageReachedOn: string; included: boolean; source: string; warnings: string[]; techsEdited?: boolean; linkStatus?: string };
 
 const compactField = { ...fieldStyle, minHeight: 34, padding: `${space.xs + 2}px ${space.sm}px` };
+// The prep plan drills the top 5 posting techs.
+const IMPORT_TECH_LIMIT = 5;
 const label = { fontSize: font.size.micro, fontWeight: 700, color: colors.textFaint };
 
 // One editable card per parsed application; unchecked rows are not imported.
@@ -41,6 +44,17 @@ export function ReviewList({ rows, onChange }: { rows: ReviewRow[]; onChange: (i
               <span style={label}>{t("quest.importColFollowUp")}</span>
               <DateInput value={row.nextActionDate} onChange={(nextActionDate) => onChange(row.id, { nextActionDate })} />
             </label>
+          </div>
+          <div style={{ marginTop: space.sm }}>
+            <TechPicker
+              label={t("quest.importTechs")}
+              techs={row.postingTechs}
+              limit={IMPORT_TECH_LIMIT}
+              onChange={(postingTechs) => onChange(row.id, { postingTechs, techsEdited: true })}
+            />
+            {row.linkStatus && row.linkStatus !== "ok" && (
+              <p style={{ margin: `${space.xs}px 0 0`, fontSize: font.size.label, color: colors.textFaint }}>{t("quest.importLinkFailed")}</p>
+            )}
           </div>
           {row.warnings.length > 0 && (
             <p style={{ margin: `${space.sm}px 0 0`, fontSize: font.size.label, color: colors.warningBright }}>
