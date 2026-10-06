@@ -1,0 +1,27 @@
+/* Agenda rows: raised on hover and keyboard focus, like other tappable rows. */
+.line {
+  transition: background 150ms ease;
+}
+
+.line:has(:focus-visible) {
+  background: var(--agenda-hover) !important;
+}
+
+.line :focus-visible {
+  outline: 2px solid var(--agenda-tone);
+  outline-offset: -2px;
+  border-radius: 6px;
+}
+
+/* Inline background needs !important to yield. */
+@media (hover: hover) {
+  .line:hover {
+    background: var(--agenda-hover) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    transition: none;
+  }
+}

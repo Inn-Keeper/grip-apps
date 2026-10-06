@@ -14,6 +14,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Quest agenda restyled to match the pipeline rail: tone dot and count per section, inset rows with a colored edge and hover, the follow-up date on the left of each item and a link to the posting (en, sv, pt).
 - Arch Board: keyboard shortcuts and the unsaved work guard, the choice of the main action, and the Next Up card moved out of `ArchBoard.tsx` into their own files. No behavior change.
 - Mobile board: the toolbar, zen overlay and saved boards tray moved out of the screen into `components/board`. The Next Up step text now comes from `@grip/core/workflowState` on web and mobile alike. No behavior change.
 

@@ -150,6 +150,7 @@ export const sv = {
   "quest.agendaLoading": "Laddar agenda…",
   "quest.agendaError": "Agendan är inte tillgänglig. Försök igen senare.",
   "quest.agendaMore": "+{count} till",
+  "quest.agendaOpenLink": "Öppna annonsen för {name}",
   "quest.importButton": "Importera lista",
   "quest.importTitle": "Importera dina ansökningar",
   "quest.importIntro": "Välj en .docx- eller .md-fil, eller klistra in din lista. Vi visar ansökningarna innan något sparas.",

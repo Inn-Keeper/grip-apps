@@ -150,6 +150,7 @@ export const pt = {
   "quest.agendaLoading": "Carregando agenda…",
   "quest.agendaError": "Agenda indisponível. Tente novamente mais tarde.",
   "quest.agendaMore": "+{count} mais",
+  "quest.agendaOpenLink": "Abrir a vaga de {name}",
   "quest.importButton": "Importar lista",
   "quest.importTitle": "Importe suas candidaturas",
   "quest.importIntro": "Escolha um arquivo .docx ou .md, ou cole sua lista. Mostraremos as candidaturas antes de salvar qualquer coisa.",

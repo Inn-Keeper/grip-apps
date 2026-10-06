@@ -150,6 +150,7 @@ export const en = {
   "quest.agendaLoading": "Loading agenda…",
   "quest.agendaError": "Agenda unavailable. Try again later.",
   "quest.agendaMore": "+{count} more",
+  "quest.agendaOpenLink": "Open the posting for {name}",
   "quest.importButton": "Import list",
   "quest.importTitle": "Import your applications",
   "quest.importIntro": "Choose a .docx or .md file, or paste your list. We’ll show you the applications before anything is saved.",
