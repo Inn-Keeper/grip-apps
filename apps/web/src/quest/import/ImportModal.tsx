@@ -182,14 +182,16 @@ export function ImportModal({
           >
             {headingText}
           </h2>
-          <button
-            type="button"
-            onClick={close}
-            disabled={save.isPending}
-            style={button(false)}
-          >
-            {t("quest.importClose")}
-          </button>
+          {step !== "reading" && (
+            <button
+              type="button"
+              onClick={close}
+              disabled={save.isPending}
+              style={button(false)}
+            >
+              {t("quest.importClose")}
+            </button>
+          )}
         </header>
         <div
           key={step}
@@ -268,7 +270,16 @@ export function ImportModal({
             </>
           )}
           {step === "reading" && (
-            <p role="status">{t(readingLinks ? "quest.importReadingLinks" : "quest.importReadingSub")}</p>
+            <div
+              className={styles.processing}
+              role="status"
+            >
+              <span
+                className={styles.spinner}
+                aria-hidden="true"
+              />
+              <p>{t(readingLinks ? "quest.importReadingLinks" : "quest.importReadingSub")}</p>
+            </div>
           )}
           {step === "review" && (
             <>

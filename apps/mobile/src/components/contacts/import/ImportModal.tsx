@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import {
   AccessibilityInfo,
+  ActivityIndicator,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -198,11 +199,13 @@ export function ImportModal({
             >
               {title}
             </Text>
-            <Action
-              label={t("quest.importClose")}
-              onPress={close}
-              disabled={save.isPending}
-            />
+            {step !== "reading" && (
+              <Action
+                label={t("quest.importClose")}
+                onPress={close}
+                disabled={save.isPending}
+              />
+            )}
           </View>
           <ScrollView
             key={step}
@@ -268,12 +271,18 @@ export function ImportModal({
               </>
             )}
             {step === "reading" && (
-              <Text
-                accessibilityLiveRegion="polite"
-                style={styles.text}
-              >
-                {t(readingLinks ? "quest.importReadingLinks" : "quest.importReadingSub")}
-              </Text>
+              <View style={{ alignItems: "center", gap: space.lg, paddingVertical: space.xl }}>
+                <ActivityIndicator
+                  size="large"
+                  color={colors.accent}
+                />
+                <Text
+                  accessibilityLiveRegion="polite"
+                  style={styles.text}
+                >
+                  {t(readingLinks ? "quest.importReadingLinks" : "quest.importReadingSub")}
+                </Text>
+              </View>
             )}
             {step === "review" && (
               <>

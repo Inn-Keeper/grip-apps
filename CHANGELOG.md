@@ -20,6 +20,8 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Reading an imported list shows a processing spinner and only the bottom Cancel action (web and mobile).
+
 - Import review and confirmation: responsive fields and persistent actions, distinct review/save labels, warnings that update after edits, validation for selected rows, and unrecognized lines included in the final summary. Posting links finish reading before review so confirmed details cannot change in the background (web and mobile; en, sv, pt).
 - Imported contacts get a prep plan: ledger import now saves up to 5 must-have techs per application (named in the list, matched to the Prep catalog) as posting techs, shown as chips in the review list. Before, imported Interviewing contacts had no plan until edited (en, sv, pt).
 
