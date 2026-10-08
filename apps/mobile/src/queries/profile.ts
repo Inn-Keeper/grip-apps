@@ -61,6 +61,14 @@ export function useGithubPrepMutation(profile: { githubUrl?: string | null } | n
   });
 }
 
+export function useSaveFavoriteTechsMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (favoriteTechs: string[]) => api.updateProfile({ favoriteTechs }),
+    onSuccess: (saved) => queryClient.setQueryData(profileQueryKeys.profile, saved),
+  });
+}
+
 export function useSaveCvTechsMutation() {
   const queryClient = useQueryClient();
   return useMutation({

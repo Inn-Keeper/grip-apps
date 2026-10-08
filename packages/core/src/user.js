@@ -23,3 +23,8 @@ export function profileFormToUpdate(form) {
   if ("useGithubTechsForPrep" in form) update.useGithubTechsForPrep = form.useGithubTechsForPrep;
   return update;
 }
+
+// Adds the tech to the favorites, or removes it if it's already there.
+export function toggleFavoriteTech(favoriteTechs = [], tech) {
+  return favoriteTechs.includes(tech) ? favoriteTechs.filter((favorite) => favorite !== tech) : [...favoriteTechs, tech];
+}

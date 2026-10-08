@@ -22,6 +22,7 @@ import {
 } from "@/queries/profile";
 import { CvImportError, importCvTechs } from "@/lib/cvImport";
 import { ProfileNextUp } from "@/components/profile/ProfileNextUp";
+import { FavoriteTechsCard } from "@/components/profile/FavoriteTechsCard";
 
 type ProfileForm = Record<string, string>;
 
@@ -424,6 +425,8 @@ export default function ProfileScreen() {
             </View>
           )}
         </Card>
+
+        <FavoriteTechsCard profile={profile} />
 
         <Card>
           <Field label={t("profile.email")}>

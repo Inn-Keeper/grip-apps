@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { RANKS, rankForXp } from "@grip/core/gamification";
 import { colors, font, tints } from "@grip/core/tokens";
-import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@grip/core/user";
+import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm, toggleFavoriteTech } from "@grip/core/user";
 import { setLocale, t } from "@grip/core/i18n";
 import { useLocale } from "../lib/useLocale";
 import { poeVisibleByDefault, setPoeAssistantVisible } from "../components/poe/poeAssistantUtils";
@@ -34,7 +34,6 @@ import {
 import type { ProfileForm } from "./types";
 import { ErrorText } from "../components/ErrorText";
 import { categories } from "@grip/core/prepData";
-import { toggleFavoriteTech } from "./favoriteTechs";
 
 const GITHUB_LINKED_KEY = "grip.githubLinked";
 

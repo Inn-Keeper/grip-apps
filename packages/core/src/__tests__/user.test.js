@@ -1,4 +1,4 @@
-import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "../user.js";
+import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm, toggleFavoriteTech } from "../user.js";
 
 describe("profile form helpers", () => {
   it("keeps the standard editable profile fields in one shared list", () => {
@@ -59,5 +59,12 @@ describe("profile form helpers", () => {
       useGithubTechsForPrep: true,
       onboardingCompleted: true,
     });
+  });
+});
+
+describe("toggleFavoriteTech", () => {
+  it("adds a missing favorite and removes an existing one", () => {
+    expect(toggleFavoriteTech(["React"], "Python")).toEqual(["React", "Python"]);
+    expect(toggleFavoriteTech(["React", "Python"], "React")).toEqual(["Python"]);
   });
 });

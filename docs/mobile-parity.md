@@ -36,7 +36,7 @@ only; 2026-09-17 and earlier shipped on both.
 - Missing: stage filters, Next Up, the applications-per-week headline, the stage velocity panel (`@grip/core/pipeline`), focused views for contact detail and forms.
 
 **Profile**
-- Has: every profile field, GitHub linking and "use GitHub techs for prep", CV import, language, rank and XP. Autosave, the completion headline, Next Up and Reset under Preferences shipped in phase 5a.
+- Has: every profile field, GitHub linking and "use GitHub techs for prep", CV import, favorite techs (and Prep's From My Favorites category), language, rank and XP. Autosave, the completion headline, Next Up and Reset under Preferences shipped in phase 5a.
 - Missing: the Poe assistant toggle (mobile has no Poe).
 
 **App level**

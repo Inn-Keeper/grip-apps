@@ -99,8 +99,13 @@ export default function PrepScreen() {
     setQuizSize(value).catch(() => undefined);
   };
 
-  // CV techs (saved on the profile) join GitHub signals into one "from your profile" category.
-  const { allItems, signals, displayCategories } = profileCategories({ githubTechs, cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
+  // Favorites get their own category; CV techs join GitHub signals into "from your profile".
+  const { allItems, signals, displayCategories } = profileCategories({
+    githubTechs,
+    cvTechs: profile?.cvTechs ?? [],
+    favoriteTechs: profile?.favoriteTechs ?? [],
+    color: colors.accentBright,
+  });
   const category = (displayCategories.find((c: { name: string }) => c.name === activeCategoryName) ?? displayCategories[0]) as PrepCategory;
 
   // Search spans every category by name or one-liner, as on web.

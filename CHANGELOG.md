@@ -9,6 +9,7 @@ because they have to be applied by hand.
 ### Added
 
 - Web Profile: Favorite techs section. Every Prep tech shows as a toggle chip, sorted alphabetically, and picks save to the profile (en, sv, pt).
+- Mobile: Favorite techs card on Profile and the From My Favorites category on Prep, matching web.
 - Interview Prep: From My Favorites category on top of the practice map, built from the profile's favorite techs (en, sv, pt).
 - Lint rule `grip/style-properties-per-line`: JSX style objects put one property per line; web and mobile files reformatted to match.
 
