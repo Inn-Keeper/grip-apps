@@ -29,7 +29,7 @@ export default function StoriesScreen() {
   const confirmDelete = (story: Story) =>
     Alert.alert(t("stories.deleteTitle"), t("stories.deleteMessage", { title: story.title }), [
       { text: t("common.cancel"), style: "cancel" },
-      { text: t("common.delete"), style: "destructive", onPress: () => deleteMutation.mutate(story.id) },
+      { text: t("common.delete"), style: "destructive", onPress: () => story.id && deleteMutation.mutate(story.id) },
     ]);
 
   const handleSave = (form: Story) => {

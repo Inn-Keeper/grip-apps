@@ -3,7 +3,7 @@ import { markDuplicates } from "./duplicates.js";
 import { importRowToContact } from "./ledgerImport.js";
 import { linksToRead, mergeTechs } from "./postingReader.js";
 
-/** @typedef {import('./api.js').Contact & { id: string, stageReachedOn: string, included: boolean, source: string, warnings: string[], linkStatus?: string }} ReviewRow */
+/** @typedef {import('./api').Contact & { id: string, stageReachedOn: string, included: boolean, source: string, warnings: string[], linkStatus?: string }} ReviewRow */
 
 export const IMPORT_MAX_BYTES = 1_000_000;
 export const IMPORT_FILE_TYPES = /\.(docx|md)$/i;
@@ -19,7 +19,7 @@ const EDITABLE_WARNINGS = new Set([
 /** Recompute editable warnings without overriding the person's inclusion choices.
  * @template {ReviewRow} R
  * @param {R[]} rows
- * @param {import('./api.js').Contact[]} contacts
+ * @param {import('./api').Contact[]} contacts
  * @returns {R[]}
  */
 export function reviewImportRows(rows, contacts) {
@@ -47,7 +47,7 @@ export const hasInvalidImportRows = (rows) =>
   );
 
 /** Both clients finish enrichment before review, so the confirmed data stays still.
- * @param {{ ledger: ReturnType<import('./ledgerImport.js').createLedgerImportApi>, posting: ReturnType<import('./postingReader.js').createPostingReaderApi> | null, payload: { text: string } | { filename: string, content_base64: string }, contacts: import('./api.js').Contact[], readLinks: boolean, signal: AbortSignal, newId: () => string, onReadingLinks?: () => void }} options
+ * @param {{ ledger: ReturnType<import('./ledgerImport.js').createLedgerImportApi>, posting: ReturnType<import('./postingReader.js').createPostingReaderApi> | null, payload: { text: string } | { filename: string, content_base64: string }, contacts: import('./api').Contact[], readLinks: boolean, signal: AbortSignal, newId: () => string, onReadingLinks?: () => void }} options
  * @returns {Promise<{ rows: ReviewRow[], unplaced: string[] }>}
  */
 export async function readImport({ ledger, posting, payload, contacts, readLinks, signal, newId, onReadingLinks }) {

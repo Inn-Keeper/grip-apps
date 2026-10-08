@@ -29,17 +29,21 @@ export default function ProfileScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [form, setForm] = useState<ProfileForm>(EMPTY_PROFILE_FORM);
+
   // Autosave feedback: the field that just saved, and a failed save for the field that caused it.
   const [savedKey, setSavedKey] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<{ key: string; message: string } | null>(null);
+  
   // The field being typed in survives the refresh that follows another field's save.
   const editingKey = useRef<string | null>(null);
   const inputs = useRef<Record<string, TextInput | null>>({});
   const locale = useLocale();
+
   const { data: profile = null, error: loadError } = useProfileQuery();
   const { data: identities = [], error: identitiesError } = useAuthIdentitiesQuery();
   const githubIdentityUrl = githubUrlFromIdentities(identities);
   const displayGithubUrl = profile?.githubUrl || githubIdentityUrl;
+
   // "Connected" means a real GitHub OAuth identity is linked — not merely that a
   // githubUrl exists, since that can be a hand-typed/saved profile field.
   const githubConnected = identities.some((identity) => identity.provider === "github");
@@ -62,9 +66,15 @@ export default function ProfileScreen() {
 
   useEffect(() => {
     if (!profile) return;
+    
     const next = profileToForm(profile) as ProfileForm;
     if (!next.githubUrl && displayGithubUrl) next.githubUrl = displayGithubUrl;
-    setForm((current) => (editingKey.current ? { ...next, [editingKey.current]: current[editingKey.current] ?? "" } : next));
+    
+    setForm((current) => (
+      editingKey.current 
+      ? { ...next, [editingKey.current]: current[editingKey.current] ?? "" } 
+      : next)
+    );
   }, [profile, displayGithubUrl]);
 
   useEffect(() => {
@@ -77,21 +87,27 @@ export default function ProfileScreen() {
     editingKey.current = key;
     setForm((current) => ({ ...current, [key]: value }));
   };
+
   // Autosave, as on web: a field saves when you leave it, only if it changed.
   const commitField = (key: string) => {
     editingKey.current = null;
+    
     if (!profile) return;
     const saved = profileToForm(profile) as ProfileForm;
+    
     if ((form[key] ?? "") === (saved[key] ?? "")) return;
     setFieldError(null);
+
     saveMutation.mutate(profileFormToUpdate(form), {
       onSuccess: () => setSavedKey(key),
       onError: (err: Error) => setFieldError({ key, message: t("profile.saveFailed", { message: err.message }) }),
     });
   };
+  
   const completionItems = PROFILE_FIELDS.filter((field) => (form[field.key] ?? "").trim()).length;
   const completionPct = Math.round((completionItems / PROFILE_FIELDS.length) * 100);
   const firstEmpty = PROFILE_FIELDS.find((field) => !(form[field.key] ?? "").trim());
+
   const nextUp = firstEmpty
     ? {
         title: t("profile.nextFieldTitle", { field: t(firstEmpty.labelKey as Parameters<typeof t>[0]).toLowerCase() }),

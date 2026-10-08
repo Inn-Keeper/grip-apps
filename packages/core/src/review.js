@@ -25,30 +25,19 @@ export function reviewIntervalDays(streak) {
 }
 
 /**
- * Builds the per-tech review schedule from raw answer events.
- * Only attempted techs appear — never-seen techs are "new", not "due".
+ * Builds the review schedule from per-tech stats (answer_tech_stats RPC).
+ * Only attempted techs appear; never-seen techs are "new", not "due".
  *
- * @param {Array<{ tech: string, correct: boolean, createdAt?: string, created_at?: string }>} events
+ * @param {Array<{ tech: string, streak: number, last_at: string }>} stats
  * @param {Date} [now]
  * @returns {ReviewEntry[]} due techs first (most overdue leading), then upcoming by dueAt
  */
-export function buildReviewQueue(events = [], now = new Date()) {
-  const sorted = events
-    .map((event) => ({ event, time: new Date(event.createdAt ?? event.created_at).getTime() }))
-    .filter(({ time }) => !Number.isNaN(time))
-    .sort((a, b) => a.time - b.time);
-
-  const byTech = new Map();
-  for (const { event, time } of sorted) {
-    const entry = byTech.get(event.tech) ?? { streak: 0, lastTime: 0 };
-    entry.streak = event.correct ? entry.streak + 1 : 0;
-    entry.lastTime = time;
-    byTech.set(event.tech, entry);
-  }
-
+export function buildReviewQueue(stats = [], now = new Date()) {
   const nowMs = now.getTime();
-  return [...byTech.entries()]
-    .map(([tech, { streak, lastTime }]) => {
+  return stats
+    .map(({ tech, streak, last_at }) => ({ tech, streak, lastTime: new Date(last_at).getTime() }))
+    .filter(({ lastTime }) => !Number.isNaN(lastTime))
+    .map(({ tech, streak, lastTime }) => {
       const intervalDays = reviewIntervalDays(streak);
       const dueAt = lastTime + intervalDays * DAY_MS;
       return { tech, streak, intervalDays, dueAt, due: dueAt <= nowMs };

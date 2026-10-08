@@ -1,0 +1,17 @@
+{
+  // Checker only: web (Vite) and mobile (Metro) compile the sources.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "allowJs": true,
+    "checkJs": false,
+    "isolatedModules": true,
+    "resolveJsonModule": true
+  },
+  "include": ["src/api.ts", "src/api"]
+}

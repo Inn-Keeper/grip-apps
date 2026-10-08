@@ -1,6 +1,6 @@
 // Ledger import: grip-ai-api parses a messy list of applications, the user reviews
 // the rows, and the confirmed ones are saved as Quest contacts in one request.
-import { dateToUi } from "./api/shared.js";
+import { dateToUi } from "./api/shared";
 import { extractTechsFromText } from "./cvTechs.js";
 import { PREP_TECHS } from "./prepData.js";
 

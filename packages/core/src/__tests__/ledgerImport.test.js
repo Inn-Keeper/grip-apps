@@ -1,4 +1,4 @@
-import { contactsApi } from "../api/contacts.js";
+import { contactsApi } from "../api/contacts";
 import { createLedgerImportApi, importRowToContact, importSummary } from "../ledgerImport.js";
 
 const parsed = {

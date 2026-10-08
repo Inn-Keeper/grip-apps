@@ -1,58 +1,46 @@
 // Answers, XP, review queue and quiz questions.
+import type { AccuracyPoint, Question, Scores } from "../api";
 import { buildAccuracyTimeline } from "../accuracy.js";
-import { buildReviewQueue } from "../review.js";
+import { buildReviewQueue, type ReviewEntry } from "../review.js";
 import { shuffle } from "../quiz.js";
-import { fail } from "./shared.js";
+import { fail, type Db } from "./shared";
 
 // Upper bound on how many candidate questions we pull for a techs+difficulty
 // fetch before randomizing. Selection happens client-side (see getQuestions),
 // so this only needs to comfortably exceed a tier's pool across a few techs.
 const QUESTION_FETCH_CAP = 500;
 
-/** @param {any} supabase */
-export function scoresApi(supabase) {
-  async function listAllAnswerEvents(columns) {
-    const rows = [];
-    let start = 0;
-    while (true) {
-      const { data, error } = await supabase
-        .from("answer_events")
-        .select(columns)
-        .order("created_at", { ascending: true })
-        .order("id", { ascending: true })
-        .range(start, start + 999);
-      if (error) fail(error);
-      if (!data.length) return rows;
-      rows.push(...data);
-      start += data.length;
-    }
+export function scoresApi(supabase: Db) {
+  // Per-tech totals and streaks, aggregated in Postgres.
+  async function techStats() {
+    const { data, error } = await supabase.rpc("answer_tech_stats");
+    if (error) fail(error);
+    return data;
   }
 
-  async function getScores() {
-    const [profile, events] = await Promise.all([
+  async function getScores(): Promise<Scores> {
+    const [profile, stats] = await Promise.all([
       supabase.from("profiles").select("xp").maybeSingle(),
-      listAllAnswerEvents("tech, correct"),
+      techStats(),
     ]);
     if (profile.error) fail(profile.error);
 
-    const answers = {};
-    for (const e of events) {
-      const a = (answers[e.tech] ??= { correct: 0, wrong: 0 });
-      if (e.correct) a.correct += 1;
-      else a.wrong += 1;
-    }
+    const answers: Scores["answers"] = {};
+    for (const s of stats) answers[s.tech] = { correct: s.correct, wrong: s.wrong };
     return { xp: profile.data?.xp ?? 0, answers };
   }
 
-  async function getAccuracyTimeline() {
-    return buildAccuracyTimeline(await listAllAnswerEvents("correct, created_at"));
+  async function getAccuracyTimeline(): Promise<AccuracyPoint[]> {
+    // The device's zone, so a late-evening session lands on the local day.
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const { data, error } = await supabase.rpc("answer_daily_totals", { p_tz: tz });
+    if (error) fail(error);
+    return buildAccuracyTimeline(data);
   }
 
   /** Spaced-review schedule derived from answer_events. */
-  async function getReviewQueue() {
-    return buildReviewQueue(
-      await listAllAnswerEvents("tech, correct, created_at")
-    );
+  async function getReviewQueue(): Promise<ReviewEntry[]> {
+    return buildReviewQueue(await techStats());
   }
 
   /**
@@ -63,10 +51,8 @@ export function scoresApi(supabase) {
    * slice. Ordering the query alone would hand back the same first N rows every
    * call and could starve some of the requested techs; randomizing client-side
    * keeps drills varied and spread across all techs.
-   * @param {{ techs: string[], difficulty: string, limit?: number }} args
-   * @returns {Promise<{ id: string, tech: string, category: string, difficulty: string, prompt: string, options: string[], correct: number, explanation: string | null }[]>}
    */
-  async function getQuestions({ techs, difficulty, limit = 10 }) {
+  async function getQuestions({ techs, difficulty, limit = 10 }: { techs: string[]; difficulty: string; limit?: number }): Promise<Question[]> {
     if (!techs?.length) return [];
     const { data, error } = await supabase
       .from("questions")
@@ -75,32 +61,34 @@ export function scoresApi(supabase) {
       .eq("difficulty", difficulty)
       .limit(QUESTION_FETCH_CAP);
     if (error) fail(error);
-    return shuffle(data).slice(0, limit);
+    // options is jsonb; the seed always writes a string array.
+    return shuffle(data).slice(0, limit).map((q) => ({ ...q, options: q.options as string[] }));
   }
 
   async function recordAnswer(
-    tech,
-    correct,
+    tech: string,
+    correct: boolean,
     source = "card",
-    difficulty = null,
-    requestId
-  ) {
+    difficulty: string | null = null,
+    requestId: string
+  ): Promise<void> {
     const { error } = await supabase.rpc("record_answer", {
       p_request_id: requestId,
       p_tech: tech,
       p_correct: correct,
       p_source: source,
-      p_difficulty: difficulty,
+      // Omitted when null; the function defaults it to null.
+      p_difficulty: difficulty ?? undefined,
     });
     if (error) fail(error);
   }
 
-  async function addXp(points) {
+  async function addXp(points: number): Promise<void> {
     const { error } = await supabase.rpc("add_xp", { points });
     if (error) fail(error);
   }
 
-  async function resetScores() {
+  async function resetScores(): Promise<Scores> {
     const { error } = await supabase.rpc("reset_scores");
     if (error) fail(error);
 

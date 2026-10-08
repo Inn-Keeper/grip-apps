@@ -28,9 +28,9 @@ export function useScoresQuery() {
   return useQuery({ queryKey: ["scores"], queryFn: api.getScores });
 }
 
-// Shares the Arch Board cache; feeds saved-board scores into readiness.
+// Readiness scores and story links; board saves and deletes invalidate it.
 export function useBoardsQuery() {
-  return useQuery({ queryKey: archBoardQueryKeys.fullBoards, queryFn: api.listBoards });
+  return useQuery({ queryKey: archBoardQueryKeys.boardOverviews, queryFn: api.listBoardOverviews });
 }
 
 // Local const so the null check narrows inside the closure below; an imported

@@ -48,7 +48,7 @@ export default function QuestScreen() {
   const confirmDelete = (contact: Contact) =>
     Alert.alert(t("contacts.deleteTitle"), t("contacts.deleteMessage", { name: contact.name }), [
       { text: t("common.cancel"), style: "cancel" },
-      { text: t("common.delete"), style: "destructive", onPress: () => deleteMutation.mutate(contact.id) },
+      { text: t("common.delete"), style: "destructive", onPress: () => contact.id && deleteMutation.mutate(contact.id) },
     ]);
 
   const handleSave = (form: Contact) => {

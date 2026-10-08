@@ -1,4 +1,4 @@
-import { createApi, dateToDb, dateToUi } from "../api.js";
+import { createApi, dateToDb, dateToUi } from "../api";
 import { emptyTalkTrack } from "../talkTrack.js";
 
 describe("date mapping", () => {
@@ -24,6 +24,7 @@ function fakeSupabase(tables = {}, authUser = null, options = {}) {
   const client = {
     auth: {
       getUser: async () => ({ data: { user: authUser }, error: null }),
+      getSession: async () => ({ data: { session: authUser ? { user: authUser } : null }, error: null }),
     },
     from(table) {
       const tableRows = tables[table] ?? [];
@@ -81,7 +82,7 @@ function fakeSupabase(tables = {}, authUser = null, options = {}) {
     },
     rpc: async (fn, args) => {
       calls.rpcs.push({ fn, args });
-      return { data: null, error: null };
+      return { data: options.rpcs?.[fn] ?? null, error: null };
     },
   };
   return { client, calls };
@@ -99,58 +100,24 @@ describe("createApi", () => {
     const { client } = fakeSupabase({ arch_boards: [{ id: "b", title: "Board", scenario_id: "s", nodes: [], edges: [] }] });
     await expect(createApi(client).getBoard("b")).resolves.toMatchObject({ id: "b", scenarioId: "s", nodes: [], edges: [] });
   });
-  it("aggregates answer events into per-tech scores", async () => {
-    const { client } = fakeSupabase({
-      profiles: [{ xp: 120 }],
-      answer_events: [
-        { tech: "React", correct: true },
-        { tech: "React", correct: true },
-        { tech: "React", correct: false },
-        { tech: "Docker", correct: false },
-      ],
+  it("maps per-tech stats from the RPC into scores", async () => {
+    const { client, calls } = fakeSupabase({ profiles: [{ xp: 120 }] }, null, {
+      rpcs: {
+        answer_tech_stats: [
+          { tech: "React", correct: 2, wrong: 1, streak: 0, last_at: "2026-01-03T10:00:00Z" },
+          { tech: "Docker", correct: 0, wrong: 1, streak: 0, last_at: "2026-01-01T10:00:00Z" },
+        ],
+      },
     });
-    const api = createApi(client);
-
-    const scores = await api.getScores();
-    expect(scores.xp).toBe(120);
-    expect(scores.answers.React).toEqual({ correct: 2, wrong: 1 });
-    expect(scores.answers.Docker).toEqual({ correct: 0, wrong: 1 });
-  });
-
-  it("defaults to zero XP when no profile row exists yet", async () => {
-    const { client } = fakeSupabase({ profiles: [], answer_events: [] });
-    const api = createApi(client);
-
-    const scores = await api.getScores();
-    expect(scores).toEqual({ xp: 0, answers: {} });
-  });
-
-  it("reads every score event when Supabase caps each response", async () => {
-    const events = [
-      { id: "1", tech: "React", correct: true, created_at: "2026-01-01T10:00:00Z" },
-      { id: "2", tech: "React", correct: false, created_at: "2026-01-02T10:00:00Z" },
-      { id: "3", tech: "React", correct: true, created_at: "2026-01-03T10:00:00Z" },
-    ];
-    const { client, calls } = fakeSupabase(
-      { profiles: [], answer_events: events },
-      null,
-      { serverCap: 2 }
-    );
 
     const scores = await createApi(client).getScores();
+    expect(scores).toEqual({ xp: 120, answers: { React: { correct: 2, wrong: 1 }, Docker: { correct: 0, wrong: 1 } } });
+    expect(calls.selects.some((c) => c.table === "answer_events")).toBe(false);
+  });
 
-    expect(scores.answers.React).toEqual({ correct: 2, wrong: 1 });
-    expect(calls.ranges).toEqual([
-      { table: "answer_events", start: 0, end: 999 },
-      { table: "answer_events", start: 2, end: 1001 },
-      { table: "answer_events", start: 3, end: 1002 },
-    ]);
-    expect(calls.orders).toEqual(
-      expect.arrayContaining([
-        { table: "answer_events", column: "created_at", options: { ascending: true } },
-        { table: "answer_events", column: "id", options: { ascending: true } },
-      ])
-    );
+  it("defaults to zero XP and no answers for a new user", async () => {
+    const { client } = fakeSupabase({ profiles: [] }, null, { rpcs: { answer_tech_stats: [] } });
+    await expect(createApi(client).getScores()).resolves.toEqual({ xp: 0, answers: {} });
   });
 
   it("merges auth identity with the app profile row", async () => {
@@ -357,35 +324,23 @@ describe("createApi", () => {
     });
   });
 
-  it("returns an accuracy timeline from answer events", async () => {
-    const { client } = fakeSupabase({
-      answer_events: [
-        { correct: true, created_at: "2026-01-01T10:00:00Z" },
-        { correct: false, created_at: "2026-01-02T10:00:00Z" },
-      ],
+  it("builds the accuracy timeline from daily totals in the device time zone", async () => {
+    const { client, calls } = fakeSupabase({}, null, {
+      rpcs: {
+        answer_daily_totals: [
+          { day: "2026-01-01", correct: 1, total: 1 },
+          { day: "2026-01-02", correct: 0, total: 1 },
+        ],
+      },
     });
-    const api = createApi(client);
 
-    await expect(api.getAccuracyTimeline()).resolves.toEqual([
+    await expect(createApi(client).getAccuracyTimeline()).resolves.toEqual([
       { date: "2026-01-01", accuracy: 1, correct: 1, total: 1 },
       { date: "2026-01-02", accuracy: 0.5, correct: 1, total: 2 },
     ]);
-  });
-
-  it("includes capped later events in accuracy and review calculations", async () => {
-    const events = [
-      { id: "1", tech: "React", correct: true, created_at: "2026-01-01T10:00:00Z" },
-      { id: "2", tech: "React", correct: true, created_at: "2026-01-02T10:00:00Z" },
-      { id: "3", tech: "React", correct: false, created_at: "2026-01-03T10:00:00Z" },
-    ];
-    const { client } = fakeSupabase({ answer_events: events }, null, { serverCap: 2 });
-    const api = createApi(client);
-
-    const timeline = await api.getAccuracyTimeline();
-    const queue = await api.getReviewQueue();
-
-    expect(timeline.at(-1)).toMatchObject({ date: "2026-01-03", correct: 2, total: 3 });
-    expect(queue).toEqual([expect.objectContaining({ tech: "React", streak: 0 })]);
+    expect(calls.rpcs).toEqual([
+      { fn: "answer_daily_totals", args: { p_tz: Intl.DateTimeFormat().resolvedOptions().timeZone } },
+    ]);
   });
 
   it("records a correct answer and XP through one retry-safe RPC", async () => {
@@ -402,7 +357,7 @@ describe("createApi", () => {
           p_tech: "Kubernetes",
           p_correct: true,
           p_source: "drill",
-          p_difficulty: null,
+          p_difficulty: undefined,
         },
       },
     ]);
@@ -422,7 +377,7 @@ describe("createApi", () => {
           p_tech: "Kubernetes",
           p_correct: false,
           p_source: "card",
-          p_difficulty: null,
+          p_difficulty: undefined,
         },
       },
     ]);
@@ -498,9 +453,9 @@ describe("createApi", () => {
     expect(calls.inserts[1].rows.struggled_techs).toEqual(["Kubernetes"]);
   });
 
-  it("builds the review queue from answer events", async () => {
-    const { client } = fakeSupabase({
-      answer_events: [{ tech: "React", correct: true, created_at: "2026-01-01T10:00:00Z" }],
+  it("builds the review queue from per-tech stats", async () => {
+    const { client } = fakeSupabase({}, null, {
+      rpcs: { answer_tech_stats: [{ tech: "React", correct: 1, wrong: 0, streak: 1, last_at: "2026-01-01T10:00:00Z" }] },
     });
     const api = createApi(client);
 

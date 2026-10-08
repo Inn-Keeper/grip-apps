@@ -98,8 +98,9 @@ export default function Quest() {
   };
 
   const handleDelete = (contact: Contact) => {
+    if (!contact.id) return;
     if (!window.confirm(t("contacts.deleteMessage", { name: contact.name }))) return;
-    setTouched(contact.id ?? null);
+    setTouched(contact.id);
     deleteMutation.mutate(contact.id, { onSuccess: () => announce(t("quest.deleted", { name: contact.name })) });
     setFocus(null);
   };

@@ -4,6 +4,19 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-10-08
+
+### Changed
+
+- `@grip/core/api` is now TypeScript, typed against Supabase types generated from the schema (`src/database.types.ts`, regenerate with `pnpm --filter @grip/core generate:db` after a migration). Web and mobile create typed Supabase clients, and `pnpm typecheck` now checks core too. No behavior change.
+- Delete calls for boards, contacts and stories now require an id, and quiz `options` and scenario `checks` carry their real types instead of `object` or `any`.
+- Faster Supabase reads: every query names the columns it uses instead of `*`, Prep scores, accuracy and the review queue come from two summary functions instead of paging every answer event three times, and Quest and story links load boards without talk tracks or share links. Saving a profile no longer calls the auth server.
+
+### Database
+
+- `0021_record_answer_nullable_difficulty.sql`: `record_answer`'s `p_difficulty` defaults to null, so clients can omit it instead of casting null. Body and grants unchanged.
+- `0022_query_performance.sql`: access rules call `auth.uid()` once per query instead of once per row (same rules), new indexes for contacts, stories, retros, status events and answer events, and the `answer_tech_stats` and `answer_daily_totals` functions.
+
 ## 2026-10-06
 
 ### Added

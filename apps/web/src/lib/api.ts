@@ -34,6 +34,7 @@ export { dateToUi, dateToDb, pipeline, talkGrade, ledgerImport, postingReader };
 export const {
   listBoards,
   listBoardSummaries,
+  listBoardOverviews,
   getBoard,
   upsertBoard,
   deleteBoard,

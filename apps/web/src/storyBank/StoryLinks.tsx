@@ -5,7 +5,8 @@ import { miniBtn } from "../components/fieldStyles";
 import { useScenarioCatalog } from "../archBoard/useScenarioCatalog";
 import { openInBoard } from "../lib/boardHandoff";
 import { useBoardsQuery } from "../quest/queries";
-import type { AugmentedScenario, SavedBoard } from "../archBoard/types";
+import type { BoardOverview } from "@grip/core/api";
+import type { AugmentedScenario } from "../archBoard/types";
 import type { Story } from "./types";
 
 const captionStyle = { fontSize: font.size.caption, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.08em", marginBottom: 2 } as const;
@@ -42,7 +43,7 @@ export function StoryLinks({ story }: { story: Story }) {
   );
 }
 
-function StoryBoard({ board, scenarios }: { board: SavedBoard; scenarios: AugmentedScenario[] }) {
+function StoryBoard({ board, scenarios }: { board: BoardOverview; scenarios: AugmentedScenario[] }) {
   const boardScenario = scenarios.find((s) => s.id === board.scenarioId);
   // Same design score the board shows; unknown until its (custom) scenario is loaded.
   const score = boardScenario ? evaluate(boardScenario as Parameters<typeof evaluate>[0], board.nodes, board.edges).score : null;
@@ -56,11 +57,11 @@ function StoryBoard({ board, scenarios }: { board: SavedBoard; scenarios: Augmen
             {[
               score !== null && t("stories.boardScore", { score }),
               board.talkGrade != null && t("stories.boardTalkGrade", { grade: board.talkGrade }),
-              new Date(board.updatedAt ?? "").toLocaleDateString(),
+              new Date(board.updatedAt).toLocaleDateString(),
             ].filter(Boolean).join(" · ")}
           </div>
         </div>
-        <button type="button" onClick={() => board.id && openInBoard({ scenarioId: board.scenarioId, boardId: board.id })} style={miniBtn(colors.accentBright ?? "")}>
+        <button type="button" onClick={() => openInBoard({ scenarioId: board.scenarioId, boardId: board.id })} style={miniBtn(colors.accentBright ?? "")}>
           {t("stories.openBoard")}
         </button>
       </div>

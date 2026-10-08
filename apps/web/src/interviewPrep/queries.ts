@@ -4,7 +4,7 @@ import { questionCapForPool } from "@grip/core/quizPrefs";
 import { shuffleOptions } from "@grip/core/quiz";
 import { drawUnseen } from "./questionDeck";
 import * as api from "../lib/api";
-import type { AccuracyPoint, QuizQuestion } from "./types";
+import type { QuizQuestion } from "./types";
 
 const CARD_POOL_LIMIT = 500;
 const DRILL_SIZE = 10;
@@ -22,10 +22,7 @@ export const prepQueryKeys = {
 };
 
 export function useAccuracyTimelineQuery() {
-  return useQuery<AccuracyPoint[]>({
-    queryKey: prepQueryKeys.accuracyTimeline,
-    queryFn: api.getAccuracyTimeline as () => Promise<AccuracyPoint[]>,
-  });
+  return useQuery({ queryKey: prepQueryKeys.accuracyTimeline, queryFn: api.getAccuracyTimeline });
 }
 
 export function usePrepProfileQuery() {

@@ -3,6 +3,11 @@
 // Fisher-Yates: a uniform shuffle. (A `sort(() => Math.random() - 0.5)`
 // comparator is non-uniform and engine-dependent, which would bias where the
 // correct answer lands across many questions.)
+/**
+ * @template T
+ * @param {readonly T[]} arr
+ * @returns {T[]}
+ */
 export const shuffle = (arr) => {
   const copy = [...arr];
   for (let i = copy.length - 1; i > 0; i--) {

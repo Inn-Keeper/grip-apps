@@ -1,12 +1,11 @@
 import { buildAccuracyTimeline } from "../accuracy.js";
 
 describe("buildAccuracyTimeline", () => {
-  it("builds cumulative daily accuracy from answer events", () => {
+  it("builds cumulative daily accuracy from per-day totals", () => {
     const timeline = buildAccuracyTimeline([
-      { correct: true, createdAt: "2026-01-02T10:00:00" },
-      { correct: false, createdAt: "2026-01-01T10:00:00" },
-      { correct: true, createdAt: "2026-01-01T12:00:00" },
-      { correct: true, createdAt: "2026-01-03T10:00:00" },
+      { day: "2026-01-02", correct: 1, total: 1 },
+      { day: "2026-01-01", correct: 1, total: 2 },
+      { day: "2026-01-03", correct: 1, total: 1 },
     ]);
 
     expect(timeline).toEqual([
@@ -16,7 +15,7 @@ describe("buildAccuracyTimeline", () => {
     ]);
   });
 
-  it("ignores events without timestamps", () => {
-    expect(buildAccuracyTimeline([{ correct: true }])).toEqual([]);
+  it("returns an empty line for no answers", () => {
+    expect(buildAccuracyTimeline([])).toEqual([]);
   });
 });

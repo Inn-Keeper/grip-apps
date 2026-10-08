@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./api": "./src/api.js",
+    "./api": "./src/api.ts",
     "./auth": "./src/auth.js",
     "./authCache": "./src/authCache.js",
     "./quiz": "./src/quiz.js",
@@ -60,11 +60,16 @@
     "@babel/preset-env": "^7.29.7",
     "babel-jest": "29.7.0",
     "jest": "29.7.0",
-    "openapi-typescript": "^7.13.0"
+    "openapi-typescript": "^7.13.0",
+    "@babel/preset-typescript": "^7.29.7",
+    "@supabase/supabase-js": "^2.108.1",
+    "typescript": "6"
   },
   "scripts": {
     "test": "jest",
-    "generate:pipeline": "openapi-typescript src/pipeline-spec.json -o src/pipeline-types.d.ts"
+    "generate:pipeline": "openapi-typescript src/pipeline-spec.json -o src/pipeline-types.d.ts",
+    "typecheck": "tsc --noEmit",
+    "generate:db": "supabase gen types typescript --project-id pfhptnmeqgmgoevvmywm --schema public > src/database.types.ts"
   },
   "dependencies": {
     "openapi-fetch": "^0.17.0"

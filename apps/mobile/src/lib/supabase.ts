@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@grip/core/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const url = process.env.EXPO_PUBLIC_SUPABASE_URL;
@@ -10,7 +11,7 @@ if (!url || !anonKey) {
   );
 }
 
-export const supabase = createClient(url, anonKey, {
+export const supabase = createClient<Database>(url, anonKey, {
   auth: {
     storage: AsyncStorage,
     autoRefreshToken: true,

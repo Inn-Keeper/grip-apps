@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import type { CustomScenario } from "@grip/core/api";
 import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
@@ -8,7 +9,7 @@ import { Combobox } from "../components/Combobox";
 import { fieldStyle as inputStyle } from "../components/fieldStyles";
 
 type ScenarioFormProps = {
-  onSave: (form: object) => void;
+  onSave: (form: CustomScenario) => void;
   onCancel: () => void;
   saving: boolean;
   error: Error | null;

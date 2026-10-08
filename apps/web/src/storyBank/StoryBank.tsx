@@ -53,8 +53,9 @@ export default function StoryBank() {
   };
 
   const handleDelete = (story: Story) => {
+    if (!story.id) return;
     if (!window.confirm(t("stories.deleteMessage", { title: story.title }))) return;
-    setTouched(story.id ?? null);
+    setTouched(story.id);
     deleteMutation.mutate(story.id, { onSuccess: () => announce(t("stories.deleted", { title: story.title })) });
     setFocus(null);
   };

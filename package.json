@@ -16,7 +16,7 @@
     "postinstall": "pnpm --filter mobile exec install-skia",
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
-    "typecheck": "pnpm --filter mobile exec tsc --noEmit && pnpm --filter web typecheck",
+    "typecheck": "pnpm --filter @grip/core typecheck && pnpm --filter mobile exec tsc --noEmit && pnpm --filter web typecheck",
     "test": "pnpm --filter @grip/core test && pnpm --filter mobile test && pnpm --filter web test",
     "seed:questions": "node --env-file-if-exists=.env scripts/seed-questions.mjs",
     "clean:ghosts": "find . -name '._*' -not -path '*/.git/*' -delete",
