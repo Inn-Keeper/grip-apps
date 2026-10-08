@@ -1,4 +1,4 @@
-import { buildGithubTechCategory, githubLanguagesToPrepTechs, githubUsernameFromUrl } from "../githubTechs.js";
+import { githubLanguagesToPrepTechs, githubUsernameFromUrl } from "../githubTechs.js";
 
 describe("GitHub tech helpers", () => {
   it("extracts a GitHub username from profile URLs", () => {
@@ -9,40 +9,15 @@ describe("GitHub tech helpers", () => {
 
   it("maps GitHub language totals to known prep technologies", () => {
     expect(
-      githubLanguagesToPrepTechs(
-        { TypeScript: 1000, JavaScript: 700, CSS: 400, Ruby: 999 },
-        ["TypeScript", "JavaScript", "HTML/CSS"]
-      )
+      githubLanguagesToPrepTechs({ TypeScript: 1000, JavaScript: 700, Dockerfile: 400, Ruby: 999 }, [
+        "TypeScript",
+        "JavaScript",
+        "Docker",
+      ]),
     ).toEqual([
       { tech: "TypeScript", score: 1000 },
       { tech: "JavaScript", score: 700 },
-      { tech: "HTML/CSS", score: 400 },
+      { tech: "Docker", score: 400 },
     ]);
-  });
-
-  it("builds a category from matched tech cards", () => {
-    const category = buildGithubTechCategory(
-      [{ tech: "TypeScript", oneliner: "Typed JS" }, { tech: "Docker", oneliner: "Containers" }],
-      [{ tech: "Docker", score: 20 }]
-    );
-
-    expect(category).toMatchObject({
-      name: "From GitHub techs",
-      items: [{ tech: "Docker", oneliner: "Containers", githubScore: 20 }],
-    });
-  });
-
-  it("omits the GitHub category when no profile techs are available", () => {
-    expect(buildGithubTechCategory([{ tech: "TypeScript" }], [])).toBeNull();
-    expect(buildGithubTechCategory([{ tech: "TypeScript" }], [{ tech: "Rust", score: 20 }])).toBeNull();
-  });
-
-  it("allows the category name/emoji to be overridden (CV vs GitHub source)", () => {
-    const category = buildGithubTechCategory(
-      [{ tech: "Docker" }],
-      [{ tech: "Docker", score: 1 }],
-      { name: "From your CV", emoji: "📄" }
-    );
-    expect(category).toMatchObject({ name: "From your CV", emoji: "📄" });
   });
 });

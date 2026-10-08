@@ -52,6 +52,8 @@ export const pt = {
 
   "prep.drillWeakest": "Treinar mais fracos",
   "prep.cvTechsCategory": "Do seu CV",
+  "prep.githubTechsCategory": "Das techs do GitHub",
+  "prep.favoritesCategory": "Dos meus favoritos",
   "prep.profileTechsCategory": "Do seu perfil",
   "prep.ranking": "Ranking",
   "prep.strongest": "Mais fortes",

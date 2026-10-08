@@ -19,7 +19,7 @@
     "./techList": "./src/techList.js",
     "./techLinks": "./src/techLinks.js",
     "./githubTechs": "./src/githubTechs.js",
-    "./cvTechs": "./src/cvTechs.js",
+    "./techMatch": "./src/techMatch.js",
     "./githubUrl": "./src/githubUrl.js",
     "./arch": "./src/arch.js",
     "./boardEdits": "./src/boardEdits.js",

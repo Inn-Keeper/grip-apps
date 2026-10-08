@@ -1,9 +1,5 @@
-// Extracts known prep techs from raw CV text. The CV is parsed in-browser
-// (PDF/txt -> text) and never stored; only the matched tech list is persisted.
-//
-// Output is shaped like githubLanguagesToPrepTechs ({ tech, score }[]) so CV
-// signals flow through the same buildGithubTechCategory path as GitHub techs.
-// "score" here is occurrence count — enough to rank, no byte weighting exists.
+// Finds catalog techs in free text: CVs, job postings, notes.
+// Matches whole words, plus case-sensitive aliases ("TS", "k8s").
 
 // Tech names contain regex-special chars (C++, Next.js, Node.js) and spaces
 // (Material UI), so \b boundaries don't work. We escape each name and require a
@@ -44,7 +40,9 @@ export function extractTechsFromText(text, knownTechs, limit = 12) {
   const found = new Map();
   for (const tech of knownTechs) {
     const name = new RegExp(`${BOUNDARY}(${escapeRegExp(tech)})(?![a-zA-Z0-9])`, "gi");
-    const aliases = (ALIASES[tech] ?? []).map((alias) => new RegExp(`${BOUNDARY}(${escapeRegExp(alias)})(?![a-zA-Z0-9])`, "g"));
+    const aliases = (ALIASES[tech] ?? []).map(
+      (alias) => new RegExp(`${BOUNDARY}(${escapeRegExp(alias)})(?![a-zA-Z0-9])`, "g"),
+    );
     const hits = [name, ...aliases].flatMap((pattern) => [...text.matchAll(pattern)].map((m) => m.index));
     if (hits.length) found.set(tech, { score: hits.length, first: Math.min(...hits) });
   }
@@ -54,24 +52,4 @@ export function extractTechsFromText(text, knownTechs, limit = 12) {
     .sort((a, b) => b[1].score - a[1].score || a[1].first - b[1].first)
     .slice(0, limit)
     .map(([tech, { score }]) => ({ tech, score }));
-}
-
-/**
- * Merges GitHub tech signals ({ tech, score }[]) with CV techs (string[]) into a
- * single deduped signal list for buildGithubTechCategory. Shared by web and
- * mobile so the prep-personalization logic lives in one place. CV techs have no
- * intrinsic score, so rank by their order (earlier = stronger); when a tech
- * appears in both sources, keep the higher score.
- * @param {{ tech: string, score: number }[]} githubTechs
- * @param {string[]} cvTechs
- * @returns {{ tech: string, score: number }[]}
- */
-export function mergeTechSignals(githubTechs, cvTechs) {
-  const byTech = new Map();
-  for (const { tech, score } of githubTechs ?? []) byTech.set(tech, score);
-  const cv = cvTechs ?? [];
-  cv.forEach((tech, i) => {
-    byTech.set(tech, Math.max(byTech.get(tech) ?? 0, cv.length - i));
-  });
-  return [...byTech.entries()].map(([tech, score]) => ({ tech, score }));
 }

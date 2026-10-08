@@ -12,7 +12,18 @@ function categoryAnswered(cat: Category, scores: Scores) {
   return cat.items.filter((item) => scores.answers[item.tech]?.correct || scores.answers[item.tech]?.wrong).length;
 }
 
-export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryName, categories, githubStatus, scores, search, setSearch, onCategory, onCategoryDrill }: {
+export function PrepLeftRail({
+  pendingCategory,
+  categoryError,
+  activeCategoryName,
+  categories,
+  githubStatus,
+  scores,
+  search,
+  setSearch,
+  onCategory,
+  onCategoryDrill,
+}: {
   activeCategoryName: string;
   categories: Category[];
   githubStatus: GithubStatus;
@@ -29,21 +40,35 @@ export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryNam
     <>
       <WorkspacePanel>
         <WorkspaceTitle
-          icon={<BrandIcon name="layers" color={colors.accentBright} size={17} />}
+          icon={
+            <BrandIcon
+              name="layers"
+              color={colors.accentBright}
+              size={17}
+            />
+          }
           title={t("prep.practiceMap")}
         />
-        <div style={{
+        <div
+          style={{
             position: "relative",
-            marginTop: 14
-          }}>
-          <span style={{
+            marginTop: 14,
+          }}
+        >
+          <span
+            style={{
               position: "absolute",
               left: 11,
               top: "50%",
               transform: "translateY(-50%)",
-              display: "flex"
-            }}>
-            <BrandIcon name="search" color={colors.textFaint} size={13} />
+              display: "flex",
+            }}
+          >
+            <BrandIcon
+              name="search"
+              color={colors.textFaint}
+              size={13}
+            />
           </span>
           <input
             value={search}
@@ -65,24 +90,30 @@ export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryNam
       </WorkspacePanel>
 
       <WorkspacePanel style={{ padding: 8 }}>
-        <div style={{
+        <div
+          style={{
             display: "flex",
             flexDirection: "column",
-            gap: 4
-          }}>
+            gap: 4,
+          }}
+        >
           {categories.map((cat) => {
             const active = activeCategoryName === cat.name && !search.trim();
             const answered = categoryAnswered(cat, scores);
             // Mastery, not coverage: average accuracy across the category, untested techs as 0.
-          const pct = computeReadiness({ postingTechs: cat.items.map((item) => item.tech), answers: scores.answers }).prep ?? 0;
+            const pct =
+              computeReadiness({ postingTechs: cat.items.map((item) => item.tech), answers: scores.answers }).prep ?? 0;
             const loading = pendingCategory === cat.name;
             return (
               <Fragment key={cat.name}>
-                <div className={styles.catRow} style={{
+                <div
+                  className={styles.catRow}
+                  style={{
                     display: "flex",
                     alignItems: "center",
-                    gap: 4
-                  }}>
+                    gap: 4,
+                  }}
+                >
                   <button
                     onClick={() => onCategory(cat.name)}
                     style={{
@@ -99,65 +130,90 @@ export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryNam
                       textAlign: "left",
                     }}
                   >
-                    <BrandIcon name={categoryIconName(cat.name)} color={active ? cat.color : colors.textFaint} size={15} />
-                    <span style={{
+                    <BrandIcon
+                      name={categoryIconName(cat.name)}
+                      color={active ? cat.color : colors.textFaint}
+                      size={15}
+                    />
+                    <span
+                      style={{
                         flex: 1,
-                        minWidth: 0
-                      }}>
-                      <span style={{
+                        minWidth: 0,
+                      }}
+                    >
+                      <span
+                        style={{
                           display: "block",
                           fontSize: font.size.body,
-                          fontWeight: 700
-                        }}>{cat.name}</span>
-                      <span style={{
+                          fontWeight: 700,
+                        }}
+                      >
+                        {cat.name}
+                      </span>
+                      <span
+                        style={{
                           display: "block",
                           marginTop: 3,
                           color: colors.textFaint,
-                          fontSize: font.size.label
-                        }}>
+                          fontSize: font.size.label,
+                        }}
+                      >
                         {t("prep.touched", { answered, total: cat.items.length })}
                       </span>
                     </span>
-                    <span title={t("prep.masteryHint")} style={{
+                    <span
+                      title={t("prep.masteryHint")}
+                      style={{
                         width: 34,
                         textAlign: "right",
                         color: pct > 0 ? cat.color : colors.textFaint,
                         fontSize: font.size.label,
-                        fontWeight: 800
-                      }}>
+                        fontWeight: 800,
+                      }}
+                    >
                       {pct}%
                     </span>
                   </button>
                   <button
-                    onClick={(e) => { e.stopPropagation(); onCategoryDrill(cat.name); }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onCategoryDrill(cat.name);
+                    }}
                     className={styles.catDrill}
                     data-active={active}
                     aria-busy={loading}
                     title={t("prep.drillCategory", { category: cat.name })}
-                    style={{
-                      flexShrink: 0,
-                      padding: "5px 8px",
-                      border: `1px solid ${cat.color}40`,
-                      borderRadius: 6,
-                      background: "transparent",
-                      color: cat.color,
-                      fontSize: font.size.caption,
-                      fontWeight: 700,
-                      cursor: "pointer",
-                      letterSpacing: "0.03em",
-                      "--cat-color": `${cat.color}99`,
-                      "--cat-shine": `${cat.color}B3`,
-                    } as CSSProperties}
+                    style={
+                      {
+                        flexShrink: 0,
+                        padding: "5px 8px",
+                        border: `1px solid ${cat.color}40`,
+                        borderRadius: 6,
+                        background: "transparent",
+                        color: cat.color,
+                        fontSize: font.size.caption,
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        letterSpacing: "0.03em",
+                        "--cat-color": `${cat.color}99`,
+                        "--cat-shine": `${cat.color}B3`,
+                      } as CSSProperties
+                    }
                   >
                     {loading ? "…" : t("prep.drill")}
                   </button>
                 </div>
                 {categoryError?.name === cat.name && (
-                  <p role="alert" style={{
+                  <p
+                    role="alert"
+                    style={{
                       margin: "0 10px 4px",
                       color: colors.warningBright,
-                      fontSize: font.size.label
-                    }}>{categoryError.message}</p>
+                      fontSize: font.size.label,
+                    }}
+                  >
+                    {categoryError.message}
+                  </p>
                 )}
               </Fragment>
             );
@@ -166,11 +222,14 @@ export function PrepLeftRail({ pendingCategory, categoryError, activeCategoryNam
       </WorkspacePanel>
 
       {githubStatus?.enabled && githubStatus?.hasUrl && (
-        <WorkspacePanel tone="sunken" style={{
+        <WorkspacePanel
+          tone="sunken"
+          style={{
             color: colors.textFaint,
             fontSize: font.size.small,
-            lineHeight: 1.5
-          }}>
+            lineHeight: 1.5,
+          }}
+        >
           {githubStatus.loading
             ? t("github.loading")
             : githubStatus.error

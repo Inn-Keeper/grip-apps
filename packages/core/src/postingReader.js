@@ -1,6 +1,6 @@
 // Posting link techs for import review: grip-ai-api returns page text, techs are
 // detected here so the catalog stays in one place.
-import { extractTechsFromText } from "./cvTechs.js";
+import { extractTechsFromText } from "./techMatch.js";
 import { PREP_TECHS } from "./prepData.js";
 import { LedgerImportError } from "./ledgerImport.js";
 

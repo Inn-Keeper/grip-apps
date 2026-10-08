@@ -52,6 +52,8 @@ export const en = {
 
   "prep.drillWeakest": "Drill weakest",
   "prep.cvTechsCategory": "From your CV",
+  "prep.githubTechsCategory": "From GitHub techs",
+  "prep.favoritesCategory": "From My Favorites",
   "prep.profileTechsCategory": "From your profile",
   "prep.ranking": "Ranking",
   "prep.strongest": "Strongest",

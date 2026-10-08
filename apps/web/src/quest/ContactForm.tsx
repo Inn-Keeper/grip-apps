@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip/core/contacts";
-import { extractTechsFromText } from "@grip/core/cvTechs";
+import { extractTechsFromText } from "@grip/core/techMatch";
 import { findDuplicate } from "@grip/core/duplicates";
 import { PREP_TECHS } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";

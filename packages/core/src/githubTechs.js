@@ -4,24 +4,10 @@
 const REPO_PAGE_SIZE = 30;
 const REPO_SCAN_LIMIT = 12;
 
-const LANGUAGE_TO_TECH = {
-  JavaScript: "JavaScript",
-  TypeScript: "TypeScript",
-  Python: "Python",
-  Java: "Java",
-  PHP: "PHP",
-  "C++": "C++",
-  Swift: "Swift",
-  Kotlin: "Kotlin",
-  Dart: "Flutter",
-  HTML: "HTML/CSS",
-  CSS: "HTML/CSS",
-  SCSS: "HTML/CSS",
-  Shell: "Linux",
-  Dockerfile: "Docker",
-  HCL: "Terraform",
-};
+// GitHub language -> catalog tech, only where the names differ; same-named languages match directly.
+const LANGUAGE_TO_TECH = { Dockerfile: "Docker" };
 
+// The username from a github.com profile URL, or "" for anything else.
 export function githubUsernameFromUrl(value) {
   const raw = (value ?? "").trim();
   if (!raw) return "";
@@ -31,6 +17,7 @@ export function githubUsernameFromUrl(value) {
   return username && !["features", "marketplace", "pricing", "topics"].includes(username.toLowerCase()) ? username : "";
 }
 
+// Sums language bytes per catalog tech and returns the top ones, strongest first.
 export function githubLanguagesToPrepTechs(languages, knownTechs, limit = 8) {
   const known = new Set(knownTechs);
   const totals = new Map();
@@ -47,29 +34,6 @@ export function githubLanguagesToPrepTechs(languages, knownTechs, limit = 8) {
     .map(([tech, score]) => ({ tech, score }));
 }
 
-export function buildGithubTechCategory(items, techSignals, options = {}) {
-  if (!techSignals?.length) return null;
-
-  const byTech = new Map(items.map((item) => [item.tech, item]));
-  const color = options.color ?? "#2DD4BF";
-  const matched = techSignals
-    .map((signal) => {
-      const item = byTech.get(signal.tech);
-      return item ? { ...item, color, githubScore: signal.score } : null;
-    })
-    .filter(Boolean);
-
-  if (!matched.length) return null;
-
-  return {
-    name: options.name ?? "From GitHub techs",
-    emoji: options.emoji ?? "⌁",
-    color,
-    items: matched,
-    source: "github",
-  };
-}
-
 /**
  * Reads a public GitHub profile's recent repo languages and maps them to known
  * prep techs. Network-bound; shared by web and mobile so the fetch orchestration
@@ -81,7 +45,7 @@ export function buildGithubTechCategory(items, techSignals, options = {}) {
  */
 export async function fetchGithubTechSignals(username, knownTechs) {
   const reposResponse = await fetch(
-    `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=${REPO_PAGE_SIZE}&sort=pushed`
+    `https://api.github.com/users/${encodeURIComponent(username)}/repos?per_page=${REPO_PAGE_SIZE}&sort=pushed`,
   );
   if (!reposResponse.ok) throw new Error("Couldn't load GitHub repositories.");
 
@@ -97,7 +61,7 @@ export async function fetchGithubTechSignals(username, knownTechs) {
       for (const [language, bytes] of Object.entries(languages)) {
         languageTotals[language] = (languageTotals[language] ?? 0) + Number(bytes || 0);
       }
-    })
+    }),
   );
 
   return githubLanguagesToPrepTechs(languageTotals, knownTechs);

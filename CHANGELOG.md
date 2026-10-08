@@ -9,10 +9,13 @@ because they have to be applied by hand.
 ### Added
 
 - Web Profile: Favorite techs section. Every Prep tech shows as a toggle chip, sorted alphabetically, and picks save to the profile (en, sv, pt).
+- Interview Prep: From My Favorites category on top of the practice map, built from the profile's favorite techs (en, sv, pt).
 - Lint rule `grip/style-properties-per-line`: JSX style objects put one property per line; web and mobile files reformatted to match.
 
 ### Changed
 
+- Interview Prep: catalog categories and favorites list their techs alphabetically; From your profile keeps its strongest-first order.
+- Core cleanup: `cvTechs.js` is now `techMatch.js` (it matches techs in any text, not only CVs), and the GitHub plus CV merge and the profile category builder moved into `drillSession.js`. `githubTechs.js` keeps only GitHub logic, and its language table drops mappings to techs outside the catalog.
 - Web: Vite 6.4 to 8.3.3 (Rolldown bundler, pinned exact) and `@vitejs/plugin-react` 4 to 6; dropped the deprecated `optimizeDeps.esbuildOptions` block.
 - `@grip/core/api` is now TypeScript, typed against Supabase types generated from the schema (`src/database.types.ts`, regenerate with `pnpm --filter @grip/core generate:db` after a migration). Web and mobile create typed Supabase clients, and `pnpm typecheck` now checks core too. No behavior change.
 - Delete calls for boards, contacts and stories now require an id, and quiz `options` and scenario `checks` carry their real types instead of `object` or `any`.
@@ -20,6 +23,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- The GitHub-only profile category name is translated (was English in sv and pt).
 - Dependabot alerts: pdfjs-dist bumped to 6.4, and pnpm overrides lift shell-quote, @xmldom/xmldom, brace-expansion, nanoid, postcss, source-map-js, js-yaml, compression, browserslist and decode-uri-component to patched releases. braces and node-forge have no patched release yet, and image-size is only fixed in a new major.
 
 ### Database

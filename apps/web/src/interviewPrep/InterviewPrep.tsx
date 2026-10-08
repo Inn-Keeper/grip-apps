@@ -5,7 +5,15 @@ import { githubUsernameFromUrl } from "@grip/core/githubTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
-import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState } from "@grip/core/drillSession";
+import {
+  advanceDrill,
+  allTechs,
+  answerDrill,
+  loadDrill,
+  profileCategories,
+  readinessFor,
+  startDrillState,
+} from "@grip/core/drillSession";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
@@ -17,13 +25,7 @@ import { workspaceFocusStyle } from "../components/fieldStyles";
 import { PoeAssistant } from "../components/poe/PoeAssistant";
 import { getAutoNext, getLevel, getQuizSize, saveAutoNext, saveLevel, setQuizSize } from "./quizPrefs";
 import styles from "./InterviewPrep.module.css";
-import type {
-  CelebrationState,
-  DrillState,
-  PoeCue,
-  PrepItem,
-  QuizQuestion,
-} from "./types";
+import type { CelebrationState, DrillState, PoeCue, PrepItem, QuizQuestion } from "./types";
 import { Card } from "./Card";
 import { DrillSession } from "./DrillSession";
 import { MockLoop } from "./MockLoop";
@@ -43,8 +45,8 @@ import { summarizeScores } from "./summarizeScores";
 import { scrollBehavior } from "../lib/motion";
 
 export default function InterviewPrep() {
-  // Track the selected category by name, not list index: the "From GitHub techs"
-  // category is prepended once it loads, which would shift every index underneath it.
+  // Track the selected category by name, not list index: the profile and favorites
+  // categories are prepended once it loads, which would shift every index underneath it.
   const [activeCategoryName, setActiveCategoryName] = useState(categories[0]?.name ?? "");
   // Which cards show their notes side, by card key.
   const [search, setSearch] = useState("");
@@ -87,7 +89,10 @@ export default function InterviewPrep() {
   const updateQuizSize = (value: number | null) => {
     setQuizSize(value);
     setQuizSizeState(value);
-    setNotice({ id: Date.now(), text: value === null ? t("prep.sizeNoticeAll") : t("prep.sizeNotice", { size: value }) });
+    setNotice({
+      id: Date.now(),
+      text: value === null ? t("prep.sizeNoticeAll") : t("prep.sizeNotice", { size: value }),
+    });
   };
   const previousRank = useRef<{ name: string; min: number } | null>(null);
   // What "Drill again" repeats: whatever started the session that just finished.
@@ -103,8 +108,11 @@ export default function InterviewPrep() {
   const struggleBoost = recentStruggledTechs(prepContacts);
   const githubPrepEnabled = !!profile?.useGithubTechsForPrep;
   const githubUsername = githubPrepEnabled ? githubUsernameFromUrl(profile?.githubUrl) : "";
-  const { data: githubTechs = [], error: githubError, isFetching: githubLoading } =
-    useGithubTechsQuery(githubUsername, allTechs, githubPrepEnabled && !!githubUsername);
+  const {
+    data: githubTechs = [],
+    error: githubError,
+    isFetching: githubLoading,
+  } = useGithubTechsQuery(githubUsername, allTechs, githubPrepEnabled && !!githubUsername);
   const { fetchTierQuestions, fetchCardQuestions } = usePrepQuestionFetchers(level, quizSize, setPoolSize);
 
   useEffect(() => {
@@ -125,14 +133,21 @@ export default function InterviewPrep() {
     sessionRef.current?.scrollIntoView({ block: "nearest", behavior: scrollBehavior() });
   }, [drill?.questions]);
 
+  const favoriteTechs = profile?.favoriteTechs ?? [];
+
   // CV techs (saved on the profile) join GitHub signals into one "from your profile" category.
-  const { allItems, signals, profileCategory: githubCategory, displayCategories } = profileCategories({ githubTechs, cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
+  const {
+    allItems,
+    signals,
+    profileCategory: githubCategory,
+    displayCategories,
+  } = profileCategories({ githubTechs, favoriteTechs, cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
 
   const filtered = search.trim()
     ? allItems.filter(
         (i) =>
           i.tech.toLowerCase().includes(search.toLowerCase()) ||
-          i.oneliner.toLowerCase().includes(search.toLowerCase())
+          i.oneliner.toLowerCase().includes(search.toLowerCase()),
       )
     : null;
 
@@ -140,9 +155,14 @@ export default function InterviewPrep() {
 
   const displayCategory = displayCategories.find((c) => c.name === activeCategoryName) ?? displayCategories[0]!;
   const summary = summarizeScores(scores);
-  const visibleItems: PrepItem[] = filtered ?? (displayCategory.items as PrepItem[]).map((item: PrepItem) => ({ ...item, color: item.color ?? displayCategory.color, emoji: displayCategory.emoji }));
+  const visibleItems: PrepItem[] =
+    filtered ??
+    (displayCategory.items as PrepItem[]).map((item: PrepItem) => ({
+      ...item,
+      color: item.color ?? displayCategory.color,
+      emoji: displayCategory.emoji,
+    }));
   const activeTitle = filtered ? t("prep.searchResults") : displayCategory.name;
-
 
   // One session at a time: a running (unfinished) or loading session ignores new starts,
   // so a stray click can't throw away progress. "Drill again" runs from the done screen.
@@ -155,11 +175,16 @@ export default function InterviewPrep() {
     setPending(`card:${item.tech}`);
     setDrillError(null);
     try {
-      const questions = (await fetchCardQuestions(item.tech))
-        ?? (shuffle(item.quiz) as QuizQuestion[]).map(shuffleOptions as (q: QuizQuestion) => QuizQuestion);
+      const questions =
+        (await fetchCardQuestions(item.tech)) ??
+        (shuffle(item.quiz) as QuizQuestion[]).map(shuffleOptions as (q: QuizQuestion) => QuizQuestion);
       const color = item.color ?? colors.accent ?? "";
       setDrill({
-        ...startDrillState(questions.map((q) => ({ tech: item.tech, color, link: techLinks[item.tech], q })), level, Date.now()),
+        ...startDrillState(
+          questions.map((q) => ({ tech: item.tech, color, link: techLinks[item.tech], q })),
+          level,
+          Date.now(),
+        ),
         source: "card",
       });
     } finally {
@@ -175,7 +200,10 @@ export default function InterviewPrep() {
     restartRef.current = () => runDrill(difficulty, techs, { fallbackToAll, source });
     setPending(source);
     setDrillError(null);
-    const loaded = await loadDrill(fetchTierQuestions, difficulty, techs, { fallbackToAll, fallbackColor: colors.accent });
+    const loaded = await loadDrill(fetchTierQuestions, difficulty, techs, {
+      fallbackToAll,
+      fallbackColor: colors.accent,
+    });
     setPending(null);
     if ("error" in loaded) {
       setDrillError({ source, message: loaded.error });
@@ -291,7 +319,11 @@ export default function InterviewPrep() {
           }}
           onCategoryDrill={startCategoryDrill}
           pendingCategory={pending?.startsWith("cat:") ? pending.slice(4) : null}
-          categoryError={drillError?.source.startsWith("cat:") ? { name: drillError.source.slice(4), message: drillError.message } : null}
+          categoryError={
+            drillError?.source.startsWith("cat:")
+              ? { name: drillError.source.slice(4), message: drillError.message }
+              : null
+          }
         />
       }
       right={
@@ -326,42 +358,55 @@ export default function InterviewPrep() {
 
       {/* The header describes the card grid; a session labels itself, so it hides during one. */}
       {!drill && (
-        <div style={{
+        <div
+          style={{
             display: "flex",
             alignItems: "flex-end",
             justifyContent: "space-between",
             gap: 18,
-            marginBottom: 16
-          }}>
+            marginBottom: 16,
+          }}
+        >
           <div>
-            <p style={{
+            <p
+              style={{
                 margin: "0 0 6px",
                 color: colors.textFaint,
                 fontSize: font.size.small,
-                fontWeight: 700
-              }}>
-              {filtered ? `${filtered.length} of ${allItems.length} technologies` : `${displayCategory.items.length} technologies`}
+                fontWeight: 700,
+              }}
+            >
+              {filtered
+                ? `${filtered.length} of ${allItems.length} technologies`
+                : `${displayCategory.items.length} technologies`}
             </p>
-            <h1 style={{
+            <h1
+              style={{
                 margin: 0,
                 color: colors.textBright,
                 fontSize: font.size.heading,
                 lineHeight: 1.12,
-                fontWeight: 800
-              }}>
+                fontWeight: 800,
+              }}
+            >
               {activeTitle}
             </h1>
           </div>
           {/* The cards explain themselves; this slot only confirms setting changes (rule 14). */}
           {notice && (
-            <p key={notice.id} role="status" className={styles.notice} style={{
+            <p
+              key={notice.id}
+              role="status"
+              className={styles.notice}
+              style={{
                 margin: 0,
                 color: colors.accentBright,
                 fontSize: font.size.body,
                 fontWeight: 700,
                 textAlign: "right",
-                maxWidth: 360
-              }}>
+                maxWidth: 360,
+              }}
+            >
               {notice.text}
             </p>
           )}
@@ -369,9 +414,17 @@ export default function InterviewPrep() {
       )}
 
       {drill ? (
-        <div ref={sessionRef} style={workspaceFocusStyle}>
+        <div
+          ref={sessionRef}
+          style={workspaceFocusStyle}
+        >
           {mockActive ? (
-            <MockLoop drill={drill} onAnswer={answer} onNextQuestion={nextDrill} onExit={exitSession} />
+            <MockLoop
+              drill={drill}
+              onAnswer={answer}
+              onNextQuestion={nextDrill}
+              onExit={exitSession}
+            />
           ) : (
             <DrillSession
               drill={drill}
@@ -384,15 +437,21 @@ export default function InterviewPrep() {
           )}
         </div>
       ) : visibleItems.length === 0 ? (
-        <WorkspacePanel tone="sunken" style={{
+        <WorkspacePanel
+          tone="sunken"
+          style={{
             textAlign: "center",
             color: colors.textFaint,
-            padding: 28
-          }}>
+            padding: 28,
+          }}
+        >
           {t("prep.noMatches")}
         </WorkspacePanel>
       ) : (
-        <div key={deal} className={styles.cardGrid}>
+        <div
+          key={deal}
+          className={styles.cardGrid}
+        >
           {visibleItems.map((item, index) => {
             const key = filtered ? `search-${item.tech}` : `${activeCategoryName}-${item.tech}`;
             return (

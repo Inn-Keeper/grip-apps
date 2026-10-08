@@ -1,4 +1,12 @@
-import { advanceDrill, allTechs, answerDrill, loadDrill, startDrillState } from "../drillSession.js";
+import {
+  advanceDrill,
+  allTechs,
+  answerDrill,
+  loadDrill,
+  mergeTechSignals,
+  profileCategories,
+  startDrillState,
+} from "../drillSession.js";
 
 const entry = (tech, correct = 0) => ({ tech, q: { question: "q", options: ["a", "b"], correct } });
 
@@ -23,9 +31,86 @@ describe("drill session", () => {
   });
 
   it("falls back to every tech only when asked", async () => {
-    const fetchTier = jest.fn(async (_d, techs) => (techs.length > 1 ? [{ tech: "React", prompt: "p", options: ["a", "b"], correct: 0 }] : []));
+    const fetchTier = jest.fn(async (_d, techs) =>
+      techs.length > 1 ? [{ tech: "React", prompt: "p", options: ["a", "b"], correct: 0 }] : [],
+    );
     expect(await loadDrill(fetchTier, "mid", ["Nope"])).toHaveProperty("error");
     expect((await loadDrill(fetchTier, "mid", ["Nope"], { fallbackToAll: true })).entries).toHaveLength(1);
     expect(fetchTier).toHaveBeenLastCalledWith("mid", allTechs);
+  });
+});
+
+describe("profileCategories favorites", () => {
+  const techs = (category) => category.items.map((item) => item.tech);
+
+  it("builds a separate From My Favorites category, sorted by name, without merging into the profile one", () => {
+    const { favoritesCategory, profileCategory } = profileCategories({
+      githubTechs: [{ tech: "Java", score: 5000 }],
+      cvTechs: ["React"],
+      favoriteTechs: ["TypeScript", "Python"],
+      color: "#2DD4BF",
+    });
+    expect(techs(favoritesCategory)).toEqual(["Python", "TypeScript"]);
+    expect(techs(profileCategory)).toEqual(["Java", "React"]);
+  });
+
+  it("lists favorites first, then the profile category, then the catalog", () => {
+    const { favoritesCategory, profileCategory, displayCategories } = profileCategories({
+      githubTechs: [],
+      cvTechs: ["React"],
+      favoriteTechs: ["Python"],
+      color: "#2DD4BF",
+    });
+    expect(displayCategories.slice(0, 2)).toEqual([favoritesCategory, profileCategory]);
+  });
+
+  it("shows favorites even with no GitHub or CV techs", () => {
+    const { favoritesCategory, profileCategory, displayCategories } = profileCategories({
+      githubTechs: [],
+      cvTechs: [],
+      favoriteTechs: ["Python"],
+      color: "#2DD4BF",
+    });
+    expect(techs(favoritesCategory)).toEqual(["Python"]);
+    expect(profileCategory).toBeNull();
+    expect(displayCategories[0]).toBe(favoritesCategory);
+  });
+
+  it("has no favorites category without favorites", () => {
+    const { favoritesCategory } = profileCategories({
+      githubTechs: [],
+      cvTechs: ["React"],
+      favoriteTechs: [],
+      color: "#2DD4BF",
+    });
+    expect(favoritesCategory).toBeNull();
+  });
+});
+
+describe("mergeTechSignals", () => {
+  it("ranks CV techs by order (earlier = higher score)", () => {
+    expect(mergeTechSignals([], ["React", "Go", "Java"])).toEqual([
+      { tech: "React", score: 3 },
+      { tech: "Go", score: 2 },
+      { tech: "Java", score: 1 },
+    ]);
+  });
+
+  it("dedupes across sources, keeping the higher score", () => {
+    // GitHub gives React a large byte-score; CV order would only give it 2.
+    const merged = mergeTechSignals([{ tech: "React", score: 5000 }], ["Go", "React"]);
+    expect(merged).toContainEqual({ tech: "React", score: 5000 });
+    expect(merged).toContainEqual({ tech: "Go", score: 2 });
+    expect(merged.filter((s) => s.tech === "React")).toHaveLength(1);
+  });
+
+  it("passes GitHub signals through untouched when there's no CV", () => {
+    const github = [{ tech: "TypeScript", score: 900 }];
+    expect(mergeTechSignals(github, [])).toEqual(github);
+  });
+
+  it("handles nullish inputs", () => {
+    expect(mergeTechSignals(null, null)).toEqual([]);
+    expect(mergeTechSignals(undefined, ["Go"])).toEqual([{ tech: "Go", score: 1 }]);
   });
 });

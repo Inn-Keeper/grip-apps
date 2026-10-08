@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ScrollView, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip/core/contacts";
-import { extractTechsFromText } from "@grip/core/cvTechs";
+import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
 import { colors, layout } from "@/theme";

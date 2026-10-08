@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Text, TextInput, View } from "react-native";
-import { extractTechsFromText } from "@grip/core/cvTechs";
+import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@/theme";

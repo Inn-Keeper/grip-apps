@@ -52,6 +52,8 @@ export const sv = {
 
   "prep.drillWeakest": "Öva svagaste",
   "prep.cvTechsCategory": "Från ditt CV",
+  "prep.githubTechsCategory": "Från GitHub-tekniker",
+  "prep.favoritesCategory": "Från mina favoriter",
   "prep.profileTechsCategory": "Från din profil",
   "prep.ranking": "Ranking",
   "prep.strongest": "Starkaste",

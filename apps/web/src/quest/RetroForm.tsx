@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { extractTechsFromText } from "@grip/core/cvTechs";
+import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";

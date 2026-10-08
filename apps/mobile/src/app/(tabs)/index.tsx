@@ -51,8 +51,8 @@ type PrepCategory = { name: string; emoji?: string; color: string; items: PrepIt
 export default function PrepScreen() {
   const locale = useLocale();
   const insets = useSafeAreaInsets();
-  // Track the selected category by name, not list index: the "From GitHub techs"
-  // category is prepended once it loads, which would shift every index underneath it.
+  // Track the selected category by name, not list index: the profile and favorites
+  // categories are prepended once it loads, which would shift every index underneath it.
   const [activeCategoryName, setActiveCategoryName] = useState<string>(categories[0].name);
   const [drill, setDrill] = useState<Drill | null>(null);
   // The running drill is round 1 of a mock loop.
