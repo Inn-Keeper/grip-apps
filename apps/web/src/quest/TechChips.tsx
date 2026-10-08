@@ -17,10 +17,20 @@ export function TechChips({
 }) {
   return (
     <div>
-      <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.06em", marginBottom: 6 }}>
+      <div style={{
+          fontSize: font.size.label,
+          fontWeight: 700,
+          color: colors.textDim,
+          letterSpacing: "0.06em",
+          marginBottom: 6
+        }}>
         {label.toUpperCase()}
       </div>
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+      <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 6
+        }}>
         {techs.map((tech) => {
           const off = dimmed.includes(tech);
           return (

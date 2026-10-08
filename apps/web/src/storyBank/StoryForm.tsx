@@ -44,7 +44,11 @@ export function StoryForm({
         gap: 10,
       }}
     >
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 10
+        }}>
         <Field label={t("stories.fieldTitle")}>
           <input
             style={inputStyle}
@@ -79,7 +83,12 @@ export function StoryForm({
       </Field>
 
       {/* The system behind the story: a built-in scenario, or a new one drafted from the story. */}
-      <div style={{ display: "flex", alignItems: "flex-end", gap: 10, flexWrap: "wrap" }}>
+      <div style={{
+          display: "flex",
+          alignItems: "flex-end",
+          gap: 10,
+          flexWrap: "wrap"
+        }}>
         <Combobox
           filterable
           label={t("stories.fieldScenario")}
@@ -104,7 +113,12 @@ export function StoryForm({
         />
       )}
 
-      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
+      <div style={{
+          display: "flex",
+          gap: 8,
+          justifyContent: "flex-end",
+          marginTop: 4
+        }}>
         <button
           onClick={onCancel}
           style={{

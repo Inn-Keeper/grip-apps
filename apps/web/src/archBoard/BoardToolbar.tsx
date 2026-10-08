@@ -18,8 +18,19 @@ type Props = {
 export function BoardToolbar({ status, history, talk, save, onClear, arrows }: Props) {
   const empty = arrows.options.length === 0;
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
-      <span aria-live="polite" style={{ fontSize: font.size.small, fontWeight: 600, color: status.dirty ? colors.warningBright : colors.successBright, marginRight: 4 }}>
+    <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        marginBottom: 10,
+        flexWrap: "wrap"
+      }}>
+      <span aria-live="polite" style={{
+          fontSize: font.size.small,
+          fontWeight: 600,
+          color: status.dirty ? colors.warningBright : colors.successBright,
+          marginRight: 4
+        }}>
         {status.text}
       </span>
       <button type="button" className={styles.toolbarButton} onClick={history.onUndo} disabled={!history.canUndo}>{t("board.undo")}</button>
@@ -29,7 +40,13 @@ export function BoardToolbar({ status, history, talk, save, onClear, arrows }: P
         className={styles.toolbarButton}
         aria-pressed={talk.open}
         onClick={talk.onToggle}
-        style={{ display: "flex", alignItems: "center", gap: 5, color: talk.open ? colors.accentBright : undefined, borderColor: talk.open ? colors.accent : undefined }}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 5,
+          color: talk.open ? colors.accentBright : undefined,
+          borderColor: talk.open ? colors.accent : undefined
+        }}
       >
         <BrandIcon name="spark" color={talk.open ? colors.accentBright : colors.textDim} size={13} />
         {t("talk.title")} ({talk.answered}/{TALK_TRACK_SECTIONS.length})
@@ -40,7 +57,10 @@ export function BoardToolbar({ status, history, talk, save, onClear, arrows }: P
       <button type="button" className={styles.toolbarButton} onClick={onClear}>{t("board.clear")}</button>
       {/* Combobox, not a native select: the OS dropdown ignores the app's
           palette, so this one control rendered light on a dark board. */}
-      <div className={styles.connectionRow} style={{ marginLeft: "auto", color: colors.textDim }}>
+      <div className={styles.connectionRow} style={{
+          marginLeft: "auto",
+          color: colors.textDim
+        }}>
         <span>{t("board.editArrow")}</span>
         <Combobox
           value={arrows.selectedId ?? ""}

@@ -17,10 +17,19 @@ export function RetroLine({ label, text }: { label: string; text?: string }) {
   if (!text) return null;
   return (
     <div style={{ marginBottom: 4 }}>
-      <span style={{ fontSize: font.size.caption, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.06em" }}>
+      <span style={{
+          fontSize: font.size.caption,
+          fontWeight: 700,
+          color: colors.textFaint,
+          letterSpacing: "0.06em"
+        }}>
         {label.toUpperCase()}:{" "}
       </span>
-      <span style={{ fontSize: font.size.body, color: colors.textDim, whiteSpace: "pre-wrap" }}>{text}</span>
+      <span style={{
+          fontSize: font.size.body,
+          color: colors.textDim,
+          whiteSpace: "pre-wrap"
+        }}>{text}</span>
     </div>
   );
 }
@@ -73,7 +82,11 @@ export function RetroForm({
       <Field label={t("retro.questions")}>
         <textarea style={textareaStyle} value={form.questions} onChange={set("questions")} />
       </Field>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 8
+        }}>
         <Field label={t("retro.wentWell")}>
           <textarea style={textareaStyle} value={form.wentWell} onChange={set("wentWell")} />
         </Field>
@@ -84,10 +97,18 @@ export function RetroForm({
       {detected.length > 0 && (
         <div>
           <TechChips label={t("retro.struggled")} techs={detected} dimmed={excluded} onToggle={toggleTech} />
-          <p style={{ margin: "6px 0 0", fontSize: font.size.label, color: colors.textFaint }}>{t("retro.struggledHint")}</p>
+          <p style={{
+              margin: "6px 0 0",
+              fontSize: font.size.label,
+              color: colors.textFaint
+            }}>{t("retro.struggledHint")}</p>
         </div>
       )}
-      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+      <div style={{
+          display: "flex",
+          gap: 8,
+          justifyContent: "flex-end"
+        }}>
         <button
           onClick={onCancel}
           style={{

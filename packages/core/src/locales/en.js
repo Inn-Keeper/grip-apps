@@ -631,6 +631,8 @@ export const en = {
   "profile.useGithubSub": "Show the From GitHub techs category on Interview Prep.",
   "profile.cvSection": "Customize prep from your CV",
   "profile.cvSubtitle": "Upload your CV and we'll detect the technologies in it, then tailor your Interview Prep to match. Your CV is read in your browser and never uploaded. Only the detected techs are saved.",
+  "profile.favoriteTechs": "Favorite techs",
+  "profile.favoriteTechsBlurb": "Pick the technologies you enjoy most.",
   "profile.cvDropTitle": "Drop your CV here, or click to choose",
   "profile.cvDropHint": "PDF or TXT, up to 5MB",
   "profile.cvImportButton": "Import techs from my CV",

@@ -132,7 +132,13 @@ export function Combobox({
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false);
       }}
-      style={{ display: "flex", flexDirection: "column", gap: 4, minWidth: 0, ...style }}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+        minWidth: 0,
+        ...style
+      }}
     >
       {label && <span style={labelStyle}>{label}</span>}
       <div style={{ position: "relative" }}>
@@ -152,7 +158,11 @@ export function Combobox({
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
             autoComplete="off"
-            style={{ ...controlStyle, cursor: "text", ...triggerOverrides }}
+            style={{
+              ...controlStyle,
+              cursor: "text",
+              ...triggerOverrides
+            }}
           />
         ) : (
           <button
@@ -171,9 +181,27 @@ export function Combobox({
               ...triggerOverrides,
             }}
           >
-            <span style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 0 }}>
-              {selected?.color && <span style={{ width: 8, height: 8, borderRadius: 4, background: selected.color, flex: "0 0 auto" }} />}
-              <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", textAlign: "left" }}>
+            <span style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                minWidth: 0
+              }}>
+              {selected?.color && <span style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  background: selected.color,
+                  flex: "0 0 auto"
+                }} />}
+              <span style={{
+                  flex: 1,
+                  minWidth: 0,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  textAlign: "left"
+                }}>
                 {selected?.label ?? placeholder}
               </span>
               <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
@@ -209,17 +237,38 @@ export function Combobox({
                 placeholder={t("common.search")}
                 autoComplete="off"
                 autoFocus
-                style={{ ...controlStyle, minHeight: 34, padding: "6px 10px", marginBottom: 4, cursor: "text" }}
+                style={{
+                  ...controlStyle,
+                  minHeight: 34,
+                  padding: "6px 10px",
+                  marginBottom: 4,
+                  cursor: "text"
+                }}
               />
             )}
             {filterable && visibleOptions.length === 0 && (
-              <p style={{ margin: 0, padding: "8px 10px", fontSize: font.size.small, color: colors.textFaint }}>{t("common.noMatches")}</p>
+              <p style={{
+                  margin: 0,
+                  padding: "8px 10px",
+                  fontSize: font.size.small,
+                  color: colors.textFaint
+                }}>{t("common.noMatches")}</p>
             )}
-            <div id={listboxId} role="listbox" style={{ maxHeight, overflowY: "auto" }}>
+            <div id={listboxId} role="listbox" style={{
+                maxHeight,
+                overflowY: "auto"
+              }}>
               {groups.map((group) => (
                 <div key={group.label ?? "options"}>
                   {group.label && (
-                    <div style={{ padding: "7px 10px 5px", color: colors.textFaint, fontSize: font.size.caption, fontWeight: 800, letterSpacing: "0.07em", textTransform: "uppercase" }}>
+                    <div style={{
+                        padding: "7px 10px 5px",
+                        color: colors.textFaint,
+                        fontSize: font.size.caption,
+                        fontWeight: 800,
+                        letterSpacing: "0.07em",
+                        textTransform: "uppercase"
+                      }}>
                       {group.label}
                     </div>
                   )}
@@ -257,8 +306,18 @@ export function Combobox({
                           opacity: option.disabled ? 0.5 : 1,
                         }}
                       >
-                        {option.color && <span style={{ width: 8, height: 8, borderRadius: 4, background: option.color, flex: "0 0 auto" }} />}
-                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{option.label}</span>
+                        {option.color && <span style={{
+                            width: 8,
+                            height: 8,
+                            borderRadius: 4,
+                            background: option.color,
+                            flex: "0 0 auto"
+                          }} />}
+                        <span style={{
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap"
+                          }}>{option.label}</span>
                       </button>
                     );
                   })}

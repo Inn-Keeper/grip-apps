@@ -67,9 +67,17 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
               >
                 {competencyName(g.competency).toUpperCase()}
               </span>
-              <div style={{ display: "flex", flexDirection: "column", gap: 2, paddingLeft: 4 }}>
+              <div style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  paddingLeft: 4
+                }}>
                 {g.stories.map((s) => (
-                  <span key={s.id ?? s.title} style={{ fontSize: font.size.small, color: colors.text }}>
+                  <span key={s.id ?? s.title} style={{
+                      fontSize: font.size.small,
+                      color: colors.text
+                    }}>
                     · {s.title}
                   </span>
                 ))}
@@ -77,7 +85,12 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
             </div>
           ))}
           {gaps.length > 0 && (
-            <div style={{ marginTop: 4, display: "flex", flexWrap: "wrap", gap: 4 }}>
+            <div style={{
+                marginTop: 4,
+                display: "flex",
+                flexWrap: "wrap",
+                gap: 4
+              }}>
               {gaps.map((g) => (
                 <span
                   key={g.competency}

@@ -164,7 +164,12 @@ export const categoryIconName = (name: string): BrandIconName => {
 export function BrandIcon({ name, color = colors.textDim, size = 18, muted = false }: Props) {
   const scale = size / 24;
   return (
-    <View style={{ width: size, height: size, position: "relative", opacity: muted ? 0.62 : 1 }}>
+    <View style={{
+        width: size,
+        height: size,
+        position: "relative",
+        opacity: muted ? 0.62 : 1
+      }}>
       {(ICONS[name] ?? ICONS.spark).map((piece, index) => {
         const stroke = Math.max(1, Math.round(2 * scale));
         const common = {

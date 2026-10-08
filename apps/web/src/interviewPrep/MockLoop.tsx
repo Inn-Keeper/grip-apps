@@ -33,8 +33,17 @@ const stageStyles: CSSProperties = {
 
 function StageHeader({ label, onExit }: { label: string; onExit: () => void }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-      <span style={{ fontSize: font.size.label, fontWeight: 800, color: colors.accentBright, letterSpacing: "0.08em" }}>
+    <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between"
+      }}>
+      <span style={{
+          fontSize: font.size.label,
+          fontWeight: 800,
+          color: colors.accentBright,
+          letterSpacing: "0.08em"
+        }}>
         {label.toUpperCase()}
       </span>
       <button
@@ -89,8 +98,17 @@ export function MockLoop({
 
   if (stage === "quiz") {
     return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 800, color: colors.accentBright, letterSpacing: "0.08em" }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 10
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 800,
+            color: colors.accentBright,
+            letterSpacing: "0.08em"
+          }}>
           {t("mock.stageQuiz").toUpperCase()}
         </span>
         <DrillSession drill={drill} onAnswer={onAnswer} onNext={onNextQuestion} onExit={onExit} />
@@ -103,14 +121,39 @@ export function MockLoop({
       <div style={stageStyles}>
         <StageHeader label={t("mock.stageArch")} onExit={onExit} />
         <div>
-          <div style={{ fontSize: font.size.title, fontWeight: 800, color: colors.textBright, marginBottom: 6 }}>{scenario.name}</div>
-          <p style={{ margin: 0, fontSize: font.size.body, lineHeight: 1.6, color: colors.text }}>{scenario.brief}</p>
-          <p style={{ margin: "8px 0 0", fontSize: font.size.small, color: colors.textDim }}>
+          <div style={{
+              fontSize: font.size.title,
+              fontWeight: 800,
+              color: colors.textBright,
+              marginBottom: 6
+            }}>{scenario.name}</div>
+          <p style={{
+              margin: 0,
+              fontSize: font.size.body,
+              lineHeight: 1.6,
+              color: colors.text
+            }}>{scenario.brief}</p>
+          <p style={{
+              margin: "8px 0 0",
+              fontSize: font.size.small,
+              color: colors.textDim
+            }}>
             <BrandIcon name="cost" color={colors.textDim} size={13} /> {t("mock.archBudget", { budget: scenario.budget })}
           </p>
         </div>
-        <p style={{ margin: 0, fontSize: font.size.body, color: colors.textDim, lineHeight: 1.55 }}>{t("mock.archInstruction")}</p>
-        <label style={{ display: "flex", alignItems: "center", gap: 10, fontSize: font.size.small, color: colors.textDim }}>
+        <p style={{
+            margin: 0,
+            fontSize: font.size.body,
+            color: colors.textDim,
+            lineHeight: 1.55
+          }}>{t("mock.archInstruction")}</p>
+        <label style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            fontSize: font.size.small,
+            color: colors.textDim
+          }}>
           {t("mock.archScoreLabel")}
           <input
             type="number"
@@ -130,20 +173,43 @@ export function MockLoop({
             }}
           />
         </label>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+        <div style={{
+            display: "flex",
+            gap: 8,
+            justifyContent: "flex-end"
+          }}>
           <button
             onClick={() => {
               setArchSkipped(true);
               setStage("story");
             }}
-            style={{ padding: "7px 14px", background: "transparent", border: `1px solid ${colors.borderSoft}`, borderRadius: 8, color: colors.textDim, fontSize: font.size.small, fontWeight: 600, cursor: "pointer" }}
+            style={{
+              padding: "7px 14px",
+              background: "transparent",
+              border: `1px solid ${colors.borderSoft}`,
+              borderRadius: 8,
+              color: colors.textDim,
+              fontSize: font.size.small,
+              fontWeight: 600,
+              cursor: "pointer"
+            }}
           >
             {t("mock.skip")}
           </button>
           <button
             onClick={() => setStage("story")}
             disabled={archScore === ""}
-            style={{ padding: "7px 16px", background: colors.accent, border: "none", borderRadius: 8, color: colors.onAccent, fontSize: font.size.small, fontWeight: 700, cursor: archScore === "" ? "not-allowed" : "pointer", opacity: archScore === "" ? 0.5 : 1 }}
+            style={{
+              padding: "7px 16px",
+              background: colors.accent,
+              border: "none",
+              borderRadius: 8,
+              color: colors.onAccent,
+              fontSize: font.size.small,
+              fontWeight: 700,
+              cursor: archScore === "" ? "not-allowed" : "pointer",
+              opacity: archScore === "" ? 0.5 : 1
+            }}
           >
             {t("common.next")}
           </button>
@@ -170,10 +236,28 @@ export function MockLoop({
         >
           {t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0])}
         </span>
-        <p style={{ margin: 0, fontSize: font.size.bodyLg, fontWeight: 700, lineHeight: 1.55, color: colors.text }}>{prompt.text}</p>
-        <p style={{ margin: 0, fontSize: font.size.body, color: colors.textDim }}>{t("mock.storyInstruction")}</p>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-          <span style={{ fontSize: font.size.small, color: colors.textDim }}>{t("mock.storyRateLabel")}</span>
+        <p style={{
+            margin: 0,
+            fontSize: font.size.bodyLg,
+            fontWeight: 700,
+            lineHeight: 1.55,
+            color: colors.text
+          }}>{prompt.text}</p>
+        <p style={{
+            margin: 0,
+            fontSize: font.size.body,
+            color: colors.textDim
+          }}>{t("mock.storyInstruction")}</p>
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            flexWrap: "wrap"
+          }}>
+          <span style={{
+              fontSize: font.size.small,
+              color: colors.textDim
+            }}>{t("mock.storyRateLabel")}</span>
           {Array.from({ length: STORY_RATING_MAX }, (_, i) => i + 1).map((rating) => (
             <button
               key={rating}
@@ -194,17 +278,40 @@ export function MockLoop({
             </button>
           ))}
         </div>
-        <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+        <div style={{
+            display: "flex",
+            gap: 8,
+            justifyContent: "flex-end"
+          }}>
           <button
             onClick={finish}
-            style={{ padding: "7px 14px", background: "transparent", border: `1px solid ${colors.borderSoft}`, borderRadius: 8, color: colors.textDim, fontSize: font.size.small, fontWeight: 600, cursor: "pointer" }}
+            style={{
+              padding: "7px 14px",
+              background: "transparent",
+              border: `1px solid ${colors.borderSoft}`,
+              borderRadius: 8,
+              color: colors.textDim,
+              fontSize: font.size.small,
+              fontWeight: 600,
+              cursor: "pointer"
+            }}
           >
             {t("mock.skip")}
           </button>
           <button
             onClick={finish}
             disabled={storyRating === null}
-            style={{ padding: "7px 16px", background: colors.accent, border: "none", borderRadius: 8, color: colors.onAccent, fontSize: font.size.small, fontWeight: 700, cursor: storyRating === null ? "not-allowed" : "pointer", opacity: storyRating === null ? 0.5 : 1 }}
+            style={{
+              padding: "7px 16px",
+              background: colors.accent,
+              border: "none",
+              borderRadius: 8,
+              color: colors.onAccent,
+              fontSize: font.size.small,
+              fontWeight: 700,
+              cursor: storyRating === null ? "not-allowed" : "pointer",
+              opacity: storyRating === null ? 0.5 : 1
+            }}
           >
             {t("mock.finish")}
           </button>
@@ -223,23 +330,56 @@ export function MockLoop({
   const seconds = Math.floor((elapsedMs % 60_000) / 1000);
 
   return (
-    <div style={{ ...stageStyles, textAlign: "center", alignItems: "center" }}>
-      <span style={{ fontSize: font.size.label, fontWeight: 800, color: colors.accentBright, letterSpacing: "0.08em" }}>
+    <div style={{
+        ...stageStyles,
+        textAlign: "center",
+        alignItems: "center"
+      }}>
+      <span style={{
+          fontSize: font.size.label,
+          fontWeight: 800,
+          color: colors.accentBright,
+          letterSpacing: "0.08em"
+        }}>
         {t("mock.summaryTitle").toUpperCase()}
       </span>
-      <div style={{ fontSize: font.size.hero, fontWeight: 800, color: colors.textBright, lineHeight: 1 }}>
+      <div style={{
+          fontSize: font.size.hero,
+          fontWeight: 800,
+          color: colors.textBright,
+          lineHeight: 1
+        }}>
         {result.overall === null ? "--" : `${result.overall}%`}
       </div>
-      <span style={{ fontSize: font.size.small, color: colors.textFaint }}>{t("mock.elapsed", { minutes, seconds })}</span>
-      <div style={{ display: "flex", gap: 18, justifyContent: "center" }}>
+      <span style={{
+          fontSize: font.size.small,
+          color: colors.textFaint
+        }}>{t("mock.elapsed", { minutes, seconds })}</span>
+      <div style={{
+          display: "flex",
+          gap: 18,
+          justifyContent: "center"
+        }}>
         {[
           { label: t("mock.summaryQuiz"), value: result.quiz },
           { label: t("mock.summaryArch"), value: result.arch },
           { label: t("mock.summaryStory"), value: result.story },
         ].map(({ label, value }) => (
-          <span key={label} style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-            <span style={{ fontSize: font.size.label, color: colors.textFaint, fontWeight: 700 }}>{label}</span>
-            <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: value === null ? colors.textFaint : colors.text }}>
+          <span key={label} style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 2
+            }}>
+            <span style={{
+                fontSize: font.size.label,
+                color: colors.textFaint,
+                fontWeight: 700
+              }}>{label}</span>
+            <span style={{
+                fontSize: font.size.bodyLg,
+                fontWeight: 800,
+                color: value === null ? colors.textFaint : colors.text
+              }}>
               {value === null ? "--" : `${value}%`}
             </span>
           </span>
@@ -247,7 +387,16 @@ export function MockLoop({
       </div>
       <button
         onClick={onExit}
-        style={{ padding: "9px 18px", background: colors.accent, border: "none", borderRadius: 8, color: colors.onAccent, fontSize: font.size.body, fontWeight: 600, cursor: "pointer" }}
+        style={{
+          padding: "9px 18px",
+          background: colors.accent,
+          border: "none",
+          borderRadius: 8,
+          color: colors.onAccent,
+          fontSize: font.size.body,
+          fontWeight: 600,
+          cursor: "pointer"
+        }}
       >
         {t("prep.backToCards")}
       </button>

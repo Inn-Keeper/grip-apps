@@ -83,7 +83,10 @@ export default function QuestScreen() {
         right={<HeaderAction icon="contact" label={t("contacts.addContact")} onPress={() => setEditing({ ...EMPTY_CONTACT_FORM, date: todayDDMMYYYY() })} />}
       >
         {ledgerImport && <Button label={t("quest.importButton")} variant="ghost" onPress={() => { setImportMessage(""); setImportOpen(true); }} />}
-        {!!importMessage && <Text accessibilityLiveRegion="polite" style={{ color: colors.accentBright, fontSize: font.size.body }}>{importMessage}</Text>}
+        {!!importMessage && <Text accessibilityLiveRegion="polite" style={{
+            color: colors.accentBright,
+            fontSize: font.size.body
+          }}>{importMessage}</Text>}
       </ScreenHeader>
       <FlatList
         data={sorted}
@@ -91,7 +94,10 @@ export default function QuestScreen() {
         contentContainerStyle={{ padding: 16, gap: 12, paddingBottom: insets.bottom + layout.tabBarClearance }}
         ListHeaderComponent={
           <View style={{ gap: 12 }}>
-            {error && <Text style={{ color: colors.dangerBright, fontSize: font.size.body }}>{t("contacts.loadError", { message: error.message })}</Text>}
+            {error && <Text style={{
+                color: colors.dangerBright,
+                fontSize: font.size.body
+              }}>{t("contacts.loadError", { message: error.message })}</Text>}
 
             <QuestFunnel summary={funnel} />
 
@@ -105,7 +111,11 @@ export default function QuestScreen() {
                   borderRadius: 10,
                 }}
               >
-                <Text style={{ color: colors.dangerBright, fontSize: font.size.body, fontWeight: "600" }}>
+                <Text style={{
+                    color: colors.dangerBright,
+                    fontSize: font.size.body,
+                    fontWeight: "600"
+                  }}>
                   {t("contacts.dueBanner", { count: dueCount, plural: dueCount > 1 ? "s" : "" })}
                 </Text>
               </View>

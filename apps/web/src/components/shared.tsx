@@ -3,7 +3,12 @@ import { colors, space, font } from "@grip/core/tokens";
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label style={{ display: "flex", flexDirection: "column", gap: space.xs + 2, minWidth: 0 }}>
+    <label style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: space.xs + 2,
+        minWidth: 0
+      }}>
       <span
         style={{
           fontSize: font.size.label,

@@ -8,7 +8,12 @@ import styles from "./Metric.module.css";
 export function GlowBar({ pct, flash = false, marginTop = 0 }: { pct: number; flash?: boolean; marginTop?: number }) {
   return (
     // No overflow clip on the track, so the fill's glow can lift off it.
-    <div className={flash ? styles.trackFlash : undefined} style={{ height: 10, background: colors.well, borderRadius: 999, marginTop }}>
+    <div className={flash ? styles.trackFlash : undefined} style={{
+        height: 10,
+        background: colors.well,
+        borderRadius: 999,
+        marginTop
+      }}>
       <div
         className={styles.glowFill}
         style={{

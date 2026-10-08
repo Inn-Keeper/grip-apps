@@ -62,7 +62,11 @@ export function Pill({ label, active, activeColor = colors.accent, icon, onPress
       }}
     >
       {icon && <BrandIcon name={icon} color={active ? colors.onAccent : colors.textDim} size={14} />}
-      <Text style={{ fontSize: font.size.body, fontWeight: "600", color: active ? colors.onAccent : colors.textDim }}>{label}</Text>
+      <Text style={{
+          fontSize: font.size.body,
+          fontWeight: "600",
+          color: active ? colors.onAccent : colors.textDim
+        }}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -92,7 +96,11 @@ export function HeaderAction({ label, onPress, icon, tone = "accent", disabled =
       }}
     >
       {icon && <BrandIcon name={icon} color={color} size={14} />}
-      <Text style={{ color, fontSize: font.size.small, fontWeight: "700" }}>{label}</Text>
+      <Text style={{
+          color,
+          fontSize: font.size.small,
+          fontWeight: "700"
+        }}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -113,11 +121,27 @@ export function ScreenHeader({ title, subtitle, right, children }: ScreenHeaderP
         gap: space.md,
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: space.md }}>
-        <View style={{ flex: 1, minWidth: 0 }}>
-          <Text style={{ color: colors.textBright, fontSize: font.size.heading, fontWeight: "800" }}>{title}</Text>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: space.md
+        }}>
+        <View style={{
+            flex: 1,
+            minWidth: 0
+          }}>
+          <Text style={{
+              color: colors.textBright,
+              fontSize: font.size.heading,
+              fontWeight: "800"
+            }}>{title}</Text>
           {!!subtitle && (
-            <Text numberOfLines={2} style={{ marginTop: 2, color: colors.textDim, fontSize: font.size.small, lineHeight: 17 }}>
+            <Text numberOfLines={2} style={{
+                marginTop: 2,
+                color: colors.textDim,
+                fontSize: font.size.small,
+                lineHeight: 17
+              }}>
               {subtitle}
             </Text>
           )}
@@ -155,8 +179,18 @@ type BadgeProps = { label: string; color: string };
 /** Small colored label — statuses, competencies. */
 export function Badge({ label, color }: BadgeProps) {
   return (
-    <View style={{ paddingHorizontal: space.sm, paddingVertical: space.xs, backgroundColor: `${color}20`, borderRadius: radius.pill }}>
-      <Text style={{ color, fontSize: font.size.caption, fontWeight: "700", letterSpacing: 0.4 }}>{label.toUpperCase()}</Text>
+    <View style={{
+        paddingHorizontal: space.sm,
+        paddingVertical: space.xs,
+        backgroundColor: `${color}20`,
+        borderRadius: radius.pill
+      }}>
+      <Text style={{
+          color,
+          fontSize: font.size.caption,
+          fontWeight: "700",
+          letterSpacing: 0.4
+        }}>{label.toUpperCase()}</Text>
     </View>
   );
 }
@@ -168,9 +202,19 @@ export function MiniButton({ label, color, onPress }: MiniButtonProps) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      style={{ paddingHorizontal: space.sm, paddingVertical: space.xs, borderWidth: 1, borderColor: `${color}50`, borderRadius: radius.sm }}
+      style={{
+        paddingHorizontal: space.sm,
+        paddingVertical: space.xs,
+        borderWidth: 1,
+        borderColor: `${color}50`,
+        borderRadius: radius.sm
+      }}
     >
-      <Text style={{ color, fontSize: font.size.label, fontWeight: "600" }}>{label}</Text>
+      <Text style={{
+          color,
+          fontSize: font.size.label,
+          fontWeight: "600"
+        }}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -194,7 +238,11 @@ export function Button({ label, onPress, variant = "primary", disabled = false }
         opacity: disabled ? 0.5 : 1,
       }}
     >
-      <Text style={{ color: primary ? colors.onAccent : colors.textDim, fontSize: font.size.body, fontWeight: "600" }}>{label}</Text>
+      <Text style={{
+          color: primary ? colors.onAccent : colors.textDim,
+          fontSize: font.size.body,
+          fontWeight: "600"
+        }}>{label}</Text>
     </TouchableOpacity>
   );
 }
@@ -205,7 +253,12 @@ type FieldProps = { label: string; children: ReactNode };
 export function Field({ label, children }: FieldProps) {
   return (
     <View style={{ gap: space.xs }}>
-      <Text style={{ fontSize: font.size.label, fontWeight: "600", color: colors.textFaint, letterSpacing: 0.3 }}>{label}</Text>
+      <Text style={{
+          fontSize: font.size.label,
+          fontWeight: "600",
+          color: colors.textFaint,
+          letterSpacing: 0.3
+        }}>{label}</Text>
       {children}
     </View>
   );
@@ -218,10 +271,20 @@ export function Section({ label, text }: SectionProps) {
   if (!text) return null;
   return (
     <View>
-      <Text style={{ fontSize: font.size.caption, fontWeight: "700", color: colors.textFaint, letterSpacing: 0.8, marginBottom: 2 }}>
+      <Text style={{
+          fontSize: font.size.caption,
+          fontWeight: "700",
+          color: colors.textFaint,
+          letterSpacing: 0.8,
+          marginBottom: 2
+        }}>
         {label.toUpperCase()}
       </Text>
-      <Text style={{ fontSize: font.size.body, lineHeight: 19, color: colors.text }}>{text}</Text>
+      <Text style={{
+          fontSize: font.size.body,
+          lineHeight: 19,
+          color: colors.text
+        }}>{text}</Text>
     </View>
   );
 }
@@ -229,7 +292,15 @@ export function Section({ label, text }: SectionProps) {
 /** A raised panel: the standard section container on long screens such as Profile. */
 export function Card({ children }: { children: ReactNode }) {
   return (
-    <View style={{ backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, borderRadius: radius.md, padding: space.lg, gap: space.md }}>
+    <View style={{
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.borderSoft,
+        boxShadow: shadow.card,
+        borderRadius: radius.md,
+        padding: space.lg,
+        gap: space.md
+      }}>
       {children}
     </View>
   );

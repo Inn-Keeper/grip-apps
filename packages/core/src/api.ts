@@ -150,6 +150,7 @@ export type User = {
   xp: number;
   createdAt: string | null;
   updatedAt: string | null;
+  favoriteTechs: string[];
 };
 
 /** Binds the data layer to a Supabase client (browser or React Native). */

@@ -26,7 +26,11 @@ export function TechPicker({
       .map((item) => ({ label: item.tech, value: item.tech })),
   }));
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+    <div style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 6
+      }}>
       <TechChips label={label} techs={techs} onRemove={(tech) => onChange(techs.filter((item) => item !== tech))} />
       <Combobox
         label={t("contacts.addTech")}
@@ -37,7 +41,10 @@ export function TechPicker({
         placeholder={t("contacts.addTech")}
         onChange={(tech) => onChange(addTech(techs, tech, limit))}
       />
-      {limit === 5 && <span style={{ fontSize: font.size.small, color: colors.textDim }}>{t("quest.importTechLimit")}</span>}
+      {limit === 5 && <span style={{
+          fontSize: font.size.small,
+          color: colors.textDim
+        }}>{t("quest.importTechLimit")}</span>}
     </div>
   );
 }

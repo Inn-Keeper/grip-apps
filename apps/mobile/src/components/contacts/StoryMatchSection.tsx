@@ -42,19 +42,33 @@ export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
                   borderRadius: 12,
                 }}
               >
-                <Text style={{ fontSize: font.size.caption, fontWeight: "700", color: g.color, letterSpacing: 0.5 }}>
+                <Text style={{
+                    fontSize: font.size.caption,
+                    fontWeight: "700",
+                    color: g.color,
+                    letterSpacing: 0.5
+                  }}>
                   {g.competency.toUpperCase()}
                 </Text>
               </View>
               {g.stories.map((s) => (
-                <Text key={s.id ?? s.title} style={{ fontSize: font.size.small, color: colors.text, paddingLeft: 4 }}>
+                <Text key={s.id ?? s.title} style={{
+                    fontSize: font.size.small,
+                    color: colors.text,
+                    paddingLeft: 4
+                  }}>
                   · {s.title}
                 </Text>
               ))}
             </View>
           ))}
           {gaps.length > 0 && (
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4, marginTop: 4 }}>
+            <View style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: 4,
+                marginTop: 4
+              }}>
               {gaps.map((g) => (
                 <View
                   key={g.competency}
@@ -65,7 +79,11 @@ export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
                     borderRadius: 12,
                   }}
                 >
-                  <Text style={{ fontSize: font.size.caption, fontWeight: "600", color: colors.textFaint }}>
+                  <Text style={{
+                      fontSize: font.size.caption,
+                      fontWeight: "600",
+                      color: colors.textFaint
+                    }}>
                     {g.competency} · no story
                   </Text>
                 </View>

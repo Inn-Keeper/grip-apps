@@ -36,41 +36,102 @@ export function Card({ index = 0, item, level, stat, loading, onQuiz }: {
         display: "flex", flexDirection: "column",
       } as React.CSSProperties}
     >
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 9 }}>
-        <div style={{
-          display: "inline-block", padding: "3px 10px",
-          background: `${item.color}20`, borderRadius: 999,
-          color: item.color, fontSize: font.size.label, fontWeight: 700,
-          letterSpacing: "0.04em",
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          marginBottom: 9
         }}>
+        <div style={{
+            display: "inline-block",
+            padding: "3px 10px",
+            background: `${item.color}20`,
+            borderRadius: 999,
+            color: item.color,
+            fontSize: font.size.label,
+            fontWeight: 700,
+            letterSpacing: "0.04em",
+          }}>
           {item.tech}
         </div>
         {tier && (
-          <span style={{ display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 999, background: `${tier.color}1A`, border: `1px solid ${tier.color}55`, color: tier.color, fontSize: font.size.caption, fontWeight: 800, whiteSpace: "nowrap" }}>
+          <span style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "2px 8px",
+              borderRadius: 999,
+              background: `${tier.color}1A`,
+              border: `1px solid ${tier.color}55`,
+              color: tier.color,
+              fontSize: font.size.caption,
+              fontWeight: 800,
+              whiteSpace: "nowrap"
+            }}>
             <DifficultyIcon tier={tier} size={12} /> {tier.label}
           </span>
         )}
       </div>
-      <p style={{ margin: 0, fontSize: font.size.body, lineHeight: 1.55, color: colors.text }}>
+      <p style={{
+          margin: 0,
+          fontSize: font.size.body,
+          lineHeight: 1.55,
+          color: colors.text
+        }}>
         {item.oneliner}
       </p>
       {/* Quiet reference text: smaller and dimmer than the one-liner, so the card leads with what the tech is. */}
-      <ul style={{ margin: "10px 0 0", paddingLeft: 16, display: "flex", flexDirection: "column", gap: 4 }}>
+      <ul style={{
+          margin: "10px 0 0",
+          paddingLeft: 16,
+          display: "flex",
+          flexDirection: "column",
+          gap: 4
+        }}>
         {item.prep.map((point) => (
-          <li key={point} style={{ fontSize: font.size.small, lineHeight: 1.45, color: quietText }}>
+          <li key={point} style={{
+              fontSize: font.size.small,
+              lineHeight: 1.45,
+              color: quietText
+            }}>
             {point}
           </li>
         ))}
       </ul>
-      <div style={{ marginTop: "auto", paddingTop: 12, display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{
+          marginTop: "auto",
+          paddingTop: 12,
+          display: "flex",
+          flexDirection: "column",
+          gap: 6
+        }}>
         {accuracy !== null && (
           // A bar reads at a glance; the number stays for the exact value.
-          <div style={{ height: 3, background: colors.well, borderRadius: 2, overflow: "hidden" }}>
-            <div style={{ width: `${accuracy}%`, height: "100%", background: accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning }} />
+          <div style={{
+              height: 3,
+              background: colors.well,
+              borderRadius: 2,
+              overflow: "hidden"
+            }}>
+            <div style={{
+                width: `${accuracy}%`,
+                height: "100%",
+                background: accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning
+              }} />
           </div>
         )}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, minHeight: 32 }}>
-          <span style={{ fontSize: font.size.label, color: accuracy === null ? colors.textFaint : accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning }}>
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            minHeight: 32
+          }}>
+          <span style={{
+              fontSize: font.size.label,
+              color: accuracy === null ? colors.textFaint : accuracy >= ACCURACY_GOOD_PCT ? colors.success : colors.warning
+            }}>
             {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
           </span>
           <button

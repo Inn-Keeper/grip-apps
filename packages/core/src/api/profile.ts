@@ -5,7 +5,8 @@ import { fail, type Db, type Tables, type TablesInsert } from "./shared";
 
 type ProfileRow = Tables<"profiles">;
 // Every column is mapped; listed so a new column is fetched only once the UI uses it.
-const PROFILE_COLUMNS = "user_id,display_name,email,avatar_url,headline,target_role,location,portfolio_url,github_url,use_github_techs_for_prep,cv_techs,linkedin_url,timezone,onboarding_completed,xp,created_at,updated_at";
+const PROFILE_COLUMNS =
+  "user_id,display_name,email,avatar_url,headline,target_role,location,portfolio_url,github_url,use_github_techs_for_prep,cv_techs,linkedin_url,timezone,onboarding_completed,xp,created_at,updated_at,favorite_techs" as const;
 type ProfileUpdate = Omit<TablesInsert<"profiles">, "user_id" | "email">;
 
 // UI field -> column for the free-text fields; blanks are stored as null.
@@ -22,17 +23,13 @@ const TEXT_FIELDS = [
 ] as const satisfies readonly (readonly [keyof User, keyof ProfileUpdate])[];
 
 export function profileApi(supabase: Db) {
+  // Maps a database row to the UI model, using authUser for fallback values.
   const profileToUi = (row: ProfileRow | null, authUser: AuthUser | null = null): User => {
     const metadata = authUser?.user_metadata ?? {};
     const githubUsername = metadata.user_name ?? metadata.preferred_username ?? "";
     return {
       id: row?.user_id ?? authUser?.id ?? "",
-      displayName:
-        row?.display_name ??
-        metadata.display_name ??
-        metadata.full_name ??
-        metadata.name ??
-        "",
+      displayName: row?.display_name ?? metadata.display_name ?? metadata.full_name ?? metadata.name ?? "",
       email: authUser?.email ?? row?.email ?? "",
       avatarUrl: row?.avatar_url ?? metadata.avatar_url ?? "",
       headline: row?.headline ?? "",
@@ -48,6 +45,7 @@ export function profileApi(supabase: Db) {
       xp: row?.xp ?? 0,
       createdAt: row?.created_at ?? null,
       updatedAt: row?.updated_at ?? null,
+      favoriteTechs: row?.favorite_techs ?? [],
     };
   };
 
@@ -59,6 +57,7 @@ export function profileApi(supabase: Db) {
     if ("onboardingCompleted" in profile) row.onboarding_completed = profile.onboardingCompleted ?? false;
     if ("useGithubTechsForPrep" in profile) row.use_github_techs_for_prep = profile.useGithubTechsForPrep ?? false;
     if ("cvTechs" in profile) row.cv_techs = profile.cvTechs ?? [];
+    if ("favoriteTechs" in profile) row.favorite_techs = profile.favoriteTechs ?? [];
     return row;
   };
 

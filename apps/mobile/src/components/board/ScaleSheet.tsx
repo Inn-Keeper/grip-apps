@@ -39,7 +39,10 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
 
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onClose}>
-      <Pressable onPress={onClose} style={{ flex: 1, backgroundColor: tints.modalScrim }} />
+      <Pressable onPress={onClose} style={{
+          flex: 1,
+          backgroundColor: tints.modalScrim
+        }} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <View
           style={{
@@ -52,20 +55,46 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
             padding: 20,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 4 }}>
+          <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8,
+              marginBottom: 4
+            }}>
             <BrandIcon name="accuracy" color={colors.accentBright} size={16} />
-            <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright, flex: 1 }}>{t("scale.title")}</Text>
+            <Text style={{
+                fontSize: font.size.bodyLg,
+                fontWeight: "700",
+                color: colors.textBright,
+                flex: 1
+              }}>{t("scale.title")}</Text>
           </View>
-          <Text style={{ fontSize: font.size.small, color: colors.textFaint, marginBottom: 12 }}>{t("scale.subtitle")}</Text>
+          <Text style={{
+              fontSize: font.size.small,
+              color: colors.textFaint,
+              marginBottom: 12
+            }}>{t("scale.subtitle")}</Text>
 
           <ScrollView style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 14, paddingBottom: 8 }}>
-            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 14 }}>
+            <View style={{
+                flexDirection: "row",
+                flexWrap: "wrap",
+                gap: 14
+              }}>
               {givens.map((given) => (
                 <View key={given.label} style={{ gap: 2 }}>
-                  <Text style={{ fontSize: font.size.caption, fontWeight: "700", color: colors.textFaint }}>
+                  <Text style={{
+                      fontSize: font.size.caption,
+                      fontWeight: "700",
+                      color: colors.textFaint
+                    }}>
                     {given.label.toUpperCase()}
                   </Text>
-                  <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.text }}>{given.value}</Text>
+                  <Text style={{
+                      fontSize: font.size.bodyLg,
+                      fontWeight: "700",
+                      color: colors.text
+                    }}>{given.value}</Text>
                 </View>
               ))}
             </View>
@@ -80,10 +109,17 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
                   : colors.successBright;
               return (
                 <View key={target.id} style={{ gap: 5 }}>
-                  <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.text }}>
+                  <Text style={{
+                      fontSize: font.size.small,
+                      fontWeight: "700",
+                      color: colors.text
+                    }}>
                     {target.label} ({target.unit})
                   </Text>
-                  <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{target.hint}</Text>
+                  <Text style={{
+                      fontSize: font.size.label,
+                      color: colors.textFaint
+                    }}>{target.hint}</Text>
                   <TextInput
                     value={guesses[target.id] ?? ""}
                     onChangeText={(value) => {
@@ -104,7 +140,10 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
                     }}
                   />
                   {grade?.band && grade.ratio !== null && (
-                    <Text style={{ fontSize: font.size.labelLg, color: bandColor }}>
+                    <Text style={{
+                        fontSize: font.size.labelLg,
+                        color: bandColor
+                      }}>
                       {t(`scale.band${grade.band === "close" ? "Close" : grade.band === "order" ? "Order" : "Off"}`)}
                       {" · "}
                       {t("scale.actual", { value: formatCompact(Math.round(actual)) })}{" "}
@@ -118,7 +157,12 @@ export function ScaleSheet({ visible, scale, onClose }: Props) {
             })}
           </ScrollView>
 
-          <View style={{ marginTop: 12, flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
+          <View style={{
+              marginTop: 12,
+              flexDirection: "row",
+              justifyContent: "flex-end",
+              gap: 8
+            }}>
             <Button label={t("scale.check")} onPress={() => setChecked(true)} />
             <Button label={t("common.close")} onPress={onClose} />
           </View>

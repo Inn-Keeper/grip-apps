@@ -23,7 +23,10 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
 
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onClose}>
-      <Pressable onPress={onClose} style={{ flex: 1, backgroundColor: tints.modalScrim }} />
+      <Pressable onPress={onClose} style={{
+          flex: 1,
+          backgroundColor: tints.modalScrim
+        }} />
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <View
           style={{
@@ -36,13 +39,26 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
             gap: 14,
           }}
         >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 8
+            }}>
             <BrandIcon name={nodeIconName(node.type)} color={color} size={16} />
-            <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright, flex: 1 }}>{spec.label}</Text>
+            <Text style={{
+                fontSize: font.size.bodyLg,
+                fontWeight: "700",
+                color: colors.textBright,
+                flex: 1
+              }}>{spec.label}</Text>
           </View>
 
           <View style={{ gap: 5 }}>
-            <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("node.partitionKey")}</Text>
+            <Text style={{
+                fontSize: font.size.label,
+                fontWeight: "700",
+                color: colors.textDim
+              }}>{t("node.partitionKey")}</Text>
             <TextInput
               value={node.partitionKey ?? ""}
               onChangeText={(value) => onChange({ partitionKey: value })}
@@ -62,8 +78,15 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
           </View>
 
           <View style={{ gap: 5 }}>
-            <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("node.replicas")}</Text>
-            <View style={{ flexDirection: "row", gap: 8 }}>
+            <Text style={{
+                fontSize: font.size.label,
+                fontWeight: "700",
+                color: colors.textDim
+              }}>{t("node.replicas")}</Text>
+            <View style={{
+                flexDirection: "row",
+                gap: 8
+              }}>
               {REPLICA_CHOICES.map((count) => (
                 <MiniButton
                   key={count}
@@ -76,7 +99,12 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
           </View>
 
           {/* Removing from here always works; the node's own ✕ gets tiny when zoomed out. */}
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10 }}>
+          <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 10
+            }}>
             <MiniButton label={t("board.remove")} color={colors.danger} onPress={onRemove} />
             <Button label={t("common.close")} onPress={onClose} />
           </View>

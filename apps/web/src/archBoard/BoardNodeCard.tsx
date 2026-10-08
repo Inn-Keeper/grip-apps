@@ -43,8 +43,17 @@ export function BoardNodeCard({ node: n, isSource, inspecting, drag, connect, on
       aria-label={isSource ? t("board.cancelConnectFrom", { name: spec.label }) : t("board.connectFrom", { name: spec.label })}
       title={isSource ? t("board.cancelConnect") : t("board.connectTitle")}
       style={{
-        position: "absolute", [side]: -16, top: NODE_H / 2 - 16, width: 32, height: 32, borderRadius: "50%",
-        border: "none", background: "transparent", ["--node-color" as string]: color, cursor: "crosshair", padding: 0,
+        position: "absolute",
+        [side]: -16,
+        top: NODE_H / 2 - 16,
+        width: 32,
+        height: 32,
+        borderRadius: "50%",
+        border: "none",
+        background: "transparent",
+        ["--node-color" as string]: color,
+        cursor: "crosshair",
+        padding: 0,
       }}
     />
   );
@@ -69,18 +78,46 @@ export function BoardNodeCard({ node: n, isSource, inspecting, drag, connect, on
         if (event.key === "Delete" || event.key === "Backspace") { event.preventDefault(); onRemove(); }
       }}
       style={{
-        position: "absolute", left: n.x, top: n.y, width: NODE_W, height: NODE_H, boxSizing: "border-box",
-        background: colors.surface, border: `2px solid ${isSource ? colors.textBright : `${color}60`}`,
-        borderRadius: 10, cursor: "grab", touchAction: "none", userSelect: "none",
-        display: "flex", alignItems: "center", gap: 8, padding: "0 10px",
+        position: "absolute",
+        left: n.x,
+        top: n.y,
+        width: NODE_W,
+        height: NODE_H,
+        boxSizing: "border-box",
+        background: colors.surface,
+        border: `2px solid ${isSource ? colors.textBright : `${color}60`}`,
+        borderRadius: 10,
+        cursor: "grab",
+        touchAction: "none",
+        userSelect: "none",
+        display: "flex",
+        alignItems: "center",
+        gap: 8,
+        padding: "0 10px",
         boxShadow: isSource ? `0 0 0 3px ${color}30` : "none",
       }}
     >
       <BrandIcon name={nodeIconName(n.type)} color={color} size={18} />
-      <span style={{ display: "flex", flexDirection: "column", gap: 1, minWidth: 0 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 600, color: colors.text, lineHeight: 1.2 }}>{spec.label}</span>
+      <span style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 1,
+          minWidth: 0
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 600,
+            color: colors.text,
+            lineHeight: 1.2
+          }}>{spec.label}</span>
         {(n.partitionKey?.trim() || n.replicas) && (
-          <span style={{ fontSize: font.size.caption, color: colors.textFaint, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+          <span style={{
+              fontSize: font.size.caption,
+              color: colors.textFaint,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis"
+            }}>
             {[n.partitionKey?.trim(), n.replicas ? `×${n.replicas}` : null].filter(Boolean).join(" · ")}
           </span>
         )}
@@ -90,7 +127,11 @@ export function BoardNodeCard({ node: n, isSource, inspecting, drag, connect, on
           onPointerDown={(ev) => ev.stopPropagation()}
           onClick={(ev) => { ev.stopPropagation(); onToggleInspect(); }}
           title={t("node.inspect")}
-          style={{ ...cornerButton, bottom: -12, background: inspecting ? colors.accent : colors.borderSoft }}
+          style={{
+            ...cornerButton,
+            bottom: -12,
+            background: inspecting ? colors.accent : colors.borderSoft
+          }}
         >
           <BrandIcon name="maintenance" color={inspecting ? colors.onAccent : colors.textDim} size={10} />
         </button>
@@ -99,7 +140,11 @@ export function BoardNodeCard({ node: n, isSource, inspecting, drag, connect, on
         onPointerDown={(ev) => ev.stopPropagation()}
         onClick={(ev) => { ev.stopPropagation(); onRemove(); }}
         title={t("board.remove")}
-        style={{ ...cornerButton, top: -12, background: colors.borderSoft }}
+        style={{
+          ...cornerButton,
+          top: -12,
+          background: colors.borderSoft
+        }}
       >
         <BrandIcon name="close" color={colors.textDim} size={10} />
       </button>

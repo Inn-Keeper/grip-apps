@@ -83,7 +83,12 @@ export default function StoryBank() {
         : { title: t("stories.nextDrillTitle"), sub: t("stories.nextDrillSub"), action: t("stories.nextDrillAction"), icon: "prompt", onAction: () => switchMode("drill"), links: <NextUpLink label={t("stories.orAdd")} onClick={() => setFocus({ mode: "new" })} /> };
 
   const noticeLine = notice && (
-    <p key={notice.id} role="status" style={{ margin: "0 0 16px", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700 }}>{notice.text}</p>
+    <p key={notice.id} role="status" style={{
+        margin: "0 0 16px",
+        color: colors.accentBright,
+        fontSize: font.size.body,
+        fontWeight: 700
+      }}>{notice.text}</p>
   );
 
   return (
@@ -101,7 +106,16 @@ export default function StoryBank() {
 
       {focus ? (
         <div style={workspaceFocusStyle}>
-          <button type="button" onClick={() => setFocus(null)} style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}>
+          <button type="button" onClick={() => setFocus(null)} style={{
+              marginBottom: 14,
+              padding: 0,
+              background: "transparent",
+              border: "none",
+              color: colors.accentBright,
+              fontSize: font.size.body,
+              fontWeight: 700,
+              cursor: "pointer"
+            }}>
             {t("stories.back")}
           </button>
           {noticeLine}
@@ -122,17 +136,38 @@ export default function StoryBank() {
             <NextUpShell title={nextUp.title} sub={nextUp.sub} tone={colors.accent ?? ""} actionLabel={nextUp.action} actionIcon={nextUp.icon} onAction={nextUp.onAction} links={nextUp.links} />
           )}
 
-          <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
-            <h1 style={{ margin: 0, fontSize: font.size.heading, fontWeight: 800, color: colors.textBright }}>
+          <div style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: 12,
+              marginBottom: 6
+            }}>
+            <h1 style={{
+                margin: 0,
+                fontSize: font.size.heading,
+                fontWeight: 800,
+                color: colors.textBright
+              }}>
               {mode === "drill" ? t("stories.drillPrompts") : t("stories.title")}
             </h1>
-            <span style={{ marginLeft: "auto", fontSize: font.size.small, color: colors.textFaint, fontWeight: 600 }}>
+            <span style={{
+                marginLeft: "auto",
+                fontSize: font.size.small,
+                color: colors.textFaint,
+                fontWeight: 600
+              }}>
               {stories ? t("stories.count", { count: stories.length }) : t("common.loading")}
             </span>
           </div>
           {/* The list explains itself (coverage and Next Up sit beside it); drill mode keeps its one-line how-to. */}
           {noticeLine ?? (mode === "drill" && (
-            <p style={{ margin: "0 0 16px", color: colors.textFaint, fontSize: font.size.body, maxWidth: 760, lineHeight: 1.6 }}>
+            <p style={{
+                margin: "0 0 16px",
+                color: colors.textFaint,
+                fontSize: font.size.body,
+                maxWidth: 760,
+                lineHeight: 1.6
+              }}>
               {t("stories.drillSubtitle")}
             </p>
           ))}
@@ -140,9 +175,18 @@ export default function StoryBank() {
           {mode === "drill" ? (
             <PromptDrill stories={storyList} />
           ) : (
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 12
+              }}>
               {stories?.length === 0 && (
-                <p style={{ color: colors.textFaint, fontSize: font.size.body, textAlign: "center", marginTop: 24 }}>{t("stories.empty")}</p>
+                <p style={{
+                    color: colors.textFaint,
+                    fontSize: font.size.body,
+                    textAlign: "center",
+                    marginTop: 24
+                  }}>{t("stories.empty")}</p>
               )}
               {stories?.map((s) => (
                 <StoryCard

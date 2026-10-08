@@ -326,18 +326,42 @@ export default function InterviewPrep() {
 
       {/* The header describes the card grid; a session labels itself, so it hides during one. */}
       {!drill && (
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 18, marginBottom: 16 }}>
+        <div style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            gap: 18,
+            marginBottom: 16
+          }}>
           <div>
-            <p style={{ margin: "0 0 6px", color: colors.textFaint, fontSize: font.size.small, fontWeight: 700 }}>
+            <p style={{
+                margin: "0 0 6px",
+                color: colors.textFaint,
+                fontSize: font.size.small,
+                fontWeight: 700
+              }}>
               {filtered ? `${filtered.length} of ${allItems.length} technologies` : `${displayCategory.items.length} technologies`}
             </p>
-            <h1 style={{ margin: 0, color: colors.textBright, fontSize: font.size.heading, lineHeight: 1.12, fontWeight: 800 }}>
+            <h1 style={{
+                margin: 0,
+                color: colors.textBright,
+                fontSize: font.size.heading,
+                lineHeight: 1.12,
+                fontWeight: 800
+              }}>
               {activeTitle}
             </h1>
           </div>
           {/* The cards explain themselves; this slot only confirms setting changes (rule 14). */}
           {notice && (
-            <p key={notice.id} role="status" className={styles.notice} style={{ margin: 0, color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, textAlign: "right", maxWidth: 360 }}>
+            <p key={notice.id} role="status" className={styles.notice} style={{
+                margin: 0,
+                color: colors.accentBright,
+                fontSize: font.size.body,
+                fontWeight: 700,
+                textAlign: "right",
+                maxWidth: 360
+              }}>
               {notice.text}
             </p>
           )}
@@ -360,7 +384,11 @@ export default function InterviewPrep() {
           )}
         </div>
       ) : visibleItems.length === 0 ? (
-        <WorkspacePanel tone="sunken" style={{ textAlign: "center", color: colors.textFaint, padding: 28 }}>
+        <WorkspacePanel tone="sunken" style={{
+            textAlign: "center",
+            color: colors.textFaint,
+            padding: 28
+          }}>
           {t("prep.noMatches")}
         </WorkspacePanel>
       ) : (

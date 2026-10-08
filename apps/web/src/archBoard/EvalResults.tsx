@@ -52,7 +52,13 @@ export function EvalResults({
         borderRadius: 14,
       }}
     >
-      <div style={{ display: "flex", alignItems: "baseline", gap: 14, marginBottom: 14, flexWrap: "wrap" }}>
+      <div style={{
+          display: "flex",
+          alignItems: "baseline",
+          gap: 14,
+          marginBottom: 14,
+          flexWrap: "wrap"
+        }}>
         {showScore && (
           <span
             style={{
@@ -61,10 +67,17 @@ export function EvalResults({
               color: result.score >= SHIP_SCORE ? colors.success : result.score >= REVIEW_SCORE ? colors.warning : colors.danger,
             }}
           >
-            {result.score}% <span style={{ fontSize: font.size.small, color: colors.textDim }}>{t("board.eval.coverage")}</span>
+            {result.score}% <span style={{
+                fontSize: font.size.small,
+                color: colors.textDim
+              }}>{t("board.eval.coverage")}</span>
           </span>
         )}
-        <span style={{ fontSize: font.size.body, fontWeight: 600, color: colors.textBright }}>
+        <span style={{
+            fontSize: font.size.body,
+            fontWeight: 600,
+            color: colors.textBright
+          }}>
           {result.score >= SHIP_SCORE ? t("board.eval.complete") : t("board.eval.partial")}
         </span>
         {showScore && (
@@ -90,12 +103,20 @@ export function EvalResults({
       </div>
       <ChecklistSummary checks={result.checks} />
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))", gap: 18, marginTop: 16 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))",
+          gap: 18,
+          marginTop: 16
+        }}>
         <Checklist checks={result.checks} />
         {result.warnings.length > 0 && (
           <section>
             <SectionHeading icon="warning" label={t("board.eval.warnings", { count: result.warnings.length })} />
-            <ul style={{ ...listStyle, gap: 8 }}>
+            <ul style={{
+                ...listStyle,
+                gap: 8
+              }}>
               {result.warnings.map((warning) => (
                 <li
                   key={warning}
@@ -118,15 +139,42 @@ export function EvalResults({
       </div>
 
       {pushback.length > 0 && (
-        <div style={{ marginTop: 18, paddingTop: 16, borderTop: `1px solid ${colors.borderSoft}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em" }}>
+        <div style={{
+            marginTop: 18,
+            paddingTop: 16,
+            borderTop: `1px solid ${colors.borderSoft}`
+          }}>
+          <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 6,
+              fontSize: font.size.label,
+              fontWeight: 700,
+              color: colors.textDim,
+              marginBottom: 8,
+              letterSpacing: "0.04em"
+            }}>
               <BrandIcon name="prompt" color={colors.textDim} size={13} />
             {t("board.pushback").toUpperCase()}
           </div>
-          <p style={{ margin: "0 0 10px", fontSize: font.size.small, color: colors.textFaint }}>{t("board.pushbackHint")}</p>
-          <ol style={{ margin: 0, paddingLeft: 18, display: "flex", flexDirection: "column", gap: 8 }}>
+          <p style={{
+              margin: "0 0 10px",
+              fontSize: font.size.small,
+              color: colors.textFaint
+            }}>{t("board.pushbackHint")}</p>
+          <ol style={{
+              margin: 0,
+              paddingLeft: 18,
+              display: "flex",
+              flexDirection: "column",
+              gap: 8
+            }}>
             {pushback.map((question) => (
-              <li key={question} style={{ fontSize: font.size.body, lineHeight: 1.55, color: colors.text }}>
+              <li key={question} style={{
+                  fontSize: font.size.body,
+                  lineHeight: 1.55,
+                  color: colors.text
+                }}>
                 {question}
               </li>
             ))}
@@ -141,7 +189,17 @@ const listStyle = { margin: 0, padding: 0, listStyle: "none", display: "flex", f
 
 function SectionHeading({ icon, label }: { icon: string; label: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 700, color: colors.textDim, marginBottom: 8, letterSpacing: "0.04em", textTransform: "uppercase" }}>
+    <div style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        fontSize: font.size.label,
+        fontWeight: 700,
+        color: colors.textDim,
+        marginBottom: 8,
+        letterSpacing: "0.04em",
+        textTransform: "uppercase"
+      }}>
       <BrandIcon name={icon} color={colors.textDim} size={13} />
       {label}
     </div>
@@ -156,11 +214,25 @@ function ChecklistSummary({ checks }: { checks: Check[] }) {
   const pct = total ? Math.round((earned / total) * 100) : 0;
   return (
     <div>
-      <p style={{ margin: "0 0 6px", fontSize: font.size.small, color: colors.textDim }}>
+      <p style={{
+          margin: "0 0 6px",
+          fontSize: font.size.small,
+          color: colors.textDim
+        }}>
         {t("board.eval.summary", { passed: passed.length, total: checks.length, earned, points: total })}
       </p>
-      <div role="presentation" style={{ height: 6, borderRadius: 3, background: colors.bgDeep, overflow: "hidden" }}>
-        <div style={{ width: `${pct}%`, height: "100%", borderRadius: 3, background: pct === 100 ? colors.success : colors.accent }} />
+      <div role="presentation" style={{
+          height: 6,
+          borderRadius: 3,
+          background: colors.bgDeep,
+          overflow: "hidden"
+        }}>
+        <div style={{
+            width: `${pct}%`,
+            height: "100%",
+            borderRadius: 3,
+            background: pct === 100 ? colors.success : colors.accent
+          }} />
       </div>
     </div>
   );
@@ -176,17 +248,31 @@ function Checklist({ checks }: { checks: Check[] }) {
       {missing.length > 0 && (
         <>
           <SectionHeading icon="evaluate" label={t("board.eval.missing", { count: missing.length })} />
-          <ul style={{ ...listStyle, gap: 4 }}>
+          <ul style={{
+              ...listStyle,
+              gap: 4
+            }}>
             {missing.map((check) => <CheckRow key={check.label} check={check} />)}
           </ul>
         </>
       )}
       {done.length > 0 && (
         <details open={missing.length === 0} style={{ marginTop: missing.length > 0 ? 12 : 0 }}>
-          <summary style={{ cursor: "pointer", fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.04em", textTransform: "uppercase", marginBottom: 8 }}>
+          <summary style={{
+              cursor: "pointer",
+              fontSize: font.size.label,
+              fontWeight: 700,
+              color: colors.textDim,
+              letterSpacing: "0.04em",
+              textTransform: "uppercase",
+              marginBottom: 8
+            }}>
             {t("board.eval.done", { count: done.length })}
           </summary>
-          <ul style={{ ...listStyle, gap: 4 }}>
+          <ul style={{
+              ...listStyle,
+              gap: 4
+            }}>
             {done.map((check) => <CheckRow key={check.label} check={check} />)}
           </ul>
         </details>
@@ -197,15 +283,38 @@ function Checklist({ checks }: { checks: Check[] }) {
 
 function CheckRow({ check }: { check: Check }) {
   return (
-    <li style={{ display: "flex", alignItems: "flex-start", gap: 10, padding: "7px 10px", borderRadius: 8, background: check.passed ? "transparent" : colors.bgDeep }}>
-      <span style={{ flex: "0 0 auto", display: "flex", marginTop: 3 }}>
+    <li style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 10,
+        padding: "7px 10px",
+        borderRadius: 8,
+        background: check.passed ? "transparent" : colors.bgDeep
+      }}>
+      <span style={{
+          flex: "0 0 auto",
+          display: "flex",
+          marginTop: 3
+        }}>
         {check.passed ? (
           <BrandIcon name="check" color={colors.successBright} size={14} />
         ) : (
-          <span aria-hidden="true" style={{ width: 12, height: 12, margin: 1, borderRadius: 6, border: `2px solid ${colors.textFaint}` }} />
+          <span aria-hidden="true" style={{
+              width: 12,
+              height: 12,
+              margin: 1,
+              borderRadius: 6,
+              border: `2px solid ${colors.textFaint}`
+            }} />
         )}
       </span>
-      <span style={{ flex: 1, minWidth: 0, fontSize: font.size.body, lineHeight: 1.5, color: check.passed ? colors.textDim : colors.text }}>
+      <span style={{
+          flex: 1,
+          minWidth: 0,
+          fontSize: font.size.body,
+          lineHeight: 1.5,
+          color: check.passed ? colors.textDim : colors.text
+        }}>
         {check.label}
       </span>
       <span

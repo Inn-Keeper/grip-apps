@@ -19,7 +19,14 @@ type Props = {
 // The arrows between nodes, plus the live line while dragging a new one.
 export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle, size }: Props) {
   return (
-    <svg style={{ position: "absolute", left: 0, top: 0, width: size.width, height: size.height, pointerEvents: "none" }}>
+    <svg style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        width: size.width,
+        height: size.height,
+        pointerEvents: "none"
+      }}>
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
           <path d="M 0 0 L 10 5 L 0 10 z" fill={colors.textDim} />
@@ -47,11 +54,19 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
               markerEnd="url(#arrow)"
             />
             {label && (
-              <text x={mx} y={(sy + ty) / 2 - 6} textAnchor="middle" style={{ fontSize: font.size.caption, fontWeight: 600, fill: colors.textFaint, pointerEvents: "none" }}>
+              <text x={mx} y={(sy + ty) / 2 - 6} textAnchor="middle" style={{
+                  fontSize: font.size.caption,
+                  fontWeight: 600,
+                  fill: colors.textFaint,
+                  pointerEvents: "none"
+                }}>
                 {label}
               </text>
             )}
-            <path d={d} fill="none" stroke="transparent" strokeWidth="14" style={{ pointerEvents: "stroke", cursor: "pointer" }} onClick={() => onToggle(e.id)}>
+            <path d={d} fill="none" stroke="transparent" strokeWidth="14" style={{
+                pointerEvents: "stroke",
+                cursor: "pointer"
+              }} onClick={() => onToggle(e.id)}>
               <title>{t("edge.clickHint")}</title>
             </path>
           </g>

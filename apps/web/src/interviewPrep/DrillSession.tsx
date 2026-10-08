@@ -35,8 +35,12 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
     return (
       <div
         style={{
-          background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 14, boxShadow: shadow.card,
-          padding: "32px 24px", textAlign: "center",
+          background: colors.surface,
+          border: `1px solid ${colors.borderSoft}`,
+          borderRadius: 14,
+          boxShadow: shadow.card,
+          padding: "32px 24px",
+          textAlign: "center",
         }}
       >
         <div
@@ -58,25 +62,49 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
             size={25}
           />
         </div>
-        <div style={{ fontSize: font.size.heading, fontWeight: 700, color: colors.textBright, marginBottom: 6 }}>
+        <div style={{
+            fontSize: font.size.heading,
+            fontWeight: 700,
+            color: colors.textBright,
+            marginBottom: 6
+          }}>
           {shownCorrect} / {questions.length}
         </div>
-        <p style={{ margin: "0 0 20px", fontSize: font.size.body, color: colors.textDim }}>
+        <p style={{
+            margin: "0 0 20px",
+            fontSize: font.size.body,
+            color: colors.textDim
+          }}>
           {t("prep.drillResult", {
             xp: sessionXp,
             bonus: perfect ? t("prep.perfectBonusSuffix", { bonus: PERFECT_QUIZ_BONUS }) : "",
           })}
         </p>
         {correctCount * 2 < questions.length && (
-          <p style={{ margin: "-12px 0 20px", fontSize: font.size.body, color: colors.textFaint }}>{t("prep.drillEncourage")}</p>
+          <p style={{
+              margin: "-12px 0 20px",
+              fontSize: font.size.body,
+              color: colors.textFaint
+            }}>{t("prep.drillEncourage")}</p>
         )}
-        <div style={{ display: "flex", gap: 8, justifyContent: "center", flexWrap: "wrap" }}>
+        <div style={{
+            display: "flex",
+            gap: 8,
+            justifyContent: "center",
+            flexWrap: "wrap"
+          }}>
         {onRestart && (
           <button
             onClick={onRestart}
             style={{
-              padding: "9px 18px", background: "transparent", border: `1px solid ${colors.accent}60`,
-              borderRadius: 8, color: colors.accentBright, fontSize: font.size.body, fontWeight: 600, cursor: "pointer",
+              padding: "9px 18px",
+              background: "transparent",
+              border: `1px solid ${colors.accent}60`,
+              borderRadius: 8,
+              color: colors.accentBright,
+              fontSize: font.size.body,
+              fontWeight: 600,
+              cursor: "pointer",
             }}
           >
             {t("prep.drillAgain")}
@@ -85,8 +113,14 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
         <button
           onClick={onExit}
           style={{
-            padding: "9px 18px", background: colors.accent, border: "none", borderRadius: 8,
-            color: colors.onAccent, fontSize: font.size.body, fontWeight: 600, cursor: "pointer",
+            padding: "9px 18px",
+            background: colors.accent,
+            border: "none",
+            borderRadius: 8,
+            color: colors.onAccent,
+            fontSize: font.size.body,
+            fontWeight: 600,
+            cursor: "pointer",
           }}
         >
           {t("prep.backToCards")}
@@ -101,30 +135,78 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
   return (
     <div
       style={{
-        background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 14, boxShadow: shadow.card,
-        padding: "20px", display: "flex", flexDirection: "column", gap: 12,
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        borderRadius: 14,
+        boxShadow: shadow.card,
+        padding: "20px",
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
         // The header below adapts to the card's width, not the window's.
         containerType: "inline-size",
       }}
     >
       {/* Wraps as two groups on narrow cards. The label group fills its line, which puts the
           difficulty pill at its right edge. Question position lives in the progress bar below. */}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "space-between", alignItems: "center", gap: "8px 12px" }}>
-        <span style={{ flex: "1 1 auto", display: "flex", flexWrap: "wrap", alignItems: "center", gap: 8, fontSize: font.size.caption, fontWeight: 700, color: cur.color, letterSpacing: "0.08em" }}>
-          <span style={{ display: "flex", alignItems: "center", gap: 5, whiteSpace: "nowrap" }}>
+      <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "8px 12px"
+        }}>
+        <span style={{
+            flex: "1 1 auto",
+            display: "flex",
+            flexWrap: "wrap",
+            alignItems: "center",
+            gap: 8,
+            fontSize: font.size.caption,
+            fontWeight: 700,
+            color: cur.color,
+            letterSpacing: "0.08em"
+          }}>
+          <span style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              whiteSpace: "nowrap"
+            }}>
             <BrandIcon name="drill" color={cur.color} size={13} />
             {drill.source === "card" ? "QUIZ" : "DRILL"} · {cur.tech}
           </span>
           {tier && (
-            <span style={{ marginLeft: "auto", display: "inline-flex", alignItems: "center", gap: 4, padding: "2px 8px", borderRadius: 999, background: `${tier.color}1A`, border: `1px solid ${tier.color}60`, color: tier.color, letterSpacing: "0.04em" }}>
+            <span style={{
+                marginLeft: "auto",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 4,
+                padding: "2px 8px",
+                borderRadius: 999,
+                background: `${tier.color}1A`,
+                border: `1px solid ${tier.color}60`,
+                color: tier.color,
+                letterSpacing: "0.04em"
+              }}>
               <DifficultyIcon tier={tier} size={13} /> {tier.label.toUpperCase()}
             </span>
           )}
         </span>
-        <span className={styles.sessionMeta} style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12, whiteSpace: "nowrap" }}>
+        <span className={styles.sessionMeta} style={{
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+            whiteSpace: "nowrap"
+          }}>
           {correctCount > 0 && (
             // XP earned this run; keyed so it bumps each time it grows.
-            <span key={correctCount} className={styles.sessionXp} title={t("prep.sessionXpHint")} style={{ color: colors.successBright, background: tints.successSoft, fontSize: font.size.label }}>
+            <span key={correctCount} className={styles.sessionXp} title={t("prep.sessionXpHint")} style={{
+                color: colors.successBright,
+                background: tints.successSoft,
+                fontSize: font.size.label
+              }}>
               +{sessionXp} XP
             </span>
           )}
@@ -132,9 +214,17 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
           <button
             onClick={onExit}
             style={{
-              display: "flex", alignItems: "center", gap: 4,
-              padding: "3px 10px", background: "transparent", border: `1px solid ${colors.borderSoft}`,
-              borderRadius: 8, color: colors.textFaint, fontSize: font.size.caption, fontWeight: 600, cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: 4,
+              padding: "3px 10px",
+              background: "transparent",
+              border: `1px solid ${colors.borderSoft}`,
+              borderRadius: 8,
+              color: colors.textFaint,
+              fontSize: font.size.caption,
+              fontWeight: 600,
+              cursor: "pointer",
             }}
           >
             {t("prep.exit")}

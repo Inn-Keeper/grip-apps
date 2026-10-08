@@ -17,9 +17,19 @@ export function DifficultyIcon({ tier, size = 18 }: Props) {
       <View
         accessibilityElementsHidden
         importantForAccessibility="no"
-        style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
+        style={{
+          width: size,
+          height: size,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
       >
-        <View style={{ width: 12 * scale, height: 4 * scale, borderRadius: 2 * scale, backgroundColor: color }} />
+        <View style={{
+            width: 12 * scale,
+            height: 4 * scale,
+            borderRadius: 2 * scale,
+            backgroundColor: color
+          }} />
       </View>
     );
   }
@@ -29,11 +39,35 @@ export function DifficultyIcon({ tier, size = 18 }: Props) {
       <View
         accessibilityElementsHidden
         importantForAccessibility="no"
-        style={{ width: size, height: size, flexDirection: "row", alignItems: "flex-end", justifyContent: "center", gap: 1.4 * scale }}
+        style={{
+          width: size,
+          height: size,
+          flexDirection: "row",
+          alignItems: "flex-end",
+          justifyContent: "center",
+          gap: 1.4 * scale
+        }}
       >
-        <View style={{ width: 4 * scale, height: 5 * scale, borderRadius: 1.2 * scale, backgroundColor: color, opacity: 0.55 }} />
-        <View style={{ width: 4 * scale, height: 8.5 * scale, borderRadius: 1.2 * scale, backgroundColor: color, opacity: 0.78 }} />
-        <View style={{ width: 4 * scale, height: 13 * scale, borderRadius: 1.2 * scale, backgroundColor: color }} />
+        <View style={{
+            width: 4 * scale,
+            height: 5 * scale,
+            borderRadius: 1.2 * scale,
+            backgroundColor: color,
+            opacity: 0.55
+          }} />
+        <View style={{
+            width: 4 * scale,
+            height: 8.5 * scale,
+            borderRadius: 1.2 * scale,
+            backgroundColor: color,
+            opacity: 0.78
+          }} />
+        <View style={{
+            width: 4 * scale,
+            height: 13 * scale,
+            borderRadius: 1.2 * scale,
+            backgroundColor: color
+          }} />
       </View>
     );
   }
@@ -43,7 +77,12 @@ export function DifficultyIcon({ tier, size = 18 }: Props) {
       <View
         accessibilityElementsHidden
         importantForAccessibility="no"
-        style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
+        style={{
+          width: size,
+          height: size,
+          alignItems: "center",
+          justifyContent: "center"
+        }}
       >
         <View
           style={{
@@ -79,7 +118,12 @@ export function DifficultyIcon({ tier, size = 18 }: Props) {
     <View
       accessibilityElementsHidden
       importantForAccessibility="no"
-      style={{ width: size, height: size, alignItems: "center", justifyContent: "center" }}
+      style={{
+        width: size,
+        height: size,
+        alignItems: "center",
+        justifyContent: "center"
+      }}
     >
       <View
         style={{
@@ -91,8 +135,22 @@ export function DifficultyIcon({ tier, size = 18 }: Props) {
           transform: [{ rotate: "45deg" }],
         }}
       />
-      <View style={{ position: "absolute", width: 9 * scale, height: 1.5 * scale, borderRadius: scale, backgroundColor: color, transform: [{ rotate: "45deg" }] }} />
-      <View style={{ position: "absolute", width: 9 * scale, height: 1.5 * scale, borderRadius: scale, backgroundColor: color, transform: [{ rotate: "-45deg" }] }} />
+      <View style={{
+          position: "absolute",
+          width: 9 * scale,
+          height: 1.5 * scale,
+          borderRadius: scale,
+          backgroundColor: color,
+          transform: [{ rotate: "45deg" }]
+        }} />
+      <View style={{
+          position: "absolute",
+          width: 9 * scale,
+          height: 1.5 * scale,
+          borderRadius: scale,
+          backgroundColor: color,
+          transform: [{ rotate: "-45deg" }]
+        }} />
     </View>
   );
 }

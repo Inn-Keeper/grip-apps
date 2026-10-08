@@ -65,8 +65,17 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
       }}
     >
       {/* Bottom-aligned: the budget label wraps to two lines, the name label does not. */}
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10, alignItems: "end" }}>
-        <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 10,
+          alignItems: "end"
+        }}>
+        <label style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4
+          }}>
           <span style={labelStyle}>{t("board.form.name")}</span>
           <input
             style={inputStyle}
@@ -76,7 +85,11 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
             autoFocus
           />
         </label>
-        <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <label style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4
+          }}>
           <span style={labelStyle}>{t("board.form.budget")}</span>
           <input
             style={inputStyle}
@@ -88,18 +101,34 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
           />
         </label>
       </div>
-      <label style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      <label style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 4
+        }}>
         <span style={labelStyle}>{t("board.form.brief")}</span>
         <textarea
-          style={{ ...inputStyle, minHeight: 52, resize: "vertical" as const, lineHeight: 1.5 }}
+          style={{
+            ...inputStyle,
+            minHeight: 52,
+            resize: "vertical" as const,
+            lineHeight: 1.5
+          }}
           value={brief}
           onChange={(event) => setBrief(event.target.value)}
         />
       </label>
 
       <div>
-        <div style={{ ...labelStyle, marginBottom: 6 }}>{t("board.form.requiredNodes")}</div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+        <div style={{
+            ...labelStyle,
+            marginBottom: 6
+          }}>{t("board.form.requiredNodes")}</div>
+        <div style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 6
+          }}>
           {NODE_TYPES.map((spec) => {
             const active = requiredNodes.includes(spec.type);
             return (
@@ -129,10 +158,21 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
       </div>
 
       <div>
-        <div style={{ ...labelStyle, marginBottom: 6 }}>{t("board.form.requiredEdges")}</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <div style={{
+            ...labelStyle,
+            marginBottom: 6
+          }}>{t("board.form.requiredEdges")}</div>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 6
+          }}>
           {requiredEdges.map((edge, index) => (
-            <div key={index} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <div key={index} style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8
+              }}>
               <Combobox
                 value={edge.from}
                 options={nodeTypeOptions}
@@ -149,7 +189,13 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
               <button
                 onClick={() => setRequiredEdges((prev) => prev.filter((_, i) => i !== index))}
                 title={t("board.removeConnection")}
-                style={{ background: "transparent", border: "none", cursor: "pointer", display: "flex", padding: 4 }}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  padding: 4
+                }}
               >
                 <BrandIcon name="close" color={colors.textFaint} size={11} />
               </button>
@@ -174,9 +220,17 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
         </div>
       </div>
 
-      {error && <p style={{ margin: 0, fontSize: font.size.small, color: colors.dangerBright }}>Save failed: {error.message}</p>}
+      {error && <p style={{
+          margin: 0,
+          fontSize: font.size.small,
+          color: colors.dangerBright
+        }}>Save failed: {error.message}</p>}
 
-      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+      <div style={{
+          display: "flex",
+          gap: 8,
+          justifyContent: "flex-end"
+        }}>
         <button
           onClick={onCancel}
           style={{

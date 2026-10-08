@@ -45,27 +45,57 @@ export function StatsBar({ scores }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.borderSoft, boxShadow: shadow.card,
+        borderColor: colors.borderSoft,
+        boxShadow: shadow.card,
         borderRadius: 12,
         padding: 14,
         gap: 8,
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}><BrandIcon name="rank" color={colors.accentBright} size={16} /><Text style={{ fontSize: font.size.bodyMd, fontWeight: "700", color: colors.textBright }}>{t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}</Text></View>
-        <Text style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>{scores.xp} XP</Text>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap"
+        }}>
+        <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 5
+          }}><BrandIcon name="rank" color={colors.accentBright} size={16} /><Text style={{
+            fontSize: font.size.bodyMd,
+            fontWeight: "700",
+            color: colors.textBright
+          }}>{t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}</Text></View>
+        <Text style={{
+            fontSize: font.size.small,
+            fontWeight: "600",
+            color: colors.textDim
+          }}>{scores.xp} XP</Text>
         {accuracy !== null && (
-          <Text style={{ fontSize: font.size.small, fontWeight: "600", color: accuracy >= 70 ? colors.success : colors.warning }}>
+          <Text style={{
+              fontSize: font.size.small,
+              fontWeight: "600",
+              color: accuracy >= 70 ? colors.success : colors.warning
+            }}>
             {t("prep.accuracySummary", { pct: accuracy, count: attempts })}
           </Text>
         )}
       </View>
 
-      <View style={{ height: 6, backgroundColor: colors.well, borderRadius: 3, overflow: "hidden" }}>
+      <View style={{
+          height: 6,
+          backgroundColor: colors.well,
+          borderRadius: 3,
+          overflow: "hidden"
+        }}>
         <Animated.View style={[{ height: "100%", backgroundColor: colors.accent, borderRadius: 3 }, fillStyle]} />
       </View>
 
-      <Text style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>
+      <Text style={{
+          fontSize: font.size.captionLg,
+          color: colors.textFaint
+        }}>
         {next ? `${t("prep.xpToNext", { xp: next.min - scores.xp, rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) })} · ` : ""}
         {t("prep.xpRules", { correct: CORRECT_XP, bonus: PERFECT_QUIZ_BONUS })}
       </Text>

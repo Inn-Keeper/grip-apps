@@ -40,10 +40,21 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
         marginBottom: compact ? 0 : 20,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10
+        }}>
         <div style={{ flex: 1 }}>
-          <div style={{ fontSize: font.size.small, fontWeight: 700, color: colors.textBright }}>{t("accuracy.title")}</div>
-          <div style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("accuracy.subtitle")}</div>
+          <div style={{
+              fontSize: font.size.small,
+              fontWeight: 700,
+              color: colors.textBright
+            }}>{t("accuracy.title")}</div>
+          <div style={{
+              fontSize: font.size.label,
+              color: colors.textFaint
+            }}>{t("accuracy.subtitle")}</div>
         </div>
         <span
           className={latest ? styles.landNumber : undefined}
@@ -60,11 +71,22 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
       </div>
 
       {points.length < 2 ? (
-        <div style={{ height: compact ? 64 : HEIGHT, display: "flex", alignItems: "center", justifyContent: "center", color: colors.textFaint, fontSize: font.size.label }}>
+        <div style={{
+            height: compact ? 64 : HEIGHT,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: colors.textFaint,
+            fontSize: font.size.label
+          }}>
           {t("accuracy.empty")}
         </div>
       ) : (
-        <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} style={{ width: "100%", height: compact ? 64 : HEIGHT, display: "block" }}>
+        <svg viewBox={`0 0 ${WIDTH} ${HEIGHT}`} style={{
+            width: "100%",
+            height: compact ? 64 : HEIGHT,
+            display: "block"
+          }}>
           <path
             d={`M ${PAD_X} ${PAD_Y} L ${PAD_X} ${HEIGHT - PAD_Y} L ${WIDTH - PAD_X} ${HEIGHT - PAD_Y}`}
             fill="none"

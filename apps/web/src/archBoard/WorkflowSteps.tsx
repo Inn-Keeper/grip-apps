@@ -147,7 +147,11 @@ export function WorkflowSteps({
             fontSize: font.size.label,
           }}
         >
-          <span style={{ fontWeight: 800, color: round.overrun ? colors.dangerBright : colors.textBright, fontVariantNumeric: "tabular-nums" }}>
+          <span style={{
+              fontWeight: 800,
+              color: round.overrun ? colors.dangerBright : colors.textBright,
+              fontVariantNumeric: "tabular-nums"
+            }}>
             {round.overrun ? formatClock(-round.overrunMs) : formatClock(round.remainingMs)}
           </span>
           <span style={{ color: colors.textFaint }}>

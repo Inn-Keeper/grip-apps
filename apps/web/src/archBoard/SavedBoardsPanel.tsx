@@ -27,11 +27,18 @@ export function SavedBoardsPanel({ open, onToggle, boards, loading, error, onRet
       <summary className={styles.savedSummary}>
         <BrandIcon name="story" color={colors.accentBright} size={16} />
         <span style={{ flex: 1 }}>{t("board.savedBoards")}</span>
-        {!loading && <span style={{ color: colors.textFaint, fontSize: font.size.small }}>{boards.length}</span>}
+        {!loading && <span style={{
+            color: colors.textFaint,
+            fontSize: font.size.small
+          }}>{boards.length}</span>}
       </summary>
       <div style={{ padding: "0 14px 14px" }}>
         {loading ? (
-          <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.small }}>{t("board.boardsLoading")}</p>
+          <p style={{
+              margin: 0,
+              color: colors.textFaint,
+              fontSize: font.size.small
+            }}>{t("board.boardsLoading")}</p>
         ) : error ? (
           <ErrorText>
             {t("board.boardsError", { message: error.message })}{" "}

@@ -50,7 +50,12 @@ export function Combobox({
   return (
     <View style={{ gap: space.xs }}>
       {label && (
-        <Text style={{ fontSize: font.size.label, fontWeight: "600", color: colors.textFaint, letterSpacing: 0.3 }}>
+        <Text style={{
+            fontSize: font.size.label,
+            fontWeight: "600",
+            color: colors.textFaint,
+            letterSpacing: 0.3
+          }}>
           {label}
         </Text>
       )}
@@ -75,8 +80,17 @@ export function Combobox({
           onPress={() => setOpen((current) => !current)}
           style={[inputStyle, { flexDirection: "row", alignItems: "center", gap: space.sm }]}
         >
-          {selected?.color && <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: selected.color }} />}
-          <Text style={{ flex: 1, color: selected ? colors.text : colors.textFaint, fontSize: font.size.body }} numberOfLines={1}>
+          {selected?.color && <View style={{
+              width: 8,
+              height: 8,
+              borderRadius: 4,
+              backgroundColor: selected.color
+            }} />}
+          <Text style={{
+              flex: 1,
+              color: selected ? colors.text : colors.textFaint,
+              fontSize: font.size.body
+            }} numberOfLines={1}>
             {selected?.label ?? placeholder}
           </Text>
           <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
@@ -110,8 +124,17 @@ export function Combobox({
                     backgroundColor: active ? tints.accentSoft : "transparent",
                   }}
                 >
-                  {option.color && <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: option.color }} />}
-                  <Text style={{ color: active ? colors.accentBright : colors.textDim, fontSize: font.size.body, fontWeight: active ? "800" : "600" }}>
+                  {option.color && <View style={{
+                      width: 8,
+                      height: 8,
+                      borderRadius: 4,
+                      backgroundColor: option.color
+                    }} />}
+                  <Text style={{
+                      color: active ? colors.accentBright : colors.textDim,
+                      fontSize: font.size.body,
+                      fontWeight: active ? "800" : "600"
+                    }}>
                     {option.label}
                   </Text>
                 </TouchableOpacity>

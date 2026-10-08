@@ -34,13 +34,32 @@ export function NodeInspector({
         gap: 18,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, minWidth: 150 }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          minWidth: 150
+        }}>
         <BrandIcon name={nodeIconName(node.type)} color={color} size={16} />
-        <span style={{ fontSize: font.size.body, fontWeight: 700, color: colors.textBright }}>{spec.label}</span>
+        <span style={{
+            fontSize: font.size.body,
+            fontWeight: 700,
+            color: colors.textBright
+          }}>{spec.label}</span>
       </div>
 
-      <label style={{ display: "flex", flexDirection: "column", gap: 4, flex: 1, minWidth: 220 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("node.partitionKey")}</span>
+      <label style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 4,
+          flex: 1,
+          minWidth: 220
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 700,
+            color: colors.textDim
+          }}>{t("node.partitionKey")}</span>
         <input
           value={node.partitionKey ?? ""}
           onChange={(e) => onChange({ partitionKey: e.target.value })}
@@ -57,9 +76,20 @@ export function NodeInspector({
         />
       </label>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("node.replicas")}</span>
-        <div style={{ display: "flex", gap: 6 }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 4
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 700,
+            color: colors.textDim
+          }}>{t("node.replicas")}</span>
+        <div style={{
+            display: "flex",
+            gap: 6
+          }}>
           {REPLICA_CHOICES.map((count) => {
             const active = node.replicas === count;
             return (

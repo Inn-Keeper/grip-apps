@@ -17,10 +17,12 @@
     "lint": "eslint . --max-warnings 0",
     "format": "prettier --write .",
     "typecheck": "pnpm --filter @grip/core typecheck && pnpm --filter mobile exec tsc --noEmit && pnpm --filter web typecheck",
-    "test": "pnpm --filter @grip/core test && pnpm --filter mobile test && pnpm --filter web test",
+    "test": "pnpm test:eslint-rules && pnpm --filter @grip/core test && pnpm --filter mobile test && pnpm --filter web test",
+    "test:eslint-rules": "node --test eslint-rules/*.test.mjs",
     "seed:questions": "node --env-file-if-exists=.env scripts/seed-questions.mjs",
     "clean:ghosts": "find . -name '._*' -not -path '*/.git/*' -delete",
-    "ci": "pnpm lint && pnpm test && pnpm typecheck && pnpm build"
+    "ci": "pnpm lint && pnpm test && pnpm typecheck && pnpm build",
+    "generate:types": "pnpm --filter @grip/core generate:types && pnpm --filter web generate:types && pnpm --filter mobile generate:types"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -21,7 +21,14 @@ export function ReviewList({
   onChange: (id: string, patch: Partial<ReviewRow>) => void;
 }) {
   return (
-    <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: space.sm }}>
+    <ul style={{
+        margin: 0,
+        padding: 0,
+        listStyle: "none",
+        display: "flex",
+        flexDirection: "column",
+        gap: space.sm
+      }}>
       {rows.map((row) => (
         <li
           key={row.id}
@@ -34,7 +41,10 @@ export function ReviewList({
         >
           <label
             className={styles.checkbox}
-            style={{ marginBottom: space.md, color: colors.textDim }}
+            style={{
+              marginBottom: space.md,
+              color: colors.textDim
+            }}
           >
             <input
               type="checkbox"
@@ -45,7 +55,12 @@ export function ReviewList({
             {t("quest.importInclude")}
           </label>
           <div className={styles.rowFields}>
-            <label style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+            <label style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minWidth: 0
+              }}>
               <span style={label}>{t("quest.importColName")}</span>
               <input
                 style={compactField}
@@ -54,7 +69,12 @@ export function ReviewList({
                 onChange={(e) => onChange(row.id, { name: e.target.value })}
               />
             </label>
-            <label style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+            <label style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minWidth: 0
+              }}>
               <span style={label}>{t("quest.importColRole")}</span>
               <input
                 style={compactField}
@@ -62,7 +82,12 @@ export function ReviewList({
                 onChange={(e) => onChange(row.id, { role: e.target.value })}
               />
             </label>
-            <label style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+            <label style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minWidth: 0
+              }}>
               <span style={label}>{t("quest.importColStage")}</span>
               <select
                 style={compactField}
@@ -79,7 +104,12 @@ export function ReviewList({
                 ))}
               </select>
             </label>
-            <label style={{ display: "flex", flexDirection: "column", gap: 2, minWidth: 0 }}>
+            <label style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 2,
+                minWidth: 0
+              }}>
               <span style={label}>{t("quest.importColFollowUp")}</span>
               <DateInput
                 invalid={row.warnings.includes("invalid_follow_up")}
@@ -96,7 +126,11 @@ export function ReviewList({
               onChange={(postingTechs) => onChange(row.id, { postingTechs })}
             />
             {row.linkStatus && row.linkStatus !== "ok" && (
-              <p style={{ margin: `${space.xs}px 0 0`, fontSize: font.size.label, color: colors.textDim }}>
+              <p style={{
+                  margin: `${space.xs}px 0 0`,
+                  fontSize: font.size.label,
+                  color: colors.textDim
+                }}>
                 {t("quest.importLinkFailed")}
               </p>
             )}
@@ -104,14 +138,28 @@ export function ReviewList({
           {row.warnings.length > 0 && (
             <p
               role="status"
-              style={{ margin: `${space.sm}px 0 0`, fontSize: font.size.label, color: colors.warningBright }}
+              style={{
+                margin: `${space.sm}px 0 0`,
+                fontSize: font.size.label,
+                color: colors.warningBright
+              }}
             >
               {row.warnings.map((warning) => t(`quest.importWarn.${warning}` as Parameters<typeof t>[0])).join(" · ")}
             </p>
           )}
-          <details style={{ marginTop: space.xs, fontSize: font.size.label, color: colors.textDim }}>
-            <summary style={{ cursor: "pointer", color: colors.textDim }}>{t("quest.importSourceLabel")}</summary>
-            <p style={{ margin: `${space.xs}px 0 0`, whiteSpace: "pre-wrap" }}>{row.source}</p>
+          <details style={{
+              marginTop: space.xs,
+              fontSize: font.size.label,
+              color: colors.textDim
+            }}>
+            <summary style={{
+                cursor: "pointer",
+                color: colors.textDim
+              }}>{t("quest.importSourceLabel")}</summary>
+            <p style={{
+                margin: `${space.xs}px 0 0`,
+                whiteSpace: "pre-wrap"
+              }}>{row.source}</p>
           </details>
         </li>
       ))}

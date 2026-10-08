@@ -49,14 +49,37 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
           pct={(pace / PACE_GOAL_PER_WEEK) * 100}
           hint={t("quest.paceHint", { goal: PACE_GOAL_PER_WEEK, days: PACE_WINDOW_DAYS })}
         />
-        <div style={{ color: colors.textDim, fontSize: font.size.label, fontWeight: 800, marginBottom: 10 }}>{t("quest.conversion")}</div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{
+            color: colors.textDim,
+            fontSize: font.size.label,
+            fontWeight: 800,
+            marginBottom: 10
+          }}>{t("quest.conversion")}</div>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 12
+          }}>
           {conversions.map((row, index) => (
             <div key={row.label}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: font.size.small }}>
-                <span style={{ flex: 1, color: colors.text }}>{row.label}</span>
+              <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  fontSize: font.size.small
+                }}>
+                <span style={{
+                    flex: 1,
+                    color: colors.text
+                  }}>{row.label}</span>
                 <span style={{ color: colors.textFaint }}>{row.to}/{row.from}</span>
-                <span style={{ width: 40, textAlign: "right", color: colors.textBright, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>
+                <span style={{
+                    width: 40,
+                    textAlign: "right",
+                    color: colors.textBright,
+                    fontWeight: 800,
+                    fontVariantNumeric: "tabular-nums"
+                  }}>
                   <CountUp value={Math.round(row.rate * 100)} durationMs={1600 + index * 200} />%
                 </span>
               </div>
@@ -68,9 +91,19 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
 
       <WorkspacePanel>
         <WorkspaceTitle icon={<BrandIcon name="accuracy" color={colors.successBright} size={17} />} title={t("quest.insights")} />
-        <div style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 12 }}>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 6,
+            marginTop: 12
+          }}>
           {funnel.signalIds.slice(0, 2).map(({ id, params }) => (
-            <p key={id} style={{ margin: 0, fontSize: font.size.small, lineHeight: 1.5, color: colors.textDim }}>
+            <p key={id} style={{
+                margin: 0,
+                fontSize: font.size.small,
+                lineHeight: 1.5,
+                color: colors.textDim
+              }}>
               {t(`funnel.signal.${id}` as Parameters<typeof t>[0], params)}
             </p>
           ))}
@@ -84,18 +117,44 @@ export function QuestRightRail({ funnel, velocity, velocityError, velocityLoadin
             title={t("quest.velocityTitle")}
             subtitle={t("quest.velocitySub")}
           />
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 14, fontSize: font.size.small }}>
-            {velocityLoading && velocityStages.length === 0 && <p style={{ margin: 0, color: colors.textFaint }}>{t("quest.velocityLoading")}</p>}
-            {velocityError && <p style={{ margin: 0, color: colors.dangerBright }}>{t("quest.velocityError")}</p>}
+          <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 8,
+              marginTop: 14,
+              fontSize: font.size.small
+            }}>
+            {velocityLoading && velocityStages.length === 0 && <p style={{
+                margin: 0,
+                color: colors.textFaint
+              }}>{t("quest.velocityLoading")}</p>}
+            {velocityError && <p style={{
+                margin: 0,
+                color: colors.dangerBright
+              }}>{t("quest.velocityError")}</p>}
             {!velocityLoading && !velocityError && velocityStages.length === 0 && (
-              <p style={{ margin: 0, color: colors.textFaint }}>
+              <p style={{
+                  margin: 0,
+                  color: colors.textFaint
+                }}>
                 {t(velocityEmptyKey(statusEvents) as Parameters<typeof t>[0])}
               </p>
             )}
             {velocityStages.map((stage, index) => (
-              <div key={index} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <span style={{ flex: 1, color: colors.textDim, fontWeight: 600 }}>{stage.fromStage} → {stage.toStage}</span>
-                <span style={{ color: colors.textBright, fontWeight: 800 }}>{t("quest.days", { days: Number(stage.avgDays).toFixed(1) })}</span>
+              <div key={index} style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8
+                }}>
+                <span style={{
+                    flex: 1,
+                    color: colors.textDim,
+                    fontWeight: 600
+                  }}>{stage.fromStage} → {stage.toStage}</span>
+                <span style={{
+                    color: colors.textBright,
+                    fontWeight: 800
+                  }}>{t("quest.days", { days: Number(stage.avgDays).toFixed(1) })}</span>
               </div>
             ))}
           </div>

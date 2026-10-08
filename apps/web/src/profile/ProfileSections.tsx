@@ -2,6 +2,7 @@ import { PROFILE_FIELDS } from "@grip/core/user";
 import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
+import { ErrorText } from "../components/ErrorText";
 import { fieldStyle as inputStyle, srOnly } from "../components/fieldStyles";
 import { InfoTip } from "../components/InfoTip";
 import { WorkspacePanel } from "../components/WorkspaceLayout";
@@ -20,7 +21,14 @@ const AUTOCOMPLETE: Record<string, string> = {
 };
 
 // Account fields save on their own when you leave them (autosave), with the result announced beside the field.
-export function AccountSection({ form, profile, savedKey, error, onChange, onCommit }: {
+export function AccountSection({
+  form,
+  profile,
+  savedKey,
+  error,
+  onChange,
+  onCommit,
+}: {
   form: ProfileForm;
   profile: ProfileRecord | null;
   // The field that just saved, and a failed save's message for the field that caused it (rule 13).
@@ -32,12 +40,38 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
   return (
     <WorkspacePanel style={{ padding: 20 }}>
       {/* A small ✓ badge instead of a sentence; fields still point at it for screen readers. */}
-      <p id="profile-autosave-hint" style={{ margin: "0 0 16px", display: "inline-flex", alignItems: "center", gap: 5, color: colors.textFaint, fontSize: font.size.label, fontWeight: 700 }}>
-        <BrandIcon name="check" color={colors.textFaint} size={12} />
+      <p
+        id="profile-autosave-hint"
+        style={{
+          margin: "0 0 16px",
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 5,
+          color: colors.textFaint,
+          fontSize: font.size.label,
+          fontWeight: 700,
+        }}
+      >
+        <BrandIcon
+          name="check"
+          color={colors.textFaint}
+          size={12}
+        />
         {t("profile.autosaveHint")}
       </p>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 16 }}>
-        <FieldRow id="profile-email" label={t("profile.email")} hint={t("profile.emailHint")} locked>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gap: 16,
+        }}
+      >
+        <FieldRow
+          id="profile-email"
+          label={t("profile.email")}
+          hint={t("profile.emailHint")}
+          locked
+        >
           {/* Read-only: it comes from sign-in, so it doesn't look like an editable field. */}
           <input
             id="profile-email"
@@ -46,7 +80,11 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
             value={profile?.email ?? ""}
             readOnly
             aria-describedby="profile-email-hint"
-            style={{ ...inputStyle, background: "transparent", color: colors.textDim }}
+            style={{
+              ...inputStyle,
+              background: "transparent",
+              color: colors.textDim,
+            }}
           />
         </FieldRow>
         {PROFILE_FIELDS.map((field) => {
@@ -54,7 +92,13 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
           const fieldError = error?.key === field.key ? error.message : null;
           const isUrl = field.keyboardType === "url";
           return (
-            <FieldRow key={field.key} id={id} label={t(field.labelKey as Parameters<typeof t>[0])} status={savedKey === field.key ? t("profile.savedCheck") : null} error={fieldError}>
+            <FieldRow
+              key={field.key}
+              id={id}
+              label={t(field.labelKey as Parameters<typeof t>[0])}
+              status={savedKey === field.key ? t("profile.savedCheck") : null}
+              error={fieldError}
+            >
               <input
                 id={id}
                 type={isUrl ? "url" : "text"}
@@ -64,11 +108,18 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
                 value={form[field.key] ?? ""}
                 disabled={!profile}
                 aria-invalid={fieldError ? true : undefined}
-                aria-describedby={[fieldError ? `${id}-error` : null, "profile-autosave-hint"].filter(Boolean).join(" ")}
+                aria-describedby={[fieldError ? `${id}-error` : null, "profile-autosave-hint"]
+                  .filter(Boolean)
+                  .join(" ")}
                 onChange={(event) => onChange(field.key, event.target.value)}
                 onBlur={() => onCommit(field.key)}
                 // Enter saves and keeps focus in the field (blurring would drop keyboard users to the page).
-                onKeyDown={(event) => { if (event.key === "Enter") { event.preventDefault(); onCommit(field.key); } }}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter") {
+                    event.preventDefault();
+                    onCommit(field.key);
+                  }
+                }}
                 placeholder={t(field.placeholderKey as Parameters<typeof t>[0])}
                 style={inputStyle}
               />
@@ -82,25 +133,111 @@ export function AccountSection({ form, profile, savedKey, error, onChange, onCom
 
 // Label above, field, then status/hint/error below. Status sits outside the label so it never renames the field.
 // locked: read-only field; a 🔒 and an ⓘ carry the hint instead of a line of text.
-function FieldRow({ id, label, hint, locked = false, status, error, children }: { id: string; label: string; hint?: string; locked?: boolean; status?: string | null; error?: string | null; children: React.ReactNode }) {
+function FieldRow({
+  id,
+  label,
+  hint,
+  locked = false,
+  status,
+  error,
+  children,
+}: {
+  id: string;
+  label: string;
+  hint?: string;
+  locked?: boolean;
+  status?: string | null;
+  error?: string | null;
+  children: React.ReactNode;
+}) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 6, minWidth: 0 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 8 }}>
-        <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
-          <label htmlFor={id} style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim, letterSpacing: "0.03em" }}>{label}</label>
-          {locked && <BrandIcon name="lock" color={colors.textFaint} size={12} />}
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        minWidth: 0,
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          gap: 8,
+        }}
+      >
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
+          <label
+            htmlFor={id}
+            style={{
+              fontSize: font.size.label,
+              fontWeight: 700,
+              color: colors.textDim,
+              letterSpacing: "0.03em",
+            }}
+          >
+            {label}
+          </label>
+          {locked && (
+            <BrandIcon
+              name="lock"
+              color={colors.textFaint}
+              size={12}
+            />
+          )}
           {locked && hint && <InfoTip>{hint}</InfoTip>}
         </span>
-        <span role="status" style={{ fontSize: font.size.label, fontWeight: 700, color: colors.successBright }}>{status ?? ""}</span>
+        <span
+          role="status"
+          style={{
+            fontSize: font.size.label,
+            fontWeight: 700,
+            color: colors.successBright,
+          }}
+        >
+          {status ?? ""}
+        </span>
       </div>
       {children}
-      {hint && <span id={`${id}-hint`} style={locked ? srOnly : { fontSize: font.size.label, color: colors.textFaint }}>{hint}</span>}
-      {error && <span id={`${id}-error`} role="alert" style={{ fontSize: font.size.label, color: colors.dangerBright }}>{error}</span>}
+      {hint && (
+        <span
+          id={`${id}-hint`}
+          style={locked ? srOnly : { fontSize: font.size.label, color: colors.textFaint }}
+        >
+          {hint}
+        </span>
+      )}
+      {error && (
+        <span
+          id={`${id}-error`}
+          role="alert"
+          style={{
+            fontSize: font.size.label,
+            color: colors.dangerBright,
+          }}
+        >
+          {error}
+        </span>
+      )}
     </div>
   );
 }
 
-export function ConnectionsSection({ form, profile, githubConnected, linkPending, githubPrepPending, onLinkGitHub, onGithubPrepChange }: {
+export function ConnectionsSection({
+  form,
+  profile,
+  githubConnected,
+  linkPending,
+  githubPrepPending,
+  onLinkGitHub,
+  onGithubPrepChange,
+}: {
   form: ProfileForm;
   profile: ProfileRecord | null;
   githubConnected: boolean;
@@ -111,15 +248,49 @@ export function ConnectionsSection({ form, profile, githubConnected, linkPending
 }) {
   return (
     <WorkspacePanel style={{ padding: 20 }}>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
-        <strong style={{ color: colors.textBright, fontSize: font.size.bodyLg }}>GitHub</strong>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+        }}
+      >
+        <strong
+          style={{
+            color: colors.textBright,
+            fontSize: font.size.bodyLg,
+          }}
+        >
+          GitHub
+        </strong>
         <ConnectionBadge connected={githubConnected} />
       </div>
-      <p style={{ margin: "8px 0 0", color: colors.textDim, fontSize: font.size.body, lineHeight: 1.5 }}>
+      <p
+        style={{
+          margin: "8px 0 0",
+          color: colors.textDim,
+          fontSize: font.size.body,
+          lineHeight: 1.5,
+        }}
+      >
         {githubConnected ? t("profile.githubLinkedBlurb") : t("profile.githubUnlinkedBlurb")}
       </p>
       {githubConnected && form.githubUrl && (
-        <a href={form.githubUrl} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 10, color: colors.accentBright, fontSize: font.size.small, fontWeight: 700, textDecoration: "none", overflowWrap: "anywhere" }}>
+        <a
+          href={form.githubUrl}
+          target="_blank"
+          rel="noreferrer"
+          style={{
+            display: "block",
+            marginTop: 10,
+            color: colors.accentBright,
+            fontSize: font.size.small,
+            fontWeight: 700,
+            textDecoration: "none",
+            overflowWrap: "anywhere",
+          }}
+        >
           {form.githubUrl}
         </a>
       )}
@@ -129,29 +300,78 @@ export function ConnectionsSection({ form, profile, githubConnected, linkPending
         disabled={githubConnected || linkPending || !profile}
         aria-busy={linkPending}
         style={{
-          marginTop: 14, padding: "10px 16px",
+          marginTop: 14,
+          padding: "10px 16px",
           background: githubConnected ? "transparent" : colors.accent,
           border: `1px solid ${githubConnected ? colors.borderSoft : colors.accent}`,
-          borderRadius: 8, color: githubConnected ? colors.successBright : colors.onAccent,
-          fontSize: font.size.body, fontWeight: 800,
+          borderRadius: 8,
+          color: githubConnected ? colors.successBright : colors.onAccent,
+          fontSize: font.size.body,
+          fontWeight: 800,
           cursor: githubConnected || linkPending || !profile ? "default" : "pointer",
           opacity: linkPending || !profile ? 0.6 : 1,
         }}
       >
-        {githubConnected ? t("profile.githubConnectedButton") : linkPending ? t("profile.githubOpening") : t("profile.githubConnectButton")}
+        {githubConnected
+          ? t("profile.githubConnectedButton")
+          : linkPending
+            ? t("profile.githubOpening")
+            : t("profile.githubConnectButton")}
       </button>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, marginTop: 16, paddingTop: 16, borderTop: `1px solid ${colors.borderSoft}` }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 12,
+          marginTop: 16,
+          paddingTop: 16,
+          borderTop: `1px solid ${colors.borderSoft}`,
+        }}
+      >
         <span>
-          <span style={{ display: "block", color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t("profile.useGithubLabel")}</span>
-          <span style={{ display: "block", marginTop: 3, color: colors.textFaint, fontSize: font.size.small }}>{t("profile.useGithubSub")}</span>
+          <span
+            style={{
+              display: "block",
+              color: colors.textBright,
+              fontSize: font.size.body,
+              fontWeight: 800,
+            }}
+          >
+            {t("profile.useGithubLabel")}
+          </span>
+          <span
+            style={{
+              display: "block",
+              marginTop: 3,
+              color: colors.textFaint,
+              fontSize: font.size.small,
+            }}
+          >
+            {t("profile.useGithubSub")}
+          </span>
         </span>
-        <Switch checked={!!profile?.useGithubTechsForPrep} disabled={!githubConnected || !form.githubUrl || githubPrepPending} label={t("profile.useGithubLabel")} onChange={onGithubPrepChange} />
+        <Switch
+          checked={!!profile?.useGithubTechsForPrep}
+          disabled={!githubConnected || !form.githubUrl || githubPrepPending}
+          label={t("profile.useGithubLabel")}
+          onChange={onGithubPrepChange}
+        />
       </div>
     </WorkspacePanel>
   );
 }
 
-export function PreferencesSection({ poeVisible, locale, profile, resetPending, resetSuccess, onPoeVisibilityChange, onLocaleChange, onResetScores }: {
+export function PreferencesSection({
+  poeVisible,
+  locale,
+  profile,
+  resetPending,
+  resetSuccess,
+  onPoeVisibilityChange,
+  onLocaleChange,
+  onResetScores,
+}: {
   poeVisible: boolean;
   locale: string;
   profile: ProfileRecord | null;
@@ -162,18 +382,75 @@ export function PreferencesSection({ poeVisible, locale, profile, resetPending, 
   onResetScores: () => void;
 }) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+      }}
+    >
       <WorkspacePanel style={{ padding: 20 }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 12,
+          }}
+        >
           <span>
-            <span style={{ display: "block", color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t("profile.poeLabel")}</span>
-            <span style={{ display: "block", marginTop: 3, color: colors.textFaint, fontSize: font.size.small }}>{t("profile.poeSub")}</span>
+            <span
+              style={{
+                display: "block",
+                color: colors.textBright,
+                fontSize: font.size.body,
+                fontWeight: 800,
+              }}
+            >
+              {t("profile.poeLabel")}
+            </span>
+            <span
+              style={{
+                display: "block",
+                marginTop: 3,
+                color: colors.textFaint,
+                fontSize: font.size.small,
+              }}
+            >
+              {t("profile.poeSub")}
+            </span>
           </span>
-          <Switch checked={poeVisible} disabled={false} label={t("profile.poeLabel")} onChange={onPoeVisibilityChange} />
+          <Switch
+            checked={poeVisible}
+            disabled={false}
+            label={t("profile.poeLabel")}
+            onChange={onPoeVisibilityChange}
+          />
         </div>
-        <div style={{ marginTop: 16, paddingTop: 16, borderTop: `1px solid ${colors.borderSoft}` }}>
-          <div style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: 800, marginBottom: 10 }}>{t("profile.language")}</div>
-          <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+        <div
+          style={{
+            marginTop: 16,
+            paddingTop: 16,
+            borderTop: `1px solid ${colors.borderSoft}`,
+          }}
+        >
+          <div
+            style={{
+              color: colors.textBright,
+              fontSize: font.size.body,
+              fontWeight: 800,
+              marginBottom: 10,
+            }}
+          >
+            {t("profile.language")}
+          </div>
+          <div
+            style={{
+              display: "flex",
+              gap: 6,
+              flexWrap: "wrap",
+            }}
+          >
             {(Object.entries(LOCALE_LABELS) as [string, string][]).map(([code, label]) => {
               const active = locale === code;
               return (
@@ -184,9 +461,21 @@ export function PreferencesSection({ poeVisible, locale, profile, resetPending, 
                   aria-label={label}
                   aria-pressed={active}
                   onClick={() => onLocaleChange(code)}
-                  style={{ display: "flex", alignItems: "center", padding: "6px 9px", background: active ? `${colors.accent}24` : "transparent", border: `1px solid ${active ? colors.accent : colors.borderSoft}`, borderRadius: 8, cursor: "pointer", opacity: active ? 1 : 0.7 }}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    padding: "6px 9px",
+                    background: active ? `${colors.accent}24` : "transparent",
+                    border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
+                    borderRadius: 8,
+                    cursor: "pointer",
+                    opacity: active ? 1 : 0.7,
+                  }}
                 >
-                  <BrandIcon name={(LOCALE_FLAGS as Record<string, string>)[code] ?? "globe"} size={20} />
+                  <BrandIcon
+                    name={(LOCALE_FLAGS as Record<string, string>)[code] ?? "globe"}
+                    size={20}
+                  />
                 </button>
               );
             })}
@@ -195,19 +484,140 @@ export function PreferencesSection({ poeVisible, locale, profile, resetPending, 
       </WorkspacePanel>
 
       <WorkspacePanel style={{ padding: 20 }}>
-        <div style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t("profile.resetTitle")}</div>
-        <p style={{ margin: "4px 0 12px", color: colors.textFaint, fontSize: font.size.small }}>{t("profile.resetSub")}</p>
+        <div
+          style={{
+            color: colors.textBright,
+            fontSize: font.size.body,
+            fontWeight: 800,
+          }}
+        >
+          {t("profile.resetTitle")}
+        </div>
+        <p
+          style={{
+            margin: "4px 0 12px",
+            color: colors.textFaint,
+            fontSize: font.size.small,
+          }}
+        >
+          {t("profile.resetSub")}
+        </p>
         <button
           type="button"
           onClick={onResetScores}
           disabled={resetPending || !profile}
           aria-busy={resetPending}
-          style={{ padding: "9px 14px", background: "transparent", border: `1px solid ${colors.danger}60`, borderRadius: 8, color: colors.dangerBright, fontSize: font.size.small, fontWeight: 800, cursor: resetPending || !profile ? "wait" : "pointer", opacity: resetPending || !profile ? 0.6 : 1 }}
+          style={{
+            padding: "9px 14px",
+            background: "transparent",
+            border: `1px solid ${colors.danger}60`,
+            borderRadius: 8,
+            color: colors.dangerBright,
+            fontSize: font.size.small,
+            fontWeight: 800,
+            cursor: resetPending || !profile ? "wait" : "pointer",
+            opacity: resetPending || !profile ? 0.6 : 1,
+          }}
         >
           {resetPending ? t("profile.resetting") : t("profile.resetScore")}
         </button>
-        {resetSuccess && <p role="status" style={{ margin: "8px 0 0", color: colors.successBright, fontSize: font.size.small, fontWeight: 700 }}>{t("profile.scoreReset")}</p>}
+        {resetSuccess && (
+          <p
+            role="status"
+            style={{
+              margin: "8px 0 0",
+              color: colors.successBright,
+              fontSize: font.size.small,
+              fontWeight: 700,
+            }}
+          >
+            {t("profile.scoreReset")}
+          </p>
+        )}
       </WorkspacePanel>
     </div>
+  );
+}
+
+// Every prep tech as a chip; favorites are highlighted and clicking toggles one.
+export function FavoriteTechsSection({
+  profile,
+  techs,
+  saving,
+  error,
+  onToggleFavoriteTech,
+}: {
+  profile: ProfileRecord | null;
+  techs: string[];
+  saving: boolean;
+  error: Error | null;
+  onToggleFavoriteTech: (tech: string, profile: ProfileRecord | null) => void;
+}) {
+  const favoriteTechs = profile?.favoriteTechs ?? [];
+  const sortedTechs = [...techs].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+
+  return (
+    <WorkspacePanel
+      style={{
+        marginTop: 20,
+        padding: 20,
+      }}
+    >
+      <div
+        style={{
+          color: colors.textBright,
+          fontSize: font.size.body,
+          fontWeight: 800,
+        }}
+      >
+        {t("profile.favoriteTechs")}
+      </div>
+      <p
+        style={{
+          margin: "8px 0 0",
+          color: colors.textDim,
+          fontSize: font.size.body,
+          lineHeight: 1.5,
+        }}
+      >
+        {t("profile.favoriteTechsBlurb")}
+      </p>
+      <div
+        style={{
+          marginTop: 16,
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 8,
+        }}
+      >
+        {sortedTechs.map((tech) => {
+          const isFavorite = favoriteTechs.includes(tech);
+          return (
+            <button
+              key={tech}
+              type="button"
+              aria-pressed={isFavorite}
+              // ponytail: blocks clicks mid-save so a toggle never starts from a stale list
+              disabled={saving}
+              onClick={() => onToggleFavoriteTech(tech, profile)}
+              style={{
+                padding: "6px 12px",
+                background: isFavorite ? `${colors.accent}14` : "transparent",
+                border: isFavorite ? `1px solid ${colors.borderDeep}10` : `1px dashed ${colors.accent}10`,
+                borderRadius: 999,
+                color: isFavorite ? colors.textHighlight : colors.textHighlightDim,
+                font: "inherit",
+                fontSize: font.size.small,
+                fontWeight: isFavorite ? 700 : 400,
+                cursor: saving ? "wait" : "pointer",
+              }}
+            >
+              {tech}
+            </button>
+          );
+        })}
+      </div>
+      {error && <ErrorText margin="12px 0 0">{error.message}</ErrorText>}
+    </WorkspacePanel>
   );
 }

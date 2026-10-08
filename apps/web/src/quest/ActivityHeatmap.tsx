@@ -47,21 +47,41 @@ export function ActivityHeatmap({ statusEvents, loading, error }: {
       <WorkspaceTitle
         icon={<BrandIcon name="calendar" color={colors.accentBright} size={17} />}
         title={t("quest.activityTitle")}
-        right={ready && <span style={{ color: colors.textDim, fontSize: font.size.label, fontWeight: 700 }}>{t("quest.activityDays", { count: active.length })}</span>}
+        right={ready && <span style={{
+            color: colors.textDim,
+            fontSize: font.size.label,
+            fontWeight: 700
+          }}>{t("quest.activityDays", { count: active.length })}</span>}
       />
       {/* Capped at the widest rail so the grid keeps its size when the rail stacks under the pipeline. */}
-      <div style={{ marginTop: 14, maxWidth: layout.workspaceRightRailMax }}>
+      <div style={{
+          marginTop: 14,
+          maxWidth: layout.workspaceRightRailMax
+        }}>
         {loading && <p style={muted}>{t("quest.activityLoading")}</p>}
-        {error && !loading && <p style={{ ...muted, color: colors.dangerBright }}>{t("quest.activityError")}</p>}
+        {error && !loading && <p style={{
+            ...muted,
+            color: colors.dangerBright
+          }}>{t("quest.activityError")}</p>}
         {ready && (
           <>
             <div
               role="img"
               aria-label={t("quest.activitySummary", { count: active.length, weeks: WEEKS })}
-              style={{ display: "grid", gridTemplateColumns: `auto repeat(${WEEKS}, 1fr)`, gap: 2, alignItems: "center" }}
+              style={{
+                display: "grid",
+                gridTemplateColumns: `auto repeat(${WEEKS}, 1fr)`,
+                gap: 2,
+                alignItems: "center"
+              }}
             >
               {Array.from({ length: 7 }, (_, row) => [
-                <span key={`label-${row}`} aria-hidden style={{ color: colors.textFaint, fontSize: font.size.micro, paddingRight: 4, lineHeight: 1 }}>
+                <span key={`label-${row}`} aria-hidden style={{
+                    color: colors.textFaint,
+                    fontSize: font.size.micro,
+                    paddingRight: 4,
+                    lineHeight: 1
+                  }}>
                   {LABELED_WEEKDAYS.has(row) ? weekday.format(new Date(2026, 0, 5 + row)) : ""}
                 </span>,
                 ...grid.map((week, column) => {
@@ -70,21 +90,44 @@ export function ActivityHeatmap({ statusEvents, loading, error }: {
                     <span
                       key={`${column}-${row}`}
                       title={day ? t("quest.activityCell", { date: shortDate.format(toDate(day.date)), count: day.count }) : undefined}
-                      style={{ aspectRatio: "1", borderRadius: 2, background: day ? LEVEL_COLORS[activityLevel(day.count, max)] : "transparent" }}
+                      style={{
+                        aspectRatio: "1",
+                        borderRadius: 2,
+                        background: day ? LEVEL_COLORS[activityLevel(day.count, max)] : "transparent"
+                      }}
                     />
                   );
                 }),
               ])}
               <span />
               {monthLabels.map((label, column) => (
-                <span key={`month-${column}`} aria-hidden style={{ color: colors.textFaint, fontSize: font.size.micro, whiteSpace: "nowrap", overflow: "visible", width: 0 }}>
+                <span key={`month-${column}`} aria-hidden style={{
+                    color: colors.textFaint,
+                    fontSize: font.size.micro,
+                    whiteSpace: "nowrap",
+                    overflow: "visible",
+                    width: 0
+                  }}>
                   {label}
                 </span>
               ))}
             </div>
-            <div aria-hidden style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 3, marginTop: 8, color: colors.textFaint, fontSize: font.size.micro }}>
+            <div aria-hidden style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "flex-end",
+                gap: 3,
+                marginTop: 8,
+                color: colors.textFaint,
+                fontSize: font.size.micro
+              }}>
               <span style={{ marginRight: 2 }}>{t("quest.activityLess")}</span>
-              {LEVEL_COLORS.map((color) => <span key={color} style={{ width: 9, height: 9, borderRadius: 2, background: color }} />)}
+              {LEVEL_COLORS.map((color) => <span key={color} style={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: 2,
+                  background: color
+                }} />)}
               <span style={{ marginLeft: 2 }}>{t("quest.activityMore")}</span>
             </div>
             {active.length > 0 && (
@@ -93,12 +136,30 @@ export function ActivityHeatmap({ statusEvents, loading, error }: {
                   type="button"
                   aria-expanded={showDays}
                   onClick={() => setShowDays((open) => !open)}
-                  style={{ marginTop: 10, padding: 0, background: "none", border: "none", color: colors.accentBright, fontSize: font.size.label, fontWeight: 700, cursor: "pointer" }}
+                  style={{
+                    marginTop: 10,
+                    padding: 0,
+                    background: "none",
+                    border: "none",
+                    color: colors.accentBright,
+                    fontSize: font.size.label,
+                    fontWeight: 700,
+                    cursor: "pointer"
+                  }}
                 >
                   {t("quest.activityShowDays")}
                 </button>
                 {showDays && (
-                  <ul style={{ margin: "8px 0 0", padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 4, fontSize: font.size.small, color: colors.textDim }}>
+                  <ul style={{
+                      margin: "8px 0 0",
+                      padding: 0,
+                      listStyle: "none",
+                      display: "flex",
+                      flexDirection: "column",
+                      gap: 4,
+                      fontSize: font.size.small,
+                      color: colors.textDim
+                    }}>
                     {[...active].reverse().map((day) => (
                       <li key={day.date}>{t("quest.activityCell", { date: shortDate.format(toDate(day.date)), count: day.count })}</li>
                     ))}

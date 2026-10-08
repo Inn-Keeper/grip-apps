@@ -276,7 +276,11 @@ export default function PrepScreen() {
             )}
             {!searchResults && <StatsBar scores={scores} />}
             {!drill && searchResults && (
-              <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.textDim }}>
+              <Text style={{
+                  fontSize: font.size.small,
+                  fontWeight: "700",
+                  color: colors.textDim
+                }}>
                 {`${t("prep.searchResults")} · ${searchResults.length}`}
               </Text>
             )}
@@ -294,7 +298,11 @@ export default function PrepScreen() {
                   opacity: drillLoading ? 0.5 : 1,
                 }}
               >
-                <Text style={{ fontSize: font.size.small, fontWeight: "700", color: category.color }}>
+                <Text style={{
+                    fontSize: font.size.small,
+                    fontWeight: "700",
+                    color: category.color
+                  }}>
                   Drill {category.name}
                 </Text>
               </TouchableOpacity>
@@ -311,7 +319,11 @@ export default function PrepScreen() {
               />
             )}
             {drillError && !drill && (
-              <Text style={{ fontSize: font.size.label, color: colors.warning, paddingHorizontal: 2 }}>{drillError}</Text>
+              <Text style={{
+                  fontSize: font.size.label,
+                  color: colors.warning,
+                  paddingHorizontal: 2
+                }}>{drillError}</Text>
             )}
 
             {drill && mockActive && (

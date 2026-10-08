@@ -39,7 +39,14 @@ export function DifficultyIcon({ tier, size = 18 }: { tier: Difficulty | undefin
   return (
     <span
       aria-hidden="true"
-      style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: size, height: size, flexShrink: 0 }}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width: size,
+        height: size,
+        flexShrink: 0
+      }}
     >
       {render(tier.color)}
     </span>

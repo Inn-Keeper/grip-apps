@@ -17,6 +17,7 @@ export type ProfileRecord = {
   githubUrl?: string;
   useGithubTechsForPrep?: boolean;
   cvTechs?: string[];
+  favoriteTechs?: string[];
 };
 
 export type Rank = { name: string; min: number };

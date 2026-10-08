@@ -30,7 +30,11 @@ function start(){
 
   // Fixed-size wrapper: a bare WebView flexes and would swallow the rest of the form.
   return (
-    <View style={{ height: 70, marginTop: 10, overflow: "hidden" }}>
+    <View style={{
+        height: 70,
+        marginTop: 10,
+        overflow: "hidden"
+      }}>
       <WebView
         // Turnstile validates the page hostname; baseUrl must be a hostname allowed on the widget.
         source={{ html, baseUrl: TURNSTILE_BASE_URL }}
@@ -38,7 +42,10 @@ function start(){
         onError={() => onToken(null)}
         originWhitelist={["*"]}
         scrollEnabled={false}
-        style={{ flex: 1, backgroundColor: colors.bg }}
+        style={{
+          flex: 1,
+          backgroundColor: colors.bg
+        }}
       />
     </View>
   );

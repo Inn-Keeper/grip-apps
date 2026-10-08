@@ -22,7 +22,12 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
       }}
     >
       {/* Background runs edge to edge; content keeps the page width, aligned with the header. */}
-      <div style={{ maxWidth: "var(--page-max)", marginInline: "auto", padding: "0 24px", boxSizing: "border-box" }}>
+      <div style={{
+          maxWidth: "var(--page-max)",
+          marginInline: "auto",
+          padding: "0 24px",
+          boxSizing: "border-box"
+        }}>
       <div
         style={{
           display: "flex",
@@ -33,15 +38,47 @@ export function Footer({ pages, onNavigate }: { pages: { id: string; label: stri
         }}
       >
         {/* Wraps on phones, so the promise drops under the logo instead of squeezing beside it. */}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap", minWidth: 0, flex: "2 1 360px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 11, flex: "0 0 auto", minWidth: 112 }}>
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            flexWrap: "wrap",
+            minWidth: 0,
+            flex: "2 1 360px"
+          }}>
+          <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 11,
+              flex: "0 0 auto",
+              minWidth: 112
+            }}>
             <BrandMark size={28} />
             <div>
-              <div style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright, lineHeight: 1, whiteSpace: "nowrap" }}>{brand.productName}</div>
-              <div style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, marginTop: 3, whiteSpace: "nowrap" }}>{brand.tagline}</div>
+              <div style={{
+                  fontSize: font.size.bodyLg,
+                  fontWeight: 800,
+                  color: colors.textBright,
+                  lineHeight: 1,
+                  whiteSpace: "nowrap"
+                }}>{brand.productName}</div>
+              <div style={{
+                  fontSize: font.size.label,
+                  fontWeight: 700,
+                  color: colors.textFaint,
+                  marginTop: 3,
+                  whiteSpace: "nowrap"
+                }}>{brand.tagline}</div>
             </div>
           </div>
-          <p style={{ margin: 0, flex: "1 1 240px", color: quietText, fontSize: font.size.body, lineHeight: 1.55, maxWidth: 720 }}>
+          <p style={{
+              margin: 0,
+              flex: "1 1 240px",
+              color: quietText,
+              fontSize: font.size.body,
+              lineHeight: 1.55,
+              maxWidth: 720
+            }}>
             {t("footer.promiseSuffix")}
           </p>
         </div>
@@ -98,8 +135,21 @@ function FooterLinkGroup({ title, links }: { title: string; links: FooterLink[] 
       }}
     >
       {/* A label, not a link: faint caps so it doesn't read as clickable. */}
-      <h2 style={{ margin: 0, color: colors.textFaint, fontSize: font.size.caption, fontWeight: 700, letterSpacing: "0.08em", textTransform: "uppercase" }}>{title}</h2>
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: "4px 14px", flexWrap: "wrap" }}>
+      <h2 style={{
+          margin: 0,
+          color: colors.textFaint,
+          fontSize: font.size.caption,
+          fontWeight: 700,
+          letterSpacing: "0.08em",
+          textTransform: "uppercase"
+        }}>{title}</h2>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "flex-end",
+          gap: "4px 14px",
+          flexWrap: "wrap"
+        }}>
         {links.map((link) =>
           link.href ? (
             <a

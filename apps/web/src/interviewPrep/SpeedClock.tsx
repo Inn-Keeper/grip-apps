@@ -44,7 +44,10 @@ export function SpeedClock({ shownAt }: { shownAt: number }) {
     >
       <BrandIcon name="clock" color={tone} size={15} />
       {timeUp ? (
-        <span style={{ fontSize: font.size.small, fontWeight: 700 }}>{t("prep.timesUp")}</span>
+        <span style={{
+            fontSize: font.size.small,
+            fontWeight: 700
+          }}>{t("prep.timesUp")}</span>
       ) : (
         // Keyed by the second, so the pop replays on every tick while urgent.
         <span key={seconds} className={styles.clockDigits} aria-hidden="true">0:{String(seconds).padStart(2, "0")}</span>

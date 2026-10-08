@@ -21,7 +21,11 @@ export function ZenOverlay({ label, onExit }: Props) {
           borderRadius: 16,
         }}
       >
-        <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>
+        <Text numberOfLines={1} style={{
+            fontSize: font.size.small,
+            fontWeight: "600",
+            color: colors.textDim
+          }}>
           {label}
         </Text>
       </View>

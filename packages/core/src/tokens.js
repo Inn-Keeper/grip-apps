@@ -16,12 +16,16 @@ export const colors = {
   border: "#353C4D", // hairlines on controls: inputs, buttons, options
   borderSoft: "#262A36", // card and panel edges: one step above surface, close to the page
   borderStrong: "#4A5268", // hover edges: one step above border
+  borderDeep: "#141926", // deep end of border gradients (progress outlines)
 
   // Text
   textBright: "#F4F7FC", // headings, emphasized values
   text: "#E8ECF4", // body
   textDim: "#9AA5BC", // secondary
   textFaint: "#6B7690", // captions, placeholders
+
+  textHighlight: "#0de6c9", // teal highlight for links, selected text, etc.
+  textHighlightDim: "#7cb1ab", // dimmer teal for hover, active, etc.
 
   // Brand
   accent: "#14B8A6", // focus teal: fills, lines, active states

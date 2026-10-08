@@ -10,7 +10,11 @@ import styles from "./InterviewPrep.module.css";
 export function LevelSelector({ level, onLevel }: { level: string; onLevel: (key: string) => void }) {
   return (
     <SettingSection title={t("prep.difficultyLevel")}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 7
+        }}>
         {DIFFICULTIES.map((d) => {
           const active = d.key === level;
           return (
@@ -31,12 +35,28 @@ export function LevelSelector({ level, onLevel }: { level: string; onLevel: (key
               }}
             >
               <DifficultyIcon tier={d} size={18} />
-              <span style={{ flex: 1, minWidth: 0 }}>
-                <span style={{ display: "block", fontSize: font.size.body, fontWeight: 800, color: active ? d.color : colors.text }}>{d.label}</span>
+              <span style={{
+                  flex: 1,
+                  minWidth: 0
+                }}>
+                <span style={{
+                    display: "block",
+                    fontSize: font.size.body,
+                    fontWeight: 800,
+                    color: active ? d.color : colors.text
+                  }}>{d.label}</span>
                 {/* Brand voice, not guidance: hidden on phones to keep the list short. */}
-                <span className={styles.tierBlurb} style={{ display: "block", fontSize: font.size.label, color: colors.textFaint }}>{t(d.blurbKey as Parameters<typeof t>[0])}</span>
+                <span className={styles.tierBlurb} style={{
+                    display: "block",
+                    fontSize: font.size.label,
+                    color: colors.textFaint
+                  }}>{t(d.blurbKey as Parameters<typeof t>[0])}</span>
               </span>
-              <span style={{ fontSize: font.size.label, fontWeight: 800, color: active ? d.color : colors.textFaint }}>+{d.xp}</span>
+              <span style={{
+                  fontSize: font.size.label,
+                  fontWeight: 800,
+                  color: active ? d.color : colors.textFaint
+                }}>+{d.xp}</span>
             </button>
           );
         })}

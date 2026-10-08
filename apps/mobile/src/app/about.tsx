@@ -67,7 +67,11 @@ export default function AboutScreen() {
   const locale = useLocale();
 
   return (
-    <View key={locale} style={{ flex: 1, backgroundColor: colors.bg, paddingTop: insets.top }}>
+    <View key={locale} style={{
+        flex: 1,
+        backgroundColor: colors.bg,
+        paddingTop: insets.top
+      }}>
       <View
         style={{
           flexDirection: "row",
@@ -79,10 +83,23 @@ export default function AboutScreen() {
           borderBottomColor: colors.border,
         }}
       >
-        <TouchableOpacity onPress={() => router.back()} style={{ padding: 4, marginLeft: -4 }}>
-          <Text style={{ color: colors.accentBright, fontSize: font.size.headingLg, lineHeight: 24, fontWeight: "300" }}>‹</Text>
+        <TouchableOpacity onPress={() => router.back()} style={{
+            padding: 4,
+            marginLeft: -4
+          }}>
+          <Text style={{
+              color: colors.accentBright,
+              fontSize: font.size.headingLg,
+              lineHeight: 24,
+              fontWeight: "300"
+            }}>‹</Text>
         </TouchableOpacity>
-        <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800", flex: 1 }}>
+        <Text style={{
+            color: colors.textBright,
+            fontSize: font.size.title,
+            fontWeight: "800",
+            flex: 1
+          }}>
           {t("about.title")}
         </Text>
       </View>
@@ -91,7 +108,11 @@ export default function AboutScreen() {
         contentContainerStyle={{ padding: space.lg, gap: space.md, paddingBottom: insets.bottom + 48 }}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={{ color: colors.textFaint, fontSize: font.size.body, lineHeight: 20 }}>
+        <Text style={{
+            color: colors.textFaint,
+            fontSize: font.size.body,
+            lineHeight: 20
+          }}>
           {t("about.intro")}
         </Text>
 
@@ -101,13 +122,18 @@ export default function AboutScreen() {
             style={{
               backgroundColor: colors.surface,
               borderWidth: 1,
-              borderColor: colors.borderSoft, boxShadow: shadow.card,
+              borderColor: colors.borderSoft,
+              boxShadow: shadow.card,
               borderRadius: radius.md,
               padding: space.lg,
               gap: space.sm,
             }}
           >
-            <View style={{ flexDirection: "row", alignItems: "center", gap: space.sm }}>
+            <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: space.sm
+              }}>
               <View
                 style={{
                   width: 36,
@@ -123,13 +149,28 @@ export default function AboutScreen() {
                 <BrandIcon name={f.icon} color={f.color} size={18} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t(f.titleKey)}</Text>
-                <Text style={{ color: colors.textFaint, fontSize: font.size.small, marginTop: 1 }}>{t(f.taglineKey)}</Text>
+                <Text style={{
+                    color: colors.textBright,
+                    fontSize: font.size.body,
+                    fontWeight: "800"
+                  }}>{t(f.titleKey)}</Text>
+                <Text style={{
+                    color: colors.textFaint,
+                    fontSize: font.size.small,
+                    marginTop: 1
+                  }}>{t(f.taglineKey)}</Text>
               </View>
             </View>
-            <View style={{ gap: 4, paddingLeft: 4 }}>
+            <View style={{
+                gap: 4,
+                paddingLeft: 4
+              }}>
               {f.bulletKeys.map((b) => (
-                <Text key={b} style={{ color: colors.textDim, fontSize: font.size.small, lineHeight: 18 }}>
+                <Text key={b} style={{
+                    color: colors.textDim,
+                    fontSize: font.size.small,
+                    lineHeight: 18
+                  }}>
                   · {t(b)}
                 </Text>
               ))}
@@ -141,20 +182,34 @@ export default function AboutScreen() {
           style={{
             backgroundColor: colors.surface,
             borderWidth: 1,
-            borderColor: colors.borderSoft, boxShadow: shadow.card,
+            borderColor: colors.borderSoft,
+            boxShadow: shadow.card,
             borderRadius: radius.md,
             padding: space.lg,
             gap: space.md,
           }}
         >
-          <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("about.howItWorks")}</Text>
+          <Text style={{
+              color: colors.textBright,
+              fontSize: font.size.body,
+              fontWeight: "800"
+            }}>{t("about.howItWorks")}</Text>
           <View style={{ gap: space.sm }}>
             {HOW_IT_WORKS.map((item) => (
               <View key={item.labelKey}>
-                <Text style={{ color: colors.accent, fontSize: font.size.small, fontWeight: "800", marginBottom: 2 }}>
+                <Text style={{
+                    color: colors.accent,
+                    fontSize: font.size.small,
+                    fontWeight: "800",
+                    marginBottom: 2
+                  }}>
                   {t(item.labelKey)}
                 </Text>
-                <Text style={{ color: colors.textDim, fontSize: font.size.small, lineHeight: 18 }}>{t(item.detailKey)}</Text>
+                <Text style={{
+                    color: colors.textDim,
+                    fontSize: font.size.small,
+                    lineHeight: 18
+                  }}>{t(item.detailKey)}</Text>
               </View>
             ))}
           </View>

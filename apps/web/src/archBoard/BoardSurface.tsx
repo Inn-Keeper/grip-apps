@@ -37,7 +37,9 @@ export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove
       onPointerCancel={onPointerCancel}
       onClick={(e) => onCanvasClick((e.target as HTMLElement).dataset.boardSurface === "true")}
       style={{
-        position: "relative", minWidth: 0, height: fullscreen ? "100%" : "calc(100svh - 430px)",
+        position: "relative",
+        minWidth: 0,
+        height: fullscreen ? "100%" : "calc(100svh - 430px)",
         // Never taller than the screen minus a strip of page: the canvas eats swipes
         // (touch-action: none), so there must always be room outside it to scroll.
         minHeight: fullscreen ? 0 : "clamp(220px, calc(100svh - 160px), 420px)",
@@ -45,14 +47,25 @@ export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove
         backgroundImage: `radial-gradient(${colors.borderSoft} ${dot}px, transparent ${dot}px)`,
         backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
         backgroundPosition: `${view.x}px ${view.y}px`,
-        border: `1px solid ${colors.borderSoft}`, borderRadius: 14, overflow: "hidden", touchAction: "none",
+        border: `1px solid ${colors.borderSoft}`,
+        borderRadius: 14,
+        overflow: "hidden",
+        touchAction: "none",
       }}
     >
       {empty && (
         <div
           style={{
-            position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center",
-            color: colors.textFaint, fontSize: font.size.body, pointerEvents: "none", padding: "0 24px", textAlign: "center",
+            position: "absolute",
+            inset: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            color: colors.textFaint,
+            fontSize: font.size.body,
+            pointerEvents: "none",
+            padding: "0 24px",
+            textAlign: "center",
           }}
         >
           {t(coarsePointer ? "board.emptyCanvasHintTouch" : "board.emptyCanvasHint")}
@@ -61,8 +74,13 @@ export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove
       <div
         data-board-surface="true"
         style={{
-          position: "absolute", left: 0, top: 0, width: WORLD.width, height: WORLD.height,
-          transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`, transformOrigin: "0 0",
+          position: "absolute",
+          left: 0,
+          top: 0,
+          width: WORLD.width,
+          height: WORLD.height,
+          transform: `translate(${view.x}px, ${view.y}px) scale(${view.scale})`,
+          transformOrigin: "0 0",
         }}
       >
         {children}

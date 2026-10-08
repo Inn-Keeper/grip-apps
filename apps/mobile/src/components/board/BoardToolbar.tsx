@@ -36,7 +36,13 @@ export function BoardToolbar({
   const overBudget = cost > budget;
   return (
     // Wraps onto a second line on narrow screens so every action stays reachable.
-    <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", columnGap: 10, rowGap: 6 }}>
+    <View style={{
+        flexDirection: "row",
+        flexWrap: "wrap",
+        alignItems: "center",
+        columnGap: 10,
+        rowGap: 6
+      }}>
       <MiniButton
         label={chrome === "full" ? t("board.chromeHide") : t("board.chromeShow")}
         color={colors.textDim}
@@ -44,21 +50,48 @@ export function BoardToolbar({
       />
       <MiniButton label={t("board.zen")} color={colors.textDim} onPress={() => onChrome("zen")} />
       {chrome === "compact" && (
-        <Text numberOfLines={1} style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim, flexShrink: 1 }}>
+        <Text numberOfLines={1} style={{
+            fontSize: font.size.small,
+            fontWeight: "600",
+            color: colors.textDim,
+            flexShrink: 1
+          }}>
           {scenarioName}
         </Text>
       )}
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 4
+        }}>
         <BrandIcon name="cost" color={overBudget ? colors.danger : colors.textDim} size={14} />
-        <Text style={{ fontSize: font.size.small, fontWeight: "600", color: overBudget ? colors.danger : colors.textDim }}>
+        <Text style={{
+            fontSize: font.size.small,
+            fontWeight: "600",
+            color: overBudget ? colors.danger : colors.textDim
+          }}>
           {cost}/{budget}
         </Text>
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 4
+        }}>
         <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-        <Text style={{ fontSize: font.size.small, fontWeight: "600", color: colors.textDim }}>{maint}</Text>
+        <Text style={{
+            fontSize: font.size.small,
+            fontWeight: "600",
+            color: colors.textDim
+          }}>{maint}</Text>
       </View>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8, marginLeft: "auto", alignItems: "center" }}>
+      <View style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: 8,
+          marginLeft: "auto",
+          alignItems: "center"
+        }}>
         <MiniButton
           label={t("scale.check")}
           color={scaleOpen ? colors.accent : colors.textDim}

@@ -11,9 +11,18 @@ const PLAN_TECH_COUNT = 5;
 
 function ReadinessStat({ label, value }: { label: string; value: number | null }) {
   return (
-    <span style={{ display: "inline-flex", alignItems: "baseline", gap: 4, fontSize: font.size.label, color: colors.textDim }}>
+    <span style={{
+        display: "inline-flex",
+        alignItems: "baseline",
+        gap: 4,
+        fontSize: font.size.label,
+        color: colors.textDim
+      }}>
       {label}
-      <span style={{ fontWeight: 800, color: value === null ? colors.textFaint : colors.text }}>
+      <span style={{
+          fontWeight: 800,
+          color: value === null ? colors.textFaint : colors.text
+        }}>
         {value === null ? "--" : `${value}%`}
       </span>
     </span>
@@ -63,24 +72,48 @@ export function PrepPlanSection({
         borderRadius: 8,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-        <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.label, fontWeight: 800, color: colors.accentBright, letterSpacing: "0.05em" }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          flexWrap: "wrap"
+        }}>
+        <span style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: font.size.label,
+            fontWeight: 800,
+            color: colors.accentBright,
+            letterSpacing: "0.05em"
+          }}>
           <BrandIcon name="drill" color={colors.accentBright} size={13} />
           {t("plan.title").toUpperCase()}
         </span>
-        <span style={{ fontSize: font.size.label, color: colors.textDim }}>
+        <span style={{
+            fontSize: font.size.label,
+            color: colors.textDim
+          }}>
           {contact.nextActionDate
             ? t("plan.deadline", { date: contact.nextActionDate, days: plan.daysLeft ?? 0 })
             : t("plan.noDeadline")}
         </span>
-        <span style={{ marginLeft: "auto", display: "flex", alignItems: "baseline", gap: 10 }}>
+        <span style={{
+            marginLeft: "auto",
+            display: "flex",
+            alignItems: "baseline",
+            gap: 10
+          }}>
           <ReadinessStat label={t("plan.readiness")} value={readiness.overall} />
           <ReadinessStat label={t("plan.readinessPrep")} value={readiness.prep} />
           <ReadinessStat label={t("plan.readinessStories")} value={readiness.stories} />
           <ReadinessStat label={t("plan.readinessBoards")} value={readiness.arch} />
           {readiness.archTopology !== null && (
             <span
-              style={{ fontSize: font.size.label, color: colors.textFaint }}
+              style={{
+                fontSize: font.size.label,
+                color: colors.textFaint
+              }}
               title={t("plan.readinessBoardsSplitHint")}
             >
               {t("plan.readinessBoardsSplit", {
@@ -92,7 +125,13 @@ export function PrepPlanSection({
         </span>
       </div>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 8, alignItems: "center" }}>
+      <div style={{
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 6,
+          marginTop: 8,
+          alignItems: "center"
+        }}>
         {focus.map((item) => (
           <span
             key={item.tech}
@@ -109,7 +148,10 @@ export function PrepPlanSection({
             }}
           >
             {item.tech}
-            <span style={{ fontWeight: 800, color: item.accuracy === null ? colors.warningBright : colors.textDim }}>
+            <span style={{
+                fontWeight: 800,
+                color: item.accuracy === null ? colors.warningBright : colors.textDim
+              }}>
               {item.accuracy === null ? t("plan.never") : `${item.accuracy}%`}
             </span>
           </span>

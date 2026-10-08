@@ -61,7 +61,14 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
           subtitle={t("prep.xpEarned", { xp: scores.xp })}
         />
         <GlowBar pct={progress} flash={gained} marginTop={14} />
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 10, marginTop: 9, color: colors.textFaint, fontSize: font.size.label }}>
+        <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 10,
+            marginTop: 9,
+            color: colors.textFaint,
+            fontSize: font.size.label
+          }}>
           <span>{t("prep.answered", { count: summary.attempts })}</span>
           <span>{next ? t("prep.xpToNext", { xp: next.min - scores.xp, rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) }) : t("prep.topRank")}</span>
         </div>
@@ -90,9 +97,22 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
       >
         <summary className={styles.settingsSummary}>
           <BrandIcon name="drill" color={colors.accentBright} size={17} />
-          <span style={{ flex: 1, minWidth: 0 }}>
-            <span style={{ display: "block", color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{t("prep.practiceSettings")}</span>
-            <span style={{ display: "block", marginTop: 4, color: colors.textFaint, fontSize: font.size.label }}>
+          <span style={{
+              flex: 1,
+              minWidth: 0
+            }}>
+            <span style={{
+                display: "block",
+                color: colors.textBright,
+                fontSize: font.size.body,
+                fontWeight: 800
+              }}>{t("prep.practiceSettings")}</span>
+            <span style={{
+                display: "block",
+                marginTop: 4,
+                color: colors.textFaint,
+                fontSize: font.size.label
+              }}>
               {t("prep.settingsSummary", { level: difficultyByKey(level)?.label ?? level, size: quizSize ?? t("prep.all") })}
               {autoNext && <span style={{ whiteSpace: "nowrap" }}>{` · ${t("prep.autoNext")}`}</span>}
             </span>
@@ -114,18 +134,49 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
 function RailList({ color, icon, items, title }: { color: string; icon: string; items: { tech: string; acc: number; n: number }[]; title: string }) {
   return (
     <div style={{ marginTop: 14 }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 6, color: colors.textDim, fontSize: font.size.label, fontWeight: 800, marginBottom: 8 }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          color: colors.textDim,
+          fontSize: font.size.label,
+          fontWeight: 800,
+          marginBottom: 8
+        }}>
         <BrandIcon name={icon} color={color} size={12} />
         {title}
       </div>
       {items.length === 0 ? (
-        <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.label, lineHeight: 1.5 }}>{t("prep.signalEmpty")}</p>
+        <p style={{
+            margin: 0,
+            color: colors.textFaint,
+            fontSize: font.size.label,
+            lineHeight: 1.5
+          }}>{t("prep.signalEmpty")}</p>
       ) : (
-        <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 7
+          }}>
           {items.map((item, index) => (
-            <div key={item.tech} style={{ display: "flex", justifyContent: "space-between", gap: 10, fontSize: font.size.small }}>
-              <span style={{ color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.tech}</span>
-              <span style={{ color, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}><CountUp value={item.acc} durationMs={1600 + index * 200} />%</span>
+            <div key={item.tech} style={{
+                display: "flex",
+                justifyContent: "space-between",
+                gap: 10,
+                fontSize: font.size.small
+              }}>
+              <span style={{
+                  color: colors.text,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}>{item.tech}</span>
+              <span style={{
+                  color,
+                  fontWeight: 800,
+                  fontVariantNumeric: "tabular-nums"
+                }}><CountUp value={item.acc} durationMs={1600 + index * 200} />%</span>
             </div>
           ))}
         </div>

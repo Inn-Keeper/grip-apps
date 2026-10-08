@@ -17,6 +17,8 @@ export const profileQueryKeys = {
   accuracyTimeline: ["accuracy-timeline"] as const,
 };
 
+export type AuthIdentity = UserIdentity;
+
 export function useProfileQuery() {
   return useQuery({ queryKey: profileQueryKeys.profile, queryFn: api.getUser });
 }
@@ -158,4 +160,13 @@ export function useLinkGitHubMutation() {
   });
 }
 
-export type AuthIdentity = UserIdentity;
+export function useSaveFavoriteTechsMutation() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (favoriteTechs: string[]) => api.updateProfile({ favoriteTechs }),
+    onSuccess: (saved) => {
+      queryClient.setQueryData(profileQueryKeys.profile, saved);
+    },
+  });
+}

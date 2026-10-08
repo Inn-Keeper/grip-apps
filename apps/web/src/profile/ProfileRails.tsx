@@ -9,7 +9,12 @@ import { SECTIONS, type ProfileSection } from "./sections";
 import type { ProfileRecord, Rank } from "./types";
 
 // Left rail = move around (rule 4): who you are, the sections, and signing out.
-export function ProfileLeftRail({ profile, section, onSection, onSignOut }: {
+export function ProfileLeftRail({
+  profile,
+  section,
+  onSection,
+  onSignOut,
+}: {
   profile: ProfileRecord | null;
   section: ProfileSection;
   onSection: (section: ProfileSection) => void;
@@ -18,22 +23,65 @@ export function ProfileLeftRail({ profile, section, onSection, onSignOut }: {
   return (
     <>
       <WorkspacePanel>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ width: 40, height: 40, borderRadius: 20, background: colors.accent, color: colors.onAccent, display: "grid", placeItems: "center", fontSize: font.size.title, fontWeight: 800, flexShrink: 0 }}>
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 12,
+          }}
+        >
+          <div
+            style={{
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              background: colors.accent,
+              color: colors.onAccent,
+              display: "grid",
+              placeItems: "center",
+              fontSize: font.size.title,
+              fontWeight: 800,
+              flexShrink: 0,
+            }}
+          >
             {(profile?.displayName || profile?.email || "?").slice(0, 1).toUpperCase()}
           </div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ color: colors.textBright, fontSize: font.size.bodyLg, fontWeight: 800 }}>{profile?.displayName || t("profile.yourProfile")}</div>
+            <div
+              style={{
+                color: colors.textBright,
+                fontSize: font.size.bodyLg,
+                fontWeight: 800,
+              }}
+            >
+              {profile?.displayName || t("profile.yourProfile")}
+            </div>
             {/* Guests have no email: show it only when there is one, and "Loading" only while loading. */}
             {(profile?.email || !profile) && (
-              <div style={{ marginTop: 2, color: colors.textFaint, fontSize: font.size.small, overflowWrap: "anywhere" }}>{profile?.email || t("profile.loading")}</div>
+              <div
+                style={{
+                  marginTop: 2,
+                  color: colors.textFaint,
+                  fontSize: font.size.small,
+                  overflowWrap: "anywhere",
+                }}
+              >
+                {profile?.email || t("profile.loading")}
+              </div>
             )}
           </div>
         </div>
       </WorkspacePanel>
 
       <WorkspacePanel style={{ padding: 8 }}>
-        <nav aria-label={t("profile.settings")} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <nav
+          aria-label={t("profile.settings")}
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+          }}
+        >
           {SECTIONS.map((item) => {
             const active = item.key === section;
             return (
@@ -43,12 +91,25 @@ export function ProfileLeftRail({ profile, section, onSection, onSignOut }: {
                 aria-current={active ? "page" : undefined}
                 onClick={() => onSection(item.key)}
                 style={{
-                  display: "flex", alignItems: "center", gap: 9, padding: "9px 10px", border: "none", borderRadius: 7,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 9,
+                  padding: "9px 10px",
+                  border: "none",
+                  borderRadius: 7,
                   background: active ? `${colors.accent}24` : "transparent",
-                  color: active ? colors.textBright : colors.textDim, fontSize: font.size.body, fontWeight: 700, cursor: "pointer", textAlign: "left",
+                  color: active ? colors.textBright : colors.textDim,
+                  fontSize: font.size.body,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  textAlign: "left",
                 }}
               >
-                <BrandIcon name={item.icon} color={active ? colors.accentBright : colors.textFaint} size={15} />
+                <BrandIcon
+                  name={item.icon}
+                  color={active ? colors.accentBright : colors.textFaint}
+                  size={15}
+                />
                 {t(item.labelKey)}
               </button>
             );
@@ -61,9 +122,33 @@ export function ProfileLeftRail({ profile, section, onSection, onSignOut }: {
           <button
             type="button"
             onClick={onSignOut}
-            style={{ marginTop: 12, width: "100%", padding: "9px 12px", background: "transparent", border: `1px solid ${colors.borderSoft}`, borderRadius: 8, color: colors.textDim, fontSize: font.size.small, fontWeight: 800, cursor: "pointer", textAlign: "left" }}
+            style={{
+              width: "100%",
+              padding: "12px",
+              background: "transparent",
+              border: `1px solid ${colors.borderSoft}`,
+              borderRadius: 6,
+              color: colors.textDim,
+              fontSize: font.size.small,
+              fontWeight: 600,
+              cursor: "pointer",
+              textAlign: "left",
+            }}
           >
-            {t("profile.signOut")}
+            <span
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 4,
+              }}
+            >
+              <BrandIcon
+                name="signOut"
+                color={colors.textFaint}
+                size={15}
+              />
+              {t("profile.signOut")}
+            </span>
           </button>
         )}
       </WorkspacePanel>
@@ -72,7 +157,13 @@ export function ProfileLeftRail({ profile, section, onSection, onSignOut }: {
 }
 
 // Right rail = status (rule 5): the completion headline, then rank.
-export function ProfileRightRail({ completionItems, completionPct, profile, rank, next }: {
+export function ProfileRightRail({
+  completionItems,
+  completionPct,
+  profile,
+  rank,
+  next,
+}: {
   completionItems: number;
   completionPct: number;
   profile: ProfileRecord | null;
@@ -91,13 +182,30 @@ export function ProfileRightRail({ completionItems, completionPct, profile, rank
         hint={t("profile.fields", { filled: completionItems, total: PROFILE_FIELDS.length })}
       />
       <WorkspaceTitle
-        icon={<BrandIcon name="rank" color={colors.accentBright} size={17} />}
+        icon={
+          <BrandIcon
+            name="rank"
+            color={colors.accentBright}
+            size={17}
+          />
+        }
         title={t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}
         subtitle={`${xp} XP`}
       />
-      <GlowBar pct={rankPct} marginTop={14} />
-      <p style={{ margin: "9px 0 0", color: colors.textFaint, fontSize: font.size.label }}>
-        {next ? t("profile.xpToNext", { xp: next.min - xp, rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) }) : t("profile.topRank")}
+      <GlowBar
+        pct={rankPct}
+        marginTop={14}
+      />
+      <p
+        style={{
+          margin: "9px 0 0",
+          color: colors.textFaint,
+          fontSize: font.size.label,
+        }}
+      >
+        {next
+          ? t("profile.xpToNext", { xp: next.min - xp, rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) })
+          : t("profile.topRank")}
       </p>
     </WorkspacePanel>
   );

@@ -3,6 +3,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import globals from "globals";
 import tseslint from "typescript-eslint";
+import stylePropertiesPerLine from "./eslint-rules/style-properties-per-line.mjs";
 
 export default tseslint.config(
   {
@@ -58,10 +59,12 @@ export default tseslint.config(
     files: ["apps/web/src/**/*.{jsx,tsx}", "apps/mobile/src/**/*.{jsx,tsx}"],
     plugins: {
       "react-hooks": reactHooks,
+      grip: { rules: { "style-properties-per-line": stylePropertiesPerLine } },
     },
     rules: {
       "react-hooks/exhaustive-deps": "warn",
       "react-hooks/rules-of-hooks": "error",
+      "grip/style-properties-per-line": "error",
     },
   },
   {

@@ -84,7 +84,13 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
       ref={rootRef}
       tabIndex={-1}
       onKeyDown={onKeyDown}
-      style={{ ...vars, display: "flex", flexDirection: "column", gap: 12, outline: "none" }}
+      style={{
+        ...vars,
+        display: "flex",
+        flexDirection: "column",
+        gap: 12,
+        outline: "none"
+      }}
     >
       <div className={styles.progress} role="img" aria-label={t("prep.questionProgress", { n: questionNumber, total })}>
         {Array.from({ length: total }, (_, i) => (
@@ -96,7 +102,13 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
       </div>
 
       <div key={questionNumber} className={styles.body}>
-        <p style={{ margin: 0, fontSize: large ? font.size.title : font.size.bodyLg, lineHeight: 1.55, color: colors.text, fontWeight: large ? 700 : 600 }}>
+        <p style={{
+            margin: 0,
+            fontSize: large ? font.size.title : font.size.bodyLg,
+            lineHeight: 1.55,
+            color: colors.text,
+            fontWeight: large ? 700 : 600
+          }}>
           {question.question}
         </p>
         <div className={styles.options}>
@@ -111,7 +123,14 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
                 disabled={answered !== null}
                 onClick={() => onAnswer(i)}
                 className={`${styles.option}${state !== "idle" ? ` ${styles[state]}` : ""}`}
-                style={{ padding: large ? "10px 12px" : "9px 12px", background: look.bg, border: `1px solid ${look.border}`, color: look.text, fontSize: font.size.body, lineHeight: 1.45 }}
+                style={{
+                  padding: large ? "10px 12px" : "9px 12px",
+                  background: look.bg,
+                  border: `1px solid ${look.border}`,
+                  color: look.text,
+                  fontSize: font.size.body,
+                  lineHeight: 1.45
+                }}
               >
                 <span
                   className={styles.badge}
@@ -130,7 +149,11 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
                 </span>
                 {/* The win lands where you clicked: +XP rises off the right answer. */}
                 {isCorrect && state === "correct" && (
-                  <span className={styles.xp} aria-hidden="true" style={{ background: tints.successSoft, border: `1px solid ${colors.success}80`, color: colors.successBright }}>
+                  <span className={styles.xp} aria-hidden="true" style={{
+                      background: tints.successSoft,
+                      border: `1px solid ${colors.success}80`,
+                      color: colors.successBright
+                    }}>
                     +{xp} XP{xpNote ? ` · ${xpNote}` : ""}
                   </span>
                 )}
@@ -146,17 +169,29 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
       {/* Fixed-height footer: a hint before answering, feedback + next step after — no layout jump. */}
       <div className={styles.footer}>
         {answered === null ? (
-          <span style={{ fontSize: font.size.small, color: colors.textFaint }}>
+          <span style={{
+              fontSize: font.size.small,
+              color: colors.textFaint
+            }}>
             {hasKeyboardHint ? t("prep.pickAnswerKeys", { last: letterFor(optionCount - 1) }) : t("prep.pickAnswer")}
           </span>
         ) : (
           <>
             <span className={styles.feedback}>
-              <span aria-hidden="true" style={{ fontSize: font.size.small, fontWeight: 600, color: isCorrect ? colors.success : colors.danger }}>
+              <span aria-hidden="true" style={{
+                  fontSize: font.size.small,
+                  fontWeight: 600,
+                  color: isCorrect ? colors.success : colors.danger
+                }}>
                 {feedback}
               </span>
               {link && (
-                <a href={link} target="_blank" rel="noreferrer" style={{ fontSize: font.size.small, color: colors.accentBright, textDecoration: "none", fontWeight: 500 }}>
+                <a href={link} target="_blank" rel="noreferrer" style={{
+                    fontSize: font.size.small,
+                    color: colors.accentBright,
+                    textDecoration: "none",
+                    fontWeight: 500
+                  }}>
                   {t("prep.docs")}
                 </a>
               )}
@@ -182,7 +217,10 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
             >
               {/* The button mounts on answering, so the fill starts with the countdown and ends with it. */}
               {autoNextMs !== undefined && (
-                <span aria-hidden className={styles.autoNextFill} style={{ background: `${color}40`, animationDuration: `${autoNextMs}ms` }} />
+                <span aria-hidden className={styles.autoNextFill} style={{
+                    background: `${color}40`,
+                    animationDuration: `${autoNextMs}ms`
+                  }} />
               )}
               <span style={{ position: "relative" }}>{isLast ? t("prep.finish") : t("common.next")}</span>
             </button>

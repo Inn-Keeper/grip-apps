@@ -153,10 +153,21 @@ export function NodeView({
           accessible
           accessibilityRole="button"
           accessibilityLabel={`Board node ${spec.label}`}
-          style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 6 }}
+          style={{
+            flex: 1,
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6
+          }}
         >
           <BrandIcon name={nodeIconName(node.type)} color={color} size={18} />
-          <Text style={{ flex: 1, fontSize: font.size.caption, fontWeight: "600", color: colors.text, lineHeight: 13 }}>
+          <Text style={{
+              flex: 1,
+              fontSize: font.size.caption,
+              fontWeight: "600",
+              color: colors.text,
+              lineHeight: 13
+            }}>
             {spec.label}
           </Text>
         </View>

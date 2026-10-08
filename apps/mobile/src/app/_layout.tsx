@@ -56,7 +56,12 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <StatusBar style="light" />
       {session === undefined && (
-        <View style={{ flex: 1, backgroundColor: colors.bg, alignItems: "center", justifyContent: "center" }}>
+        <View style={{
+            flex: 1,
+            backgroundColor: colors.bg,
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
           <Text style={{ color: colors.textFaint }}>Loading…</Text>
         </View>
       )}

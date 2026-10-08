@@ -49,7 +49,10 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
 
   return (
     <ScrollView
-      style={{ flex: 1, backgroundColor: colors.bg }}
+      style={{
+        flex: 1,
+        backgroundColor: colors.bg
+      }}
       contentContainerStyle={{ padding: 16, gap: 10, paddingBottom: insets.bottom + layout.tabBarClearance }}
       keyboardShouldPersistTaps="handled"
     >
@@ -57,7 +60,11 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
         <TextInput style={inputStyle} value={form.name} onChangeText={set("name")} autoFocus />
       </Field>
       <Field label={t("contacts.fieldStatus")}>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+        <View style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 6
+          }}>
           {STATUSES.map((status: string) => (
             <Pill
               key={status}
@@ -104,7 +111,11 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
       </Field>
       {form.postingTechs.length > 0 && (
         <Field label={t("contacts.postingDetected")}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+          <View style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 6
+            }}>
             {form.postingTechs.map((tech) => (
               <Pill key={tech} label={`${tech} ×`} active onPress={() => removePostingTech(tech)} />
             ))}
@@ -123,7 +134,12 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
       </Field>
       <DateField label={t("contacts.nextActionDue")} value={form.nextActionDate} onChange={set("nextActionDate")} clearable />
 
-      <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end", marginTop: 8 }}>
+      <View style={{
+          flexDirection: "row",
+          gap: 8,
+          justifyContent: "flex-end",
+          marginTop: 8
+        }}>
         <Button label={t("common.cancel")} variant="ghost" onPress={onCancel} />
         <Button label={t("common.save")} onPress={() => onSave(form)} disabled={!form.name.trim()} />
       </View>

@@ -152,7 +152,12 @@ export default function Quest() {
   const focused = focus && focus.mode !== "new" ? contacts?.find((c) => c.id === focus.id) ?? null : null;
 
   const noticeLine = notice && (
-    <p key={notice.id} role="status" style={{ margin: "0 0 16px", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700 }}>
+    <p key={notice.id} role="status" style={{
+        margin: "0 0 16px",
+        color: colors.accentBright,
+        fontSize: font.size.body,
+        fontWeight: 700
+      }}>
       {notice.text}
     </p>
   );
@@ -175,7 +180,16 @@ export default function Quest() {
           <button
             type="button"
             onClick={() => setFocus(null)}
-            style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}
+            style={{
+              marginBottom: 14,
+              padding: 0,
+              background: "transparent",
+              border: "none",
+              color: colors.accentBright,
+              fontSize: font.size.body,
+              fontWeight: 700,
+              cursor: "pointer"
+            }}
           >
             {t("quest.back")}
           </button>
@@ -208,11 +222,26 @@ export default function Quest() {
         <>
           {contacts && <QuestNextUp contacts={contacts} onOpen={(id) => setFocus({ mode: "detail", id })} onAdd={() => setFocus({ mode: "new" })} />}
 
-          <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 6 }}>
-            <h1 style={{ margin: 0, fontSize: font.size.heading, fontWeight: 800, color: colors.textBright }}>
+          <div style={{
+              display: "flex",
+              alignItems: "baseline",
+              gap: 12,
+              marginBottom: 6
+            }}>
+            <h1 style={{
+                margin: 0,
+                fontSize: font.size.heading,
+                fontWeight: 800,
+                color: colors.textBright
+              }}>
               {filter ? t(`enum.status.${filter}` as Parameters<typeof t>[0]) : t("quest.title")}
             </h1>
-            <span style={{ marginLeft: "auto", fontSize: font.size.small, color: colors.textFaint, fontWeight: 600 }}>
+            <span style={{
+                marginLeft: "auto",
+                fontSize: font.size.small,
+                color: colors.textFaint,
+                fontWeight: 600
+              }}>
               {visible ? t("quest.inPipeline", { count: visible.length }) : t("common.loading")}
             </span>
             {/* Hidden without VITE_AI_URL, like grading: a button that can only fail is worse than none. */}
@@ -232,7 +261,11 @@ export default function Quest() {
           {/* The pipeline speaks for itself; this slot only carries save/delete notices. */}
           {noticeLine}
 
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{
+              display: "flex",
+              flexDirection: "column",
+              gap: 12
+            }}>
             {visible?.map((contact) => (
               <ContactCard
                 key={contact.id}

@@ -9,7 +9,7 @@ import { NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout, WorkspacePanel } from "../components/WorkspaceLayout";
 import { CvUpload } from "./CvUpload";
 import { ProfileLeftRail, ProfileRightRail } from "./ProfileRails";
-import { AccountSection, ConnectionsSection, PreferencesSection } from "./ProfileSections";
+import { AccountSection, ConnectionsSection, FavoriteTechsSection, PreferencesSection } from "./ProfileSections";
 import type { ProfileSection } from "./sections";
 import {
   useAuthIdentitiesQuery,
@@ -23,6 +23,7 @@ import {
   useSaveCvTechsMutation,
   useSaveGithubUrlMutation,
   useSaveProfileMutation,
+  useSaveFavoriteTechsMutation,
 } from "./queries";
 import {
   githubAccountIdFromIdentity,
@@ -32,6 +33,8 @@ import {
 } from "./githubUtils";
 import type { ProfileForm } from "./types";
 import { ErrorText } from "../components/ErrorText";
+import { categories } from "@grip/core/prepData";
+import { toggleFavoriteTech } from "./favoriteTechs";
 
 const GITHUB_LINKED_KEY = "grip.githubLinked";
 
@@ -46,7 +49,7 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
   const [form, setForm] = useState<ProfileForm>(EMPTY_PROFILE_FORM as ProfileForm);
   const locale = useLocale();
   const [linkedInThisSession, setLinkedInThisSession] = useState(
-    () => githubLinked || window.localStorage.getItem(GITHUB_LINKED_KEY) === "1"
+    () => githubLinked || window.localStorage.getItem(GITHUB_LINKED_KEY) === "1",
   );
   const [poeVisible, setPoeVisible] = useState(poeVisibleByDefault);
   const [section, setSection] = useState<ProfileSection>("account");
@@ -65,7 +68,8 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
   const authProviders = authUser?.app_metadata?.providers ?? [];
   const authIdentities = authUser?.identities ?? [];
   const githubIdentity = [...identities, ...authIdentities].find((identity) => identity.provider === "github");
-  const githubAccountId = githubAccountIdFromIdentity(githubIdentity) || githubAccountIdFromMetadata(authUser?.user_metadata);
+  const githubAccountId =
+    githubAccountIdFromIdentity(githubIdentity) || githubAccountIdFromMetadata(authUser?.user_metadata);
 
   const { data: githubPublicUrl = "", error: githubPublicError } = useGithubPublicUrlQuery(githubAccountId);
 
@@ -75,6 +79,8 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
   const cvTechsMutation = useSaveCvTechsMutation();
   const resetMutation = useResetScoresMutation(profile);
   const linkGitHubMutation = useLinkGitHubMutation();
+
+  const saveFavoriteTechsMutation = useSaveFavoriteTechsMutation();
 
   const githubUrl =
     profile?.githubUrl ||
@@ -88,7 +94,9 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
     if (!profile) return;
     const next = profileToForm(profile) as ProfileForm;
     if (!next.githubUrl && githubUrl) next.githubUrl = githubUrl;
-    setForm((current) => (editingKey.current ? { ...next, [editingKey.current]: current[editingKey.current] ?? "" } : next));
+    setForm((current) =>
+      editingKey.current ? { ...next, [editingKey.current]: current[editingKey.current] ?? "" } : next,
+    );
   }, [githubUrl, profile]);
 
   useEffect(() => {
@@ -135,7 +143,12 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
     setPoeVisible(checked);
     setPoeAssistantVisible(checked);
   };
-  const loadErrors = (loadError || identitiesError || authUserError || githubViewerError || githubPublicError || saveGithubUrlMutation.error) as Error | null;
+  const loadErrors = (loadError ||
+    identitiesError ||
+    authUserError ||
+    githubViewerError ||
+    githubPublicError ||
+    saveGithubUrlMutation.error) as Error | null;
   const connectionsError = (linkGitHubMutation.error || githubPrepMutation.error) as Error | null;
   const completionItems = PROFILE_FIELDS.filter((field) => (form[field.key] ?? "").trim()).length;
   const completionPct = Math.round((completionItems / PROFILE_FIELDS.length) * 100);
@@ -147,12 +160,36 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
     window.setTimeout(() => document.getElementById(`profile-${key}`)?.focus(), 0);
   };
   const nextUp = firstEmpty
-    ? { title: t("profile.nextFieldTitle", { field: t(firstEmpty.labelKey as Parameters<typeof t>[0]).toLowerCase() }), sub: t("profile.nextFieldSub"), action: t("profile.nextFieldAction"), icon: "profile", onAction: () => focusField(firstEmpty.key) }
+    ? {
+        title: t("profile.nextFieldTitle", { field: t(firstEmpty.labelKey as Parameters<typeof t>[0]).toLowerCase() }),
+        sub: t("profile.nextFieldSub"),
+        action: t("profile.nextFieldAction"),
+        icon: "profile",
+        onAction: () => focusField(firstEmpty.key),
+      }
     : !(profile?.cvTechs ?? []).length
-      ? { title: t("profile.nextCvTitle"), sub: t("profile.nextCvSub"), action: t("profile.nextCvAction"), icon: "story", onAction: () => setSection("cv") }
+      ? {
+          title: t("profile.nextCvTitle"),
+          sub: t("profile.nextCvSub"),
+          action: t("profile.nextCvAction"),
+          icon: "story",
+          onAction: () => setSection("cv"),
+        }
       : !githubConnected
-        ? { title: t("profile.nextGithubTitle"), sub: t("profile.nextGithubSub"), action: t("profile.nextGithubAction"), icon: "globe", onAction: () => setSection("connections") }
-        : { title: t("profile.nextDoneTitle"), sub: t("profile.nextDoneSub"), action: t("profile.nextDoneAction"), icon: "story", onAction: () => setSection("cv") };
+        ? {
+            title: t("profile.nextGithubTitle"),
+            sub: t("profile.nextGithubSub"),
+            action: t("profile.nextGithubAction"),
+            icon: "globe",
+            onAction: () => setSection("connections"),
+          }
+        : {
+            title: t("profile.nextDoneTitle"),
+            sub: t("profile.nextDoneSub"),
+            action: t("profile.nextDoneAction"),
+            icon: "story",
+            onAction: () => setSection("cv"),
+          };
 
   const header = {
     // No subtitle: Next Up above already says what a complete profile does.
@@ -162,18 +199,60 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
     preferences: { title: t("profile.preferences"), sub: t("profile.preferencesSub") },
   }[section];
 
+  const prepTechs = categories.flatMap((c) => c.items).map((item) => item.tech);
+
   return (
     <WorkspaceLayout
       mainLabel={t("profile.settings")}
-      left={<ProfileLeftRail profile={profile} section={section} onSection={setSection} onSignOut={onSignOut} />}
-      right={<ProfileRightRail completionItems={completionItems} completionPct={completionPct} profile={profile} rank={rank} next={next} />}
+      left={
+        <ProfileLeftRail
+          profile={profile}
+          section={section}
+          onSection={setSection}
+          onSignOut={onSignOut}
+        />
+      }
+      right={
+        <ProfileRightRail
+          completionItems={completionItems}
+          completionPct={completionPct}
+          profile={profile}
+          rank={rank}
+          next={next}
+        />
+      }
     >
-      <NextUpShell title={nextUp.title} sub={nextUp.sub} tone={colors.accent ?? ""} actionLabel={nextUp.action} actionIcon={nextUp.icon} onAction={nextUp.onAction} disabled={!profile} />
+      <NextUpShell
+        title={nextUp.title}
+        sub={nextUp.sub}
+        tone={colors.accent ?? ""}
+        actionLabel={nextUp.action}
+        actionIcon={nextUp.icon}
+        onAction={nextUp.onAction}
+        disabled={!profile}
+      />
 
       <div style={{ marginBottom: 16 }}>
-        <h1 style={{ margin: 0, color: colors.textBright, fontSize: font.size.heading, fontWeight: 800 }}>{header.title}</h1>
+        <h1
+          style={{
+            margin: 0,
+            color: colors.textBright,
+            fontSize: font.size.heading,
+            fontWeight: 800,
+          }}
+        >
+          {header.title}
+        </h1>
         {(isLoading || header.sub) && (
-          <p style={{ margin: "6px 0 0", maxWidth: 720, color: colors.textFaint, fontSize: font.size.body, lineHeight: 1.6 }}>
+          <p
+            style={{
+              margin: "6px 0 0",
+              maxWidth: 720,
+              color: colors.textFaint,
+              fontSize: font.size.body,
+              lineHeight: 1.6,
+            }}
+          >
             {isLoading ? t("common.loading") : header.sub}
           </p>
         )}
@@ -182,21 +261,48 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
       {loadErrors && <Banner tone="danger">{loadErrors.message}</Banner>}
       {githubLinked && <Banner tone="success">{t("profile.githubConnectedBanner")}</Banner>}
 
-      <div style={{ width: "min(100%, 920px)", paddingBottom: 48 }}>
+      <div
+        style={{
+          width: "min(100%, 920px)",
+          paddingBottom: 48,
+        }}
+      >
         {section === "account" && (
-          <AccountSection form={form} profile={profile} savedKey={savedKey} error={fieldError} onChange={changeField} onCommit={commitField} />
+          <AccountSection
+            form={form}
+            profile={profile}
+            savedKey={savedKey}
+            error={fieldError}
+            onChange={changeField}
+            onCommit={commitField}
+          />
         )}
         {section === "cv" && (
-          <WorkspacePanel style={{ padding: 20 }}>
-            <CvUpload
-              cvTechs={profile?.cvTechs ?? []}
-              disabled={!profile}
-              pending={cvTechsMutation.isPending}
-              onTechsExtracted={(techs) => cvTechsMutation.mutate(techs)}
-              onClear={() => cvTechsMutation.mutate([])}
+          <>
+            <WorkspacePanel style={{ padding: 20 }}>
+              <CvUpload
+                cvTechs={profile?.cvTechs ?? []}
+                disabled={!profile}
+                pending={cvTechsMutation.isPending}
+                onTechsExtracted={(techs) => cvTechsMutation.mutate(techs)}
+                onClear={() => cvTechsMutation.mutate([])}
+              />
+              {cvTechsMutation.error && (
+                <ErrorText margin="12px 0 0">{(cvTechsMutation.error as Error).message}</ErrorText>
+              )}
+            </WorkspacePanel>
+
+            <FavoriteTechsSection
+              profile={profile}
+              techs={prepTechs}
+              saving={saveFavoriteTechsMutation.isPending}
+              error={saveFavoriteTechsMutation.error}
+              onToggleFavoriteTech={(tech, currentProfile) => {
+                if (!currentProfile) return;
+                saveFavoriteTechsMutation.mutate(toggleFavoriteTech(currentProfile.favoriteTechs, tech));
+              }}
             />
-            {cvTechsMutation.error && <ErrorText margin="12px 0 0">{(cvTechsMutation.error as Error).message}</ErrorText>}
-          </WorkspacePanel>
+          </>
         )}
         {section === "connections" && (
           <>
@@ -221,7 +327,10 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
               resetPending={resetMutation.isPending}
               resetSuccess={resetMutation.isSuccess}
               onPoeVisibilityChange={updatePoeVisibility}
-              onLocaleChange={(code) => { if (onLocaleChange) onLocaleChange(code); else setLocale(code); }}
+              onLocaleChange={(code) => {
+                if (onLocaleChange) onLocaleChange(code);
+                else setLocale(code);
+              }}
               onResetScores={resetScores}
             />
             {resetMutation.error && <ErrorText margin="12px 0 0">{(resetMutation.error as Error).message}</ErrorText>}
@@ -239,7 +348,11 @@ function Banner({ tone, children }: { tone: "danger" | "success"; children: Reac
     <div
       role={danger ? "alert" : "status"}
       style={{
-        marginBottom: 16, padding: "12px 14px", borderRadius: 8, fontSize: font.size.body, fontWeight: danger ? 400 : 700,
+        marginBottom: 16,
+        padding: "12px 14px",
+        borderRadius: 8,
+        fontSize: font.size.body,
+        fontWeight: danger ? 400 : 700,
         background: danger ? tints.dangerSoft : tints.successSoft,
         border: `1px solid ${danger ? colors.danger : colors.success}60`,
         color: danger ? colors.dangerBright : colors.successBright,

@@ -631,6 +631,8 @@ export const sv = {
   "profile.useGithubSub": "Visa kategorin GitHub-tekniker i Prep.",
   "profile.cvSection": "Anpassa prep utifrån ditt CV",
   "profile.cvSubtitle": "Ladda upp ditt CV så identifierar vi teknikerna i det och anpassar Interview Prep därefter. Ditt CV läses i webbläsaren och laddas aldrig upp. Endast de identifierade teknikerna sparas.",
+  "profile.favoriteTechs": "Favorittekniker",
+  "profile.favoriteTechsBlurb": "Välj de tekniker du gillar mest.",
   "profile.cvDropTitle": "Släpp ditt CV här, eller klicka för att välja",
   "profile.cvDropHint": "PDF eller TXT, upp till 5MB",
   "profile.cvImportButton": "Importera tekniker från mitt CV",

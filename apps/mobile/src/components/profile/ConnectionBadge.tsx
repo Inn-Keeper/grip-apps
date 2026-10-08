@@ -18,8 +18,17 @@ export function ConnectionBadge({ connected }: { connected: boolean }) {
         borderColor: connected ? colors.success : colors.border,
       }}
     >
-      <View style={{ width: 6, height: 6, borderRadius: 3, backgroundColor: connected ? colors.successBright : colors.textFaint }} />
-      <Text style={{ color: connected ? colors.successBright : colors.textFaint, fontSize: font.size.label, fontWeight: "800" }}>
+      <View style={{
+          width: 6,
+          height: 6,
+          borderRadius: 3,
+          backgroundColor: connected ? colors.successBright : colors.textFaint
+        }} />
+      <Text style={{
+          color: connected ? colors.successBright : colors.textFaint,
+          fontSize: font.size.label,
+          fontWeight: "800"
+        }}>
         {connected ? t("profile.connectionLinked") : t("profile.connectionOptional")}
       </Text>
     </View>

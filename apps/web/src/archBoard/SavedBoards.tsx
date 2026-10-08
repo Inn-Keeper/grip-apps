@@ -44,9 +44,18 @@ export function SavedBoards({
   };
 
   return (
-    <div style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 12 }}>
+    <div style={{
+        display: "flex",
+        gap: 10,
+        overflowX: "auto",
+        paddingBottom: 12
+      }}>
       {boards.length === 0 ? (
-        <p style={{ margin: 0, fontSize: font.size.small, color: colors.textFaint }}>{t("board.savedEmpty")}</p>
+        <p style={{
+            margin: 0,
+            fontSize: font.size.small,
+            color: colors.textFaint
+          }}>{t("board.savedEmpty")}</p>
       ) : (
         boards.map((board) => {
           const boardScenario = allScenarios.find((item) => item.id === board.scenarioId);
@@ -79,11 +88,20 @@ export function SavedBoards({
               >
                 {board.title}
               </span>
-              <span style={{ fontSize: font.size.label, color: colors.textFaint }}>
+              <span style={{
+                  fontSize: font.size.label,
+                  color: colors.textFaint
+                }}>
                 {boardScenario?.name ?? board.scenarioId} {t("board.saved.updated", { date: new Date(board.updatedAt).toLocaleDateString() })}
               </span>
               {boardStory && (
-                <span style={{ fontSize: font.size.label, color: colors.accentBright, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                <span style={{
+                    fontSize: font.size.label,
+                    color: colors.accentBright,
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis"
+                  }}>
                   {t("board.saved.story", { title: boardStory.title })}
                 </span>
               )}
@@ -93,7 +111,12 @@ export function SavedBoards({
                 </ErrorText>
               )}
               {shareMutation.error && shareMutation.variables?.id === board.id && <ErrorText size="label">{shareMutation.error.message}</ErrorText>}
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, flexWrap: "wrap" }}>
+              <div style={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  gap: 8,
+                  flexWrap: "wrap"
+                }}>
                 {board.shareToken ? (
                   <>
                     <button
@@ -128,7 +151,11 @@ export function SavedBoards({
                     </button>
                   </>
                 ) : isDemo ? (
-                  <span style={{ padding: "3px 4px", color: colors.textFaint, fontSize: font.size.label }}>{t("demo.signInToShare")}</span>
+                  <span style={{
+                      padding: "3px 4px",
+                      color: colors.textFaint,
+                      fontSize: font.size.label
+                    }}>{t("demo.signInToShare")}</span>
                 ) : (
                   <button
                     onClick={() => board.id && shareMutation.mutate({ id: board.id, enable: true })}

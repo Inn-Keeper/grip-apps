@@ -23,16 +23,33 @@ export function StoryLinks({ story }: { story: Story }) {
 
   return (
     <>
-      {scenarioMissing && <p style={{ margin: "14px 0 0", fontSize: font.size.small, color: colors.textFaint }}>{t("stories.scenarioMissing")}</p>}
+      {scenarioMissing && <p style={{
+          margin: "14px 0 0",
+          fontSize: font.size.small,
+          color: colors.textFaint
+        }}>{t("stories.scenarioMissing")}</p>}
       {scenario && (
-        <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <div style={{
+            marginTop: 14,
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+            flexWrap: "wrap"
+          }}>
           <div style={{ minWidth: 0 }}>
             <div style={captionStyle}>{t("stories.scenario").toUpperCase()}</div>
-            <span style={{ fontSize: font.size.body, fontWeight: 600, color: colors.text }}>{scenario.name}</span>
+            <span style={{
+                fontSize: font.size.body,
+                fontWeight: 600,
+                color: colors.text
+              }}>{scenario.name}</span>
           </div>
           {/* One board per story: once it exists, its Open below is the way in. */}
           {!board && (
-            <button type="button" onClick={() => openInBoard({ scenarioId: scenario.id, storyId: story.id })} style={{ ...miniBtn(colors.accentBright ?? ""), marginLeft: "auto" }}>
+            <button type="button" onClick={() => openInBoard({ scenarioId: scenario.id, storyId: story.id })} style={{
+                ...miniBtn(colors.accentBright ?? ""),
+                marginLeft: "auto"
+              }}>
               {t("stories.newBoard")}
             </button>
           )}
@@ -50,10 +67,30 @@ function StoryBoard({ board, scenarios }: { board: BoardOverview; scenarios: Aug
   return (
     <div style={{ marginTop: 14 }}>
       <div style={captionStyle}>{t("stories.board").toUpperCase()}</div>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 4, padding: "8px 10px", border: `1px solid ${colors.borderSoft}`, borderRadius: 8 }}>
-        <div style={{ flex: "1 1 180px", minWidth: 0 }}>
-          <div style={{ fontSize: font.size.body, fontWeight: 600, color: colors.text, overflowWrap: "anywhere" }}>{board.title}</div>
-          <div style={{ fontSize: font.size.small, color: colors.textFaint }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap",
+          marginTop: 4,
+          padding: "8px 10px",
+          border: `1px solid ${colors.borderSoft}`,
+          borderRadius: 8
+        }}>
+        <div style={{
+            flex: "1 1 180px",
+            minWidth: 0
+          }}>
+          <div style={{
+              fontSize: font.size.body,
+              fontWeight: 600,
+              color: colors.text,
+              overflowWrap: "anywhere"
+            }}>{board.title}</div>
+          <div style={{
+              fontSize: font.size.small,
+              color: colors.textFaint
+            }}>
             {[
               score !== null && t("stories.boardScore", { score }),
               board.talkGrade != null && t("stories.boardTalkGrade", { grade: board.talkGrade }),

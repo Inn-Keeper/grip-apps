@@ -57,7 +57,11 @@ function Action({
         { backgroundColor: primary ? colors.accent : colors.surfaceHi, opacity: disabled ? 0.5 : 1 },
       ]}
     >
-      <Text style={{ color: primary ? colors.onAccent : colors.text, fontSize: font.size.body, fontWeight: "600" }}>
+      <Text style={{
+          color: primary ? colors.onAccent : colors.text,
+          fontSize: font.size.body,
+          fontWeight: "600"
+        }}>
         {label}
       </Text>
     </Pressable>
@@ -242,9 +246,15 @@ export function ImportModal({
                     setPasting(!pasting);
                     setError(null);
                   }}
-                  style={{ minHeight: 44, justifyContent: "center" }}
+                  style={{
+                    minHeight: 44,
+                    justifyContent: "center"
+                  }}
                 >
-                  <Text style={{ color: colors.accentBright, fontSize: font.size.body }}>
+                  <Text style={{
+                      color: colors.accentBright,
+                      fontSize: font.size.body
+                    }}>
                     {pasting ? t("quest.importChoose") : t("quest.importPasteToggle")}
                   </Text>
                 </Pressable>
@@ -271,7 +281,11 @@ export function ImportModal({
               </>
             )}
             {step === "reading" && (
-              <View style={{ alignItems: "center", gap: space.lg, paddingVertical: space.xl }}>
+              <View style={{
+                  alignItems: "center",
+                  gap: space.lg,
+                  paddingVertical: space.xl
+                }}>
                 <ActivityIndicator
                   size="large"
                   color={colors.accent}

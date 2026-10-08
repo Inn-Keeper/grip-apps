@@ -23,9 +23,22 @@ export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hin
   const scale = 10 ** decimals;
   const shown = (useCountUp(Math.round(value * scale), 1100) / scale).toFixed(decimals);
   return (
-    <div style={{ marginBottom: 16, paddingBottom: 16, borderBottom: `1px solid ${colors.borderSoft}` }}>
-      <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", gap: 10 }}>
-        <span style={{ color: colors.textDim, fontSize: font.size.small, fontWeight: 700 }}>{label}</span>
+    <div style={{
+        marginBottom: 16,
+        paddingBottom: 16,
+        borderBottom: `1px solid ${colors.borderSoft}`
+      }}>
+      <div style={{
+          display: "flex",
+          alignItems: "baseline",
+          justifyContent: "space-between",
+          gap: 10
+        }}>
+        <span style={{
+            color: colors.textDim,
+            fontSize: font.size.small,
+            fontWeight: 700
+          }}>{label}</span>
         <span
           className={styles.landNumber}
           style={{
@@ -48,8 +61,17 @@ export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hin
       </div>
       <GlowBar pct={pct} marginTop={12} />
       {(hint || info) && (
-        <div style={{ display: "flex", alignItems: "center", gap: 2, marginTop: 6 }}>
-          {hint && <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.label }}>{hint}</p>}
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 2,
+            marginTop: 6
+          }}>
+          {hint && <p style={{
+              margin: 0,
+              color: colors.textFaint,
+              fontSize: font.size.label
+            }}>{hint}</p>}
           {info && <InfoTip>{info}</InfoTip>}
         </div>
       )}

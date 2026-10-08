@@ -38,13 +38,27 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
         <div style={{ marginBottom: 14 }}>
           <CompetencyBadge competency={prompt?.competency ?? ""} />
         </div>
-        <p style={{ margin: "0 0 8px", fontSize: font.size.title, fontWeight: 600, lineHeight: 1.5, color: colors.textBright }}>
+        <p style={{
+            margin: "0 0 8px",
+            fontSize: font.size.title,
+            fontWeight: 600,
+            lineHeight: 1.5,
+            color: colors.textBright
+          }}>
           "{prompt?.text}"
         </p>
-        <p style={{ margin: "0 0 20px", fontSize: font.size.small, color: colors.textFaint }}>
+        <p style={{
+            margin: "0 0 20px",
+            fontSize: font.size.small,
+            color: colors.textFaint
+          }}>
           {t("stories.answerOutLoud")}
         </p>
-        <div style={{ display: "flex", gap: 10, justifyContent: "center" }}>
+        <div style={{
+            display: "flex",
+            gap: 10,
+            justifyContent: "center"
+          }}>
           <button
             onClick={() => setRevealed(true)}
             disabled={revealed}
@@ -81,7 +95,12 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
       </div>
 
       {revealed && (
-        <div style={{ marginTop: 16, display: "flex", flexDirection: "column", gap: 12 }}>
+        <div style={{
+            marginTop: 16,
+            display: "flex",
+            flexDirection: "column",
+            gap: 12
+          }}>
           {matching.length === 0 ? (
             <p
               style={{

@@ -204,7 +204,10 @@ export function ImportModal({
                 <label className={styles.field}>
                   <span>{t("quest.importPasteLabel")}</span>
                   <textarea
-                    style={{ ...textareaFieldStyle, minHeight: 180 }}
+                    style={{
+                      ...textareaFieldStyle,
+                      minHeight: 180
+                    }}
                     value={text}
                     onChange={(e) => setText(e.target.value)}
                   />
@@ -212,7 +215,10 @@ export function ImportModal({
               ) : (
                 <div
                   className={styles.fileChoice}
-                  style={{ background: colors.well, borderRadius: radius.sm }}
+                  style={{
+                    background: colors.well,
+                    borderRadius: radius.sm
+                  }}
                 >
                   <input
                     ref={fileInput}
@@ -304,7 +310,10 @@ export function ImportModal({
           )}
           {step === "confirm" && (
             <>
-              <p style={{ fontSize: font.size.title, color: colors.textBright }}>
+              <p style={{
+                  fontSize: font.size.title,
+                  color: colors.textBright
+                }}>
                 {t("quest.importConfirmNew", { count: summary.importing })}
               </p>
               <ul className={styles.summary}>

@@ -18,15 +18,48 @@ function Section({ label, tone, items, render }: { label: string; tone: string; 
   const hidden = items.length - MAX_LINES;
   return (
     <section>
-      <h3 style={{ display: "flex", alignItems: "center", gap: space.sm, margin: `0 0 ${space.sm}px`, padding: `0 ${space.sm}px`, fontSize: font.size.caption, fontWeight: 800, letterSpacing: 0.6, textTransform: "uppercase" }}>
-        <span style={{ width: 6, height: 6, borderRadius: radius.pill, background: tone }} />
-        <span style={{ flex: 1, color: colors.textDim }}>{label}</span>
-        <span style={{ color: tone, fontVariantNumeric: "tabular-nums" }}>{items.length}</span>
+      <h3 style={{
+          display: "flex",
+          alignItems: "center",
+          gap: space.sm,
+          margin: `0 0 ${space.sm}px`,
+          padding: `0 ${space.sm}px`,
+          fontSize: font.size.caption,
+          fontWeight: 800,
+          letterSpacing: 0.6,
+          textTransform: "uppercase"
+        }}>
+        <span style={{
+            width: 6,
+            height: 6,
+            borderRadius: radius.pill,
+            background: tone
+          }} />
+        <span style={{
+            flex: 1,
+            color: colors.textDim
+          }}>{label}</span>
+        <span style={{
+            color: tone,
+            fontVariantNumeric: "tabular-nums"
+          }}>{items.length}</span>
       </h3>
-      <ul style={{ margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 2 }}>
+      <ul style={{
+          margin: 0,
+          padding: 0,
+          listStyle: "none",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2
+        }}>
         {items.slice(0, MAX_LINES).map((contact) => <li key={contact.id}>{render(contact)}</li>)}
       </ul>
-      {hidden > 0 && <p style={{ margin: `${space.sm}px 0 0`, padding: `0 ${space.sm}px`, color: colors.textFaint, fontSize: font.size.label }}>{t("quest.agendaMore", { count: hidden })}</p>}
+      {hidden > 0 && <p style={{
+          margin: `${space.sm}px 0 0`,
+          padding: `0 ${space.sm}px`,
+          color: colors.textFaint,
+          fontSize: font.size.label
+        }}>{t("quest.agendaMore", { count: hidden })}</p>}
     </section>
   );
 }
@@ -48,11 +81,29 @@ function Line({ contact, tone, onOpen, detail, extra }: { contact: Contact; tone
         background: colors.well,
       } as CSSProperties}
     >
-      <span style={{ width: 46, flexShrink: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: tone, lineHeight: 1.1 }}>
+      <span style={{
+          width: 46,
+          flexShrink: 0,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          color: tone,
+          lineHeight: 1.1
+        }}>
         {date ? (
           <>
-            <span style={{ fontSize: font.size.caption, fontWeight: 800, textTransform: "uppercase", letterSpacing: 0.4 }}>{weekdayFormat().format(date)}</span>
-            <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, fontVariantNumeric: "tabular-nums" }}>{date.getDate()}</span>
+            <span style={{
+                fontSize: font.size.caption,
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: 0.4
+              }}>{weekdayFormat().format(date)}</span>
+            <span style={{
+                fontSize: font.size.bodyLg,
+                fontWeight: 800,
+                fontVariantNumeric: "tabular-nums"
+              }}>{date.getDate()}</span>
           </>
         ) : (
           <span style={{ color: colors.textFaint }}>—</span>
@@ -61,10 +112,30 @@ function Line({ contact, tone, onOpen, detail, extra }: { contact: Contact; tone
       <button
         type="button"
         onClick={() => contact.id && onOpen(contact.id)}
-        style={{ flex: 1, minWidth: 0, padding: `${space.md}px ${space.md}px ${space.md}px ${space.xs}px`, border: "none", background: "transparent", cursor: "pointer", textAlign: "left", fontSize: font.size.small }}
+        style={{
+          flex: 1,
+          minWidth: 0,
+          padding: `${space.md}px ${space.md}px ${space.md}px ${space.xs}px`,
+          border: "none",
+          background: "transparent",
+          cursor: "pointer",
+          textAlign: "left",
+          fontSize: font.size.small
+        }}
       >
-        <span style={{ display: "block", color: colors.text, fontSize: font.size.body, fontWeight: 700, ...oneLine }}>{title}</span>
-        <span style={{ display: "block", marginTop: 2, color: colors.textDim, ...oneLine }}>{detail}</span>
+        <span style={{
+            display: "block",
+            color: colors.text,
+            fontSize: font.size.body,
+            fontWeight: 700,
+            ...oneLine
+          }}>{title}</span>
+        <span style={{
+            display: "block",
+            marginTop: 2,
+            color: colors.textDim,
+            ...oneLine
+          }}>{detail}</span>
         {extra}
       </button>
       {contact.link && (
@@ -73,7 +144,14 @@ function Line({ contact, tone, onOpen, detail, extra }: { contact: Contact; tone
           target="_blank"
           rel="noreferrer"
           aria-label={t("quest.agendaOpenLink", { name: contact.name })}
-          style={{ display: "flex", alignItems: "center", padding: `0 ${space.md}px`, color: colors.accentBright, textDecoration: "none", fontWeight: 800 }}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            padding: `0 ${space.md}px`,
+            color: colors.accentBright,
+            textDecoration: "none",
+            fontWeight: 800
+          }}
         >
           ↗
         </a>
@@ -97,10 +175,28 @@ export function QuestAgenda({ contacts, error, onOpen }: {
   return (
     <WorkspacePanel>
       <WorkspaceTitle icon={<BrandIcon name="calendar" color={colors.accentBright} size={17} />} title={t("quest.agendaTitle")} />
-      <div style={{ display: "flex", flexDirection: "column", gap: space.xl, marginTop: space.lg }}>
-        {error && <p style={{ margin: 0, color: colors.dangerBright, fontSize: font.size.small }}>{t("quest.agendaError")}</p>}
-        {!error && !agenda && <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.small }}>{t("quest.agendaLoading")}</p>}
-        {!error && agenda?.isEmpty && <p style={{ margin: 0, color: colors.textFaint, fontSize: font.size.small, lineHeight: 1.5 }}>{t("quest.agendaEmpty")}</p>}
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: space.xl,
+          marginTop: space.lg
+        }}>
+        {error && <p style={{
+            margin: 0,
+            color: colors.dangerBright,
+            fontSize: font.size.small
+          }}>{t("quest.agendaError")}</p>}
+        {!error && !agenda && <p style={{
+            margin: 0,
+            color: colors.textFaint,
+            fontSize: font.size.small
+          }}>{t("quest.agendaLoading")}</p>}
+        {!error && agenda?.isEmpty && <p style={{
+            margin: 0,
+            color: colors.textFaint,
+            fontSize: font.size.small,
+            lineHeight: 1.5
+          }}>{t("quest.agendaEmpty")}</p>}
         {!error && agenda && (
           <>
             <Section label={t("quest.agendaToday")} tone={tones.today} items={agenda.today} render={(c) => <Line contact={c} tone={tones.today} onOpen={onOpen} detail={action(c)} />} />
@@ -113,7 +209,10 @@ export function QuestAgenda({ contacts, error, onOpen }: {
                   contact={c}
                   tone={tones.overdue}
                   onOpen={onOpen}
-                  detail={<><span style={{ color: colors.warningBright, fontWeight: 700 }}>{t("quest.agendaDaysLate", { days: (c as Contact & { daysLate: number }).daysLate })}</span> · {action(c)}</>}
+                  detail={<><span style={{
+                      color: colors.warningBright,
+                      fontWeight: 700
+                    }}>{t("quest.agendaDaysLate", { days: (c as Contact & { daysLate: number }).daysLate })}</span> · {action(c)}</>}
                 />
               )}
             />
@@ -129,7 +228,12 @@ export function QuestAgenda({ contacts, error, onOpen }: {
                     tone={tones.prep}
                     onOpen={onOpen}
                     detail={techs.join(", ")}
-                    extra={lastToImprove && <span style={{ display: "block", marginTop: 2, color: colors.textFaint, ...oneLine }}>{t("quest.agendaLastRetro", { note: lastToImprove })}</span>}
+                    extra={lastToImprove && <span style={{
+                        display: "block",
+                        marginTop: 2,
+                        color: colors.textFaint,
+                        ...oneLine
+                      }}>{t("quest.agendaLastRetro", { note: lastToImprove })}</span>}
                   />
                 );
               }}

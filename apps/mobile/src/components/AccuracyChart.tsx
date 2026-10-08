@@ -35,28 +35,54 @@ export function AccuracyChart({ points }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.borderSoft, boxShadow: shadow.card,
+        borderColor: colors.borderSoft,
+        boxShadow: shadow.card,
         borderRadius: 12,
         padding: 12,
         gap: 8,
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8
+        }}>
         <View style={{ flex: 1 }}>
-          <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.textBright }}>{t("accuracy.title")}</Text>
-          <Text style={{ fontSize: font.size.captionLg, color: colors.textFaint }}>{t("accuracy.subtitle")}</Text>
+          <Text style={{
+              fontSize: font.size.small,
+              fontWeight: "700",
+              color: colors.textBright
+            }}>{t("accuracy.title")}</Text>
+          <Text style={{
+              fontSize: font.size.captionLg,
+              color: colors.textFaint
+            }}>{t("accuracy.subtitle")}</Text>
         </View>
-        <Text style={{ fontSize: font.size.body, fontWeight: "800", color: latest && latest.accuracy >= 0.7 ? colors.success : colors.warning }}>
+        <Text style={{
+            fontSize: font.size.body,
+            fontWeight: "800",
+            color: latest && latest.accuracy >= 0.7 ? colors.success : colors.warning
+          }}>
           {latest ? `${Math.round(latest.accuracy * 100)}%` : "--"}
         </Text>
       </View>
 
       {points.length < 2 ? (
-        <View style={{ height: HEIGHT, alignItems: "center", justifyContent: "center" }}>
-          <Text style={{ color: colors.textFaint, fontSize: font.size.label }}>{t("accuracy.empty")}</Text>
+        <View style={{
+            height: HEIGHT,
+            alignItems: "center",
+            justifyContent: "center"
+          }}>
+          <Text style={{
+              color: colors.textFaint,
+              fontSize: font.size.label
+            }}>{t("accuracy.empty")}</Text>
         </View>
       ) : (
-        <Canvas style={{ width: "100%", height: HEIGHT }}>
+        <Canvas style={{
+            width: "100%",
+            height: HEIGHT
+          }}>
           <Path path={`M ${PAD_X} ${PAD_Y} L ${PAD_X} ${HEIGHT - PAD_Y} L ${Math.max(PAD_X, width - PAD_X)} ${HEIGHT - PAD_Y}`} color={colors.border} style="stroke" strokeWidth={1} />
           <Path path={chart.path} color={colors.accent} style="stroke" strokeWidth={3} />
           {chart.dots.map((dot, index) => (

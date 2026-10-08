@@ -181,13 +181,32 @@ export default function App() {
             flexWrap: "wrap",
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 11 }}>
+          <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 11
+            }}>
             <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${colors.accent}18, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
-            <span style={{ display: "flex", flexDirection: "column", gap: 1 }}>
-              <span style={{ fontSize: font.size.title, fontWeight: 800, letterSpacing: "0px", color: colors.textBright, lineHeight: 1 }}>
+            <span style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 1
+              }}>
+              <span style={{
+                  fontSize: font.size.title,
+                  fontWeight: 800,
+                  letterSpacing: "0px",
+                  color: colors.textBright,
+                  lineHeight: 1
+                }}>
                 {brand.productName}
               </span>
-              <span className={styles.tagline} style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textFaint, lineHeight: 1.2 }}>
+              <span className={styles.tagline} style={{
+                  fontSize: font.size.label,
+                  fontWeight: 700,
+                  color: colors.textFaint,
+                  lineHeight: 1.2
+                }}>
                 {brand.tagline}
               </span>
             </span>
@@ -274,7 +293,11 @@ export default function App() {
 
       {/* Fills the space between header and footer, so the footer sits at the bottom of the
           screen on short pages. Pages must not add their own full-screen min-height. */}
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      <div style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column"
+        }}>
         {session === undefined && (
           <main
             style={{

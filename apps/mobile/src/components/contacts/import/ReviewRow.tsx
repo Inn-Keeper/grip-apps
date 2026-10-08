@@ -16,15 +16,28 @@ export function ReviewRow({ row, onChange }: { row: ImportRow; onChange: (patch:
     .flatMap((group: { items: { tech: string }[] }) => group.items.map(({ tech }) => tech))
     .filter((tech: string) => !row.postingTechs.includes(tech));
   return (
-    <View style={{ backgroundColor: colors.well, borderRadius: radius.sm, padding: space.lg, gap: space.lg }}>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: space.sm, minHeight: 44 }}>
+    <View style={{
+        backgroundColor: colors.well,
+        borderRadius: radius.sm,
+        padding: space.lg,
+        gap: space.lg
+      }}>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: space.sm,
+          minHeight: 44
+        }}>
         <Switch
           accessibilityLabel={t("quest.importIncludeNamed", { name: row.name || t("quest.importColName") })}
           value={row.included}
           onValueChange={(included) => onChange({ included })}
           trackColor={{ true: colors.accent }}
         />
-        <Text style={{ color: colors.textDim, fontSize: font.size.body }}>{t("quest.importInclude")}</Text>
+        <Text style={{
+            color: colors.textDim,
+            fontSize: font.size.body
+          }}>{t("quest.importInclude")}</Text>
       </View>
       <Field label={t("quest.importColName")}>
         <TextInput
@@ -58,7 +71,11 @@ export function ReviewRow({ row, onChange }: { row: ImportRow; onChange: (patch:
         clearable
       />
       <Field label={t("quest.importTechs")}>
-        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.sm }}>
+        <View style={{
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: space.sm
+          }}>
           {row.postingTechs.map((tech) => (
             <Pressable
               key={tech}
@@ -99,14 +116,20 @@ export function ReviewRow({ row, onChange }: { row: ImportRow; onChange: (patch:
                       onChange({ postingTechs: [...row.postingTechs, tech] });
                       setTechQuery("");
                     }}
-                    style={{ minHeight: 44, justifyContent: "center" }}
+                    style={{
+                      minHeight: 44,
+                      justifyContent: "center"
+                    }}
                   >
                     <Text style={{ color: colors.accentBright }}>{tech}</Text>
                   </Pressable>
                 ))}
           </>
         )}
-        <Text style={{ color: colors.textDim, fontSize: font.size.small }}>{t("quest.importTechLimit")}</Text>
+        <Text style={{
+            color: colors.textDim,
+            fontSize: font.size.small
+          }}>{t("quest.importTechLimit")}</Text>
       </Field>
       {row.linkStatus && row.linkStatus !== "ok" && (
         <Text style={{ color: colors.textDim }}>{t("quest.importLinkFailed")}</Text>
@@ -114,7 +137,10 @@ export function ReviewRow({ row, onChange }: { row: ImportRow; onChange: (patch:
       {!!row.warnings.length && (
         <Text
           accessibilityLiveRegion="polite"
-          style={{ color: colors.warningBright, fontSize: font.size.small }}
+          style={{
+            color: colors.warningBright,
+            fontSize: font.size.small
+          }}
         >
           {row.warnings.map((warning) => t(`quest.importWarn.${warning}` as Parameters<typeof t>[0])).join(" · ")}
         </Text>
@@ -123,7 +149,10 @@ export function ReviewRow({ row, onChange }: { row: ImportRow; onChange: (patch:
         accessibilityRole="button"
         accessibilityState={{ expanded: sourceOpen }}
         onPress={() => setSourceOpen(!sourceOpen)}
-        style={{ minHeight: 44, justifyContent: "center" }}
+        style={{
+          minHeight: 44,
+          justifyContent: "center"
+        }}
       >
         <Text style={{ color: colors.textDim }}>{t("quest.importSourceLabel")}</Text>
       </Pressable>

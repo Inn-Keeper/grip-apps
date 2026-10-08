@@ -19,7 +19,10 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
 
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onClose}>
-      <Pressable onPress={onClose} style={{ flex: 1, backgroundColor: tints.modalScrim }} />
+      <Pressable onPress={onClose} style={{
+          flex: 1,
+          backgroundColor: tints.modalScrim
+        }} />
       <View
         style={{
           backgroundColor: colors.surface,
@@ -32,15 +35,30 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
         }}
       >
         <View style={{ gap: 3 }}>
-          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("edge.title")}</Text>
-          <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright }}>
+          <Text style={{
+              fontSize: font.size.label,
+              fontWeight: "700",
+              color: colors.textDim
+            }}>{t("edge.title")}</Text>
+          <Text style={{
+              fontSize: font.size.bodyLg,
+              fontWeight: "700",
+              color: colors.textBright
+            }}>
             {from ? meta(from.type).label : "?"} → {to ? meta(to.type).label : "?"}
           </Text>
         </View>
 
         <View style={{ gap: 6 }}>
-          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("edge.mode")}</Text>
-          <View style={{ flexDirection: "row", gap: 8 }}>
+          <Text style={{
+              fontSize: font.size.label,
+              fontWeight: "700",
+              color: colors.textDim
+            }}>{t("edge.mode")}</Text>
+          <View style={{
+              flexDirection: "row",
+              gap: 8
+            }}>
             {EDGE_MODES.map((mode: string) => (
               <MiniButton
                 key={mode}
@@ -53,8 +71,16 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
         </View>
 
         <View style={{ gap: 6 }}>
-          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim }}>{t("edge.protocol")}</Text>
-          <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap" }}>
+          <Text style={{
+              fontSize: font.size.label,
+              fontWeight: "700",
+              color: colors.textDim
+            }}>{t("edge.protocol")}</Text>
+          <View style={{
+              flexDirection: "row",
+              gap: 8,
+              flexWrap: "wrap"
+            }}>
             {EDGE_PROTOCOLS.map((protocol: string) => (
               <MiniButton
                 key={protocol}
@@ -66,7 +92,11 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
           </View>
         </View>
 
-        <View style={{ flexDirection: "row", justifyContent: "flex-end", gap: 8 }}>
+        <View style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            gap: 8
+          }}>
           <MiniButton label={t("board.removeConnection")} color={colors.danger} onPress={onRemove} />
           <Button label={t("common.close")} onPress={onClose} />
         </View>

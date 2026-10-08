@@ -65,24 +65,48 @@ export function DesignTimerBar({ timer }: Props) {
       : colors.textBright;
 
   return (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+    <View style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10
+      }}>
       <TouchableOpacity
         onPress={toggle}
         hitSlop={6}
         accessibilityRole="button"
         accessibilityLabel={running ? t("timer.pause") : started ? t("timer.resume") : t("timer.start")}
-        style={{ flexDirection: "row", alignItems: "center", gap: 6 }}
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 6
+        }}
       >
         <BrandIcon name={running ? "close" : "spark"} color={running ? colors.textDim : colors.accentBright} size={14} />
-        <Text style={{ fontSize: font.size.lead, fontWeight: "700", color: clockColor, fontVariant: ["tabular-nums"] }}>{clock}</Text>
+        <Text style={{
+            fontSize: font.size.lead,
+            fontWeight: "700",
+            color: clockColor,
+            fontVariant: ["tabular-nums"]
+          }}>{clock}</Text>
       </TouchableOpacity>
 
-      <View style={{ flex: 1, gap: 3 }}>
-        <Text numberOfLines={1} style={{ fontSize: font.size.label, fontWeight: "700", color: overrun ? colors.dangerBright : colors.accentBright }}>
+      <View style={{
+          flex: 1,
+          gap: 3
+        }}>
+        <Text numberOfLines={1} style={{
+            fontSize: font.size.label,
+            fontWeight: "700",
+            color: overrun ? colors.dangerBright : colors.accentBright
+          }}>
           {overrun ? t("timer.overtime") : started ? phase.label : t("timer.round", { minutes: ROUND_MINUTES })}
         </Text>
         {/* Phase strip: each segment proportional to its minutes. */}
-        <View style={{ flexDirection: "row", gap: 2, height: 4 }}>
+        <View style={{
+            flexDirection: "row",
+            gap: 2,
+            height: 4
+          }}>
           {DESIGN_PHASES.map((p, i) => (
             <View
               key={p.id}

@@ -17,7 +17,12 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
   } as CSSProperties;
 
   return (
-    <div role="toolbar" aria-label={t("board.components")} style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))", gap: 6, ...tipVars }}>
+    <div role="toolbar" aria-label={t("board.components")} style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+        gap: 6,
+        ...tipVars
+      }}>
       {NODE_TYPES.map((item) => (
         <div key={item.type} className={styles.chip}>
           <button
@@ -25,14 +30,34 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
             onClick={() => onAddNode(item.type)}
             aria-describedby={`node-tip-${item.type}`}
             style={{
-              display: "flex", alignItems: "center", gap: 7, padding: "7px 9px", width: "100%",
-              background: colors.surface, border: `1px solid ${TYPE_COLORS[item.type]}40`, borderRadius: 8,
-              color: colors.text, fontSize: font.size.small, fontWeight: 600, cursor: "pointer", textAlign: "left", minWidth: 0,
+              display: "flex",
+              alignItems: "center",
+              gap: 7,
+              padding: "7px 9px",
+              width: "100%",
+              background: colors.surface,
+              border: `1px solid ${TYPE_COLORS[item.type]}40`,
+              borderRadius: 8,
+              color: colors.text,
+              fontSize: font.size.small,
+              fontWeight: 600,
+              cursor: "pointer",
+              textAlign: "left",
+              minWidth: 0,
             }}
           >
             <BrandIcon name={nodeIconName(item.type)} color={TYPE_COLORS[item.type]} size={15} />
-            <span style={{ flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{item.label}</span>
-            <span style={{ color: colors.textFaint, fontSize: font.size.caption }}>{"$".repeat(item.cost) || "free"}</span>
+            <span style={{
+                flex: 1,
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap"
+              }}>{item.label}</span>
+            <span style={{
+                color: colors.textFaint,
+                fontSize: font.size.caption
+              }}>{"$".repeat(item.cost) || "free"}</span>
           </button>
           <span id={`node-tip-${item.type}`} role="tooltip" className={styles.tip}>
             {t(`node.desc.${item.type}` as Parameters<typeof t>[0])}

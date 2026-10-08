@@ -6,6 +6,11 @@ because they have to be applied by hand.
 
 ## 2026-10-08
 
+### Added
+
+- Web Profile: Favorite techs section. Every Prep tech shows as a toggle chip, sorted alphabetically, and picks save to the profile (en, sv, pt).
+- Lint rule `grip/style-properties-per-line`: JSX style objects put one property per line; web and mobile files reformatted to match.
+
 ### Changed
 
 - Web: Vite 6.4 to 8.3.3 (Rolldown bundler, pinned exact) and `@vitejs/plugin-react` 4 to 6; dropped the deprecated `optimizeDeps.esbuildOptions` block.
@@ -20,6 +25,7 @@ because they have to be applied by hand.
 ### Database
 
 - `0021_record_answer_nullable_difficulty.sql`: `record_answer`'s `p_difficulty` defaults to null, so clients can omit it instead of casting null. Body and grants unchanged.
+- `0023_profile_favorite_techs.sql`: `profiles.favorite_techs text[] not null default '{}'`.
 - `0022_query_performance.sql`: access rules call `auth.uid()` once per query instead of once per row (same rules), new indexes for contacts, stories, retros, status events and answer events, and the `answer_tech_stats` and `answer_daily_totals` functions.
 
 ## 2026-10-06

@@ -29,7 +29,10 @@ export function StorySheet({ visible, candidates, current, taken, onPick, onClos
 
   return (
     <Modal transparent animationType="slide" visible={visible} onRequestClose={onClose}>
-      <Pressable onPress={onClose} style={{ flex: 1, backgroundColor: tints.modalScrim }} accessibilityLabel={t("common.close")} />
+      <Pressable onPress={onClose} style={{
+          flex: 1,
+          backgroundColor: tints.modalScrim
+        }} accessibilityLabel={t("common.close")} />
       <View
         style={{
           maxHeight: "80%",
@@ -42,10 +45,21 @@ export function StorySheet({ visible, candidates, current, taken, onPick, onClos
           gap: 10,
         }}
       >
-        <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright }}>{t("board.storyLabel")}</Text>
+        <Text style={{
+            fontSize: font.size.bodyLg,
+            fontWeight: "700",
+            color: colors.textBright
+          }}>{t("board.storyLabel")}</Text>
         <ScrollView style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 12, paddingBottom: 12 }}>
           {current && (
-            <View style={{ gap: 8, padding: 12, borderRadius: 10, backgroundColor: colors.bgDeep, borderWidth: 1, borderColor: colors.borderSoft }}>
+            <View style={{
+                gap: 8,
+                padding: 12,
+                borderRadius: 10,
+                backgroundColor: colors.bgDeep,
+                borderWidth: 1,
+                borderColor: colors.borderSoft
+              }}>
               <Badge label={t(`enum.competency.${current.competency}` as Parameters<typeof t>[0])} color={COMPETENCY_COLORS[current.competency] ?? colors.textFaint} />
               <Section label={t("stories.situation")} text={current.situation} />
               <Section label={t("stories.task")} text={current.task} />
@@ -77,7 +91,12 @@ export function StorySheet({ visible, candidates, current, taken, onPick, onClos
                     backgroundColor: active ? tints.accentSoft : "transparent",
                   }}
                 >
-                  <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.bodyMd, fontWeight: active ? "700" : "500", color: active ? colors.accentBright : colors.text }}>
+                  <Text numberOfLines={1} style={{
+                      flex: 1,
+                      fontSize: font.size.bodyMd,
+                      fontWeight: active ? "700" : "500",
+                      color: active ? colors.accentBright : colors.text
+                    }}>
                     {option.label}
                   </Text>
                   {active && <BrandIcon name="check" color={colors.accentBright} size={14} />}

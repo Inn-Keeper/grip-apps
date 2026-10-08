@@ -38,11 +38,24 @@ export function DemoBanner() {
         borderBottomColor: `${colors.accent}40`,
       }}
     >
-      <Text style={{ fontSize: font.size.labelLg, color: colors.textDim }}>{t("demo.bar")}</Text>
+      <Text style={{
+          fontSize: font.size.labelLg,
+          color: colors.textDim
+        }}>{t("demo.bar")}</Text>
       <TouchableOpacity onPress={keepProgress} disabled={busy} accessibilityRole="link" hitSlop={8}>
-        <Text style={{ fontSize: font.size.labelLg, fontWeight: "700", color: colors.accentBright, opacity: busy ? 0.6 : 1 }}>{t("auth.github")}</Text>
+        <Text style={{
+            fontSize: font.size.labelLg,
+            fontWeight: "700",
+            color: colors.accentBright,
+            opacity: busy ? 0.6 : 1
+          }}>{t("auth.github")}</Text>
       </TouchableOpacity>
-      {error && <Text style={{ width: "100%", textAlign: "center", fontSize: font.size.labelLg, color: colors.dangerBright }}>{error}</Text>}
+      {error && <Text style={{
+          width: "100%",
+          textAlign: "center",
+          fontSize: font.size.labelLg,
+          color: colors.dangerBright
+        }}>{error}</Text>}
     </View>
   );
 }

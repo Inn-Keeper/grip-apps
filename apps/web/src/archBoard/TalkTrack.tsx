@@ -73,22 +73,57 @@ export function TalkTrack({
         borderRadius: 14,
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginBottom: 6 }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap",
+          marginBottom: 6
+        }}>
         <BrandIcon name="spark" color={colors.accentBright} size={16} />
-        <h2 style={{ margin: 0, fontSize: font.size.body, fontWeight: 700, color: colors.textBright }}>{t("talk.title")}</h2>
-        <span style={{ fontSize: font.size.label, fontWeight: 600, color: colors.textFaint }}>
+        <h2 style={{
+            margin: 0,
+            fontSize: font.size.body,
+            fontWeight: 700,
+            color: colors.textBright
+          }}>{t("talk.title")}</h2>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 600,
+            color: colors.textFaint
+          }}>
           {t("talk.covered", { answered: answered.length, total: TALK_TRACK_SECTIONS.length })}
         </span>
         <div
           aria-hidden
-          style={{ flex: 1, minWidth: 80, height: 4, borderRadius: 2, background: colors.borderSoft, overflow: "hidden" }}
+          style={{
+            flex: 1,
+            minWidth: 80,
+            height: 4,
+            borderRadius: 2,
+            background: colors.borderSoft,
+            overflow: "hidden"
+          }}
         >
-          <div style={{ width: `${completion}%`, height: "100%", background: meterColor }} />
+          <div style={{
+              width: `${completion}%`,
+              height: "100%",
+              background: meterColor
+            }} />
         </div>
       </div>
-      <p style={{ margin: "0 0 14px", fontSize: font.size.small, lineHeight: 1.55, color: colors.textFaint }}>{t("talk.intro")}</p>
+      <p style={{
+          margin: "0 0 14px",
+          fontSize: font.size.small,
+          lineHeight: 1.55,
+          color: colors.textFaint
+        }}>{t("talk.intro")}</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: 14 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          gap: 14
+        }}>
         {TALK_TRACK_SECTIONS.map((section) => {
           const value = sections[section.id] ?? "";
           const covered = answered.includes(section.id);
@@ -98,21 +133,42 @@ export function TalkTrack({
           // placeholder floor is what happened, so name it.
           const verdictKey = graded?.verdict === "missing" && value.trim() ? "talk.verdictTooThin" : verdict?.key;
           return (
-            <label key={section.id} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+            <label key={section.id} style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 5
+              }}>
+              <span style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 6
+                }}>
                 <BrandIcon
                   name={covered ? "check" : "board"}
                   color={covered ? colors.successBright : colors.textFaint}
                   size={13}
                 />
-                <span style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>{section.label}</span>
+                <span style={{
+                    fontSize: font.size.small,
+                    fontWeight: 700,
+                    color: colors.text
+                  }}>{section.label}</span>
                 {verdict && verdictKey && (
-                  <span style={{ marginLeft: "auto", fontSize: font.size.label, fontWeight: 700, color: verdict.color }}>
+                  <span style={{
+                      marginLeft: "auto",
+                      fontSize: font.size.label,
+                      fontWeight: 700,
+                      color: verdict.color
+                    }}>
                     {t(verdictKey)}
                   </span>
                 )}
               </span>
-              <span style={{ fontSize: font.size.label, lineHeight: 1.5, color: colors.textFaint }}>
+              <span style={{
+                  fontSize: font.size.label,
+                  lineHeight: 1.5,
+                  color: colors.textFaint
+                }}>
                 <AbbrText>{section.hint}</AbbrText>
               </span>
               <textarea
@@ -137,23 +193,51 @@ export function TalkTrack({
               />
               {/* The quoted span the credit was given for — the grade's evidence. */}
               {graded?.evidence && (
-                <span style={{ borderLeft: `2px solid ${verdict?.color ?? colors.borderSoft}`, paddingLeft: 8, fontSize: font.size.label, lineHeight: 1.5, fontStyle: "italic", color: colors.textDim }}>
+                <span style={{
+                    borderLeft: `2px solid ${verdict?.color ?? colors.borderSoft}`,
+                    paddingLeft: 8,
+                    fontSize: font.size.label,
+                    lineHeight: 1.5,
+                    fontStyle: "italic",
+                    color: colors.textDim
+                  }}>
                   {`\u201C${graded.evidence}\u201D`}
                 </span>
               )}
               {/* Grading by absence: what an interviewer would still ask here. */}
               {graded && (
-                <span style={{ fontSize: font.size.label, lineHeight: 1.5, color: colors.text }}>{graded.gap}</span>
+                <span style={{
+                    fontSize: font.size.label,
+                    lineHeight: 1.5,
+                    color: colors.text
+                  }}>{graded.gap}</span>
               )}
             </label>
           );
         })}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 16, flexWrap: "wrap" }}>
-        <span style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>{t("talk.ratingLabel")}</span>
-        <span style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("talk.ratingHint")}</span>
-        <div style={{ display: "flex", gap: 6, marginLeft: "auto" }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginTop: 16,
+          flexWrap: "wrap"
+        }}>
+        <span style={{
+            fontSize: font.size.small,
+            fontWeight: 700,
+            color: colors.text
+          }}>{t("talk.ratingLabel")}</span>
+        <span style={{
+            fontSize: font.size.label,
+            color: colors.textFaint
+          }}>{t("talk.ratingHint")}</span>
+        <div style={{
+            display: "flex",
+            gap: 6,
+            marginLeft: "auto"
+          }}>
           {Array.from({ length: SELF_RATING_MAX }, (_, i) => i + 1).map((value) => {
             const active = rating === value;
             return (
@@ -181,8 +265,17 @@ export function TalkTrack({
       </div>
 
       {onGrade && (
-        <div style={{ marginTop: 14, paddingTop: 14, borderTop: `1px solid ${colors.borderSoft}` }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <div style={{
+            marginTop: 14,
+            paddingTop: 14,
+            borderTop: `1px solid ${colors.borderSoft}`
+          }}>
+          <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              flexWrap: "wrap"
+            }}>
             <button
               type="button"
               onClick={onGrade}
@@ -206,11 +299,20 @@ export function TalkTrack({
               {grading ? t("talk.grading") : t("talk.gradeAction")}
             </button>
             {/* Rule 13: the reason and the result sit next to the button that was clicked. */}
-            <span aria-live="polite" style={{ fontSize: font.size.label, color: colors.textFaint, flex: 1, minWidth: 140 }}>
+            <span aria-live="polite" style={{
+                fontSize: font.size.label,
+                color: colors.textFaint,
+                flex: 1,
+                minWidth: 140
+              }}>
               {gradeBlocked ?? (grade === null ? t("talk.gradeHint") : t("talk.gradeScore"))}
             </span>
             {grade !== null && (
-              <span style={{ fontSize: font.size.body, fontWeight: 700, color: gradeColor }}>{grade}%</span>
+              <span style={{
+                  fontSize: font.size.body,
+                  fontWeight: 700,
+                  color: gradeColor
+                }}>{grade}%</span>
             )}
           </div>
 
@@ -222,14 +324,31 @@ export function TalkTrack({
           )}
 
           {gradeDetail && (
-            <div aria-live="polite" style={{ marginTop: 10, display: "flex", flexDirection: "column", gap: 6 }}>
+            <div aria-live="polite" style={{
+                marginTop: 10,
+                display: "flex",
+                flexDirection: "column",
+                gap: 6
+              }}>
               {gradeDetail.divergence !== null && gradeDetail.divergence > 0 && (
-                <p style={{ margin: 0, fontSize: font.size.small, color: colors.warningBright }}>
+                <p style={{
+                    margin: 0,
+                    fontSize: font.size.small,
+                    color: colors.warningBright
+                  }}>
                   {t("talk.gradeDivergence", { points: gradeDetail.divergence })}
                 </p>
               )}
-              <p style={{ margin: 0, fontSize: font.size.small, lineHeight: 1.55, color: colors.text }}>
-                <span style={{ fontWeight: 700, color: colors.textDim }}>{t("talk.gradeFollowup")} </span>
+              <p style={{
+                  margin: 0,
+                  fontSize: font.size.small,
+                  lineHeight: 1.55,
+                  color: colors.text
+                }}>
+                <span style={{
+                    fontWeight: 700,
+                    color: colors.textDim
+                  }}>{t("talk.gradeFollowup")} </span>
                 {gradeDetail.suggestion.hardest_followup}
               </p>
             </div>

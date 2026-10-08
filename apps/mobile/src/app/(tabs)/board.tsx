@@ -270,9 +270,24 @@ export default function BoardScreen() {
               accessibilityLabel={t("board.pickScenario")}
               accessibilityValue={{ text: scenario.name }}
               onPress={() => setPickerOpen(true)}
-              style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 44, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface }}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8,
+                minHeight: 44,
+                paddingHorizontal: 12,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: colors.border,
+                backgroundColor: colors.surface
+              }}
             >
-              <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.bodyMd, fontWeight: "600", color: colors.textBright }}>{scenario.name}</Text>
+              <Text numberOfLines={1} style={{
+                  flex: 1,
+                  fontSize: font.size.bodyMd,
+                  fontWeight: "600",
+                  color: colors.textBright
+                }}>{scenario.name}</Text>
               <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
             </TouchableOpacity>
             {storyCandidates.length > 0 && (
@@ -281,10 +296,26 @@ export default function BoardScreen() {
                 accessibilityLabel={t("board.storyLabel")}
                 accessibilityValue={{ text: currentStory?.title ?? t("board.noStory") }}
                 onPress={() => setStoryOpen(true)}
-                style={{ flexDirection: "row", alignItems: "center", gap: 8, minHeight: 40, marginTop: 8, paddingHorizontal: 12, borderRadius: 10, borderWidth: 1, borderColor: colors.border, backgroundColor: colors.surface }}
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 8,
+                  minHeight: 40,
+                  marginTop: 8,
+                  paddingHorizontal: 12,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: colors.surface
+                }}
               >
                 <BrandIcon name="story" color={currentStory ? colors.accentBright : colors.textFaint} size={14} />
-                <Text numberOfLines={1} style={{ flex: 1, fontSize: font.size.body, fontWeight: "600", color: currentStory ? colors.text : colors.textFaint }}>
+                <Text numberOfLines={1} style={{
+                    flex: 1,
+                    fontSize: font.size.body,
+                    fontWeight: "600",
+                    color: currentStory ? colors.text : colors.textFaint
+                  }}>
                   {currentStory?.title ?? t("board.noStory")}
                 </Text>
                 <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
@@ -338,7 +369,10 @@ export default function BoardScreen() {
       )}
 
       {boardsError && chrome !== "zen" && (
-        <Text style={{ fontSize: font.size.small, color: colors.dangerBright }}>
+        <Text style={{
+            fontSize: font.size.small,
+            color: colors.dangerBright
+          }}>
           {t("board.boardsError", { message: boardsError.message })}
         </Text>
       )}

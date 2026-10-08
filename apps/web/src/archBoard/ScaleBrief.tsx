@@ -66,7 +66,15 @@ export function ScaleBrief({
         borderRadius: 8,
       }}
     >
-      <summary style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: font.size.body, fontWeight: 800, color: colors.textBright }}>
+      <summary style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          cursor: "pointer",
+          fontSize: font.size.body,
+          fontWeight: 800,
+          color: colors.textBright
+        }}>
         <BrandIcon name="accuracy" color={colors.accentBright} size={15} />
         {t("scale.title")}
         {/* How to use the brief, on demand. The ⓘ is its own button, so it doesn't fold the brief. */}
@@ -89,8 +97,17 @@ export function ScaleBrief({
               borderTop: index === 0 ? "none" : `1px solid ${colors.borderSoft}`,
             }}
           >
-            <dt style={{ fontSize: font.size.small, color: colors.textDim }}>{given.label}</dt>
-            <dd style={{ margin: 0, fontSize: font.size.body, fontWeight: 800, color: colors.textBright, fontVariantNumeric: "tabular-nums" }}>
+            <dt style={{
+                fontSize: font.size.small,
+                color: colors.textDim
+              }}>{given.label}</dt>
+            <dd style={{
+                margin: 0,
+                fontSize: font.size.body,
+                fontWeight: 800,
+                color: colors.textBright,
+                fontVariantNumeric: "tabular-nums"
+              }}>
               {given.value}
             </dd>
           </div>
@@ -99,22 +116,52 @@ export function ScaleBrief({
 
       {/* The brief has two halves and only the first was labelled, so the
           inputs read as another given rather than as the work. */}
-      <h3 style={{ display: "flex", alignItems: "center", gap: 6, margin: "0 0 10px", fontSize: font.size.label, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", color: colors.textFaint }}>
+      <h3 style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          margin: "0 0 10px",
+          fontSize: font.size.label,
+          fontWeight: 800,
+          letterSpacing: "0.06em",
+          textTransform: "uppercase",
+          color: colors.textFaint
+        }}>
         <BrandIcon name="drill" color={colors.textFaint} size={13} />
         {t("scale.deriveHeading")}
       </h3>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: 12
+        }}>
         {ESTIMATE_TARGETS.map((target) => {
           const actual = target.valueOf(derived);
           const grade = checked ? gradeEstimate(actual, guesses[target.id]) : null;
           const band = grade?.band ? BAND_STYLE[grade.band] : null;
           return (
-            <div key={target.id} style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
-                <label style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>
+            <div key={target.id} style={{
+                display: "flex",
+                flexDirection: "column",
+                gap: 5
+              }}>
+              <div style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 2
+                }}>
+                <label style={{
+                    fontSize: font.size.small,
+                    fontWeight: 700,
+                    color: colors.text
+                  }}>
                   {target.label}{" "}
-                  <span style={{ color: colors.textFaint, fontWeight: 600, whiteSpace: "nowrap" }}>
+                  <span style={{
+                      color: colors.textFaint,
+                      fontWeight: 600,
+                      whiteSpace: "nowrap"
+                    }}>
                     (<AbbrText>{target.unit}</AbbrText>)
                   </span>
                 </label>
@@ -143,7 +190,13 @@ export function ScaleBrief({
                 }}
               />
               {band && grade?.ratio !== null && grade !== null && (
-                <span style={{ display: "flex", alignItems: "center", gap: 6, fontSize: font.size.small, color: band.color() }}>
+                <span style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    fontSize: font.size.small,
+                    color: band.color()
+                  }}>
                   <BrandIcon name={band.icon} color={band.color()} size={13} />
                   {t(band.label)} · {t("scale.actual", { value: formatCompact(Math.round(actual)) })}{" "}
                   <span style={{ color: colors.textFaint }}>
@@ -158,7 +211,13 @@ export function ScaleBrief({
         })}
       </div>
 
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap", marginTop: 12 }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap",
+          marginTop: 12
+        }}>
         {/* Nothing estimated means nothing to grade: the same test the handoff uses. */}
         <button
           onClick={() => setChecked(true)}

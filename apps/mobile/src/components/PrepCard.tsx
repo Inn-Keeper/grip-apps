@@ -124,7 +124,8 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           minHeight: 185,
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: colors.borderSoft, boxShadow: shadow.card,
+          borderColor: colors.borderSoft,
+          boxShadow: shadow.card,
           borderRadius: 14,
           alignItems: "center",
           justifyContent: "center",
@@ -133,10 +134,17 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         }}
       >
         <BrandIcon name={perfect ? "rank" : "spark"} color={tone} size={24} />
-        <Text style={{ fontSize: font.size.titleLg, fontWeight: "800", color: colors.textBright }}>
+        <Text style={{
+            fontSize: font.size.titleLg,
+            fontWeight: "800",
+            color: colors.textBright
+          }}>
           {t("prep.cardResult", { correct: result.correct, total: result.total, xp: result.xp })}
         </Text>
-        <Text style={{ fontSize: font.size.labelLg, color: colors.textFaint }}>{item.tech}</Text>
+        <Text style={{
+            fontSize: font.size.labelLg,
+            color: colors.textFaint
+          }}>{item.tech}</Text>
       </Animated.View>
     );
   }
@@ -148,23 +156,50 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         style={{
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: colors.borderSoft, boxShadow: shadow.card,
+          borderColor: colors.borderSoft,
+          boxShadow: shadow.card,
           borderRadius: 14,
           padding: 16,
           gap: 10,
         }}
       >
         {/* Same header as a drill: what kind of run this is, and a way out before the end. */}
-        <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center" }}>
+        <View style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
           {tier ? (
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 7, paddingVertical: 2, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}60` }}>
+            <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 3,
+                paddingHorizontal: 7,
+                paddingVertical: 2,
+                borderRadius: 999,
+                backgroundColor: `${tier.color}1A`,
+                borderWidth: 1,
+                borderColor: `${tier.color}60`
+              }}>
               <DifficultyIcon tier={tier} size={11} />
-              <Text style={{ fontSize: font.size.tier, fontWeight: "700", color: tier.color, letterSpacing: 0.3 }}>{tier.label.toUpperCase()}</Text>
+              <Text style={{
+                  fontSize: font.size.tier,
+                  fontWeight: "700",
+                  color: tier.color,
+                  letterSpacing: 0.3
+                }}>{tier.label.toUpperCase()}</Text>
             </View>
           ) : <View />}
           <TouchableOpacity onPress={backToCard} accessibilityRole="button" hitSlop={10}>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
-              <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{t("prep.exit")}</Text>
+            <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 4
+              }}>
+              <Text style={{
+                  fontSize: font.size.label,
+                  color: colors.textFaint
+                }}>{t("prep.exit")}</Text>
               <BrandIcon name="close" color={colors.textFaint} size={11} />
             </View>
           </TouchableOpacity>
@@ -199,43 +234,116 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         style={{
           backgroundColor: colors.surface,
           borderWidth: 1,
-          borderColor: colors.borderSoft, boxShadow: shadow.card,
+          borderColor: colors.borderSoft,
+          boxShadow: shadow.card,
           borderRadius: 14,
           padding: 18,
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 8, marginBottom: 10 }}>
-          <View style={{ paddingHorizontal: 10, paddingVertical: 3, backgroundColor: `${item.color}20`, borderRadius: 20 }}>
-            <Text style={{ color: item.color, fontSize: font.size.label, fontWeight: "700", letterSpacing: 0.4 }}>{item.tech}</Text>
+        <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 8,
+            marginBottom: 10
+          }}>
+          <View style={{
+              paddingHorizontal: 10,
+              paddingVertical: 3,
+              backgroundColor: `${item.color}20`,
+              borderRadius: 20
+            }}>
+            <Text style={{
+                color: item.color,
+                fontSize: font.size.label,
+                fontWeight: "700",
+                letterSpacing: 0.4
+              }}>{item.tech}</Text>
           </View>
           {tier && (
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 999, backgroundColor: `${tier.color}1A`, borderWidth: 1, borderColor: `${tier.color}55` }}>
+            <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 3,
+                paddingHorizontal: 8,
+                paddingVertical: 3,
+                borderRadius: 999,
+                backgroundColor: `${tier.color}1A`,
+                borderWidth: 1,
+                borderColor: `${tier.color}55`
+              }}>
               <DifficultyIcon tier={tier} size={11} />
-              <Text style={{ fontSize: font.size.tier, fontWeight: "800", color: tier.color }}>{tier.label}</Text>
+              <Text style={{
+                  fontSize: font.size.tier,
+                  fontWeight: "800",
+                  color: tier.color
+                }}>{tier.label}</Text>
             </View>
           )}
         </View>
-        <Text style={{ fontSize: font.size.bodyMd, lineHeight: 21, color: colors.text }}>{item.oneliner}</Text>
+        <Text style={{
+            fontSize: font.size.bodyMd,
+            lineHeight: 21,
+            color: colors.text
+          }}>{item.oneliner}</Text>
         {/* Quiet reference text: smaller and dimmer than the one-liner, as on web. */}
-        <View style={{ gap: 4, marginTop: 10 }}>
+        <View style={{
+            gap: 4,
+            marginTop: 10
+          }}>
           {item.prep.map((point) => (
-            <Text key={point} style={{ fontSize: font.size.small, lineHeight: 17, color: `${colors.textDim}CC` }}>
+            <Text key={point} style={{
+                fontSize: font.size.small,
+                lineHeight: 17,
+                color: `${colors.textDim}CC`
+              }}>
               {"•"} {point}
             </Text>
           ))}
         </View>
         {accuracy !== null && (
           // A bar reads at a glance; the number stays for the exact value.
-          <View style={{ height: 3, backgroundColor: colors.well, borderRadius: 2, overflow: "hidden", marginTop: 12 }}>
-            <View style={{ width: `${accuracy}%`, height: "100%", backgroundColor: accuracy >= 70 ? colors.success : colors.warning }} />
+          <View style={{
+              height: 3,
+              backgroundColor: colors.well,
+              borderRadius: 2,
+              overflow: "hidden",
+              marginTop: 12
+            }}>
+            <View style={{
+                width: `${accuracy}%`,
+                height: "100%",
+                backgroundColor: accuracy >= 70 ? colors.success : colors.warning
+              }} />
           </View>
         )}
-        <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: 10, marginTop: 10 }}>
-          <Text style={{ fontSize: font.size.label, color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning }}>
+        <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 10,
+            marginTop: 10
+          }}>
+          <Text style={{
+              fontSize: font.size.label,
+              color: accuracy !== null && accuracy >= 70 ? colors.success : colors.warning
+            }}>
             {accuracy === null ? "" : t("prep.accuracyStat", { pct: accuracy, count: attempts })}
           </Text>
-          <View style={{ paddingHorizontal: 14, paddingVertical: 7, backgroundColor: `${item.color}25`, borderWidth: 1, borderColor: `${item.color}60`, borderRadius: 8, opacity: quizLoading ? 0.6 : 1 }}>
-            <Text style={{ fontSize: font.size.small, fontWeight: "700", color: item.color }}>{quizLoading ? t("common.loading") : t("prep.takeQuiz")}</Text>
+          <View style={{
+              paddingHorizontal: 14,
+              paddingVertical: 7,
+              backgroundColor: `${item.color}25`,
+              borderWidth: 1,
+              borderColor: `${item.color}60`,
+              borderRadius: 8,
+              opacity: quizLoading ? 0.6 : 1
+            }}>
+            <Text style={{
+                fontSize: font.size.small,
+                fontWeight: "700",
+                color: item.color
+              }}>{quizLoading ? t("common.loading") : t("prep.takeQuiz")}</Text>
           </View>
         </View>
       </Pressable>

@@ -38,7 +38,11 @@ export function QuestLeftRail({ contacts, filter, onFilter, agendaContacts, agen
       </WorkspacePanel>
 
       <WorkspacePanel style={{ padding: 8 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4
+          }}>
           {rows.map((row) => {
             const active = filter === row.key;
             return (
@@ -59,11 +63,25 @@ export function QuestLeftRail({ contacts, filter, onFilter, agendaContacts, agen
                   textAlign: "left",
                 }}
               >
-                <span style={{ width: 8, height: 8, borderRadius: 4, background: row.count ? row.color : colors.borderSoft }} />
-                <span style={{ flex: 1, color: active ? colors.textBright : row.count ? colors.text : colors.textFaint, fontSize: font.size.body, fontWeight: 700 }}>
+                <span style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    background: row.count ? row.color : colors.borderSoft
+                  }} />
+                <span style={{
+                    flex: 1,
+                    color: active ? colors.textBright : row.count ? colors.text : colors.textFaint,
+                    fontSize: font.size.body,
+                    fontWeight: 700
+                  }}>
                   {row.label}
                 </span>
-                <span style={{ color: row.count ? row.color : colors.textFaint, fontSize: font.size.small, fontWeight: 800 }}>{row.count}</span>
+                <span style={{
+                    color: row.count ? row.color : colors.textFaint,
+                    fontSize: font.size.small,
+                    fontWeight: 800
+                  }}>{row.count}</span>
               </button>
             );
           })}

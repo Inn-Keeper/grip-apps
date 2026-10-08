@@ -461,7 +461,16 @@ export default function ArchBoard() {
         {creatorOpen ? (
           // Creating a scenario is a task: it takes the main column and locks the rails (rules 8, 10).
           <div style={workspaceFocusStyle}>
-            <button type="button" onClick={() => setCreatorOpen(false)} style={{ marginBottom: 14, padding: 0, background: "transparent", border: "none", color: colors.accentBright, fontSize: font.size.body, fontWeight: 700, cursor: "pointer" }}>
+            <button type="button" onClick={() => setCreatorOpen(false)} style={{
+                marginBottom: 14,
+                padding: 0,
+                background: "transparent",
+                border: "none",
+                color: colors.accentBright,
+                fontSize: font.size.body,
+                fontWeight: 700,
+                cursor: "pointer"
+              }}>
               {t("board.back")}
             </button>
             <ScenarioForm

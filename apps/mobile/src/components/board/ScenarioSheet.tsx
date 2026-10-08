@@ -31,7 +31,10 @@ export function ScenarioSheet({ visible, groups, activeId, onPick, onClose }: Pr
     <Modal transparent animationType="slide" visible={visible} onRequestClose={close}>
       {/* The sheet rides above the keyboard, so search results stay visible while typing. */}
       <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
-        <Pressable onPress={close} style={{ flex: 1, backgroundColor: tints.modalScrim }} accessibilityLabel={t("common.close")} />
+        <Pressable onPress={close} style={{
+            flex: 1,
+            backgroundColor: tints.modalScrim
+          }} accessibilityLabel={t("common.close")} />
         <View
           style={{
             maxHeight: "80%",
@@ -44,7 +47,11 @@ export function ScenarioSheet({ visible, groups, activeId, onPick, onClose }: Pr
             gap: 10,
           }}
         >
-          <Text style={{ fontSize: font.size.bodyLg, fontWeight: "700", color: colors.textBright }}>{t("board.pickScenario")}</Text>
+          <Text style={{
+              fontSize: font.size.bodyLg,
+              fontWeight: "700",
+              color: colors.textBright
+            }}>{t("board.pickScenario")}</Text>
           <TextInput
             value={query}
             onChangeText={setQuery}
@@ -58,11 +65,21 @@ export function ScenarioSheet({ visible, groups, activeId, onPick, onClose }: Pr
           />
           <ScrollView style={{ flexGrow: 0 }} keyboardShouldPersistTaps="handled" contentContainerStyle={{ paddingBottom: 12 }}>
             {visibleGroups.length === 0 && (
-              <Text style={{ fontSize: font.size.body, color: colors.textFaint, paddingVertical: 8 }}>{t("common.noMatches")}</Text>
+              <Text style={{
+                  fontSize: font.size.body,
+                  color: colors.textFaint,
+                  paddingVertical: 8
+                }}>{t("common.noMatches")}</Text>
             )}
             {visibleGroups.map((group) => (
               <View key={group.label} style={{ marginBottom: 6 }}>
-                <Text style={{ fontSize: font.size.label, fontWeight: "800", letterSpacing: 0.6, color: colors.textFaint, paddingVertical: 6 }}>
+                <Text style={{
+                    fontSize: font.size.label,
+                    fontWeight: "800",
+                    letterSpacing: 0.6,
+                    color: colors.textFaint,
+                    paddingVertical: 6
+                  }}>
                   {group.label.toUpperCase()}
                 </Text>
                 {group.options.map((option) => {
@@ -86,7 +103,12 @@ export function ScenarioSheet({ visible, groups, activeId, onPick, onClose }: Pr
                         backgroundColor: active ? tints.accentSoft : "transparent",
                       }}
                     >
-                      <Text style={{ flex: 1, fontSize: font.size.bodyMd, fontWeight: active ? "700" : "500", color: active ? colors.accentBright : colors.text }}>
+                      <Text style={{
+                          flex: 1,
+                          fontSize: font.size.bodyMd,
+                          fontWeight: active ? "700" : "500",
+                          color: active ? colors.accentBright : colors.text
+                        }}>
                         {option.label}
                       </Text>
                       {active && <BrandIcon name="check" color={colors.accentBright} size={14} />}

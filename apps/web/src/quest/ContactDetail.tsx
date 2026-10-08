@@ -28,19 +28,57 @@ export function ContactDetail({ contact, stories, answers, boards, error, onDele
 
       <StoryMatchSection stories={stories} />
 
-      <h3 style={{ margin: "20px 0 8px", fontSize: font.size.body, fontWeight: 800, color: colors.textBright }}>{t("quest.retrosTitle")}</h3>
-      {retros.length === 0 && <p style={{ margin: 0, fontSize: font.size.small, color: colors.textFaint }}>{t("quest.noRetros")}</p>}
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <h3 style={{
+          margin: "20px 0 8px",
+          fontSize: font.size.body,
+          fontWeight: 800,
+          color: colors.textBright
+        }}>{t("quest.retrosTitle")}</h3>
+      {retros.length === 0 && <p style={{
+          margin: 0,
+          fontSize: font.size.small,
+          color: colors.textFaint
+        }}>{t("quest.noRetros")}</p>}
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 8
+        }}>
         {retros.map((r) => (
-          <div key={r.id} style={{ padding: "10px 12px", background: colors.well, border: `1px solid ${colors.borderSoft}`, borderRadius: 8 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 6 }}>
-              <span style={{ fontSize: font.size.small, fontWeight: 700, color: colors.text }}>{r.round || t("retro.round")}</span>
-              <span style={{ fontSize: font.size.label, color: colors.textFaint }}>{r.date}</span>
+          <div key={r.id} style={{
+              padding: "10px 12px",
+              background: colors.well,
+              border: `1px solid ${colors.borderSoft}`,
+              borderRadius: 8
+            }}>
+            <div style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                marginBottom: 6
+              }}>
+              <span style={{
+                  fontSize: font.size.small,
+                  fontWeight: 700,
+                  color: colors.text
+                }}>{r.round || t("retro.round")}</span>
+              <span style={{
+                  fontSize: font.size.label,
+                  color: colors.textFaint
+                }}>{r.date}</span>
               <button
                 type="button"
                 onClick={() => r.id && onDeleteRetro(r.id)}
                 title={t("contacts.deleteRetro")}
-                style={{ marginLeft: "auto", background: "transparent", border: "none", cursor: "pointer", display: "flex", alignItems: "center", padding: 0 }}
+                style={{
+                  marginLeft: "auto",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  padding: 0
+                }}
               >
                 <BrandIcon name="close" color={colors.textFaint} size={11} />
               </button>

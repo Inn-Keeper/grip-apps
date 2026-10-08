@@ -22,7 +22,13 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
   return (
     <svg
       viewBox={`${minX} ${minY} ${maxX - minX} ${maxY - minY}`}
-      style={{ width: "100%", maxHeight: 520, background: colors.bgDeep, borderRadius: 14, border: `1px solid ${colors.borderSoft}` }}
+      style={{
+        width: "100%",
+        maxHeight: 520,
+        background: colors.bgDeep,
+        borderRadius: 14,
+        border: `1px solid ${colors.borderSoft}`
+      }}
     >
       <defs>
         <marker id="share-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
@@ -110,30 +116,67 @@ export function SharedBoardPage({ token }: { token: string }) {
         boxSizing: "border-box",
       }}
     >
-      <div style={{ width: "min(100%, 960px)", display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{
+          width: "min(100%, 960px)",
+          display: "flex",
+          flexDirection: "column",
+          gap: 16
+        }}>
+        <div style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 10
+          }}>
           <BrandMark size={24} />
-          <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>{brand.productName}</span>
-          <span style={{ fontSize: font.size.small, color: colors.textFaint }}>· {t("board.sharedTitle")}</span>
+          <span style={{
+              fontSize: font.size.bodyLg,
+              fontWeight: 800,
+              color: colors.textBright
+            }}>{brand.productName}</span>
+          <span style={{
+              fontSize: font.size.small,
+              color: colors.textFaint
+            }}>· {t("board.sharedTitle")}</span>
         </div>
 
-        {isLoading && <p style={{ color: colors.textFaint, fontSize: font.size.body }}>{t("common.loading")}</p>}
+        {isLoading && <p style={{
+            color: colors.textFaint,
+            fontSize: font.size.body
+          }}>{t("common.loading")}</p>}
 
         {!isLoading && (error || !board) && (
-          <p style={{ color: colors.dangerBright, fontSize: font.size.body }}>{t("board.sharedNotFound")}</p>
+          <p style={{
+              color: colors.dangerBright,
+              fontSize: font.size.body
+            }}>{t("board.sharedNotFound")}</p>
         )}
 
         {board && (
           <>
             <div>
-              <h1 style={{ margin: "0 0 4px", fontSize: font.size.heading, fontWeight: 800, color: colors.textBright }}>
+              <h1 style={{
+                  margin: "0 0 4px",
+                  fontSize: font.size.heading,
+                  fontWeight: 800,
+                  color: colors.textBright
+                }}>
                 {board.title}
               </h1>
-              <p style={{ margin: 0, fontSize: font.size.body, color: colors.textFaint }}>
+              <p style={{
+                  margin: 0,
+                  fontSize: font.size.body,
+                  color: colors.textFaint
+                }}>
                 {scenario ? scenario.name : board.scenarioId} · {t("board.sharedReadOnly")}
               </p>
               {scenario && (
-                <p style={{ margin: "10px 0 0", fontSize: font.size.body, lineHeight: 1.6, color: colors.textDim, maxWidth: 720 }}>
+                <p style={{
+                    margin: "10px 0 0",
+                    fontSize: font.size.body,
+                    lineHeight: 1.6,
+                    color: colors.textDim,
+                    maxWidth: 720
+                  }}>
                   {scenario.brief}
                 </p>
               )}
@@ -144,7 +187,11 @@ export function SharedBoardPage({ token }: { token: string }) {
             {result && scenario ? (
               <EvalResults result={result} scenario={scenario} />
             ) : (
-              <p style={{ margin: 0, fontSize: font.size.body, color: colors.textFaint }}>{t("board.sharedScenarioMissing")}</p>
+              <p style={{
+                  margin: 0,
+                  fontSize: font.size.body,
+                  color: colors.textFaint
+                }}>{t("board.sharedScenarioMissing")}</p>
             )}
           </>
         )}

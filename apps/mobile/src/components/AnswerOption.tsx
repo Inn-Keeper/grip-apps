@@ -76,10 +76,19 @@ export function AnswerOption({ letter, text, state, color, onPress }: Props) {
           {state === "correct" || state === "wrong" ? (
             <BrandIcon name={state === "correct" ? "check" : "close"} color={look.text} size={12} />
           ) : (
-            <Text style={{ fontSize: font.size.label, fontWeight: "700", color: answered ? look.text : color }}>{letter}</Text>
+            <Text style={{
+                fontSize: font.size.label,
+                fontWeight: "700",
+                color: answered ? look.text : color
+              }}>{letter}</Text>
           )}
         </View>
-        <Text style={{ flex: 1, fontSize: font.size.body, lineHeight: 18, color: look.text }}>{text}</Text>
+        <Text style={{
+            flex: 1,
+            fontSize: font.size.body,
+            lineHeight: 18,
+            color: look.text
+          }}>{text}</Text>
       </Pressable>
     </Animated.View>
   );

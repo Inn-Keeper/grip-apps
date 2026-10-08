@@ -44,16 +44,40 @@ export function EdgeInspector({
         gap: 18,
       }}
     >
-      <div style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 160 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("edge.title")}</span>
-        <span style={{ fontSize: font.size.body, fontWeight: 700, color: colors.textBright }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 3,
+          minWidth: 160
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 700,
+            color: colors.textDim
+          }}>{t("edge.title")}</span>
+        <span style={{
+            fontSize: font.size.body,
+            fontWeight: 700,
+            color: colors.textBright
+          }}>
           {from ? meta(from.type).label : "?"} → {to ? meta(to.type).label : "?"}
         </span>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("edge.mode")}</span>
-        <div style={{ display: "flex", gap: 6 }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 5
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 700,
+            color: colors.textDim
+          }}>{t("edge.mode")}</span>
+        <div style={{
+            display: "flex",
+            gap: 6
+          }}>
           {EDGE_MODES.map((mode: string) => (
             <button
               key={mode}
@@ -67,9 +91,23 @@ export function EdgeInspector({
         </div>
       </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 5, flex: 1, minWidth: 240 }}>
-        <span style={{ fontSize: font.size.label, fontWeight: 700, color: colors.textDim }}>{t("edge.protocol")}</span>
-        <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 5,
+          flex: 1,
+          minWidth: 240
+        }}>
+        <span style={{
+            fontSize: font.size.label,
+            fontWeight: 700,
+            color: colors.textDim
+          }}>{t("edge.protocol")}</span>
+        <div style={{
+            display: "flex",
+            gap: 6,
+            flexWrap: "wrap"
+          }}>
           {EDGE_PROTOCOLS.map((protocol: string) => (
             <button
               key={protocol}
@@ -83,7 +121,10 @@ export function EdgeInspector({
         </div>
       </div>
 
-      <div style={{ display: "flex", gap: 8 }}>
+      <div style={{
+          display: "flex",
+          gap: 8
+        }}>
         <button
           onClick={onRemove}
           style={{

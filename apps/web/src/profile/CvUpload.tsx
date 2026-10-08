@@ -56,14 +56,23 @@ export function CvUpload({
   return (
     // The section header (title and intro) comes from the Profile screen.
     <section>
-
       <div
         role="button"
         tabIndex={disabled || busy ? -1 : 0}
         aria-disabled={disabled || busy}
-        onClick={() => { if (!disabled && !busy) inputRef.current?.click(); }}
-        onKeyDown={(e) => { if ((e.key === "Enter" || e.key === " ") && !disabled && !busy) { e.preventDefault(); inputRef.current?.click(); } }}
-        onDragOver={(e) => { e.preventDefault(); if (!disabled && !busy) setDragging(true); }}
+        onClick={() => {
+          if (!disabled && !busy) inputRef.current?.click();
+        }}
+        onKeyDown={(e) => {
+          if ((e.key === "Enter" || e.key === " ") && !disabled && !busy) {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={(e) => {
+          e.preventDefault();
+          if (!disabled && !busy) setDragging(true);
+        }}
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
         style={{
@@ -82,16 +91,33 @@ export function CvUpload({
           transition: "background 0.18s ease, border-color 0.18s ease",
         }}
       >
-        <span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright }}>
+        <span
+          style={{
+            fontSize: font.size.bodyLg,
+            fontWeight: 800,
+            color: colors.textBright,
+          }}
+        >
           {busy ? t("profile.cvReading") : t("profile.cvDropTitle")}
         </span>
-        <span style={{ fontSize: font.size.body, color: colors.textFaint }}>{t("profile.cvDropHint")}</span>
+        <span
+          style={{
+            fontSize: font.size.body,
+            color: colors.textFaint,
+          }}
+        >
+          {t("profile.cvDropHint")}
+        </span>
         <input
           ref={inputRef}
           type="file"
           accept=".pdf,.txt"
           hidden
-          onChange={(e) => { const f = e.target.files?.[0]; if (f) void handleFile(f); e.target.value = ""; }}
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) void handleFile(f);
+            e.target.value = "";
+          }}
         />
       </div>
 
@@ -116,23 +142,60 @@ export function CvUpload({
       </button>
 
       {error && (
-        <p style={{ marginTop: 16, color: colors.dangerBright, fontSize: font.size.body, lineHeight: 1.6 }}>{error}</p>
+        <p
+          style={{
+            marginTop: 16,
+            color: colors.dangerBright,
+            fontSize: font.size.body,
+            lineHeight: 1.6,
+          }}
+        >
+          {error}
+        </p>
       )}
 
       {cvTechs.length > 0 && (
         <div style={{ marginTop: 28 }}>
-          <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: 14 }}>
-            <span style={{ fontSize: font.size.body, fontWeight: 800, color: colors.textBright }}>{t("profile.cvDetected")}</span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "baseline",
+              justifyContent: "space-between",
+              marginBottom: 14,
+            }}
+          >
+            <span
+              style={{
+                fontSize: font.size.body,
+                fontWeight: 800,
+                color: colors.textBright,
+              }}
+            >
+              {t("profile.cvDetected")}
+            </span>
             <button
               type="button"
               onClick={onClear}
               disabled={busy}
-              style={{ background: "none", border: "none", color: colors.textFaint, fontSize: font.size.small, fontWeight: 700, cursor: "pointer" }}
+              style={{
+                background: "none",
+                border: "none",
+                color: colors.textFaint,
+                fontSize: font.size.small,
+                fontWeight: 700,
+                cursor: "pointer",
+              }}
             >
               {t("profile.cvClear")}
             </button>
           </div>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 10,
+            }}
+          >
             {cvTechs.map((tech) => (
               <span
                 key={tech}

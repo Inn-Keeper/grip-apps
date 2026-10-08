@@ -17,8 +17,17 @@ type Props = {
 export function BoardProgress({ step, title, sub, action }: Props) {
   const current = WORKFLOW_STEPS.find((item) => item.step === step);
   return (
-    <View style={{ gap: 6, padding: 10, borderRadius: 12, backgroundColor: tints.accentSoft }}>
-      <View accessibilityRole="progressbar" accessibilityLabel={t("board.railLabel")} accessibilityValue={{ min: 1, max: WORKFLOW_STEPS.length, now: step }} style={{ flexDirection: "row", alignItems: "center", gap: 4 }}>
+    <View style={{
+        gap: 6,
+        padding: 10,
+        borderRadius: 12,
+        backgroundColor: tints.accentSoft
+      }}>
+      <View accessibilityRole="progressbar" accessibilityLabel={t("board.railLabel")} accessibilityValue={{ min: 1, max: WORKFLOW_STEPS.length, now: step }} style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 4
+        }}>
         {WORKFLOW_STEPS.map((item) => {
           const state = stepState(item.step, step);
           return (
@@ -35,22 +44,47 @@ export function BoardProgress({ step, title, sub, action }: Props) {
                 borderColor: colors.borderSoft,
               }}
             >
-              <Text style={{ fontSize: font.size.caption, fontWeight: "800", color: state === "todo" ? colors.textFaint : colors.onAccent }}>
+              <Text style={{
+                  fontSize: font.size.caption,
+                  fontWeight: "800",
+                  color: state === "todo" ? colors.textFaint : colors.onAccent
+                }}>
                 {state === "done" ? "✓" : item.step}
               </Text>
             </View>
           );
         })}
         {current && (
-          <Text style={{ marginLeft: 4, fontSize: font.size.label, fontWeight: "800", letterSpacing: 0.6, color: colors.accentBright }}>
+          <Text style={{
+              marginLeft: 4,
+              fontSize: font.size.label,
+              fontWeight: "800",
+              letterSpacing: 0.6,
+              color: colors.accentBright
+            }}>
             {t(current.labelKey as Parameters<typeof t>[0]).toUpperCase()}
           </Text>
         )}
       </View>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ fontSize: font.size.body, fontWeight: "700", color: colors.textBright }}>{title}</Text>
-          <Text style={{ fontSize: font.size.labelLg, lineHeight: 16, color: colors.textDim }}>{sub}</Text>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10
+        }}>
+        <View style={{
+            flex: 1,
+            gap: 2
+          }}>
+          <Text style={{
+              fontSize: font.size.body,
+              fontWeight: "700",
+              color: colors.textBright
+            }}>{title}</Text>
+          <Text style={{
+              fontSize: font.size.labelLg,
+              lineHeight: 16,
+              color: colors.textDim
+            }}>{sub}</Text>
         </View>
         {action && <MiniButton label={action.label} color={colors.accentBright} onPress={action.onPress} />}
       </View>

@@ -69,15 +69,27 @@ export function RetroForm({ onSave, onCancel }: RetroFormProps) {
       </Field>
       {detected.length > 0 && (
         <Field label={t("retro.struggled")}>
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+          <View style={{
+              flexDirection: "row",
+              flexWrap: "wrap",
+              gap: 6
+            }}>
             {detected.map((tech) => (
               <Pill key={tech} label={tech} active={!excluded.includes(tech)} onPress={() => toggleTech(tech)} />
             ))}
           </View>
-          <Text style={{ fontSize: font.size.label, color: colors.textFaint, marginTop: 4 }}>{t("retro.struggledHint")}</Text>
+          <Text style={{
+              fontSize: font.size.label,
+              color: colors.textFaint,
+              marginTop: 4
+            }}>{t("retro.struggledHint")}</Text>
         </Field>
       )}
-      <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>
+      <View style={{
+          flexDirection: "row",
+          gap: 8,
+          justifyContent: "flex-end"
+        }}>
         <Button label={t("common.cancel")} variant="ghost" onPress={onCancel} />
         <Button label={t("contacts.saveRetro")} onPress={() => onSave({ ...form, struggledTechs })} />
       </View>

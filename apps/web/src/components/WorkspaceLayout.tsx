@@ -14,34 +14,57 @@ type WorkspaceLayoutProps = {
   lockedHint?: string | null;
 };
 
-export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace", density = "normal", leftRailBottomInset, lockedHint }: WorkspaceLayoutProps) {
+// Main workspace layout with 3 columns: left rail, main content, right rail. The rails can be locked (inert) with a hint.
+export function WorkspaceLayout({
+  left,
+  children,
+  right,
+  mainLabel = "Workspace",
+  density = "normal",
+  leftRailBottomInset,
+  lockedHint,
+}: WorkspaceLayoutProps) {
   const compact = density === "compact";
 
   return (
     <main
       className={styles.shell}
-      style={{
-        background: colors.bg,
-        "--workspace-top": `${layout.workspaceTop}px`,
-        "--workspace-bottom-inset": `${layout.workspaceBottomInset}px`,
-        "--workspace-left-bottom-inset": `${leftRailBottomInset ?? layout.workspaceBottomInset}px`,
-        "--workspace-gap": compact ? "18px" : "22px",
-        "--workspace-padding": compact ? "18px 24px 40px" : "22px 24px 44px",
-        "--workspace-rail-min": `${layout.workspaceRailMin}px`,
-        "--workspace-left-rail-max": `${layout.workspaceLeftRailMax}px`,
-        "--workspace-right-rail-min": `${layout.workspaceRightRailMin}px`,
-        "--workspace-right-rail-max": `${layout.workspaceRightRailMax}px`,
-      } as CSSProperties}
+      style={
+        {
+          background: colors.bg,
+          "--workspace-top": `${layout.workspaceTop}px`,
+          "--workspace-bottom-inset": `${layout.workspaceBottomInset}px`,
+          "--workspace-left-bottom-inset": `${leftRailBottomInset ?? layout.workspaceBottomInset}px`,
+          "--workspace-gap": compact ? "18px" : "22px",
+          "--workspace-padding": compact ? "18px 24px 40px" : "22px 24px 44px",
+          "--workspace-rail-min": `${layout.workspaceRailMin}px`,
+          "--workspace-left-rail-max": `${layout.workspaceLeftRailMax}px`,
+          "--workspace-right-rail-min": `${layout.workspaceRightRailMin}px`,
+          "--workspace-right-rail-max": `${layout.workspaceRightRailMax}px`,
+        } as CSSProperties
+      }
     >
       <aside className={`${styles.rail} ${styles.leftRail}`}>
         {lockedHint && (
-          <p role="status" style={{ margin: 0, padding: "0 4px", color: colors.textDim, fontSize: font.size.small, fontWeight: 600 }}>
+          <p
+            role="status"
+            style={{
+              margin: 0,
+              padding: "0 4px",
+              color: colors.textDim,
+              fontSize: font.size.small,
+              fontWeight: 600,
+            }}
+          >
             {lockedHint}
           </p>
         )}
         <RailContent locked={!!lockedHint}>{left}</RailContent>
       </aside>
-      <section aria-label={mainLabel} className={styles.main}>
+      <section
+        aria-label={mainLabel}
+        className={styles.main}
+      >
         {children}
       </section>
       <aside className={`${styles.rail} ${styles.rightRail}`}>
@@ -53,15 +76,16 @@ export function WorkspaceLayout({ left, children, right, mainLabel = "Workspace"
 
 type WorkspacePanelProps = { children: ReactNode; tone?: "default" | "sunken"; style?: CSSProperties };
 
+// Floating card-like panel with a border and optional sunken tone.
 export function WorkspacePanel({ children, tone = "default", style }: WorkspacePanelProps) {
   return (
     <div
       style={{
         background: tone === "sunken" ? colors.well : colors.surface,
-        border: `1px solid ${colors.borderSoft}`,
-        borderRadius: 8,
+        border: `1px solid ${colors.borderDeep}`,
+        borderRadius: 6,
         boxShadow: tone === "sunken" ? undefined : shadow.card,
-        padding: 14,
+        padding: 18,
         ...style,
       }}
     >
@@ -74,11 +98,42 @@ type WorkspaceTitleProps = { icon: ReactNode; title: string; subtitle?: string; 
 
 export function WorkspaceTitle({ icon, title, subtitle, right }: WorkspaceTitleProps) {
   return (
-    <div style={{ display: "flex", alignItems: "flex-start", gap: 10 }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "flex-start",
+        gap: 10,
+      }}
+    >
       {icon}
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <h2 style={{ margin: 0, color: colors.textBright, fontSize: font.size.body, fontWeight: 800 }}>{title}</h2>
-        {subtitle && <p style={{ margin: "4px 0 0", color: colors.textFaint, fontSize: font.size.label, lineHeight: 1.45 }}>{subtitle}</p>}
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+        }}
+      >
+        <h2
+          style={{
+            margin: 0,
+            color: colors.textBright,
+            fontSize: font.size.body,
+            fontWeight: 800,
+          }}
+        >
+          {title}
+        </h2>
+        {subtitle && (
+          <p
+            style={{
+              margin: "4px 0 0",
+              color: colors.textFaint,
+              fontSize: font.size.label,
+              lineHeight: 1.45,
+            }}
+          >
+            {subtitle}
+          </p>
+        )}
       </div>
       {right}
     </div>
@@ -88,7 +143,16 @@ export function WorkspaceTitle({ icon, title, subtitle, right }: WorkspaceTitleP
 // Keeps the rail's column gap; when locked, the rail can't be reached by mouse, keyboard or screen reader.
 function RailContent({ locked, children }: { locked: boolean; children: ReactNode }) {
   return (
-    <div inert={locked} style={{ display: "flex", flexDirection: "column", gap: 14, opacity: locked ? 0.45 : 1, transition: "opacity 200ms ease" }}>
+    <div
+      inert={locked}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 14,
+        opacity: locked ? 0.45 : 1,
+        transition: "opacity 200ms ease",
+      }}
+    >
       {children}
     </div>
   );

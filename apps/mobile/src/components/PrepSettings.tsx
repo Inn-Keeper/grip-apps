@@ -30,25 +30,54 @@ export function PrepSettings({ level, onLevel, quizSize, poolSize, onQuizSize, a
         accessibilityRole="button"
         accessibilityState={{ expanded: open }}
         style={{
-          flexDirection: "row", alignItems: "center", gap: 8, paddingHorizontal: 12, paddingVertical: 10,
-          borderRadius: 10, borderWidth: 1, borderColor: colors.borderSoft, boxShadow: shadow.card, backgroundColor: colors.surface,
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8,
+          paddingHorizontal: 12,
+          paddingVertical: 10,
+          borderRadius: 10,
+          borderWidth: 1,
+          borderColor: colors.borderSoft,
+          boxShadow: shadow.card,
+          backgroundColor: colors.surface,
         }}
       >
         {tier && <DifficultyIcon tier={tier} size={15} />}
-        <Text style={{ flex: 1, fontSize: font.size.smallLg, fontWeight: "700", color: colors.text }}>
+        <Text style={{
+            flex: 1,
+            fontSize: font.size.smallLg,
+            fontWeight: "700",
+            color: colors.text
+          }}>
           {t("prep.settingsSummary", { level: tier?.label ?? level, size: quizSize ?? "All" })}
           {autoNext ? ` · ${t("prep.autoNext")}` : ""}
         </Text>
-        <Text style={{ fontSize: font.size.small, color: colors.textFaint }}>{open ? "▴" : "▾"}</Text>
+        <Text style={{
+            fontSize: font.size.small,
+            color: colors.textFaint
+          }}>{open ? "▴" : "▾"}</Text>
       </TouchableOpacity>
       {open && (
         <>
           <DifficultyPicker level={level} onLevel={onLevel} />
           <QuizSizePicker quizSize={quizSize} poolSize={poolSize} onQuizSize={onQuizSize} />
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 12, paddingHorizontal: 4 }}>
+          <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: 12,
+              paddingHorizontal: 4
+            }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ fontSize: font.size.smallLg, fontWeight: "700", color: colors.text }}>{t("prep.autoNext")}</Text>
-              <Text style={{ fontSize: font.size.label, color: colors.textFaint, marginTop: 2 }}>{t("prep.autoNextHint", { seconds: AUTO_NEXT_MS / 1000 })}</Text>
+              <Text style={{
+                  fontSize: font.size.smallLg,
+                  fontWeight: "700",
+                  color: colors.text
+                }}>{t("prep.autoNext")}</Text>
+              <Text style={{
+                  fontSize: font.size.label,
+                  color: colors.textFaint,
+                  marginTop: 2
+                }}>{t("prep.autoNextHint", { seconds: AUTO_NEXT_MS / 1000 })}</Text>
             </View>
             <Switch
               value={autoNext}

@@ -46,24 +46,49 @@ export function PrepPlanSection({
         gap: 8,
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
-        <Text style={{ fontSize: font.size.label, fontWeight: "800", color: colors.accentBright, letterSpacing: 0.5 }}>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8,
+          flexWrap: "wrap"
+        }}>
+        <Text style={{
+            fontSize: font.size.label,
+            fontWeight: "800",
+            color: colors.accentBright,
+            letterSpacing: 0.5
+          }}>
           {t("plan.title").toUpperCase()}
         </Text>
-        <Text style={{ fontSize: font.size.label, color: colors.textDim, flex: 1 }}>
+        <Text style={{
+            fontSize: font.size.label,
+            color: colors.textDim,
+            flex: 1
+          }}>
           {contact.nextActionDate
             ? t("plan.deadline", { date: contact.nextActionDate, days: plan.daysLeft ?? 0 })
             : t("plan.noDeadline")}
         </Text>
-        <Text style={{ fontSize: font.size.label, color: colors.textDim }}>
+        <Text style={{
+            fontSize: font.size.label,
+            color: colors.textDim
+          }}>
           {t("plan.readiness")}{" "}
-          <Text style={{ fontWeight: "800", color: colors.text }}>
+          <Text style={{
+              fontWeight: "800",
+              color: colors.text
+            }}>
             {readiness.overall === null ? "--" : `${readiness.overall}%`}
           </Text>
         </Text>
       </View>
 
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6, alignItems: "center" }}>
+      <View style={{
+          flexDirection: "row",
+          flexWrap: "wrap",
+          gap: 6,
+          alignItems: "center"
+        }}>
         {focus.map((item) => (
           <View
             key={item.tech}
@@ -78,7 +103,10 @@ export function PrepPlanSection({
               backgroundColor: colors.well,
             }}
           >
-            <Text style={{ fontSize: font.size.label, color: colors.text }}>{item.tech}</Text>
+            <Text style={{
+                fontSize: font.size.label,
+                color: colors.text
+              }}>{item.tech}</Text>
             <Text
               style={{
                 fontSize: font.size.label,
@@ -100,7 +128,11 @@ export function PrepPlanSection({
             borderRadius: 8,
           }}
         >
-          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.onAccent }}>{t("plan.drillCta")}</Text>
+          <Text style={{
+              fontSize: font.size.label,
+              fontWeight: "700",
+              color: colors.onAccent
+            }}>{t("plan.drillCta")}</Text>
         </TouchableOpacity>
       </View>
     </View>

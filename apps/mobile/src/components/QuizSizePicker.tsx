@@ -22,23 +22,46 @@ export function QuizSizePicker({ quizSize, poolSize, onQuizSize }: Props) {
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.borderSoft, boxShadow: shadow.card,
+        borderColor: colors.borderSoft,
+        boxShadow: shadow.card,
         borderRadius: 12,
         padding: 12,
         gap: 10,
       }}
     >
-      <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", gap: 12 }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+      <View style={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: 12
+        }}>
+        <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6
+          }}>
           <BrandIcon name="layers" color={colors.accentBright} size={15} />
-          <Text style={{ fontSize: font.size.label, fontWeight: "700", color: colors.textDim, letterSpacing: 0.6 }}>QUESTIONS</Text>
+          <Text style={{
+              fontSize: font.size.label,
+              fontWeight: "700",
+              color: colors.textDim,
+              letterSpacing: 0.6
+            }}>QUESTIONS</Text>
         </View>
-        <Text style={{ flex: 1, textAlign: "right", fontSize: font.size.captionLg, color: colors.textFaint }} numberOfLines={1}>
+        <Text style={{
+            flex: 1,
+            textAlign: "right",
+            fontSize: font.size.captionLg,
+            color: colors.textFaint
+          }} numberOfLines={1}>
           {detail}
         </Text>
       </View>
 
-      <View style={{ flexDirection: "row", gap: 6 }}>
+      <View style={{
+          flexDirection: "row",
+          gap: 6
+        }}>
         {QUIZ_SIZE_OPTIONS.map((option) => {
           const active = quizSize === option.value;
           const disabled = typeof option.value === "number" && poolSize !== null && option.value > poolSize;
@@ -58,7 +81,11 @@ export function QuizSizePicker({ quizSize, poolSize, onQuizSize }: Props) {
                 opacity: disabled && !active ? 0.55 : 1,
               }}
             >
-              <Text style={{ fontSize: font.size.small, fontWeight: "800", color: active ? colors.accentBright : colors.textDim }}>{option.label}</Text>
+              <Text style={{
+                  fontSize: font.size.small,
+                  fontWeight: "800",
+                  color: active ? colors.accentBright : colors.textDim
+                }}>{option.label}</Text>
             </TouchableOpacity>
           );
         })}

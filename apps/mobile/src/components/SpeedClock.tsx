@@ -43,7 +43,12 @@ export function SpeedClock({ shownAt }: { shownAt: number }) {
       }}
     >
       <BrandIcon name="spark" color={tone} size={12} />
-      <Text style={{ fontSize: font.size.small, fontWeight: "800", color: tone, fontVariant: ["tabular-nums"] }}>
+      <Text style={{
+          fontSize: font.size.small,
+          fontWeight: "800",
+          color: tone,
+          fontVariant: ["tabular-nums"]
+        }}>
         {timeUp ? t("prep.timesUp") : `0:${String(seconds).padStart(2, "0")}`}
       </Text>
     </View>

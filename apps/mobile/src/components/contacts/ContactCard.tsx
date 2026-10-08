@@ -48,16 +48,29 @@ export function ContactCard({
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: due ? `${colors.danger}80` : colors.borderSoft, boxShadow: shadow.card,
+        borderColor: due ? `${colors.danger}80` : colors.borderSoft,
+        boxShadow: shadow.card,
         borderRadius: 14,
         padding: 16,
         gap: 8,
       }}
     >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+      <View style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 8,
+          flexWrap: "wrap"
+        }}>
         <Badge label={t(`enum.status.${contact.status}` as Parameters<typeof t>[0])} color={status.color} />
-        {!!contact.date && <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{contact.date}</Text>}
-        <View style={{ flexDirection: "row", gap: 6, marginLeft: "auto" }}>
+        {!!contact.date && <Text style={{
+            fontSize: font.size.label,
+            color: colors.textFaint
+          }}>{contact.date}</Text>}
+        <View style={{
+            flexDirection: "row",
+            gap: 6,
+            marginLeft: "auto"
+          }}>
           {nextStatus && (
             <MiniButton label={`→ ${t(`enum.status.${nextStatus}` as Parameters<typeof t>[0])}`} color={STATUS_STYLES[nextStatus].color} onPress={onAdvance} />
           )}
@@ -65,18 +78,31 @@ export function ContactCard({
         </View>
       </View>
 
-      <Text style={{ fontSize: font.size.bodyLg, fontWeight: "600", color: colors.textBright }}>{contact.name}</Text>
+      <Text style={{
+          fontSize: font.size.bodyLg,
+          fontWeight: "600",
+          color: colors.textBright
+        }}>{contact.name}</Text>
 
       {!!contact.role &&
         (contact.link ? (
           <TouchableOpacity onPress={() => Linking.openURL(contact.link)}>
-            <Text style={{ fontSize: font.size.body, color: colors.accentBright }}>{contact.role} ↗</Text>
+            <Text style={{
+                fontSize: font.size.body,
+                color: colors.accentBright
+              }}>{contact.role} ↗</Text>
           </TouchableOpacity>
         ) : (
-          <Text style={{ fontSize: font.size.body, color: colors.text }}>{contact.role}</Text>
+          <Text style={{
+              fontSize: font.size.body,
+              color: colors.text
+            }}>{contact.role}</Text>
         ))}
 
-      {!!contact.note && <Text style={{ fontSize: font.size.smallLg, color: colors.textDim }}>{contact.note}</Text>}
+      {!!contact.note && <Text style={{
+          fontSize: font.size.smallLg,
+          color: colors.textDim
+        }}>{contact.note}</Text>}
 
       {!!contact.nextAction && (
         <View
@@ -92,7 +118,11 @@ export function ContactCard({
           }}
         >
           <BrandIcon name={due ? "warning" : "calendar"} color={due ? colors.dangerBright : colors.warningBright} size={15} />
-          <Text style={{ flex: 1, fontSize: font.size.smallLg, color: due ? colors.dangerBright : colors.warningBright }}>
+          <Text style={{
+              flex: 1,
+              fontSize: font.size.smallLg,
+              color: due ? colors.dangerBright : colors.warningBright
+            }}>
             {due ? "DUE · " : ""}
             {contact.nextAction}
             {!!contact.nextActionDate && ` · ${contact.nextActionDate}`}
@@ -107,7 +137,11 @@ export function ContactCard({
 
       <StoryMatchSection stories={stories} />
 
-      <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>
+      <View style={{
+          flexDirection: "row",
+          gap: 8,
+          justifyContent: "flex-end"
+        }}>
         {retros.length > 0 && (
           <MiniButton
             label={`${t("contacts.retros", { count: retros.length })} ${showRetros ? "Collapse" : "Expand"}`}
@@ -132,11 +166,23 @@ export function ContactCard({
               gap: 6,
             }}
           >
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-              <Text style={{ fontSize: font.size.small, fontWeight: "700", color: colors.text, flex: 1 }}>
+            <View style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 8
+              }}>
+              <Text style={{
+                  fontSize: font.size.small,
+                  fontWeight: "700",
+                  color: colors.text,
+                  flex: 1
+                }}>
                 {retro.round || t("retro.round")}
               </Text>
-              <Text style={{ fontSize: font.size.label, color: colors.textFaint }}>{retro.date}</Text>
+              <Text style={{
+                  fontSize: font.size.label,
+                  color: colors.textFaint
+                }}>{retro.date}</Text>
               <MiniButton label={t("contacts.removeRetro")} color={colors.textFaint} onPress={() => onDeleteRetro(retro.id)} />
             </View>
             <Section label={t("contacts.questionsAsked")} text={retro.questions} />

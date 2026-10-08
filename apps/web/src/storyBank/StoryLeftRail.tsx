@@ -19,7 +19,12 @@ export function StoryLeftRail({ mode, setMode, stories }: { mode: StoryMode; set
         title={t("stories.behavioralPrep")}
         subtitle={t("stories.count", { count: stories.length })}
       />
-      <nav aria-label={t("stories.title")} style={{ display: "flex", flexDirection: "column", gap: 6, marginTop: 14 }}>
+      <nav aria-label={t("stories.title")} style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+          marginTop: 14
+        }}>
         {items.map((item) => {
           const active = mode === item.id;
           return (
@@ -29,9 +34,18 @@ export function StoryLeftRail({ mode, setMode, stories }: { mode: StoryMode; set
               aria-current={active ? "page" : undefined}
               onClick={() => setMode(item.id)}
               style={{
-                display: "flex", alignItems: "center", gap: 8, padding: "9px 10px", border: "none", borderRadius: 7,
-                background: active ? tints.accentSoft : "transparent", color: active ? colors.accentBright : colors.textDim,
-                fontSize: font.size.body, fontWeight: 800, cursor: "pointer", textAlign: "left",
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "9px 10px",
+                border: "none",
+                borderRadius: 7,
+                background: active ? tints.accentSoft : "transparent",
+                color: active ? colors.accentBright : colors.textDim,
+                fontSize: font.size.body,
+                fontWeight: 800,
+                cursor: "pointer",
+                textAlign: "left",
               }}
             >
               <BrandIcon name={item.icon} color={active ? colors.accentBright : colors.textFaint} size={14} />

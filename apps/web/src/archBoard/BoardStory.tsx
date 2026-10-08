@@ -37,9 +37,19 @@ export function BoardStory({ boardId, scenarioId, storyId, onChange }: {
         style={{ width: "100%" }}
       />
       {current && (
-        <details style={{ marginTop: 8, padding: "8px 10px", border: `1px solid ${colors.borderSoft}`, borderRadius: 8 }}>
+        <details style={{
+            marginTop: 8,
+            padding: "8px 10px",
+            border: `1px solid ${colors.borderSoft}`,
+            borderRadius: 8
+          }}>
           {/* Stays display: list-item; flex would drop the disclosure triangle. */}
-          <summary style={{ cursor: "pointer", fontSize: font.size.small, fontWeight: 600, color: colors.textDim }}>
+          <summary style={{
+              cursor: "pointer",
+              fontSize: font.size.small,
+              fontWeight: 600,
+              color: colors.textDim
+            }}>
             <BrandIcon name="story" color={colors.accentBright} size={14} />{" "}
             {t("board.showStory")}
           </summary>

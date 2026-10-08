@@ -11,10 +11,22 @@ function StarSection({ label, text }: { label: string; text: string }) {
   if (!text) return null;
   return (
     <div>
-      <div style={{ fontSize: font.size.caption, fontWeight: 700, color: colors.textFaint, letterSpacing: "0.08em", marginBottom: 2 }}>
+      <div style={{
+          fontSize: font.size.caption,
+          fontWeight: 700,
+          color: colors.textFaint,
+          letterSpacing: "0.08em",
+          marginBottom: 2
+        }}>
         {label.toUpperCase()}
       </div>
-      <p style={{ margin: 0, fontSize: font.size.body, lineHeight: 1.55, color: colors.text, whiteSpace: "pre-wrap" }}>{text}</p>
+      <p style={{
+          margin: 0,
+          fontSize: font.size.body,
+          lineHeight: 1.55,
+          color: colors.text,
+          whiteSpace: "pre-wrap"
+        }}>{text}</p>
     </div>
   );
 }
@@ -22,7 +34,12 @@ function StarSection({ label, text }: { label: string; text: string }) {
 // The four STAR sections, used by the focused view and the drill's revealed stories.
 export function StarSections({ story }: { story: Story }) {
   return (
-    <div style={{ marginTop: 14, display: "flex", flexDirection: "column", gap: 12 }}>
+    <div style={{
+        marginTop: 14,
+        display: "flex",
+        flexDirection: "column",
+        gap: 12
+      }}>
       <StarSection label={t("stories.situation")} text={story.situation} />
       <StarSection label={t("stories.task")} text={story.task} />
       <StarSection label={t("stories.action")} text={story.action} />
@@ -45,18 +62,40 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
   readOnly?: boolean;
 }) {
   return (
-    <div className={readOnly ? undefined : hover.hoverCard} style={{ background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 14, boxShadow: shadow.card, padding: "16px 20px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+    <div className={readOnly ? undefined : hover.hoverCard} style={{
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        borderRadius: 14,
+        boxShadow: shadow.card,
+        padding: "16px 20px"
+      }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap"
+        }}>
         <CompetencyBadge competency={s.competency} />
         {onOpen ? (
-          <button type="button" onClick={onOpen} style={{ ...titleStyle, padding: 0, background: "transparent", border: "none", textAlign: "left", cursor: "pointer" }}>
+          <button type="button" onClick={onOpen} style={{
+              ...titleStyle,
+              padding: 0,
+              background: "transparent",
+              border: "none",
+              textAlign: "left",
+              cursor: "pointer"
+            }}>
             {s.title}
           </button>
         ) : (
           <span style={titleStyle}>{s.title}</span>
         )}
         {(onOpen || !readOnly) && (
-          <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+          <div style={{
+              marginLeft: "auto",
+              display: "flex",
+              gap: 6
+            }}>
             {onOpen && <button type="button" onClick={onOpen} style={miniBtn(colors.accentBright ?? "")}>{t("stories.open")}</button>}
             {!readOnly && onEdit && <button type="button" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>}
             {!readOnly && onDelete && <button type="button" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>}
@@ -73,15 +112,35 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
 // One story in the focused view: the full STAR with its actions.
 export function StoryDetail({ story, onEdit, onDelete, error }: { story: Story; onEdit: () => void; onDelete: () => void; error?: string | null }) {
   return (
-    <div style={{ background: colors.surface, border: `1px solid ${colors.borderSoft}`, borderRadius: 14, boxShadow: shadow.card, padding: "20px 22px" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+    <div style={{
+        background: colors.surface,
+        border: `1px solid ${colors.borderSoft}`,
+        borderRadius: 14,
+        boxShadow: shadow.card,
+        padding: "20px 22px"
+      }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          flexWrap: "wrap"
+        }}>
         <CompetencyBadge competency={story.competency} />
-        <div style={{ marginLeft: "auto", display: "flex", gap: 6 }}>
+        <div style={{
+            marginLeft: "auto",
+            display: "flex",
+            gap: 6
+          }}>
           <button type="button" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>
           <button type="button" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>
         </div>
       </div>
-      <h2 style={{ margin: "12px 0 0", fontSize: font.size.title, fontWeight: 800, color: colors.textBright }}>{story.title}</h2>
+      <h2 style={{
+          margin: "12px 0 0",
+          fontSize: font.size.title,
+          fontWeight: 800,
+          color: colors.textBright
+        }}>{story.title}</h2>
       <StarSections story={story} />
       <StoryLinks story={story} />
       {error && <ErrorText margin="12px 0 0">{error}</ErrorText>}

@@ -91,18 +91,39 @@ export function SignIn() {
         boxSizing: "border-box",
       }}
     >
-      <div style={{ width: "100%", maxWidth: 380, textAlign: "center" }}>
+      <div style={{
+          width: "100%",
+          maxWidth: 380,
+          textAlign: "center"
+        }}>
         {/* Poe's raven, the same mark as the favicon and header. */}
-        <BrandMark size={88} style={{ margin: "0 auto 18px", boxShadow: "0 6px 10px -4px #000000D9" }} />
-        <h1 style={{ margin: "0 0 8px", fontSize: font.size.heading, fontWeight: 700, color: colors.textBright }}>
+        <BrandMark size={88} style={{
+            margin: "0 auto 18px",
+            boxShadow: "0 6px 10px -4px #000000D9"
+          }} />
+        <h1 style={{
+            margin: "0 0 8px",
+            fontSize: font.size.heading,
+            fontWeight: 700,
+            color: colors.textBright
+          }}>
           {brand.productName}
         </h1>
         {/* The promise, not brand flavour, so it reads at the same weight as the form labels. */}
-        <p style={{ margin: "0 0 24px", fontSize: font.size.body, color: colors.textDim, lineHeight: 1.6 }}>
+        <p style={{
+            margin: "0 0 24px",
+            fontSize: font.size.body,
+            color: colors.textDim,
+            lineHeight: 1.6
+          }}>
           {t("auth.subtitle")}
         </p>
 
-        <form onSubmit={submit} style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+        <form onSubmit={submit} style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 10
+          }}>
           <button
             type="button"
             onClick={signInWithGitHub}
@@ -143,14 +164,35 @@ export function SignIn() {
             }}
           >
             {t("demo.try")}
-            <span style={{ display: "block", marginTop: 2, fontSize: font.size.label, fontWeight: 500, color: colors.textFaint }}>
+            <span style={{
+                display: "block",
+                marginTop: 2,
+                fontSize: font.size.label,
+                fontWeight: 500,
+                color: colors.textFaint
+              }}>
               {t("demo.trySub")}
             </span>
           </button>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, color: colors.textFaint, fontSize: font.size.label, fontWeight: 700 }}>
-            <span style={{ flex: 1, height: 1, background: colors.borderSoft }} />
+          <div style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              color: colors.textFaint,
+              fontSize: font.size.label,
+              fontWeight: 700
+            }}>
+            <span style={{
+                flex: 1,
+                height: 1,
+                background: colors.borderSoft
+              }} />
             {t("auth.or")}
-            <span style={{ flex: 1, height: 1, background: colors.borderSoft }} />
+            <span style={{
+                flex: 1,
+                height: 1,
+                background: colors.borderSoft
+              }} />
           </div>
           <input
             type="email"
@@ -191,8 +233,17 @@ export function SignIn() {
           >
             {busy ? "…" : mode === "signin" ? t("auth.signIn") : t("auth.createAccount")}
           </button>
-          {error && <p style={{ margin: 0, fontSize: font.size.small, color: colors.dangerBright }}>{error}</p>}
-          {notice && <p style={{ margin: 0, fontSize: font.size.small, color: colors.warningBright, lineHeight: 1.5 }}>{notice}</p>}
+          {error && <p style={{
+              margin: 0,
+              fontSize: font.size.small,
+              color: colors.dangerBright
+            }}>{error}</p>}
+          {notice && <p style={{
+              margin: 0,
+              fontSize: font.size.small,
+              color: colors.warningBright,
+              lineHeight: 1.5
+            }}>{notice}</p>}
         </form>
 
         <button
@@ -226,7 +277,10 @@ export function SignIn() {
             color: colors.textFaint,
           }}
         >
-          <span style={{ flex: "0 0 auto", marginTop: 2 }}>
+          <span style={{
+              flex: "0 0 auto",
+              marginTop: 2
+            }}>
             <BrandIcon name="spark" color={colors.accentBright} size={14} />
           </span>
           {t("auth.aiProof")}

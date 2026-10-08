@@ -139,18 +139,28 @@ export default function ProfileScreen() {
         right={<HeaderAction label={t("auth.signOut")} tone="muted" onPress={() => supabase.auth.signOut()} />}
       />
       <ScrollView
-        style={{ flex: 1, backgroundColor: colors.bg }}
+        style={{
+          flex: 1,
+          backgroundColor: colors.bg
+        }}
         contentContainerStyle={{ padding: space.lg, gap: space.md, paddingBottom: insets.bottom + layout.tabBarClearance }}
         keyboardShouldPersistTaps="handled"
         // Scrolls a focused field above the keyboard, including one Next Up focused.
         automaticallyAdjustKeyboardInsets
       >
-        {error && <Text style={{ color: colors.dangerBright, fontSize: font.size.body }}>{error.message}</Text>}
+        {error && <Text style={{
+            color: colors.dangerBright,
+            fontSize: font.size.body
+          }}>{error.message}</Text>}
 
         <ProfileNextUp title={nextUp.title} sub={nextUp.sub} action={nextUp.action} disabled={!profile} />
 
         <Card>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: space.md }}>
+          <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              gap: space.md
+            }}>
             <View
               style={{
                 width: 46,
@@ -161,17 +171,31 @@ export default function ProfileScreen() {
                 justifyContent: "center",
               }}
             >
-              <Text style={{ color: colors.onAccent, fontSize: font.size.title, fontWeight: "800" }}>
+              <Text style={{
+                  color: colors.onAccent,
+                  fontSize: font.size.title,
+                  fontWeight: "800"
+                }}>
                 {(profile?.displayName || profile?.email || "?").slice(0, 1).toUpperCase()}
               </Text>
             </View>
-            <View style={{ flex: 1, minWidth: 0 }}>
-              <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }} numberOfLines={1}>
+            <View style={{
+                flex: 1,
+                minWidth: 0
+              }}>
+              <Text style={{
+                  color: colors.textBright,
+                  fontSize: font.size.title,
+                  fontWeight: "800"
+                }} numberOfLines={1}>
                 {profile?.displayName || t("profile.yourProfile")}
               </Text>
               {/* A demo user has no email; only a profile still loading says so. */}
               {(!profile || !!profile.email) && (
-                <Text style={{ color: colors.textDim, fontSize: font.size.small }} numberOfLines={1}>
+                <Text style={{
+                    color: colors.textDim,
+                    fontSize: font.size.small
+                  }} numberOfLines={1}>
                   {profile ? profile.email : t("profile.loading")}
                 </Text>
               )}
@@ -179,42 +203,106 @@ export default function ProfileScreen() {
           </View>
 
           <View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: space.xs }}>
-              <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "700" }}>{t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}</Text>
-              <Text style={{ color: colors.textDim, fontSize: font.size.small }}>{profile?.xp ?? 0} XP</Text>
+            <View style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: space.xs
+              }}>
+              <Text style={{
+                  color: colors.textBright,
+                  fontSize: font.size.body,
+                  fontWeight: "700"
+                }}>{t(`enum.rank.${rank.name}` as Parameters<typeof t>[0])}</Text>
+              <Text style={{
+                  color: colors.textDim,
+                  fontSize: font.size.small
+                }}>{profile?.xp ?? 0} XP</Text>
             </View>
-            <View style={{ height: 8, backgroundColor: colors.bgDeep, borderRadius: radius.pill, overflow: "hidden" }}>
-              <View style={{ width: `${progress * 100}%`, height: "100%", backgroundColor: colors.accent }} />
+            <View style={{
+                height: 8,
+                backgroundColor: colors.bgDeep,
+                borderRadius: radius.pill,
+                overflow: "hidden"
+              }}>
+              <View style={{
+                  width: `${progress * 100}%`,
+                  height: "100%",
+                  backgroundColor: colors.accent
+                }} />
             </View>
-            <Text style={{ color: colors.textFaint, fontSize: font.size.small, marginTop: space.xs }}>
+            <Text style={{
+                color: colors.textFaint,
+                fontSize: font.size.small,
+                marginTop: space.xs
+              }}>
               {next ? t("profile.xpToNext", { xp: next.min - (profile?.xp ?? 0), rank: t(`enum.rank.${next.name}` as Parameters<typeof t>[0]) }) : t("profile.topRank")}
             </Text>
           </View>
 
           <View>
-            <View style={{ flexDirection: "row", justifyContent: "space-between", marginBottom: space.xs }}>
-              <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "700" }}>{t("profile.completionLabel")}</Text>
-              <Text style={{ color: colors.textDim, fontSize: font.size.small }}>{completionPct}%</Text>
+            <View style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                marginBottom: space.xs
+              }}>
+              <Text style={{
+                  color: colors.textBright,
+                  fontSize: font.size.body,
+                  fontWeight: "700"
+                }}>{t("profile.completionLabel")}</Text>
+              <Text style={{
+                  color: colors.textDim,
+                  fontSize: font.size.small
+                }}>{completionPct}%</Text>
             </View>
-            <View style={{ height: 8, backgroundColor: colors.bgDeep, borderRadius: radius.pill, overflow: "hidden" }}>
-              <View style={{ width: `${completionPct}%`, height: "100%", backgroundColor: colors.success }} />
+            <View style={{
+                height: 8,
+                backgroundColor: colors.bgDeep,
+                borderRadius: radius.pill,
+                overflow: "hidden"
+              }}>
+              <View style={{
+                  width: `${completionPct}%`,
+                  height: "100%",
+                  backgroundColor: colors.success
+                }} />
             </View>
-            <Text style={{ color: colors.textFaint, fontSize: font.size.small, marginTop: space.xs }}>
+            <Text style={{
+                color: colors.textFaint,
+                fontSize: font.size.small,
+                marginTop: space.xs
+              }}>
               {t("profile.fields", { filled: completionItems, total: PROFILE_FIELDS.length })}
             </Text>
           </View>
         </Card>
 
         <Card>
-          <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
-            <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>GitHub</Text>
+          <View style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: space.md
+            }}>
+            <Text style={{
+                color: colors.textBright,
+                fontSize: font.size.title,
+                fontWeight: "800"
+              }}>GitHub</Text>
             <ConnectionBadge connected={githubConnected} />
           </View>
-          <Text style={{ color: colors.textFaint, fontSize: font.size.small, lineHeight: 18 }}>
+          <Text style={{
+              color: colors.textFaint,
+              fontSize: font.size.small,
+              lineHeight: 18
+            }}>
             {githubConnected ? t("profile.githubLinkedBlurb") : t("profile.githubUnlinkedBlurb")}
           </Text>
           {!!displayGithubUrl && (
-            <Text style={{ color: colors.accentBright, fontSize: font.size.small }} numberOfLines={1}>
+            <Text style={{
+                color: colors.accentBright,
+                fontSize: font.size.small
+              }} numberOfLines={1}>
               {displayGithubUrl}
             </Text>
           )}
@@ -230,14 +318,35 @@ export default function ProfileScreen() {
               opacity: linkGitHubMutation.isPending || !profile ? 0.5 : 1,
             }}
           >
-            <Text style={{ color: githubConnected ? colors.successBright : colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>
+            <Text style={{
+                color: githubConnected ? colors.successBright : colors.textBright,
+                fontSize: font.size.body,
+                fontWeight: "800"
+              }}>
               {githubConnected ? t("profile.githubConnectedButton") : linkGitHubMutation.isPending ? t("profile.githubOpening") : t("profile.githubConnectButton")}
             </Text>
           </TouchableOpacity>
-          <View style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingTop: space.md, flexDirection: "row", alignItems: "center", justifyContent: "space-between", gap: space.md }}>
+          <View style={{
+              borderTopWidth: 1,
+              borderTopColor: colors.border,
+              paddingTop: space.md,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: space.md
+            }}>
             <View style={{ flex: 1 }}>
-              <Text style={{ color: colors.text, fontSize: font.size.body, fontWeight: "800" }}>{t("profile.useGithubLabel")}</Text>
-              <Text style={{ color: colors.textFaint, fontSize: font.size.small, lineHeight: 18, marginTop: 2 }}>
+              <Text style={{
+                  color: colors.text,
+                  fontSize: font.size.body,
+                  fontWeight: "800"
+                }}>{t("profile.useGithubLabel")}</Text>
+              <Text style={{
+                  color: colors.textFaint,
+                  fontSize: font.size.small,
+                  lineHeight: 18,
+                  marginTop: 2
+                }}>
                 {t("profile.useGithubSub")}
               </Text>
             </View>
@@ -250,8 +359,16 @@ export default function ProfileScreen() {
         </Card>
 
         <Card>
-          <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>{t("profile.cvSection")}</Text>
-          <Text style={{ color: colors.textFaint, fontSize: font.size.small, lineHeight: 18 }}>
+          <Text style={{
+              color: colors.textBright,
+              fontSize: font.size.title,
+              fontWeight: "800"
+            }}>{t("profile.cvSection")}</Text>
+          <Text style={{
+              color: colors.textFaint,
+              fontSize: font.size.small,
+              lineHeight: 18
+            }}>
             {t("profile.cvSubtitleMobile")}
           </Text>
           <Button
@@ -261,13 +378,29 @@ export default function ProfileScreen() {
           />
           {!!profile?.cvTechs?.length && (
             <View style={{ gap: space.sm }}>
-              <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-                <Text style={{ color: colors.textBright, fontSize: font.size.small, fontWeight: "800" }}>{t("profile.cvDetected")}</Text>
+              <View style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between"
+                }}>
+                <Text style={{
+                    color: colors.textBright,
+                    fontSize: font.size.small,
+                    fontWeight: "800"
+                  }}>{t("profile.cvDetected")}</Text>
                 <TouchableOpacity onPress={() => cvTechsMutation.mutate([])} disabled={cvTechsMutation.isPending}>
-                  <Text style={{ color: colors.textFaint, fontSize: font.size.small, fontWeight: "700" }}>{t("profile.cvClear")}</Text>
+                  <Text style={{
+                      color: colors.textFaint,
+                      fontSize: font.size.small,
+                      fontWeight: "700"
+                    }}>{t("profile.cvClear")}</Text>
                 </TouchableOpacity>
               </View>
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: space.sm }}>
+              <View style={{
+                  flexDirection: "row",
+                  flexWrap: "wrap",
+                  gap: space.sm
+                }}>
                 {profile.cvTechs.map((tech) => (
                   <View
                     key={tech}
@@ -280,7 +413,11 @@ export default function ProfileScreen() {
                       borderColor: colors.accent,
                     }}
                   >
-                    <Text style={{ color: colors.accentBright, fontSize: font.size.small, fontWeight: "700" }}>{tech}</Text>
+                    <Text style={{
+                        color: colors.accentBright,
+                        fontSize: font.size.small,
+                        fontWeight: "700"
+                      }}>{tech}</Text>
                   </View>
                 ))}
               </View>
@@ -293,7 +430,11 @@ export default function ProfileScreen() {
             <TextInput editable={false} value={profile?.email ?? ""} style={[inputStyle, { color: colors.textDim }]} />
           </Field>
 
-          <Text style={{ color: colors.textFaint, fontSize: font.size.label, fontWeight: "700" }}>{`✓ ${t("profile.autosaveHint")}`}</Text>
+          <Text style={{
+              color: colors.textFaint,
+              fontSize: font.size.label,
+              fontWeight: "700"
+            }}>{`✓ ${t("profile.autosaveHint")}`}</Text>
           {PROFILE_FIELDS.map((field) => (
             <Field key={field.key} label={t(field.labelKey as Parameters<typeof t>[0])}>
               <TextInput
@@ -312,19 +453,38 @@ export default function ProfileScreen() {
                 style={inputStyle}
               />
               {savedKey === field.key && (
-                <Text accessibilityLiveRegion="polite" style={{ color: colors.successBright, fontSize: font.size.label, fontWeight: "700" }}>{t("profile.savedCheck")}</Text>
+                <Text accessibilityLiveRegion="polite" style={{
+                    color: colors.successBright,
+                    fontSize: font.size.label,
+                    fontWeight: "700"
+                  }}>{t("profile.savedCheck")}</Text>
               )}
               {fieldError?.key === field.key && (
-                <Text accessibilityRole="alert" style={{ color: colors.dangerBright, fontSize: font.size.label }}>{fieldError.message}</Text>
+                <Text accessibilityRole="alert" style={{
+                    color: colors.dangerBright,
+                    fontSize: font.size.label
+                  }}>{fieldError.message}</Text>
               )}
             </Field>
           ))}
         </Card>
 
         <Card>
-          <Text style={{ color: colors.textBright, fontSize: font.size.title, fontWeight: "800" }}>{t("profile.preferences")}</Text>
-          <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("profile.language")}</Text>
-          <View style={{ flexDirection: "row", gap: space.sm, flexWrap: "wrap" }}>
+          <Text style={{
+              color: colors.textBright,
+              fontSize: font.size.title,
+              fontWeight: "800"
+            }}>{t("profile.preferences")}</Text>
+          <Text style={{
+              color: colors.textBright,
+              fontSize: font.size.body,
+              fontWeight: "800"
+            }}>{t("profile.language")}</Text>
+          <View style={{
+              flexDirection: "row",
+              gap: space.sm,
+              flexWrap: "wrap"
+            }}>
             {(Object.entries(LOCALE_LABELS) as [string, string][]).map(([code, label]) => {
               const active = locale === code;
               return (
@@ -343,14 +503,31 @@ export default function ProfileScreen() {
                   }}
                 >
                   {/* The language's own name: flag emoji don't render on every device. */}
-                  <Text style={{ fontSize: font.size.body, fontWeight: "700", color: active ? colors.textBright : colors.textDim }}>{label}</Text>
+                  <Text style={{
+                      fontSize: font.size.body,
+                      fontWeight: "700",
+                      color: active ? colors.textBright : colors.textDim
+                    }}>{label}</Text>
                 </TouchableOpacity>
               );
             })}
           </View>
-          <View style={{ borderTopWidth: 1, borderTopColor: colors.border, paddingTop: space.md, gap: space.xs }}>
-            <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("profile.resetTitle")}</Text>
-            <Text style={{ color: colors.textFaint, fontSize: font.size.small, lineHeight: 18 }}>{t("profile.resetSub")}</Text>
+          <View style={{
+              borderTopWidth: 1,
+              borderTopColor: colors.border,
+              paddingTop: space.md,
+              gap: space.xs
+            }}>
+            <Text style={{
+                color: colors.textBright,
+                fontSize: font.size.body,
+                fontWeight: "800"
+              }}>{t("profile.resetTitle")}</Text>
+            <Text style={{
+                color: colors.textFaint,
+                fontSize: font.size.small,
+                lineHeight: 18
+              }}>{t("profile.resetSub")}</Text>
             <TouchableOpacity
               onPress={resetScores}
               disabled={!profile || resetMutation.isPending}
@@ -364,12 +541,20 @@ export default function ProfileScreen() {
                 opacity: !profile || resetMutation.isPending ? 0.5 : 1,
               }}
             >
-              <Text style={{ color: colors.dangerBright, fontSize: font.size.body, fontWeight: "800" }}>
+              <Text style={{
+                  color: colors.dangerBright,
+                  fontSize: font.size.body,
+                  fontWeight: "800"
+                }}>
                 {resetMutation.isPending ? t("profile.resetting") : t("profile.resetScore")}
               </Text>
             </TouchableOpacity>
             {resetMutation.isSuccess && (
-              <Text style={{ color: colors.successBright, fontSize: font.size.small, fontWeight: "700" }}>{t("profile.scoreReset")}</Text>
+              <Text style={{
+                  color: colors.successBright,
+                  fontSize: font.size.small,
+                  fontWeight: "700"
+                }}>{t("profile.scoreReset")}</Text>
             )}
           </View>
         </Card>
@@ -382,16 +567,28 @@ export default function ProfileScreen() {
             justifyContent: "space-between",
             backgroundColor: colors.surface,
             borderWidth: 1,
-            borderColor: colors.borderSoft, boxShadow: shadow.card,
+            borderColor: colors.borderSoft,
+            boxShadow: shadow.card,
             borderRadius: radius.md,
             padding: space.lg,
           }}
         >
           <View>
-            <Text style={{ color: colors.textBright, fontSize: font.size.body, fontWeight: "800" }}>{t("about.profileLinkTitle")}</Text>
-            <Text style={{ color: colors.textFaint, fontSize: font.size.small, marginTop: 2 }}>{t("about.profileLinkSubtitle")}</Text>
+            <Text style={{
+                color: colors.textBright,
+                fontSize: font.size.body,
+                fontWeight: "800"
+              }}>{t("about.profileLinkTitle")}</Text>
+            <Text style={{
+                color: colors.textFaint,
+                fontSize: font.size.small,
+                marginTop: 2
+              }}>{t("about.profileLinkSubtitle")}</Text>
           </View>
-          <Text style={{ color: colors.textFaint, fontSize: font.size.titleLg }}>›</Text>
+          <Text style={{
+              color: colors.textFaint,
+              fontSize: font.size.titleLg
+            }}>›</Text>
         </TouchableOpacity>
       </ScrollView>
     </Screen>

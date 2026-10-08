@@ -188,6 +188,7 @@ export type Database = {
           cv_techs: string[]
           display_name: string | null
           email: string | null
+          favorite_techs: string[]
           github_url: string | null
           headline: string | null
           linkedin_url: string | null
@@ -207,6 +208,7 @@ export type Database = {
           cv_techs?: string[]
           display_name?: string | null
           email?: string | null
+          favorite_techs?: string[]
           github_url?: string | null
           headline?: string | null
           linkedin_url?: string | null
@@ -226,6 +228,7 @@ export type Database = {
           cv_techs?: string[]
           display_name?: string | null
           email?: string | null
+          favorite_techs?: string[]
           github_url?: string | null
           headline?: string | null
           linkedin_url?: string | null

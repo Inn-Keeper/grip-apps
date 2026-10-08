@@ -21,9 +21,18 @@ export function QuizSizeSelector({ quizSize, poolSize, onQuizSize }: { quizSize:
     <SettingSection
       title={t("prep.questionsPerCard")}
       hint={subtitle}
-      right={<span style={{ fontSize: font.size.bodyLg, fontWeight: 800, color: colors.textBright, fontVariantNumeric: "tabular-nums" }}>{isAll ? t("prep.all") : effective}</span>}
+      right={<span style={{
+          fontSize: font.size.bodyLg,
+          fontWeight: 800,
+          color: colors.textBright,
+          fontVariantNumeric: "tabular-nums"
+        }}>{isAll ? t("prep.all") : effective}</span>}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+      <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10
+        }}>
         <input
           type="range"
           aria-label={t("prep.questionsPerCard")}
@@ -35,7 +44,12 @@ export function QuizSizeSelector({ quizSize, poolSize, onQuizSize }: { quizSize:
             const v = parseInt(e.target.value, 10);
             onQuizSize(normalizeQuizSize(v));
           }}
-          style={{ flex: 1, minWidth: 0, height: 24, accentColor: colors.accent }}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            height: 24,
+            accentColor: colors.accent
+          }}
         />
         <button
           type="button"
@@ -56,7 +70,14 @@ export function QuizSizeSelector({ quizSize, poolSize, onQuizSize }: { quizSize:
           {t("prep.all")}
         </button>
       </div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4, color: colors.textFaint, fontSize: font.size.label, fontWeight: 700 }}>
+      <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          marginTop: 4,
+          color: colors.textFaint,
+          fontSize: font.size.label,
+          fontWeight: 700
+        }}>
         <span>{QUIZ_SIZE_MIN}</span>
         <span>{max > QUIZ_SIZE_MIN ? max : "—"}</span>
       </div>

@@ -54,7 +54,11 @@ export function ContactForm({
         gap: 10,
       }}
     >
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          gap: 10
+        }}>
         <Field label={t("contacts.fieldName")}>
           <input style={inputStyle} value={form.name} onChange={set("name")} autoFocus />
         </Field>
@@ -70,7 +74,11 @@ export function ContactForm({
         />
       </div>
       {duplicate && (
-        <p role="status" style={{ margin: 0, fontSize: font.size.label, color: colors.warningBright }}>
+        <p role="status" style={{
+            margin: 0,
+            fontSize: font.size.label,
+            color: colors.warningBright
+          }}>
           {t(duplicate.kind === "duplicate" ? "contacts.duplicateWarn" : "contacts.possibleDuplicateWarn", { name: duplicate.contact.name })}
         </p>
       )}
@@ -99,7 +107,11 @@ export function ContactForm({
         limit={POSTING_TECH_LIMIT}
         onChange={(postingTechs) => setForm((current) => ({ ...current, postingTechs }))}
       />
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 10
+        }}>
         <Field label={t("contacts.fieldNote")}>
           <input style={inputStyle} value={form.note} onChange={set("note")} />
         </Field>
@@ -107,7 +119,11 @@ export function ContactForm({
           <DateInput value={form.date} onChange={(date) => setForm((current) => ({ ...current, date }))} />
         </Field>
       </div>
-      <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 10 }}>
+      <div style={{
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: 10
+        }}>
         <Field label={t("contacts.fieldNextAction")}>
           <input
             style={inputStyle}
@@ -124,7 +140,12 @@ export function ContactForm({
         </Field>
       </div>
 
-      <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 4 }}>
+      <div style={{
+          display: "flex",
+          gap: 8,
+          justifyContent: "flex-end",
+          marginTop: 4
+        }}>
         <button
           onClick={onCancel}
           style={{

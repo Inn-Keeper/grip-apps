@@ -19,15 +19,35 @@ export function StoryCoverage({ stories }: { stories: Story[] }) {
         pct={(covered / COMPETENCIES.length) * 100}
         hint={t("stories.coverageHint")}
       />
-      <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: 8
+        }}>
         {COMPETENCIES.map((competency) => {
           const color = COMPETENCY_COLORS[competency] || colors.textFaint;
           const count = counts[competency] ?? 0;
           return (
-            <div key={competency} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: font.size.small }}>
-              <span style={{ width: 8, height: 8, borderRadius: 4, background: count ? color : colors.borderSoft }} />
-              <span style={{ flex: 1, color: count ? colors.text : colors.textFaint }}>{t(`enum.competency.${competency}` as Parameters<typeof t>[0])}</span>
-              <span style={{ color: count ? color : colors.textFaint, fontWeight: 800 }}>{count}</span>
+            <div key={competency} style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: font.size.small
+              }}>
+              <span style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: 4,
+                  background: count ? color : colors.borderSoft
+                }} />
+              <span style={{
+                  flex: 1,
+                  color: count ? colors.text : colors.textFaint
+                }}>{t(`enum.competency.${competency}` as Parameters<typeof t>[0])}</span>
+              <span style={{
+                  color: count ? color : colors.textFaint,
+                  fontWeight: 800
+                }}>{count}</span>
             </div>
           );
         })}
