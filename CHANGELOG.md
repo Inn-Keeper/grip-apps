@@ -12,6 +12,10 @@ because they have to be applied by hand.
 - Delete calls for boards, contacts and stories now require an id, and quiz `options` and scenario `checks` carry their real types instead of `object` or `any`.
 - Faster Supabase reads: every query names the columns it uses instead of `*`, Prep scores, accuracy and the review queue come from two summary functions instead of paging every answer event three times, and Quest and story links load boards without talk tracks or share links. Saving a profile no longer calls the auth server.
 
+### Fixed
+
+- Dependabot alerts: pdfjs-dist bumped to 6.4, and pnpm overrides lift shell-quote, @xmldom/xmldom, brace-expansion, nanoid, postcss, source-map-js, js-yaml, compression, browserslist and decode-uri-component to patched releases. braces and node-forge have no patched release yet, and image-size is only fixed in a new major.
+
 ### Database
 
 - `0021_record_answer_nullable_difficulty.sql`: `record_answer`'s `p_difficulty` defaults to null, so clients can omit it instead of casting null. Body and grants unchanged.
