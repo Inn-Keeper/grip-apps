@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Web: Vite 6.4 to 8.3.3 (Rolldown bundler, pinned exact) and `@vitejs/plugin-react` 4 to 6; dropped the deprecated `optimizeDeps.esbuildOptions` block.
 - `@grip/core/api` is now TypeScript, typed against Supabase types generated from the schema (`src/database.types.ts`, regenerate with `pnpm --filter @grip/core generate:db` after a migration). Web and mobile create typed Supabase clients, and `pnpm typecheck` now checks core too. No behavior change.
 - Delete calls for boards, contacts and stories now require an id, and quiz `options` and scenario `checks` carry their real types instead of `object` or `any`.
 - Faster Supabase reads: every query names the columns it uses instead of `*`, Prep scores, accuracy and the review queue come from two summary functions instead of paging every answer event three times, and Quest and story links load boards without talk tracks or share links. Saving a profile no longer calls the auth server.
