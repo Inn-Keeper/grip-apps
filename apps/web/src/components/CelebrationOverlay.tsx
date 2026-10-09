@@ -1,5 +1,5 @@
 import { useEffect, type CSSProperties } from "react";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font, space } from "@grip/core/tokens";
 
 const DISMISS_MS = 2100;
 
@@ -41,8 +41,8 @@ const backdropStyle: CSSProperties = {
   pointerEvents: "none",
 };
 
-const titleStyle: CSSProperties = { color: colors.textBright, fontSize: font.size.heading, fontWeight: 800 };
-const subtitleStyle: CSSProperties = { color: colors.textDim, fontSize: font.size.body, marginTop: 6, lineHeight: 1.4 };
+const titleStyle: CSSProperties = { color: colors.textBright, fontSize: font.size.heading, fontWeight: "800" };
+const subtitleStyle: CSSProperties = { color: colors.textDim, fontSize: font.size.body, marginTop: space.xs, lineHeight: 1.4 };
 
 function particleStyle(particle: (typeof PARTICLES)[number]): CSSProperties {
   return {
@@ -62,8 +62,9 @@ function cardStyle(accent: string): CSSProperties {
   return {
     minWidth: 260,
     maxWidth: 360,
-    padding: "20px 26px",
-    borderRadius: 14,
+    padding: `${space.xl}px ${space.xxl}px`,
+    // Deliberately tighter than radius.sm; reads better on this small card.
+    borderRadius: 6,
     border: `1px solid ${accent}90`,
     background: `${colors.surface}f2`,
     textAlign: "center",
@@ -85,11 +86,21 @@ export function CelebrationOverlay({ title, subtitle, accent = colors.accent as 
       <style>{KEYFRAMES}</style>
 
       {PARTICLES.map((particle, index) => (
-        <span key={index} className="celebration-particle" aria-hidden="true" style={particleStyle(particle)} />
+        <span
+          key={index}
+          className="celebration-particle"
+          aria-hidden="true"
+          style={particleStyle(particle)}
+        />
       ))}
 
       {/* Announced to screen readers without stealing focus. */}
-      <div className="celebration-card" role="status" aria-live="polite" style={cardStyle(accent)}>
+      <div
+        className="celebration-card"
+        role="status"
+        aria-live="polite"
+        style={cardStyle(accent)}
+      >
         <div style={titleStyle}>{title}</div>
         <div style={subtitleStyle}>{subtitle}</div>
       </div>
