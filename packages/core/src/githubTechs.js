@@ -35,10 +35,7 @@ export function githubLanguagesToPrepTechs(languages, knownTechs, limit = 8) {
 }
 
 /**
- * Reads a public GitHub profile's recent repo languages and maps them to known
- * prep techs. Network-bound; shared by web and mobile so the fetch orchestration
- * lives in one place. Throws if the repo list can't be loaded; individual
- * language fetches that fail are skipped.
+ * Reads a public GitHub profile's recent repo languages and maps them to known catalog techs, returning the strongest ones first.
  * @param {string} username
  * @param {string[]} knownTechs
  * @returns {Promise<{ tech: string, score: number }[]>}
@@ -53,7 +50,8 @@ export async function fetchGithubTechSignals(username, knownTechs) {
   const languageTotals = {};
   const candidates = repos.filter((repo) => !repo.fork && repo.languages_url).slice(0, REPO_SCAN_LIMIT);
 
-  await Promise.all(
+  // allSettled so a thrown fetch (network drop, bad JSON) skips that repo instead of failing the scan.
+  await Promise.allSettled(
     candidates.map(async (repo) => {
       const response = await fetch(repo.languages_url);
       if (!response.ok) return;
