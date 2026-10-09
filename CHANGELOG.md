@@ -6,6 +6,10 @@ because they have to be applied by hand.
 
 ## 2026-10-09
 
+### Changed
+
+- Web celebration overlay: screen readers now announce it, it respects reduced motion, and its styles were pulled into named constants.
+
 ### Fixed
 
 - GitHub tech import no longer fails the whole scan when one repo's language fetch throws; that repo is skipped.
