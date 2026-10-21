@@ -114,17 +114,20 @@ export function NodeView({
   const startX = useSharedValue(0);
   const startY = useSharedValue(0);
   const scale = useSharedValue(1);
+  const dragging = useSharedValue(false);
 
-  // Keep shared values in sync when positions change outside a drag
-  // (e.g. board reset or scenario switch reusing node ids).
+  // Keep shared values in sync when positions change outside a drag (reset, undo, a reused
+  // id). Not during one: React's copy lags the finger and would pull the node back a frame.
   useEffect(() => {
+    if (dragging.value) return;
     x.value = node.x;
     y.value = node.y;
-  }, [node.x, node.y, x, y]);
+  }, [node.x, node.y, x, y, dragging]);
 
   const drag = Gesture.Pan()
     .minDistance(4)
     .onStart(() => {
+      dragging.value = true;
       startX.value = x.value;
       startY.value = y.value;
       scale.value = withSpring(1.07, { damping: 14 });
@@ -137,6 +140,9 @@ export function NodeView({
     })
     .onEnd(() => {
       scale.value = withSpring(1, { damping: 14 });
+    })
+    .onFinalize(() => {
+      dragging.value = false;
     });
 
   // Tap on the body completes an armed tap-to-connect; race with drag so a

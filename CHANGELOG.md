@@ -26,6 +26,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Mobile board: the action row is one line of icon buttons (Show, undo, redo, then talk track with its count, saved boards, save, clear and Evaluate), each named for screen readers. The scenario title sits beside the Practise under time link.
 - Mobile board (parity phase 3): undo and redo (icon buttons beside the Show arrow), using core's board history shared with web; a drag or resize counts as one step, and loading a board starts a fresh history. Saved boards can be shared: Share turns on the link and opens the iOS share sheet with web's read only page, Unshare turns it off. Not in demo mode. Web's history helpers moved to `@grip/core/boardHistory`. New optional `EXPO_PUBLIC_WEB_URL` (defaults to the production site).
 - Mobile board (parity phase 2): editing matches web. A tool row on the canvas holds the Components sheet, the four shapes, arrow, line and text tools; a style bar shows for the selected item (size, colour, fill, alignment, bold, dashes, heads, trash bin); selected nodes resize from their corners; four connect circles per node; free boards take an editable brief. Fit and the + and − buttons now glide instead of snapping, and fast taps stack correctly.
 - Mobile board: the round timer follows web's rule. It is hidden until a round starts; before that a Practise under time link with a clock icon shows on the first step only.
@@ -44,6 +45,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Mobile board: a dragged node no longer flickers. Each frame's re-render wrote React's older position back onto the node mid drag; the sync now waits until the finger lifts.
 - Mobile board: Fit no longer pulls the canvas edge into the middle of the screen. Nodes near the edge could not be dragged left past it, and the next pan snapped the view; Fit now keeps to the same limits as panning.
 - Arch Board (web): on a selected storage node the inspect button no longer covers the bottom right resize corner; it steps inside the card.
 - Mobile board: the empty board hint now says to drag from a handle to connect, not tap then tap (en, pt, sv).

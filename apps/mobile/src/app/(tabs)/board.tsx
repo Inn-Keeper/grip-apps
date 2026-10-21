@@ -442,9 +442,14 @@ export default function BoardScreen() {
       )}
 
       {/* As on web: the timer shows once a round starts; until then an offer, on the first step only. */}
-      {chrome !== "zen" && (timer.started ? <DesignTimerBar timer={timer} /> : step === 1 && (
-        <TouchableOpacity accessibilityHint={t("timer.offerHint", { minutes: ROUND_MINUTES })} onPress={timer.toggle} accessibilityRole="link" style={{
-            alignSelf: "flex-start",
+      {chrome !== "zen" && timer.started && <DesignTimerBar timer={timer} />}
+      {chrome !== "zen" && (!timer.started && step === 1 || chrome === "compact") && (
+        <View style={{
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 12
+          }}>
+        {!timer.started && step === 1 && <TouchableOpacity accessibilityHint={t("timer.offerHint", { minutes: ROUND_MINUTES })} onPress={timer.toggle} accessibilityRole="link" style={{
             flexDirection: "row",
             alignItems: "center",
             gap: 6,
@@ -457,14 +462,22 @@ export default function BoardScreen() {
               color: colors.accentBright,
               textDecorationLine: "underline"
             }}>{t("timer.offer")}</Text>
-        </TouchableOpacity>
-      ))}
+        </TouchableOpacity>}
+        {chrome === "compact" && (
+          <Text numberOfLines={1} style={{
+              flex: 1,
+              fontSize: font.size.small,
+              fontWeight: "600",
+              color: colors.textDim
+            }}>{scenario.name}</Text>
+        )}
+        </View>
+      )}
 
       {chrome !== "zen" && (
         <BoardToolbar
           chrome={chrome}
           onChrome={setChrome}
-          scenarioName={scenario.name}
           talkAnswered={talkAnswered}
           talkOpen={talkOpen}
           savedOpen={savedOpen}
