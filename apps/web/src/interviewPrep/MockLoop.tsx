@@ -5,7 +5,6 @@ import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
 import { colors, tints, font, shadow } from "@grip/core/tokens";
-import { BrandIcon } from "../components/BrandIcon";
 import { DrillSession } from "./DrillSession";
 import type { DrillState } from "./types";
 
@@ -17,7 +16,7 @@ import type { DrillState } from "./types";
 
 type Stage = "quiz" | "arch" | "story" | "summary";
 
-type Scenario = { id: string; name: string; brief: string; budget: number };
+type Scenario = { id: string; name: string; brief: string };
 type Prompt = { competency: string; text: string };
 
 const stageStyles: CSSProperties = {
@@ -133,13 +132,6 @@ export function MockLoop({
               lineHeight: 1.6,
               color: colors.text
             }}>{scenario.brief}</p>
-          <p style={{
-              margin: "8px 0 0",
-              fontSize: font.size.small,
-              color: colors.textDim
-            }}>
-            <BrandIcon name="cost" color={colors.textDim} size={13} /> {t("mock.archBudget", { budget: scenario.budget })}
-          </p>
         </div>
         <p style={{
             margin: 0,

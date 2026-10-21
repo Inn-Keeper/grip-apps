@@ -5,7 +5,6 @@ import { COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
 import { colors, font, shadow, tints } from "@/theme";
-import { BrandIcon } from "@/components/BrandIcon";
 import { Button, inputStyle } from "@/components/ui";
 import { DrillSession, type Drill } from "./DrillSession";
 
@@ -14,7 +13,7 @@ import { DrillSession, type Drill } from "./DrillSession";
 // ponytail: the design round is self-reported, as on web; opening the board and scoring it is the upgrade path.
 
 type Stage = "quiz" | "arch" | "story" | "summary";
-type Scenario = { id: string; name: string; brief: string; budget: number };
+type Scenario = { id: string; name: string; brief: string };
 type Prompt = { competency: string; text: string };
 
 type Props = {
@@ -59,7 +58,7 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
       <StageCard label={t("mock.stageArch")} onExit={onExit}>
         <Text style={{
             fontSize: font.size.title,
-            fontWeight: "800",
+            fontWeight: "700",
             color: colors.textBright
           }}>{scenario.name}</Text>
         <Text style={{
@@ -67,17 +66,6 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
             lineHeight: 19,
             color: colors.text
           }}>{scenario.brief}</Text>
-        <View style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 5
-          }}>
-          <BrandIcon name="cost" color={colors.textDim} size={13} />
-          <Text style={{
-              fontSize: font.size.small,
-              color: colors.textDim
-            }}>{t("mock.archBudget", { budget: scenario.budget })}</Text>
-        </View>
         <Text style={{
             fontSize: font.size.body,
             lineHeight: 19,
@@ -224,7 +212,7 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
               }}>{label}</Text>
             <Text style={{
                 fontSize: font.size.lead,
-                fontWeight: "800",
+                fontWeight: "700",
                 color: value === null ? colors.textFaint : colors.text
               }}>{value === null ? "--" : `${value}%`}</Text>
           </View>
@@ -248,7 +236,7 @@ const cardStyle = {
 function StageLabel({ text }: { text: string }) {
   return <Text style={{
       fontSize: font.size.label,
-      fontWeight: "800",
+      fontWeight: "700",
       letterSpacing: 0.9,
       color: colors.accentBright
     }}>{text.toUpperCase()}</Text>;

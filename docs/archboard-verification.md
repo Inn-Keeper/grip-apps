@@ -16,7 +16,7 @@
 6. Save, edit while saving, and confirm the later edit remains marked unsaved. Simulate a failed save and confirm the draft remains.
 7. Open Saved Boards. Confirm only summaries load, loading/error states are visible, and one board payload loads after choosing Load.
 8. Share, copy, deny clipboard access, and unshare. Confirm each pending/error state appears on the affected board.
-9. Evaluate a complete but over-budget design. Confirm 100% is labeled checklist coverage and the design warning remains visible.
+9. Evaluate a complete design that triggers a design warning. Confirm 100% is labeled checklist coverage and the warning remains visible.
 10. Repeat the primary editing flow at 200% zoom and using only a keyboard.
 
 ## Current environment limits

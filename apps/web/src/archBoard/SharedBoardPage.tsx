@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
-import { SCENARIOS, TYPE_COLORS, evaluate, meta } from "@grip/core/arch";
+import { FREE_SCENARIO, SCENARIOS, TYPE_COLORS, evaluate, isFreeScenario, isFreeType, meta, nodeLabel, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { brand, colors, font } from "@grip/core/tokens";
 import { getSharedBoard } from "../lib/api";
 import { BrandMark } from "../components/BrandMark";
 import { EvalResults } from "./EvalResults";
+import { headPoints } from "@grip/core/edgeGeometry";
 import type { AugmentedScenario, BoardEdge, BoardNode } from "./types";
 
 const NODE_W = 96;
@@ -55,6 +56,32 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
       {nodes.map((node) => {
         const spec = meta(node.type);
         const color = TYPE_COLORS[node.type] ?? colors.accent;
+        if (node.type === "arrow") {
+          const style = styleOf(node);
+          const from = { x: node.x, y: node.y };
+          const to = { x: node.x2 ?? node.x, y: node.y2 ?? node.y };
+          const stroke = colors[style.color];
+          return (
+            <g key={node.id}>
+              <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke={stroke} strokeWidth={1.5} strokeDasharray={style.dashed ? "6 4" : undefined} />
+              {style.heads !== "none" && <polygon points={headPoints(from, to, 8, 4)} fill={stroke} />}
+              {style.heads === "both" && <polygon points={headPoints(to, from, 8, 4)} fill={stroke} />}
+            </g>
+          );
+        }
+        // ponytail: shapes draw as plain rectangles here; diamonds, ellipses and fills are board-only for now.
+        if (isFreeType(node.type)) {
+          return (
+            <g key={node.id}>
+              {node.type === "box" && (
+                <rect x={node.x} y={node.y} width={NODE_W} height={NODE_H} rx={10} fill={colors.surface} stroke={colors.textFaint} strokeWidth={1.5} />
+              )}
+              <text x={node.x + NODE_W / 2} y={node.y + NODE_H / 2 + 4} textAnchor="middle" fontSize={11} fontWeight={600} fill={colors.text}>
+                {nodeLabel(node)}
+              </text>
+            </g>
+          );
+        }
         return (
           <g key={node.id}>
             <rect
@@ -94,11 +121,13 @@ export function SharedBoardPage({ token }: { token: string }) {
     retry: false,
   });
 
+  const free = isFreeScenario(board?.scenarioId);
   const scenario = board
-    ? (SCENARIOS.find((s: { id: string }) => s.id === board.scenarioId) as AugmentedScenario | undefined)
+    ? ((free ? FREE_SCENARIO : SCENARIOS.find((s: { id: string }) => s.id === board.scenarioId)) as AugmentedScenario | undefined)
     : undefined;
+  // A free board has no checklist, so there is nothing to score.
   const result =
-    board && scenario
+    board && scenario && !free
       ? evaluate(scenario as Parameters<typeof evaluate>[0], board.nodes, board.edges)
       : null;
 
@@ -157,7 +186,7 @@ export function SharedBoardPage({ token }: { token: string }) {
               <h1 style={{
                   margin: "0 0 4px",
                   fontSize: font.size.heading,
-                  fontWeight: 800,
+                  fontWeight: 700,
                   color: colors.textBright
                 }}>
                 {board.title}
@@ -185,8 +214,8 @@ export function SharedBoardPage({ token }: { token: string }) {
             <BoardSnapshot nodes={board.nodes} edges={board.edges} />
 
             {result && scenario ? (
-              <EvalResults result={result} scenario={scenario} />
-            ) : (
+              <EvalResults result={result} />
+            ) : !free && (
               <p style={{
                   margin: 0,
                   fontSize: font.size.body,

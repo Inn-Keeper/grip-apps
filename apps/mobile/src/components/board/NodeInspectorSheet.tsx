@@ -1,5 +1,5 @@
 import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
-import { meta, TYPE_COLORS } from "@grip/core/arch";
+import { TYPE_COLORS, isFreeType, nodeLabel } from "@grip/core/arch";
 import type { BoardNode } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, font, tints } from "@/theme";
@@ -18,8 +18,17 @@ type Props = {
 
 export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props) {
   if (!node) return null;
-  const spec = meta(node.type);
-  const color = TYPE_COLORS[node.type];
+  const free = isFreeType(node.type);
+  const color = TYPE_COLORS[node.type] ?? colors.textDim;
+  const inputStyle = {
+    padding: 10,
+    backgroundColor: colors.bgDeep,
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: 8,
+    color: colors.text,
+    fontSize: font.size.body,
+  };
 
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onClose}>
@@ -50,8 +59,22 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
                 fontWeight: "700",
                 color: colors.textBright,
                 flex: 1
-              }}>{spec.label}</Text>
+              }}>{nodeLabel(node)}</Text>
           </View>
+
+          {/* Free box and text: the label is all there is to edit. */}
+          {free ? (
+            <TextInput
+              value={node.label ?? ""}
+              onChangeText={(value) => onChange({ label: value })}
+              placeholder={t(node.type === "text" ? "board.textPlaceholder" : "board.boxPlaceholder")}
+              placeholderTextColor={colors.textFaint}
+              autoFocus={node.label === undefined}
+              multiline={node.type === "text"}
+              style={inputStyle}
+            />
+          ) : (
+          <>
 
           <View style={{ gap: 5 }}>
             <Text style={{
@@ -65,15 +88,7 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
               placeholder={t("node.partitionKeyPlaceholder")}
               placeholderTextColor={colors.textFaint}
               autoCapitalize="none"
-              style={{
-                padding: 10,
-                backgroundColor: colors.bgDeep,
-                borderWidth: 1,
-                borderColor: colors.border,
-                borderRadius: 8,
-                color: colors.text,
-                fontSize: font.size.body,
-              }}
+              style={inputStyle}
             />
           </View>
 
@@ -97,6 +112,8 @@ export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props)
               ))}
             </View>
           </View>
+          </>
+          )}
 
           {/* Removing from here always works; the node's own ✕ gets tiny when zoomed out. */}
           <View style={{

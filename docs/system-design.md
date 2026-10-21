@@ -339,7 +339,7 @@ flowchart TD
     C --> E["Canvas: add nodes\n13 types: Client, API Gateway,\nDB, CDN, Queue, etc."]
     D --> E
     E --> F["Draw edges\nbetween nodes"]
-    F --> G["arch.js evaluate(scenario, nodes, edges)\n→ run checks, score, cost"]
+    F --> G["arch.js evaluate(scenario, nodes, edges)\n→ run checks, score"]
     G --> H{Pass checks?}
     H -->|warnings| I["Show score + warnings panel"]
     H -->|pass| J["Green score display"]

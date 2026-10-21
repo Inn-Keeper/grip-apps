@@ -45,13 +45,17 @@ export function nextZoomStop(percent, direction) {
   return Math.min(MAX_SCALE * 100, Math.max(MIN_SCALE * 100, next * STOP));
 }
 
-/** Frames every node with padding; never enlarges past `maxScale` so small boards stay readable. */
+/**
+ * Frames every node with padding; never enlarges past `maxScale` so small boards stay readable.
+ * `nodeSize` is one size for all, or a function of the node when boxes grow.
+ */
 export function fitView(nodes, size, nodeSize, { padding = 40, maxScale = 1 } = {}) {
   if (nodes.length === 0) return { scale: 1, x: 0, y: 0 };
+  const sizeOf = typeof nodeSize === "function" ? nodeSize : () => nodeSize;
   const minX = Math.min(...nodes.map((n) => n.x)) - padding;
   const minY = Math.min(...nodes.map((n) => n.y)) - padding;
-  const maxX = Math.max(...nodes.map((n) => n.x + nodeSize.width)) + padding;
-  const maxY = Math.max(...nodes.map((n) => n.y + nodeSize.height)) + padding;
+  const maxX = Math.max(...nodes.map((n) => n.x + sizeOf(n).width)) + padding;
+  const maxY = Math.max(...nodes.map((n) => n.y + sizeOf(n).height)) + padding;
   const scale = clampScale(Math.min(size.width / (maxX - minX), size.height / (maxY - minY), maxScale));
   return {
     scale,

@@ -5,7 +5,7 @@ import { colors, font } from "@grip/core/tokens";
 import { WORLD } from "./constants";
 import styles from "./ArchBoard.module.css";
 
-// Touch-first devices get tap/pinch wording instead of Shift-drag and Ctrl/⌘ + scroll.
+// Touch-first devices get pinch wording instead of Ctrl/⌘ + scroll.
 const coarsePointer = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
 
 type Props = {
@@ -17,14 +17,16 @@ type Props = {
   onPointerUp: (e: React.PointerEvent) => void;
   onPointerCancel: () => void;
   // Every click on the canvas; onSurface is true for bare board (not a node or arrow).
-  onCanvasClick: (onSurface: boolean) => void;
+  onCanvasClick: (onSurface: boolean, e: React.MouseEvent) => void;
+  onCanvasDoubleClick: (onSurface: boolean, e: React.MouseEvent) => void;
+  // The Text tool is armed: the board shows a text cursor.
+  textTool: boolean;
   controls: ReactNode;
   children: ReactNode;
 };
 
-// The pannable, zoomable board: a dot grid that moves with the world layer inside it.
-export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove, onPointerUp, onPointerCancel, onCanvasClick, controls, children }: Props) {
-  const dot = Math.max(0.6, view.scale);
+// The pannable, zoomable board: a plain sunken plane with the world layer inside it.
+export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove, onPointerUp, onPointerCancel, onCanvasClick, onCanvasDoubleClick, textTool, controls, children }: Props) {
   return (
     <div
       ref={canvasRef}
@@ -35,18 +37,17 @@ export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerCancel}
-      onClick={(e) => onCanvasClick((e.target as HTMLElement).dataset.boardSurface === "true")}
+      data-tool={textTool ? "text" : undefined}
+      onClick={(e) => onCanvasClick((e.target as HTMLElement).dataset.boardSurface === "true", e)}
+      onDoubleClick={(e) => onCanvasDoubleClick((e.target as HTMLElement).dataset.boardSurface === "true", e)}
       style={{
         position: "relative",
         minWidth: 0,
-        height: fullscreen ? "100%" : "calc(100svh - 430px)",
-        // Never taller than the screen minus a strip of page: the canvas eats swipes
+        // Fills the screen minus a strip of page: the canvas eats swipes
         // (touch-action: none), so there must always be room outside it to scroll.
-        minHeight: fullscreen ? 0 : "clamp(220px, calc(100svh - 160px), 420px)",
+        height: fullscreen ? "100%" : "calc(100svh - 160px)",
+        minHeight: fullscreen ? 0 : 220,
         background: colors.bgDeep,
-        backgroundImage: `radial-gradient(${colors.borderSoft} ${dot}px, transparent ${dot}px)`,
-        backgroundSize: `${22 * view.scale}px ${22 * view.scale}px`,
-        backgroundPosition: `${view.x}px ${view.y}px`,
         border: `1px solid ${colors.borderSoft}`,
         borderRadius: 14,
         overflow: "hidden",

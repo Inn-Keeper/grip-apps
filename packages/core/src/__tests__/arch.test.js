@@ -1,4 +1,4 @@
-import { SCENARIOS, evaluate, meta } from "../arch.js";
+import { SCENARIOS, evaluate, meta, nodeLabel, nodeSize, resizeRect, styleOf } from "../arch.js";
 
 const payment = SCENARIOS.find((s) => s.id === "payment");
 
@@ -56,7 +56,6 @@ describe("evaluate", () => {
   it("scores an empty board at 0%", () => {
     const result = evaluate(payment, [], []);
     expect(result.score).toBe(0);
-    expect(result.cost).toBe(0);
     expect(result.checks.some((check) => check.passed)).toBe(false);
   });
 
@@ -65,14 +64,6 @@ describe("evaluate", () => {
     const sql = node("sql");
     const result = evaluate(payment, [client, sql], [edge(client, sql)]);
     expect(result.warnings.some((w) => w.includes("client talks directly to a database"))).toBe(true);
-  });
-
-  it("flags going over the scenario budget", () => {
-    // Three payment providers (cost 3 each) plus a full passing board blows the budget of 16.
-    const { nodes, edges } = passingPaymentBoard();
-    const extras = [node("psp"), node("psp"), node("psp")];
-    const result = evaluate(payment, [...nodes, ...extras], edges);
-    expect(result.warnings.some((w) => w.startsWith("Over budget"))).toBe(true);
   });
 
   it("flags a queue that nothing consumes", () => {
@@ -136,7 +127,7 @@ describe("edge mode warnings", () => {
 });
 
 describe("prop checks", () => {
-  const scenario = (check) => ({ id: "p", name: "p", brief: "", budget: 20, checks: [check] });
+  const scenario = (check) => ({ id: "p", name: "p", brief: "", checks: [check] });
   const store = (props) => ({ id: "s1", type: "sql", x: 0, y: 0, ...props });
 
   it("passes when a store declares the required property", () => {
@@ -214,14 +205,62 @@ describe("blob storage warning", () => {
   });
 
   it("does not fire on a scenario with no scale givens", () => {
-    const custom = { id: "c", name: "c", brief: "", budget: 10, checks: [] };
+    const custom = { id: "c", name: "c", brief: "", checks: [] };
     expect(evaluate(custom, [node("sql")], []).warnings.some((w) => w.includes("Object storage"))).toBe(false);
+  });
+});
+
+describe("free nodes", () => {
+  it("leave the score and warnings untouched, arrows included", () => {
+    const { nodes, edges } = passingPaymentBoard();
+    const box = node("box");
+    const text = node("text");
+    const extras = Array.from({ length: 12 }, () => node("box"));
+    const before = evaluate(payment, nodes, edges);
+    const after = evaluate(payment, [...nodes, box, text, ...extras], [...edges, edge(box, nodes[0]), edge(nodes[0], box)]);
+    expect(after.score).toBe(before.score);
+    expect(after.warnings).toEqual(before.warnings);
+  });
+
+  it("fill style defaults per kind: text at M, a shape at S, a note on amber, a line in muted", () => {
+    expect(styleOf(node("text"))).toEqual({ size: "m", color: "text", fill: "none", align: "left", bold: false, dashed: false, heads: "end" });
+    expect(styleOf(node("box"))).toMatchObject({ size: "s", align: "center" });
+    expect(styleOf({ ...node("box"), shape: "note" })).toMatchObject({ size: "m", fill: "warning", align: "left" });
+    expect(styleOf(node("arrow")).color).toBe("textDim");
+    expect(styleOf(node("sql"))).toMatchObject({ size: "s", color: "text", fill: "none", align: "center" });
+    expect(styleOf({ ...node("text"), style: { bold: true, color: "accent" } })).toMatchObject({ size: "m", bold: true, color: "accent" });
+  });
+
+  it("read as their typed label, falling back to the type name", () => {
+    expect(nodeLabel({ ...node("box"), label: " Billing " })).toBe("Billing");
+    expect(nodeLabel(node("text"))).toBe("Text");
+    expect(nodeLabel(node("sql"))).toBe("SQL Database");
+  });
+});
+
+describe("nodeSize", () => {
+  const base = { width: 100, height: 40 };
+  it("keeps a resized shape or component's size, else the card", () => {
+    expect(nodeSize({ type: "box", w: 200, h: 90 }, base)).toEqual({ width: 200, height: 90 });
+    expect(nodeSize({ type: "box" }, base)).toEqual(base);
+    expect(nodeSize({ type: "sql", w: 300 }, base)).toEqual({ width: 300, height: 40 });
+    expect(nodeSize({ type: "text", w: 300 }, base)).toBe(base);
+    expect(nodeSize({ type: "arrow", x: 10, y: 10, x2: 110, y2: 60 }, base)).toEqual({ width: 100, height: 50 });
+  });
+});
+
+describe("resizeRect", () => {
+  it("moves only the dragged sides and stops at the minimum", () => {
+    const rect = { x: 100, y: 100, w: 140, h: 64 };
+    expect(resizeRect(rect, "se", 20, 10)).toEqual({ x: 100, y: 100, w: 160, h: 74 });
+    expect(resizeRect(rect, "w", 20, 0)).toEqual({ x: 120, y: 100, w: 120, h: 64 });
+    expect(resizeRect(rect, "nw", 500, 500)).toEqual({ x: 192, y: 132, w: 48, h: 32 });
+    expect(resizeRect(rect, "se", -500, -500, { w: 96, h: 40 })).toEqual({ x: 100, y: 100, w: 96, h: 40 });
   });
 });
 
 describe("meta", () => {
   it("resolves every palette type to its spec", () => {
     expect(meta("psp").label).toBe("Payment Provider");
-    expect(meta("cache").cost).toBe(1);
   });
 });

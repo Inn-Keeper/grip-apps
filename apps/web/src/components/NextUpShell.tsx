@@ -51,7 +51,7 @@ export function NextUpShell({ title, sub, tone, actionLabel, actionIcon = "drill
         }}>
         <span style={{
             fontSize: font.size.label,
-            fontWeight: 800,
+            fontWeight: 700,
             letterSpacing: "0.08em",
             color: tone,
             textTransform: "uppercase"
@@ -60,7 +60,7 @@ export function NextUpShell({ title, sub, tone, actionLabel, actionIcon = "drill
         </span>
         <span style={{
             fontSize: font.size.bodyLg,
-            fontWeight: 800,
+            fontWeight: 700,
             color: colors.textBright
           }}>{title}</span>
         <span style={{
@@ -103,7 +103,7 @@ export function NextUpShell({ title, sub, tone, actionLabel, actionIcon = "drill
             borderRadius: 9,
             color: colors.onAccent,
             fontSize: font.size.body,
-            fontWeight: 800,
+            fontWeight: 700,
             cursor: busy ? "wait" : disabled ? "default" : "pointer",
             opacity: disabled ? 0.6 : 1,
           }}

@@ -19,10 +19,12 @@ type Props = {
   onNewScenario: () => void;
   onDeleteScenario: () => void;
   errors: (string | null)[];
+  // Free board only: the brief the user writes in place of a scenario's.
+  freeBrief: { value: string; onChange: (value: string) => void } | null;
 };
 
 // Left rail: the scenario you are designing for and its brief (rule 4).
-export function ScenarioPanel({ scenario, scenarioCount, scenarioOptions, onSwitch, board, onNewScenario, onDeleteScenario, errors }: Props) {
+export function ScenarioPanel({ scenario, scenarioCount, scenarioOptions, onSwitch, board, onNewScenario, onDeleteScenario, errors, freeBrief }: Props) {
   return (
     <WorkspacePanel>
       <WorkspaceTitle
@@ -33,6 +35,42 @@ export function ScenarioPanel({ scenario, scenarioCount, scenarioOptions, onSwit
       <div style={{ marginTop: 12 }}>
         <Combobox filterable value={scenario.id} options={scenarioOptions} onChange={onSwitch} style={{ width: "100%" }} triggerStyle={{ fontWeight: 600 }} />
       </div>
+      {freeBrief && (
+        <label style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 5,
+            marginTop: 12
+          }}>
+          <span style={{
+              fontSize: font.size.label,
+              fontWeight: 600,
+              color: colors.textFaint
+            }}>{t("board.freeBriefLabel")}</span>
+          <textarea
+            value={freeBrief.value}
+            onChange={(event) => freeBrief.onChange(event.target.value)}
+            placeholder={t("board.freeBriefPlaceholder")}
+            rows={4}
+            maxLength={2000}
+            style={{
+              padding: "10px 12px",
+              background: colors.bgDeep,
+              border: `1px solid ${colors.borderSoft}`,
+              borderRadius: 8,
+              color: colors.text,
+              font: "inherit",
+              fontSize: font.size.body,
+              lineHeight: 1.5,
+              resize: "vertical"
+            }}
+          />
+          <span style={{
+              fontSize: font.size.label,
+              color: colors.textFaint
+            }}>{t("board.freeBriefHint")}</span>
+        </label>
+      )}
       {/* The problem every check and figure is judged against; recessed inside its card (rule 24). */}
       {scenario.brief && (
         <div style={{
@@ -54,7 +92,7 @@ export function ScenarioPanel({ scenario, scenarioCount, scenarioOptions, onSwit
             <h3 style={{
                 margin: "0 0 5px",
                 fontSize: font.size.label,
-                fontWeight: 800,
+                fontWeight: 700,
                 letterSpacing: "0.06em",
                 textTransform: "uppercase",
                 color: colors.textFaint

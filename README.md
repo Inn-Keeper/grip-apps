@@ -137,7 +137,7 @@ Mobile builds go through `pnpm exec eas build` (`.ipa` / `.aab`). Expo OTA updat
 | PostgREST | `packages/core/src/api.js` | The schema is the API contract |
 | TanStack Query | `apps/*/src/` | Server state: caching, dedupe, offline |
 | Reanimated + Skia | `apps/mobile/src/components/` | JSI and GPU rendering at 60fps |
-| System design | `packages/core/src/arch.js` | Cost against reliability against complexity |
+| System design | `packages/core/src/arch.js` | Reliability against complexity |
 
 ## Contributing
 

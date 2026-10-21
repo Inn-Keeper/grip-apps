@@ -133,7 +133,7 @@ export function ScreenHeader({ title, subtitle, right, children }: ScreenHeaderP
           <Text style={{
               color: colors.textBright,
               fontSize: font.size.heading,
-              fontWeight: "800"
+              fontWeight: "700"
             }}>{title}</Text>
           {!!subtitle && (
             <Text numberOfLines={2} style={{

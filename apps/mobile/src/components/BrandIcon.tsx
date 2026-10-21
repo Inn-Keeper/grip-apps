@@ -3,6 +3,16 @@ import { colors } from "@/theme";
 
 export type BrandIconName =
   | "accuracy"
+  | "alignCenter"
+  | "alignLeft"
+  | "alignRight"
+  | "shapeDiamond"
+  | "shapeEllipse"
+  | "shapeLine"
+  | "shapeNote"
+  | "shapeRect"
+  | "text"
+  | "trash"
   | "arrowDown"
   | "arrowRight"
   | "arrowUp"
@@ -11,17 +21,20 @@ export type BrandIconName =
   | "calendar"
   | "check"
   | "client"
+  | "clock"
   | "close"
   | "cloud"
   | "code"
   | "contact"
-  | "cost"
   | "database"
   | "done"
   | "drill"
   | "error"
   | "evaluate"
   | "fit"
+  | "zen"
+  | "undo"
+  | "redo"
   | "gateway"
   | "globe"
   | "layers"
@@ -59,6 +72,17 @@ type Piece = {
 };
 
 const ICONS: Record<BrandIconName, Piece[]> = {
+  // Board tools, style bar and trash: geometry shared with the web icon set.
+  alignCenter: [{ kind: "line", x: 4, y: 6, w: 16, h: 2 }, { kind: "line", x: 7, y: 11, w: 10, h: 2 }, { kind: "line", x: 5.5, y: 16, w: 13, h: 2 }],
+  alignLeft: [{ kind: "line", x: 4, y: 6, w: 16, h: 2 }, { kind: "line", x: 4, y: 11, w: 10, h: 2 }, { kind: "line", x: 4, y: 16, w: 13, h: 2 }],
+  alignRight: [{ kind: "line", x: 4, y: 6, w: 16, h: 2 }, { kind: "line", x: 10, y: 11, w: 10, h: 2 }, { kind: "line", x: 7, y: 16, w: 13, h: 2 }],
+  shapeDiamond: [{ x: 6, y: 6, w: 12, h: 12, r: 1.5, rotate: "45deg" }],
+  shapeEllipse: [{ x: 3, y: 5, w: 18, h: 14, r: 9 }],
+  shapeLine: [{ kind: "line", x: 2.5, y: 11, w: 19, h: 2, rotate: "-40deg" }],
+  shapeNote: [{ x: 4, y: 4, w: 16, h: 16, r: 2 }, { kind: "line", x: 8, y: 9, w: 8, h: 2 }, { kind: "line", x: 8, y: 13, w: 5, h: 2 }],
+  shapeRect: [{ x: 3, y: 6, w: 18, h: 12, r: 2 }],
+  text: [{ kind: "line", x: 5, y: 5, w: 14, h: 2 }, { kind: "line", x: 11, y: 5, w: 2, h: 14 }],
+  trash: [{ kind: "line", x: 4, y: 6, w: 16, h: 2 }, { kind: "line", x: 9, y: 3, w: 6, h: 2 }, { x: 6, y: 8, w: 12, h: 13, r: 2 }, { kind: "line", x: 10, y: 11, w: 0, h: 7 }, { kind: "line", x: 14, y: 11, w: 0, h: 7 }],
   accuracy: [
     { x: 3, y: 17, w: 18, h: 2, r: 1 },
     { x: 5, y: 13, w: 2, h: 4, r: 1, fill: true },
@@ -79,17 +103,22 @@ const ICONS: Record<BrandIconName, Piece[]> = {
   // Strokes are thin bars (h: 2) centered on their segment and rotated; a "line" with
   // both w and h large paints a filled box, not a diagonal.
   // Two thin bars crossing at the center (12, 12).
+  clock: [{ x: 4, y: 4, w: 16, h: 16, r: 8 }, { kind: "line", x: 12, y: 7, w: 0, h: 5 }, { kind: "line", x: 12, y: 12, w: 4, h: 0 }],
   close: [{ kind: "line", x: 4, y: 11, w: 16, h: 2, rotate: "45deg" }, { kind: "line", x: 4, y: 11, w: 16, h: 2, rotate: "-45deg" }],
   cloud: [{ x: 5, y: 10, w: 14, h: 8, r: 4 }, { x: 8, y: 6, w: 8, h: 8, r: 4 }],
   code: [{ kind: "line", x: 0.96, y: 8.5, w: 9.07, h: 2, rotate: "135deg" }, { kind: "line", x: 0.96, y: 13.5, w: 9.07, h: 2, rotate: "45deg" }, { kind: "line", x: 13.96, y: 8.5, w: 9.07, h: 2, rotate: "45deg" }, { kind: "line", x: 13.96, y: 13.5, w: 9.07, h: 2, rotate: "135deg" }, { kind: "line", x: 3.72, y: 11, w: 16.56, h: 2, rotate: "106deg" }],
   contact: [{ kind: "dot", x: 9, y: 4, w: 6, h: 6 }, { x: 6, y: 13, w: 12, h: 7, r: 4 }],
-  cost: [{ kind: "dot", x: 5, y: 8, w: 8, h: 8 }, { kind: "dot", x: 11, y: 8, w: 8, h: 8 }, { kind: "line", x: 12, y: 5, w: 0, h: 14 }],
   database: [{ x: 5, y: 5, w: 14, h: 5, r: 3 }, { kind: "line", x: 5, y: 8, w: 0, h: 9 }, { kind: "line", x: 19, y: 8, w: 0, h: 9 }, { x: 5, y: 14, w: 14, h: 5, r: 3 }],
   done: [{ x: 4, y: 4, w: 16, h: 16, r: 8 }, { kind: "line", x: 6.38, y: 12.5, w: 6.24, h: 2, rotate: "45deg" }, { kind: "line", x: 8.59, y: 11, w: 9.81, h: 2, rotate: "-50deg" }],
   drill: [{ x: 4, y: 4, w: 16, h: 16, r: 8 }, { x: 8, y: 8, w: 8, h: 8, r: 4 }, { kind: "dot", x: 11, y: 11, w: 2, h: 2, fill: true }],
   error: [{ x: 4, y: 4, w: 16, h: 16, r: 8 }, { kind: "line", x: 6.76, y: 11, w: 10.49, h: 2, rotate: "45deg" }, { kind: "line", x: 6.76, y: 11, w: 10.49, h: 2, rotate: "135deg" }],
   evaluate: [{ x: 5, y: 5, w: 14, h: 14, r: 3 }, { kind: "line", x: 6.38, y: 12.5, w: 6.24, h: 2, rotate: "45deg" }, { kind: "line", x: 8.59, y: 11, w: 9.81, h: 2, rotate: "-50deg" }],
   fit: [{ x: 5, y: 5, w: 5, h: 5 }, { x: 14, y: 5, w: 5, h: 5 }, { x: 5, y: 14, w: 5, h: 5 }, { x: 14, y: 14, w: 5, h: 5 }],
+  // Four corner brackets: full screen.
+  zen: [{ kind: "line", x: 4, y: 4, w: 5, h: 0 }, { kind: "line", x: 4, y: 4, w: 0, h: 5 }, { kind: "line", x: 15, y: 4, w: 5, h: 0 }, { kind: "line", x: 20, y: 4, w: 0, h: 5 }, { kind: "line", x: 4, y: 20, w: 5, h: 0 }, { kind: "line", x: 4, y: 15, w: 0, h: 5 }, { kind: "line", x: 15, y: 20, w: 5, h: 0 }, { kind: "line", x: 20, y: 15, w: 0, h: 5 }],
+  // Hooked arrows, back and forward.
+  undo: [{ kind: "line", x: 4, y: 13, w: 15, h: 2 }, { kind: "line", x: 17, y: 6, w: 2, h: 9 }, { kind: "line", x: 2.97, y: 10.5, w: 9.07, h: 2, rotate: "135deg" }, { kind: "line", x: 2.97, y: 15.5, w: 9.07, h: 2, rotate: "45deg" }],
+  redo: [{ kind: "line", x: 5, y: 13, w: 15, h: 2 }, { kind: "line", x: 5, y: 6, w: 2, h: 9 }, { kind: "line", x: 11.96, y: 10.5, w: 9.07, h: 2, rotate: "45deg" }, { kind: "line", x: 11.96, y: 15.5, w: 9.07, h: 2, rotate: "135deg" }],
   gateway: [{ x: 6, y: 4, w: 12, h: 16, r: 2 }, { kind: "line", x: 12, y: 8, w: 0, h: 8 }, { kind: "dot", x: 14, y: 12, w: 2, h: 2, fill: true }],
   globe: [{ x: 4, y: 4, w: 16, h: 16, r: 8 }, { kind: "line", x: 4, y: 12, w: 16, h: 0 }, { kind: "line", x: 12, y: 4, w: 0, h: 16 }],
   layers: [{ x: 5, y: 6, w: 14, h: 5, r: 2 }, { x: 5, y: 10, w: 14, h: 5, r: 2 }, { x: 5, y: 14, w: 14, h: 5, r: 2 }],
@@ -139,6 +168,8 @@ export const nodeIconName = (type: string): BrandIconName => {
     ssai: "spark",
     adserver: "rank",
     monitor: "monitor",
+    box: "board",
+    text: "prompt",
   };
   return map[type] ?? "service";
 };

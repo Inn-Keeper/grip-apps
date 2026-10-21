@@ -27,13 +27,13 @@ export function ProfileNextUp({ title, sub, action, disabled }: Props) {
     >
       <Text style={{
           fontSize: font.size.captionLg,
-          fontWeight: "800",
+          fontWeight: "700",
           letterSpacing: 0.8,
           color: colors.accent
         }}>{t("nextUp.label").toUpperCase()}</Text>
       <Text style={{
           fontSize: font.size.bodyLg,
-          fontWeight: "800",
+          fontWeight: "700",
           color: colors.textBright
         }}>{title}</Text>
       <Text style={{
@@ -57,7 +57,7 @@ export function ProfileNextUp({ title, sub, action, disabled }: Props) {
         >
           <Text style={{
               fontSize: font.size.bodyMd,
-              fontWeight: "800",
+              fontWeight: "700",
               color: colors.onAccent
             }}>{action.label}</Text>
         </TouchableOpacity>

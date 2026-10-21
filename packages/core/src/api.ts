@@ -70,6 +70,8 @@ export type SavedBoard = {
   scenarioId: string;
   /** the story this board was designed for */
   storyId?: string | null;
+  /** a free board's own brief, for the AI grader; empty on scenario boards */
+  brief?: string;
   nodes: BoardNode[];
   edges: BoardEdge[];
   talkTrack?: TalkTrack;
@@ -113,7 +115,6 @@ export type CustomScenario = {
   id?: string;
   name: string;
   brief: string;
-  budget: number;
   checks: Check[];
 };
 

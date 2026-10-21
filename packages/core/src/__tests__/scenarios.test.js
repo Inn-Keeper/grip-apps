@@ -1,6 +1,6 @@
 import { SCENARIOS, SCENARIO_CATEGORIES, NODE_TYPES, buildCustomChecks, evaluate } from "../arch.js";
 import { SCENARIO_SCALE } from "../scenarioScale.js";
-import { ESTIMATE_TARGETS, deriveScale } from "../estimation.js";
+import { deriveScale } from "../estimation.js";
 
 // The scenario library is hand-authored data; these invariants are what the
 // evaluator and the scenario pickers in both apps rely on.
@@ -18,13 +18,10 @@ describe("scenario library", () => {
     }
   });
 
-  it("gives every scenario a name, brief, and sane budget", () => {
+  it("gives every scenario a name and brief", () => {
     for (const s of SCENARIOS) {
       expect(s.name.trim()).not.toBe("");
       expect(s.brief.trim()).not.toBe("");
-      expect(Number.isInteger(s.budget)).toBe(true);
-      expect(s.budget).toBeGreaterThanOrEqual(6);
-      expect(s.budget).toBeLessThanOrEqual(25);
     }
   });
 
@@ -68,13 +65,13 @@ describe("scenario library", () => {
     expect(orphans).toEqual([]);
   });
 
-  it("derives estimation targets that are finite and positive for every scenario", () => {
+  it("derives grading figures that are finite and positive for every scenario", () => {
     for (const s of SCENARIOS) {
       const derived = deriveScale(s.scale);
-      for (const target of ESTIMATE_TARGETS) {
-        const value = target.valueOf(derived);
+      for (const key of ["peakQps", "storageGb"]) {
+        const value = derived[key];
         if (!Number.isFinite(value) || value <= 0) {
-          throw new Error(`Scenario "${s.id}" derives a bad ${target.id}: ${value}`);
+          throw new Error(`Scenario "${s.id}" derives a bad ${key}: ${value}`);
         }
       }
     }
@@ -160,7 +157,6 @@ describe("buildCustomChecks", () => {
       id: "custom-test",
       name: "Custom",
       brief: "",
-      budget: 10,
       checks: buildCustomChecks(["client"], [{ from: "client", to: "service" }]),
     };
     const nodes = [

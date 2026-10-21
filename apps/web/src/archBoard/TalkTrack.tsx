@@ -30,6 +30,7 @@ export function TalkTrack({
   onChangeRating,
   focusSection,
   onFocused,
+  free = false,
 }: {
   sections: Record<string, string>;
   rating: number | null;
@@ -47,6 +48,8 @@ export function TalkTrack({
   /** A section to put the cursor in, set when the verdict card points at it. */
   focusSection: string | null;
   onFocused: () => void;
+  /** A free board has no checklist, so the intro can't promise a board score. */
+  free?: boolean;
 }) {
   const fields = useRef<Record<string, HTMLTextAreaElement | null>>({});
   // Focus rather than scroll: this panel lives in the right rail, so scrolling
@@ -117,7 +120,7 @@ export function TalkTrack({
           fontSize: font.size.small,
           lineHeight: 1.55,
           color: colors.textFaint
-        }}>{t("talk.intro")}</p>
+        }}>{t(free ? "talk.introFree" : "talk.intro")}</p>
 
       <div style={{
           display: "grid",

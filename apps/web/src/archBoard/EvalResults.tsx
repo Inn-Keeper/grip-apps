@@ -2,35 +2,25 @@ import { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font, tints } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
-import {
-  MAINT_LEAN_MAX,
-  MAINT_MODERATE_MAX,
-  REVIEW_SCORE,
-  SHIP_SCORE,
-} from "./constants";
-import type { AugmentedScenario } from "./types";
+import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 import { scrollBehavior } from "../lib/motion";
 
 type Check = { label: string; passed: boolean; points: number };
 
 type EvalResult = {
   score: number;
-  cost: number;
-  maint: number;
   checks: Check[];
   warnings: string[];
 };
 
 export function EvalResults({
   result,
-  scenario,
   pushback = [],
   showScore = true,
 }: {
   result: EvalResult;
-  scenario: AugmentedScenario;
   pushback?: string[];
-  // Off on the Arch Board, whose right rail already shows the score, cost and maintenance (rule 6).
+  // Off on the Arch Board, whose right rail already shows the score (rule 6).
   showScore?: boolean;
 }) {
   // Results render below the canvas; bring them into view so "Evaluate design" visibly answers.
@@ -80,26 +70,6 @@ export function EvalResults({
           }}>
           {result.score >= SHIP_SCORE ? t("board.eval.complete") : t("board.eval.partial")}
         </span>
-        {showScore && (
-        <span
-          style={{
-            marginLeft: "auto",
-            display: "flex",
-            alignItems: "center",
-            gap: 5,
-            fontSize: font.size.small,
-            color: colors.textDim,
-          }}
-        >
-          <BrandIcon name="cost" color={colors.textDim} size={14} />
-          {t("board.eval.cost", { cost: result.cost, budget: scenario.budget })}
-          <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-          {t("board.eval.maint", {
-            value: result.maint,
-            level: t(result.maint <= MAINT_LEAN_MAX ? "board.eval.lean" : result.maint <= MAINT_MODERATE_MAX ? "board.eval.moderate" : "board.eval.heavy"),
-          })}
-        </span>
-        )}
       </div>
       <ChecklistSummary checks={result.checks} />
 

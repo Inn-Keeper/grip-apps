@@ -17,6 +17,16 @@ describe("board edits", () => {
     expect(addEdge(linked, a.id, a.id)).toBe(linked);
   });
 
+  it("connects free boxes but never free text or free arrows", () => {
+    const withFree = addNode(addNode(addNode(two, "box", { x: 0, y: 100 }), "text", { x: 0, y: 200 }), "arrow", { x: 0, y: 300 }, { x2: 90, y2: 300 });
+    const [, , box, text, arrow] = withFree.nodes;
+    expect(arrow).toMatchObject({ x: 0, y: 300, x2: 90, y2: 300 });
+    expect(addEdge(withFree, box.id, a.id).edges).toHaveLength(1);
+    expect(addEdge(withFree, a.id, text.id)).toBe(withFree);
+    expect(addEdge(withFree, text.id, box.id)).toBe(withFree);
+    expect(addEdge(withFree, arrow.id, a.id)).toBe(withFree);
+  });
+
   it("removes a node together with its arrows", () => {
     const linked = addEdge(two, a.id, b.id);
     expect(removeNode(linked, a.id)).toEqual({ nodes: [b], edges: [] });

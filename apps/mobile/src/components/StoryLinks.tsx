@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
 import type { Story } from "@grip/core/api";
-import { evaluate } from "@grip/core/arch";
+import { evaluate, isFreeScenario } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@/theme";
 import { MiniButton } from "@/components/ui";
@@ -20,7 +20,8 @@ export function StoryLinks({ story }: { story: Story }) {
   // Only a settled list proves the scenario is gone; one created on web may still be loading.
   const scenarioMissing = story.scenarioId && !scenario && !isFetching;
   const boardScenario = board ? allScenarios.find((item) => item.id === board.scenarioId) : undefined;
-  const score = board && boardScenario ? evaluate(boardScenario, board.nodes, board.edges).score : null;
+  // A free board has no checklist, so it has no design score to show.
+  const score = board && boardScenario && !isFreeScenario(boardScenario.id) ? evaluate(boardScenario, board.nodes, board.edges).score : null;
 
   if (!scenario && !scenarioMissing && !board) return null;
 

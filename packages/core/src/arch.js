@@ -8,8 +8,6 @@ import { deriveScale } from "./estimation.js";
  * @property {string} type
  * @property {string} label
  * @property {string} emoji
- * @property {number} cost
- * @property {number} maint
  */
 
 /**
@@ -24,6 +22,25 @@ import { deriveScale } from "./estimation.js";
  * @property {number} y
  * @property {string} [partitionKey]
  * @property {number} [replicas]
+ * @property {string} [label] free shape and text only: what the user typed
+ * @property {"rect" | "diamond" | "ellipse" | "note"} [shape] free box only; absent is "rect"
+ * @property {number} [w] free box only: its size, set by resizing; absent is the app's card size
+ * @property {number} [h]
+ * @property {number} [x2] free arrow or line only: its end point; `x`, `y` is the start
+ * @property {number} [y2]
+ * @property {FreeStyle} [style] free nodes only; absent fields take the defaults in styleOf
+ */
+
+/**
+ * One style for every free node; each kind uses the fields that fit it.
+ * @typedef {object} FreeStyle
+ * @property {"s" | "m" | "l" | "xl"} [size] text size
+ * @property {"text" | "textDim" | "accent" | "warning" | "danger"} [color] text or line colour, a `colors` token name
+ * @property {"none" | "text" | "textDim" | "accent" | "warning" | "danger"} [fill] shape fill as a soft tint; "none" is the card surface
+ * @property {"left" | "center" | "right"} [align]
+ * @property {boolean} [bold]
+ * @property {boolean} [dashed] arrows and lines
+ * @property {"end" | "both" | "none"} [heads] arrows and lines; a line is an arrow with "none"
  */
 
 /**
@@ -67,7 +84,6 @@ import { deriveScale } from "./estimation.js";
  * @property {string} id
  * @property {string} name
  * @property {string} brief
- * @property {number} budget
  * @property {Check[]} checks
  * @property {WarningRule[]} [warnings]
  * @property {import("./estimation.js").ScenarioScale} [scale] absent on user-authored scenarios
@@ -80,37 +96,33 @@ import { deriveScale } from "./estimation.js";
  * @property {number} earned
  * @property {number} totalPts
  * @property {number} score
- * @property {number} cost
- * @property {number} maint
  * @property {string[]} warnings
  */
 
 /** @type {NodeSpec[]} */
 export const NODE_TYPES = [
-  { type: "client", label: "Client", emoji: "📱", cost: 0, maint: 0 },
-  { type: "cdn", label: "CDN", emoji: "🌐", cost: 1, maint: 1 },
-  { type: "lb", label: "Load Balancer", emoji: "⚖️", cost: 1, maint: 1 },
-  { type: "gateway", label: "API Gateway", emoji: "🚪", cost: 2, maint: 2 },
-  { type: "auth", label: "Auth Service", emoji: "🔐", cost: 2, maint: 2 },
-  { type: "service", label: "Service / API", emoji: "⚙️", cost: 2, maint: 2 },
-  { type: "worker", label: "Async Worker", emoji: "🛠️", cost: 2, maint: 2 },
-  { type: "queue", label: "Message Queue", emoji: "📨", cost: 2, maint: 2 },
-  { type: "cache", label: "Cache (Redis)", emoji: "⚡", cost: 1, maint: 1 },
-  { type: "sql", label: "SQL Database", emoji: "🗄️", cost: 2, maint: 2 },
-  { type: "nosql", label: "NoSQL DB", emoji: "📦", cost: 2, maint: 2 },
-  // Blob is cheap per byte and nearly maintenance-free; a search index and an
-  // event log are both operationally heavy, which is the point of the cost gap.
-  { type: "blob", label: "Object Storage", emoji: "🪣", cost: 1, maint: 1 },
-  { type: "search", label: "Search Index", emoji: "🔎", cost: 2, maint: 3 },
-  { type: "stream", label: "Event Stream", emoji: "🌊", cost: 2, maint: 3 },
-  { type: "psp", label: "Payment Provider", emoji: "💳", cost: 3, maint: 1 },
+  { type: "client", label: "Client", emoji: "📱" },
+  { type: "cdn", label: "CDN", emoji: "🌐" },
+  { type: "lb", label: "Load Balancer", emoji: "⚖️" },
+  { type: "gateway", label: "API Gateway", emoji: "🚪" },
+  { type: "auth", label: "Auth Service", emoji: "🔐" },
+  { type: "service", label: "Service / API", emoji: "⚙️" },
+  { type: "worker", label: "Async Worker", emoji: "🛠️" },
+  { type: "queue", label: "Message Queue", emoji: "📨" },
+  { type: "cache", label: "Cache (Redis)", emoji: "⚡" },
+  { type: "sql", label: "SQL Database", emoji: "🗄️" },
+  { type: "nosql", label: "NoSQL DB", emoji: "📦" },
+  { type: "blob", label: "Object Storage", emoji: "🪣" },
+  { type: "search", label: "Search Index", emoji: "🔎" },
+  { type: "stream", label: "Event Stream", emoji: "🌊" },
+  { type: "psp", label: "Payment Provider", emoji: "💳" },
   // Video pipeline: encoding is compute-heavy; DRM and ad insertion are usually bought, like a PSP.
-  { type: "encoder", label: "Encoder / Transcoder", emoji: "🎞️", cost: 3, maint: 2 },
-  { type: "packager", label: "Packager / Origin", emoji: "🎬", cost: 2, maint: 2 },
-  { type: "drm", label: "DRM License Server", emoji: "🔑", cost: 2, maint: 1 },
-  { type: "ssai", label: "Ad Insertion (SSAI)", emoji: "📺", cost: 2, maint: 2 },
-  { type: "adserver", label: "Ad Server", emoji: "📣", cost: 2, maint: 1 },
-  { type: "monitor", label: "Monitoring", emoji: "📊", cost: 1, maint: 1 },
+  { type: "encoder", label: "Encoder / Transcoder", emoji: "🎞️" },
+  { type: "packager", label: "Packager / Origin", emoji: "🎬" },
+  { type: "drm", label: "DRM License Server", emoji: "🔑" },
+  { type: "ssai", label: "Ad Insertion (SSAI)", emoji: "📺" },
+  { type: "adserver", label: "Ad Server", emoji: "📣" },
+  { type: "monitor", label: "Monitoring", emoji: "📊" },
 ];
 
 /** @type {Record<string, string>} */
@@ -124,13 +136,145 @@ export const TYPE_COLORS = {
   encoder: "#34D399", packager: "#FDBA74", drm: "#C4B5FD", ssai: "#FCD34D", adserver: "#F9A8D4",
 };
 
+/** Free box and free text: the user's own notes on the board, never graded. */
+export const FREE_TYPES = [
+  { type: "box", label: "Box", emoji: "▭" },
+  { type: "text", label: "Text", emoji: "T" },
+  { type: "arrow", label: "Arrow", emoji: "→" },
+];
+
+/** Free text and free arrows are notes, not components, so graded arrows never attach to them. */
+export const CONNECTABLE_FREE_TYPES = ["box"];
+
+export const TEXT_SIZES = ["s", "m", "l", "xl"];
+/** Token names only, so free notes stay inside the palette (DESIGN.md). */
+export const TEXT_COLORS = ["text", "textDim", "accent", "warning", "danger"];
+export const TEXT_ALIGNS = ["left", "center", "right"];
+
+export const FILL_COLORS = ["none", ...TEXT_COLORS];
+export const ARROW_HEADS = ["end", "both", "none"];
+
+/** `font.size` token per size step; card labels (shapes and components) sit one step below free text. */
+export const TEXT_FONT_TOKEN = {
+  text: { s: "body", m: "title", l: "heading", xl: "display" },
+  card: { s: "small", m: "bodyLg", l: "title", xl: "heading" },
+};
+
+/** Starting size of a new shape, in board units; resizing changes it from there. */
+export const SHAPE_SIZE = {
+  rect: { w: 140, h: 64 },
+  diamond: { w: 150, h: 100 },
+  ellipse: { w: 140, h: 80 },
+  note: { w: 170, h: 140 },
+};
+
+/** Fill is a soft tint of a token colour: the alpha-concat convention in DESIGN.md. */
+export const FILL_ALPHA = "33";
+
 /**
- * Palette lookup. Board nodes are only ever created from NODE_TYPES,
+ * A node's size on the board. A resized node (shape or component) keeps its own;
+ * a free arrow spans its two points; the rest take the app's card size, `base`.
+ * @param {BoardNode} node
+ * @param {{ width: number, height: number }} base
+ */
+export function nodeSize(node, base) {
+  // ponytail: assumes the arrow points right and down from x, y; Fit can crop arrows drawn the other way.
+  if (node.type === "arrow") return { width: Math.max(1, (node.x2 ?? node.x) - node.x), height: Math.max(1, (node.y2 ?? node.y) - node.y) };
+  if (node.type === "text") return base;
+  return { width: node.w ?? base.width, height: node.h ?? base.height };
+}
+
+/** Smallest a shape can be resized to, so its handles and text stay usable. */
+export const MIN_SHAPE = { w: 48, h: 32 };
+
+const PLACE_PADDING = 30;
+const PLACE_GAP_X = 23;
+const PLACE_GAP_Y = 41;
+
+/**
+ * The first free spot for a new node in a grid across the visible board, on web and mobile.
+ * `sizeOf` gives each existing node its own size (resized shapes are bigger than a card).
+ */
+/** @param {(node: any) => { width: number, height: number }} [sizeOf] */
+export function findPlacement(nodes, viewport, nodeSize, sizeOf = () => nodeSize) {
+  const stepX = nodeSize.width + PLACE_GAP_X;
+  const stepY = nodeSize.height + PLACE_GAP_Y;
+  const columns = Math.max(1, Math.floor((viewport.width - PLACE_PADDING * 2 + PLACE_GAP_X) / stepX));
+  for (let index = 0; ; index += 1) {
+    const point = { x: PLACE_PADDING + (index % columns) * stepX, y: PLACE_PADDING + Math.floor(index / columns) * stepY };
+    const overlaps = (node) => {
+      const size = sizeOf(node);
+      return point.x < node.x + size.width && node.x < point.x + nodeSize.width && point.y < node.y + size.height && node.y < point.y + nodeSize.height;
+    };
+    if (!nodes.some(overlaps)) return point;
+  }
+}
+
+/** Smallest a component card resizes to: its label still fits. */
+export const MIN_CARD = { w: 96, h: 40 };
+
+/**
+ * Resizes a node from a corner (or side) handle. Edges on the handle's side move with
+ * the pointer; the opposite side stays put, and the size never drops below `min`.
+ * @param {{ x: number, y: number, w: number, h: number }} rect
+ * @param {string} dir n, s, e, w or a corner like "ne"
+ * @param {{ w: number, h: number }} [min] MIN_SHAPE for shapes, MIN_CARD for components
+ */
+export function resizeRect(rect, dir, dx, dy, min = MIN_SHAPE) {
+  let { x, y, w, h } = rect;
+  if (dir.includes("e")) w = Math.max(min.w, w + dx);
+  if (dir.includes("s")) h = Math.max(min.h, h + dy);
+  if (dir.includes("w")) { const next = Math.max(min.w, w - dx); x += w - next; w = next; }
+  if (dir.includes("n")) { const next = Math.max(min.h, h - dy); y += h - next; h = next; }
+  return { x: Math.max(0, x), y: Math.max(0, y), w, h };
+}
+
+/**
+ * A node's style with defaults filled in (free nodes, and components styled from the panel). Text starts at M; a shape at S to
+ * match the component cards and centred like them, a note at M on an amber fill like a sticky note
+ * and left aligned for longer writing;
+ * arrows and lines draw in the muted colour, as component arrows do.
+ * @param {BoardNode} node
+ * @returns {Required<FreeStyle>}
+ */
+export function styleOf(node) {
+  const style = node.style ?? {};
+  const note = node.type === "box" && node.shape === "note";
+  return {
+    size: style.size ?? (node.type === "text" || note ? "m" : "s"),
+    color: style.color ?? (node.type === "arrow" ? "textDim" : "text"),
+    fill: style.fill ?? (note ? "warning" : "none"),
+    align: style.align ?? (node.type === "text" || note ? "left" : "center"),
+    bold: style.bold ?? false,
+    dashed: style.dashed ?? false,
+    heads: style.heads ?? "end",
+  };
+}
+
+/** @param {string} type */
+export const isFreeType = (type) => FREE_TYPES.some((t) => t.type === type);
+
+/**
+ * Palette lookup. Board nodes are only ever created from NODE_TYPES or FREE_TYPES,
  * so a miss is a programmer error.
  * @param {string} type
  * @returns {NodeSpec}
  */
-export const meta = (type) => NODE_TYPES.find((t) => t.type === type) ?? NODE_TYPES[0];
+export const meta = (type) => NODE_TYPES.find((t) => t.type === type) ?? FREE_TYPES.find((t) => t.type === type) ?? NODE_TYPES[0];
+
+/** What a node reads as: the typed label for free nodes, else the palette name. @param {BoardNode} node */
+export const nodeLabel = (node) => (isFreeType(node.type) ? node.label?.trim() || meta(node.type).label : meta(node.type).label);
+
+/**
+ * The graded part of a board: free nodes and every arrow touching one are dropped.
+ * @param {BoardNode[]} nodes
+ * @param {BoardEdge[]} edges
+ */
+export function designOnly(nodes, edges) {
+  const design = nodes.filter((n) => !isFreeType(n.type));
+  const ids = new Set(design.map((n) => n.id));
+  return { nodes: design, edges: edges.filter((e) => ids.has(e.from) && ids.has(e.to)) };
+}
 
 /** At roughly a megabyte a row, bytes belong in object storage, not a table. */
 const LARGE_PAYLOAD_KB = 1000;
@@ -153,6 +297,16 @@ export const STATEFUL_TYPES = ["sql", "nosql", "search", "stream", "cache", "blo
  */
 const SHARDING_QPS = 1000;
 const SHARDING_STORAGE_GB = 1000;
+
+/**
+ * A board with no scenario: draw anything, no checklist and no design score.
+ * The talk track and AI grading still work, against the board's own brief.
+ * Saved as scenario_id "free", so no table needs to know about it.
+ */
+export const FREE_SCENARIO = { id: "free", name: "Free board", brief: "", checks: [] };
+
+/** @param {string | null | undefined} id */
+export const isFreeScenario = (id) => id === FREE_SCENARIO.id;
 
 // The 100-scenario default library lives in scenarios.js; re-exported here so
 // both apps keep importing everything board-related from "@grip/core/arch".
@@ -185,13 +339,14 @@ export function buildCustomChecks(requiredNodes, requiredEdges) {
 }
 
 /**
- * Scores a board against a scenario's checks, budget, and global design rules.
+ * Scores a board against a scenario's checks and global design rules.
  * @param {Scenario} scenario
  * @param {BoardNode[]} nodes
  * @param {BoardEdge[]} edges
  * @returns {EvalResult}
  */
-export function evaluate(scenario, nodes, edges) {
+export function evaluate(scenario, boardNodes, boardEdges) {
+  const { nodes, edges } = designOnly(boardNodes, boardEdges);
   const typeOf = Object.fromEntries(nodes.map((n) => [n.id, n.type]));
   const hasNode = (types) => nodes.some((n) => types.includes(n.type));
   const hasEdge = (from, to, bidi) =>
@@ -225,12 +380,7 @@ export function evaluate(scenario, nodes, edges) {
   const earned = checks.filter((c) => c.passed).reduce((s, c) => s + c.points, 0);
   const totalPts = scenario.checks.reduce((s, c) => s + c.points, 0);
 
-  const cost = nodes.reduce((s, n) => s + meta(n.type).cost, 0);
-  const maint = nodes.reduce((s, n) => s + meta(n.type).maint, 0);
-
   const warnings = [];
-  if (cost > scenario.budget)
-    warnings.push(`Over budget: cost ${cost} against a budget of ${scenario.budget}. Every box is a monthly bill.`);
   if (nodes.length > 12)
     warnings.push("A lot of moving parts: each one is deploy, patch, and on-call surface for the team.");
   if (hasEdge(["client"], ["sql", "nosql"]))
@@ -287,5 +437,5 @@ export function evaluate(scenario, nodes, edges) {
 
   // A scenario with no scorable checks would divide by zero; treat it as 0%.
   const score = totalPts > 0 ? Math.round((earned / totalPts) * 100) : 0;
-  return { checks, earned, totalPts, score, cost, maint, warnings };
+  return { checks, earned, totalPts, score, warnings };
 }

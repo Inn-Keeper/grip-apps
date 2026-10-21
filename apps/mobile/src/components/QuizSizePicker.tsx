@@ -83,7 +83,7 @@ export function QuizSizePicker({ quizSize, poolSize, onQuizSize }: Props) {
             >
               <Text style={{
                   fontSize: font.size.small,
-                  fontWeight: "800",
+                  fontWeight: "700",
                   color: active ? colors.accentBright : colors.textDim
                 }}>{option.label}</Text>
             </TouchableOpacity>

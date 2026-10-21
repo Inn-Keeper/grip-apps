@@ -1,6 +1,6 @@
 # Mobile parity assessment
 
-Assessed on 2026-09-23 by reading the code and CHANGELOG, not by running the app. Mobile is on hold until the web
+Assessed on 2026-09-23 and updated 2026-10-21 by reading the code and CHANGELOG, not by running the app. Mobile is on hold until the web
 app is right; this is the starting list for when it comes back. Almost everything since 2026-09-18 shipped on web
 only; 2026-09-17 and earlier shipped on both.
 
@@ -9,18 +9,33 @@ only; 2026-09-17 and earlier shipped on both.
 | Area | State |
 | --- | --- |
 | Story to scenario link | Safe. Mobile edits the whole story object, so `scenarioId` round-trips. |
-| Board to story link | Safe. Mobile never sends `storyId`; `boardToDb` only writes `story_id` when sent. |
-| One board per story | Safe. Mobile can't set a board's story, so it can't hit the unique index. |
+| Board to story link | Safe. Mobile has a story picker and saves `storyId`, like web. |
+| One board per story | Safe. Both pickers only offer stories no other board holds, so neither hits the unique index. |
 | Talk track grade | Aligned. Mobile clears the grade on talk track edits, like web. |
 | Boards on custom scenarios | Fixed 2026-09-23 (phase 1): mobile loads your custom scenarios, so these boards open. |
+| Web canvas items (shapes, free arrows, styles) | Safe. Mobile copies whole nodes on move and edit, so `shape`, `w`, `h` (on shapes and resized components), `x2`, `y2` and `style` survive a mobile save. Free arrows stay in the data even though mobile does not draw them. |
+| Free board brief | Safe. Mobile never sends `brief`, and `boardToDb` only writes it when sent. |
 
 ## Missing on mobile, by screen
 
 **Arch Board** (biggest gap)
 - Creating and deleting custom scenarios. (Picking and loading them, and a searchable picker, shipped in phase 1.)
 - Next Up coaching beyond the rail. (The five-step rail, AI grading and the graded verdict shipped in phase 4.)
-- Scale brief handing numbers to the talk track, and "Check my math".
 - Undo and redo, share links, full screen (mobile has its own Zen mode).
+- The web canvas tools (added 2026-10-21). Free boards, drag to connect and the removal of cost and the scale panel are already on both.
+
+  Phase 1 (display, 2026-10-21) is done: mobile draws web boards as web does. Phase 2 (editing, 2026-10-21) is done too: tool row with Components sheet, shapes, arrow, line and text tools, style bar with trash bin, corner resizing, four connect circles and the free board brief. Phase 3 (undo and redo, share links) is done too. Full screen is skipped: Zen covers it on a phone.
+
+  | Feature | Web | Mobile |
+  | --- | --- | --- |
+  | Built-in components | Components dropdown | Palette strip |
+  | Free text | Text tool: click to place, type in place | Palette chip, typed in a sheet; drawn with its style |
+  | Shapes | Rectangle, diamond, ellipse, sticky note; resize and fill | Drawn with outline, fill and saved size; only Box can be added |
+  | Text, shape and component style (size, color, fill, align, bold) | Style panel and shortcuts | Drawn; not editable |
+  | Free arrows and lines | Draw, reshape, style | Drawn with color, dashes and heads; not editable |
+  | Resizing (shapes and components) | Corner handles and Alt + arrow keys | Saved sizes drawn; no resizing |
+  | Connect circles | Four per node (top, right, bottom, left) | One on the right; arrows route top to bottom when nodes are stacked |
+  | Free board brief | Editable | Read only (graded against, not editable) |
 
 **Stories**
 - The competency coverage headline and Next Up for the first uncovered competency.

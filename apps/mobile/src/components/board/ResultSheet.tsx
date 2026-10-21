@@ -1,5 +1,5 @@
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
-import type { EvalResult, Scenario } from "@grip/core/arch";
+import type { EvalResult } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
@@ -7,7 +7,6 @@ import { Button } from "@/components/ui";
 
 type Props = {
   result: EvalResult | null;
-  scenario: Scenario;
   pushback?: string[];
   onClose: () => void;
 };
@@ -18,10 +17,9 @@ function verdict(score: number): { label: string; color: string } {
   return { label: t("board.verdictWhiteboard"), color: colors.danger };
 }
 
-export function ResultSheet({ result, scenario, pushback = [], onClose }: Props) {
+export function ResultSheet({ result, pushback = [], onClose }: Props) {
   if (!result) return null;
   const { label, color } = verdict(result.score);
-  const maintLabel = result.maint <= 8 ? "lean" : result.maint <= 14 ? "moderate" : "heavy";
 
   return (
     // Modal's native slide animation — Reanimated entering animations
@@ -46,7 +44,7 @@ export function ResultSheet({ result, scenario, pushback = [], onClose }: Props)
             flexDirection: "row",
             alignItems: "baseline",
             gap: 12,
-            marginBottom: 4,
+            marginBottom: 14,
             flexWrap: "wrap"
           }}>
           <Text style={{
@@ -61,36 +59,6 @@ export function ResultSheet({ result, scenario, pushback = [], onClose }: Props)
               flex: 1
             }}>{label}</Text>
         </View>
-        <View style={{
-            flexDirection: "row",
-            gap: 12,
-            marginBottom: 14,
-            flexWrap: "wrap"
-          }}>
-          <View style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5
-            }}>
-            <BrandIcon name="cost" color={colors.textDim} size={14} />
-            <Text style={{
-                fontSize: font.size.small,
-                color: colors.textDim
-              }}>{result.cost}/{scenario.budget} budget</Text>
-          </View>
-          <View style={{
-              flexDirection: "row",
-              alignItems: "center",
-              gap: 5
-            }}>
-            <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-            <Text style={{
-                fontSize: font.size.small,
-                color: colors.textDim
-              }}>maintenance {result.maint} ({maintLabel})</Text>
-          </View>
-        </View>
-
         <ScrollView style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 14, paddingBottom: 8 }}>
           <View style={{ gap: 6 }}>
             <Text style={{

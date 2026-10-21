@@ -265,7 +265,7 @@ export function Combobox({
                         padding: "7px 10px 5px",
                         color: colors.textFaint,
                         fontSize: font.size.caption,
-                        fontWeight: 800,
+                        fontWeight: 700,
                         letterSpacing: "0.07em",
                         textTransform: "uppercase"
                       }}>

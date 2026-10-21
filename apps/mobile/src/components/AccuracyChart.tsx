@@ -60,7 +60,7 @@ export function AccuracyChart({ points }: Props) {
         </View>
         <Text style={{
             fontSize: font.size.body,
-            fontWeight: "800",
+            fontWeight: "700",
             color: latest && latest.accuracy >= 0.7 ? colors.success : colors.warning
           }}>
           {latest ? `${Math.round(latest.accuracy * 100)}%` : "--"}

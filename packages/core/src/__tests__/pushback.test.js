@@ -57,7 +57,7 @@ describe("buildPushback", () => {
   });
 
   it("survives a custom scenario that has no pushback of its own", () => {
-    const custom = { id: "mine", name: "Mine", brief: "", budget: 10, checks: [] };
+    const custom = { id: "mine", name: "Mine", brief: "", checks: [] };
     const questions = buildPushback(custom, [node("queue")]);
     expect(questions.length).toBeGreaterThan(0);
     expect(questions.every((q) => typeof q === "string" && q.trim() !== "")).toBe(true);

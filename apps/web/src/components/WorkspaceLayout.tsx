@@ -12,6 +12,8 @@ type WorkspaceLayoutProps = {
   leftRailBottomInset?: number;
   // While a focused task runs, both rails lock (rule 10) and this hint says why.
   lockedHint?: string | null;
+  // Ignore the page max width, e.g. for the Arch Board canvas.
+  fullWidth?: boolean;
 };
 
 // Main workspace layout with 3 columns: left rail, main content, right rail. The rails can be locked (inert) with a hint.
@@ -23,6 +25,7 @@ export function WorkspaceLayout({
   density = "normal",
   leftRailBottomInset,
   lockedHint,
+  fullWidth,
 }: WorkspaceLayoutProps) {
   const compact = density === "compact";
 
@@ -32,6 +35,7 @@ export function WorkspaceLayout({
       style={
         {
           background: colors.bg,
+          ...(fullWidth && { "--page-max": "none" }),
           "--workspace-top": `${layout.workspaceTop}px`,
           "--workspace-bottom-inset": `${layout.workspaceBottomInset}px`,
           "--workspace-left-bottom-inset": `${leftRailBottomInset ?? layout.workspaceBottomInset}px`,
@@ -117,7 +121,8 @@ export function WorkspaceTitle({ icon, title, subtitle, right }: WorkspaceTitleP
             margin: 0,
             color: colors.textBright,
             fontSize: font.size.body,
-            fontWeight: 800,
+            // 700, not 800: at 13px Inter's heaviest weight closes up the letter gaps (DESIGN.md: 800 is for hero numbers).
+            fontWeight: 700,
           }}
         >
           {title}

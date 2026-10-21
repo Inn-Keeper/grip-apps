@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type RefObject } from "react";
 import type { BoardNode } from "./types";
 import { NODE_H, NODE_W } from "./constants";
+import { nodeSize } from "@grip/core/arch";
 import { fitView, nextZoomStop, normalizeWheel, screenToBoard, wheelZoomFactor, zoomAt } from "./viewport.js";
 
 export type View = { scale: number; x: number; y: number };
@@ -58,7 +59,7 @@ export function useBoardViewport(canvasRef: RefObject<HTMLDivElement | null>, no
   }, [center, setView]);
 
   const fit = useCallback((nodes: BoardNode[]) => {
-    setView(fitView(nodes, size(), NODE_SIZE));
+    setView(fitView(nodes, size(), (n: BoardNode) => nodeSize(n, NODE_SIZE)));
   }, [setView, size]);
 
   /** True once, right after a pan, so the canvas click handler can ignore it. */

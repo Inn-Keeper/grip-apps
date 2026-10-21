@@ -136,7 +136,7 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         <BrandIcon name={perfect ? "rank" : "spark"} color={tone} size={24} />
         <Text style={{
             fontSize: font.size.titleLg,
-            fontWeight: "800",
+            fontWeight: "700",
             color: colors.textBright
           }}>
           {t("prep.cardResult", { correct: result.correct, total: result.total, xp: result.xp })}
@@ -275,7 +275,7 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{
                   fontSize: font.size.tier,
-                  fontWeight: "800",
+                  fontWeight: "700",
                   color: tier.color
                 }}>{tier.label}</Text>
             </View>

@@ -27,7 +27,7 @@ function Metric({ label, value, color }: { label: string; value: string; color: 
     >
       <Text style={{
           fontSize: font.size.titleLg,
-          fontWeight: "800",
+          fontWeight: "700",
           color
         }}>{value}</Text>
       <Text numberOfLines={1} style={{

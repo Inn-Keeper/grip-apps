@@ -1,4 +1,4 @@
-import { evaluate } from "@grip/core/arch";
+import { evaluate, isFreeScenario } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { miniBtn } from "../components/fieldStyles";
@@ -63,7 +63,8 @@ export function StoryLinks({ story }: { story: Story }) {
 function StoryBoard({ board, scenarios }: { board: BoardOverview; scenarios: AugmentedScenario[] }) {
   const boardScenario = scenarios.find((s) => s.id === board.scenarioId);
   // Same design score the board shows; unknown until its (custom) scenario is loaded.
-  const score = boardScenario ? evaluate(boardScenario as Parameters<typeof evaluate>[0], board.nodes, board.edges).score : null;
+  // A free board has no checklist, so it has no design score to show.
+  const score = boardScenario && !isFreeScenario(boardScenario.id) ? evaluate(boardScenario as Parameters<typeof evaluate>[0], board.nodes, board.edges).score : null;
   return (
     <div style={{ marginTop: 14 }}>
       <div style={captionStyle}>{t("stories.board").toUpperCase()}</div>

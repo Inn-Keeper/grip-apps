@@ -24,7 +24,7 @@ export function FavoriteTechsCard({ profile }: { profile: User | null }) {
       <Text style={{
           color: colors.textBright,
           fontSize: font.size.title,
-          fontWeight: "800"
+          fontWeight: "700"
         }}>{t("profile.favoriteTechs")}</Text>
       <Text style={{
           color: colors.textFaint,

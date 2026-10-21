@@ -2,6 +2,7 @@ import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { bezierPath, edgeGeometry } from "@grip/core/edgeGeometry";
 import { NODE_H, NODE_W } from "./constants";
+import { nodeSize } from "@grip/core/arch";
 import { nodeAxisPoint } from "./boardGeometry.js";
 import type { BoardEdge, BoardNode, ConnectDrag } from "./types";
 
@@ -36,7 +37,7 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
         const a = nodeById[e.from];
         const b = nodeById[e.to];
         if (!a || !b) return null;
-        const g = edgeGeometry(a, b, NODE_SIZE);
+        const g = edgeGeometry(a, b, nodeSize(a, NODE_SIZE), nodeSize(b, NODE_SIZE));
         const { mx, sy, ty } = g;
         const d = bezierPath(g);
         const selected = selectedId === e.id;
@@ -73,7 +74,8 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
         );
       })}
       {connectDrag && nodeById[connectDrag.from] && (() => {
-        const start = nodeAxisPoint(nodeById[connectDrag.from]!, connectDrag, NODE_SIZE);
+        const source = nodeById[connectDrag.from]!;
+        const start = nodeAxisPoint(source, connectDrag, nodeSize(source, NODE_SIZE));
         const mx = (start.x + connectDrag.x) / 2;
         const d = `M ${start.x} ${start.y} C ${mx} ${start.y}, ${mx} ${connectDrag.y}, ${connectDrag.x} ${connectDrag.y}`;
         return <path d={d} fill="none" stroke={colors.accentBright} strokeWidth="2" strokeDasharray="5 5" markerEnd="url(#arrow)" />;

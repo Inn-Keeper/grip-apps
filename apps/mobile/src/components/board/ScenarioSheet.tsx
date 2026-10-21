@@ -6,7 +6,8 @@ import { colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { inputStyle } from "@/components/ui";
 
-type Group = { label: string; options: { value: string; label: string }[] };
+// label null: the free board's group, shown without a heading.
+type Group = { label: string | null; options: { value: string; label: string }[] };
 
 type Props = {
   visible: boolean;
@@ -72,16 +73,16 @@ export function ScenarioSheet({ visible, groups, activeId, onPick, onClose }: Pr
                 }}>{t("common.noMatches")}</Text>
             )}
             {visibleGroups.map((group) => (
-              <View key={group.label} style={{ marginBottom: 6 }}>
-                <Text style={{
+              <View key={group.label ?? "free"} style={{ marginBottom: 6 }}>
+                {group.label && <Text style={{
                     fontSize: font.size.label,
-                    fontWeight: "800",
+                    fontWeight: "700",
                     letterSpacing: 0.6,
                     color: colors.textFaint,
                     paddingVertical: 6
                   }}>
                   {group.label.toUpperCase()}
-                </Text>
+                </Text>}
                 {group.options.map((option) => {
                   const active = option.value === activeId;
                   return (

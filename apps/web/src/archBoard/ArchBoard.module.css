@@ -35,7 +35,7 @@
 }
 .savedSummary {
   display: flex; align-items: center; gap: 10px; padding: 14px;
-  list-style: none; cursor: pointer; color: var(--c-text-bright); font-size: var(--fs-body); font-weight: 800;
+  list-style: none; cursor: pointer; color: var(--c-text-bright); font-size: var(--fs-body); font-weight: 700;
 }
 .savedSummary::-webkit-details-marker { display: none; }
 .savedSummary:focus-visible { outline: 2px solid var(--c-accent-bright); outline-offset: 2px; border-radius: 8px; }
@@ -50,6 +50,67 @@
 /* Empty canvas reads as draggable; nodes keep their own grab cursor. */
 .canvas { cursor: grab; }
 .canvas[data-panning="true"] { cursor: grabbing; }
+.canvas[data-tool="text"], .canvas[data-tool="text"] .node { cursor: text; }
+/* Tools and the style panel float top left on the canvas, Excalidraw style. */
+.canvasTools {
+  position: absolute; top: 12px; left: 12px; z-index: 3; max-width: calc(100% - 24px);
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px; cursor: default;
+}
+.toolBar, .stylePanel {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 2px; padding: 3px;
+  border: 1px solid var(--arch-border); border-radius: 10px;
+  background: var(--arch-surface); box-shadow: var(--shadow-floating);
+}
+.toolBar .zoomButton { display: inline-flex; align-items: center; gap: 6px; font-size: var(--fs-small); font-weight: 600; }
+.componentsPopover {
+  width: min(760px, 100%); max-height: min(60vh, 420px); overflow: auto; padding: 10px; box-sizing: border-box;
+  border: 1px solid var(--arch-border); border-radius: 12px;
+  background: var(--arch-surface); box-shadow: var(--shadow-floating);
+}
+.styleGroup { display: flex; gap: 2px; padding: 0 4px; }
+.styleGroup + .styleGroup { border-left: 1px solid var(--arch-border); }
+.styleButton {
+  min-width: 28px; height: 28px; padding: 0 6px; border: none; border-radius: 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: transparent; color: var(--arch-text-dim); font: inherit; font-size: var(--fs-small); font-weight: 600; cursor: pointer;
+}
+.styleButton:hover { background: color-mix(in srgb, var(--arch-accent) 14%, transparent); color: var(--arch-text); }
+.styleButton[aria-pressed="true"] { background: color-mix(in srgb, var(--arch-accent) 24%, transparent); color: var(--arch-text); }
+.deleteButton:hover { background: color-mix(in srgb, var(--arch-danger) 18%, transparent); color: var(--arch-danger); }
+.styleButton:focus-visible { outline: 2px solid var(--arch-accent); outline-offset: 1px; }
+.swatch { width: 14px; height: 14px; border-radius: 50%; border: 1px solid var(--arch-border); }
+.zoomButton[data-active] { background: color-mix(in srgb, var(--arch-accent) 22%, transparent); color: var(--arch-text); }
+/* Free shapes: the outline is SVG; resize handles show on the selected one. */
+.shape:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 4px; }
+.resizeHandle {
+  position: absolute; width: 16px; height: 16px; margin: -8px 0 0 -8px; z-index: 1;
+  display: flex; align-items: center; justify-content: center;
+}
+.resizeHandle::after {
+  content: ""; width: 8px; height: 8px; border-radius: 2px;
+  background: var(--arch-surface); border: 2px solid var(--arch-accent);
+}
+.resizeHandle[data-dir="nw"] { left: 0; top: 0; cursor: nwse-resize; }
+.resizeHandle[data-dir="se"] { left: 100%; top: 100%; cursor: nwse-resize; }
+.resizeHandle[data-dir="ne"] { left: 100%; top: 0; cursor: nesw-resize; }
+.resizeHandle[data-dir="sw"] { left: 0; top: 100%; cursor: nesw-resize; }
+/* Arrow and Line tools: a layer over the board, so a press draws instead of panning. */
+.drawLayer { position: absolute; inset: 0; z-index: 2; cursor: crosshair; touch-action: none; }
+.freeArrow { outline: none; }
+.freeArrow:focus-visible line:first-child { stroke: var(--arch-accent); stroke-opacity: .6; }
+.toolDivider { width: 1px; align-self: stretch; margin: 4px 3px; background: var(--arch-border); }
+/* Free text: no box, just a faint outline while hovered, focused or edited. */
+.textNote { border: 1px dashed transparent; border-radius: 6px; }
+.textNote:hover, .textNote:focus-visible, .textNote[data-editing] { border-color: var(--arch-border); }
+.textNote:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 3px; }
+.textEditor { outline: none; min-width: 24px; }
+.textEditor:empty::before { content: attr(data-placeholder); color: var(--arch-text-dim); opacity: .6; }
+.textRemove {
+  position: absolute; top: -12px; right: -12px; width: 24px; height: 24px; padding: 0;
+  border: none; border-radius: 50%; background: var(--arch-border); cursor: pointer;
+  display: flex; align-items: center; justify-content: center; opacity: 0;
+}
+.textNote:hover .textRemove, .textNote:focus-within .textRemove { opacity: 1; }
 .canvas:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 2px; }
 .zoomControls {
   position: absolute; right: 12px; bottom: 12px; z-index: 2;
@@ -97,7 +158,8 @@
   padding: 12px;
   box-sizing: border-box;
   background: var(--arch-page);
-  grid-template-rows: auto 1fr;
+  /* One row: the canvas is the only child (the tools float inside it). */
+  grid-template-rows: minmax(0, 1fr);
   overflow: hidden;
 }
 

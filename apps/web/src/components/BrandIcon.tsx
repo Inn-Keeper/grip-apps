@@ -1,7 +1,7 @@
 import { colors } from "@grip/core/tokens";
 
 // Web port of apps/mobile/src/components/BrandIcon.tsx — keep the icon
-// geometry in sync with the mobile component ("search" is web-only).
+// geometry in sync with the mobile component ("search" and "cost" are web-only).
 
 const FLAGS: Record<string, React.ReactNode> = {
   flagUS: (
@@ -232,6 +232,42 @@ const ICONS: Record<string, Piece[]> = {
   contact: [
     { kind: "dot", x: 9, y: 4, w: 6, h: 6 },
     { x: 6, y: 13, w: 12, h: 7, r: 4 },
+  ],
+  // Text tool and the style panel's alignment (web only until mobile gets the panel).
+  text: [
+    { kind: "line", x: 5, y: 5, w: 14, h: 2 },
+    { kind: "line", x: 11, y: 5, w: 2, h: 14 },
+  ],
+  trash: [
+    { kind: "line", x: 4, y: 6, w: 16, h: 2 },
+    { kind: "line", x: 9, y: 3, w: 6, h: 2 },
+    { x: 6, y: 8, w: 12, h: 13, r: 2 },
+    { kind: "line", x: 10, y: 11, w: 0, h: 7 },
+    { kind: "line", x: 14, y: 11, w: 0, h: 7 },
+  ],
+  shapeRect: [{ x: 3, y: 6, w: 18, h: 12, r: 2 }],
+  shapeDiamond: [{ x: 6, y: 6, w: 12, h: 12, r: 1.5, rotate: "45deg" }],
+  shapeEllipse: [{ x: 3, y: 5, w: 18, h: 14 }],
+  shapeNote: [
+    { x: 4, y: 4, w: 16, h: 16, r: 2 },
+    { kind: "line", x: 8, y: 9, w: 8, h: 2 },
+    { kind: "line", x: 8, y: 13, w: 5, h: 2 },
+  ],
+  shapeLine: [{ kind: "line", x: 2.5, y: 11, w: 19, h: 2, rotate: "-40deg" }],
+  alignLeft: [
+    { kind: "line", x: 4, y: 6, w: 16, h: 2 },
+    { kind: "line", x: 4, y: 11, w: 10, h: 2 },
+    { kind: "line", x: 4, y: 16, w: 13, h: 2 },
+  ],
+  alignCenter: [
+    { kind: "line", x: 4, y: 6, w: 16, h: 2 },
+    { kind: "line", x: 7, y: 11, w: 10, h: 2 },
+    { kind: "line", x: 5.5, y: 16, w: 13, h: 2 },
+  ],
+  alignRight: [
+    { kind: "line", x: 4, y: 6, w: 16, h: 2 },
+    { kind: "line", x: 10, y: 11, w: 10, h: 2 },
+    { kind: "line", x: 7, y: 16, w: 13, h: 2 },
   ],
   cost: [
     { kind: "dot", x: 5, y: 8, w: 8, h: 8 },

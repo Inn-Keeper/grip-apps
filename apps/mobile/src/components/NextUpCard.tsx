@@ -53,13 +53,13 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onMo
     >
       <Text style={{
           fontSize: font.size.captionLg,
-          fontWeight: "800",
+          fontWeight: "700",
           letterSpacing: 0.8,
           color: copy.tone
         }}>{t("nextUp.label").toUpperCase()}</Text>
       <Text style={{
           fontSize: font.size.bodyLg,
-          fontWeight: "800",
+          fontWeight: "700",
           color: colors.textBright
         }}>{copy.title}</Text>
       <Text style={{
@@ -87,7 +87,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, onStart, onMo
         <BrandIcon name="drill" color={colors.onAccent} size={14} />
         <Text style={{
             fontSize: font.size.bodyMd,
-            fontWeight: "800",
+            fontWeight: "700",
             color: colors.onAccent
           }}>{busy ? t("common.loading") : copy.action}</Text>
       </TouchableOpacity>

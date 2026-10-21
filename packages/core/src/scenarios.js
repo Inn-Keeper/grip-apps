@@ -1,6 +1,6 @@
 // Arch Board scenario library. 104 default scenarios grouped by category,
 // all solvable with the NODE_TYPES palette in arch.js (see Scenario typedef there).
-// Variety comes from domain framing, budgets, and check weighting — the same
+// Variety comes from domain framing and check weighting, the same
 // way real interviews re-skin a dozen core topologies.
 
 /** @typedef {import("./arch.js").Check} Check */
@@ -36,7 +36,6 @@ const COMMERCE = [
     name: "Read-heavy product catalog",
     brief:
       "Millions of reads, few writes. Serve product pages fast and cheap worldwide without melting the database.",
-    budget: 11,
     checks: [
       node(["client"], "A client browses the catalog", 5),
       node(["cdn"], "A CDN exists for static assets", 10),
@@ -61,7 +60,6 @@ const COMMERCE = [
     name: "Flash-sale ticket burst",
     brief:
       "Spiky traffic: 100× normal load for 10 minutes when sales open. Don't oversell inventory, don't fall over, and keep the queue of buyers fair.",
-    budget: 14,
     checks: [
       node(["client"], "A client tries to buy", 5),
       edge(["client"], ["lb", "gateway"], "Traffic enters through a load balancer or gateway", 10),
@@ -87,7 +85,6 @@ const COMMERCE = [
     name: "Cart & checkout flow",
     brief:
       "Carts must survive device switches and node restarts; checkout converts a cart into an order exactly once, even on a double-click.",
-    budget: 14,
     checks: [
       node(["client"], "A client shops with a cart", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a gateway or load balancer", 10),
@@ -107,7 +104,6 @@ const COMMERCE = [
     name: "Warehouse inventory sync",
     brief:
       "Thousands of stock updates per minute from warehouses; product pages must not show phantom stock for more than a few seconds.",
-    budget: 13,
     checks: [
       node(["client"], "Warehouse systems push stock updates", 5),
       edge(["client"], ["gateway", "lb"], "Updates enter through a managed edge", 10),
@@ -126,7 +122,6 @@ const COMMERCE = [
     name: "Search autocomplete",
     brief:
       "Sub-50ms prefix suggestions on every keystroke. The database can't be allowed to see this traffic.",
-    budget: 10,
     checks: [
       node(["client"], "A client types in the search box", 5),
       edge(["client"], ["gateway", "lb"], "Keystroke traffic is load-balanced", 10),
@@ -145,7 +140,6 @@ const COMMERCE = [
     name: "Reviews & ratings",
     brief:
       "Read-heavy reviews with an abuse problem: every submission passes moderation before it's visible, without blocking the submitter.",
-    budget: 13,
     checks: [
       node(["client"], "A client reads and writes reviews", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -165,7 +159,6 @@ const COMMERCE = [
     name: "Promo code validation",
     brief:
       "Checkout validates promo codes at peak traffic; limited-use codes must never exceed their cap under concurrency.",
-    budget: 12,
     checks: [
       node(["client"], "A client applies a code at checkout", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -185,7 +178,6 @@ const COMMERCE = [
     name: "Order tracking page",
     brief:
       "Carriers push status webhooks in bursts; customers refresh the tracking page constantly. Neither side should feel the other's latency.",
-    budget: 13,
     checks: [
       node(["client"], "Customers watch the tracking page", 5),
       edge(["client"], ["gateway", "lb"], "Both webhooks and reads enter through the edge", 10),
@@ -204,7 +196,6 @@ const COMMERCE = [
     name: "You-may-also-like widget",
     brief:
       "Personalized recommendations on every product page. Computing them online is too slow. Serve precomputed lists fast.",
-    budget: 12,
     checks: [
       node(["client"], "Every product page requests recommendations", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -223,7 +214,6 @@ const COMMERCE = [
     name: "Subscription renewals",
     brief:
       "Monthly renewals charge thousands of cards in a nightly window; failures retry with backoff and never double-charge.",
-    budget: 17,
     checks: [
       node(["client"], "Customers manage their subscriptions", 5),
       node(["auth"], "Card management is authenticated", 5),
@@ -245,7 +235,6 @@ const FINTECH = [
     name: "Payment end-to-end",
     brief:
       "Design checkout payment processing: accept a payment, call the provider, survive retries and webhooks, and keep records consistent. Card data must never touch your own database.",
-    budget: 16,
     checks: [
       node(["client"], "A client initiates checkout", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a gateway or load balancer. Clients never hit services directly", 10),
@@ -275,7 +264,6 @@ const FINTECH = [
     name: "Double-entry ledger",
     brief:
       "Every money movement writes two entries that must balance. Order matters; eventual consistency is not acceptable on the write path.",
-    budget: 12,
     checks: [
       node(["client"], "A client triggers money movements", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -300,7 +288,6 @@ const FINTECH = [
     name: "Inline fraud screening",
     brief:
       "Score every transaction in under 100ms inline, and run deeper analysis async. Blocking checkout on the deep path is not an option.",
-    budget: 15,
     checks: [
       node(["client"], "A client submits a transaction", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -320,7 +307,6 @@ const FINTECH = [
     name: "Nightly seller payouts",
     brief:
       "Pay out thousands of sellers nightly through the provider; partial failures must be resumable without paying anyone twice.",
-    budget: 16,
     checks: [
       node(["client"], "Sellers check payout status", 5),
       edge(["client"], ["gateway", "lb"], "The status API sits behind a managed edge", 10),
@@ -339,7 +325,6 @@ const FINTECH = [
     name: "KYC onboarding",
     brief:
       "New users upload identity documents; verification takes minutes and involves third parties. Keep signup responsive and the audit trail complete.",
-    budget: 14,
     checks: [
       node(["client"], "An applicant uploads documents", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -359,7 +344,6 @@ const FINTECH = [
     name: "FX rate service",
     brief:
       "Every pricing call needs a fresh exchange rate. The upstream feed allows one request per second. Your traffic is thousands.",
-    budget: 10,
     checks: [
       node(["client"], "Pricing calls ask for rates", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -378,7 +362,6 @@ const FINTECH = [
     name: "Invoice generation",
     brief:
       "Month-end generates hundreds of thousands of PDFs. Users request them anytime; generation must not crowd out the interactive API.",
-    budget: 13,
     checks: [
       node(["client"], "Users download invoices", 5),
       edge(["client"], ["gateway", "lb"], "The API sits behind a managed edge", 10),
@@ -398,7 +381,6 @@ const FINTECH = [
     name: "Wallet top-up",
     brief:
       "Users add funds with a card; the provider confirms asynchronously. The balance must reflect exactly one credit per confirmed charge.",
-    budget: 17,
     checks: [
       node(["client"], "A user tops up the wallet", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -417,7 +399,6 @@ const FINTECH = [
     name: "Chargeback handling",
     brief:
       "Disputes arrive as provider webhooks weeks after the charge; each opens a case, freezes funds, and must never be lost.",
-    budget: 15,
     checks: [
       node(["client"], "Agents work dispute cases", 5),
       edge(["client"], ["gateway", "lb"], "The case UI sits behind a managed edge", 10),
@@ -436,7 +417,6 @@ const FINTECH = [
     name: "Spending insights",
     brief:
       "Monthly spending breakdowns computed from millions of transactions: offline aggregation, instant reads.",
-    budget: 13,
     checks: [
       node(["client"], "Users open their insights tab", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -459,7 +439,6 @@ const SOCIAL = [
     name: "Social feed fan-out",
     brief:
       "A post from someone with 2M followers must land in followers' feeds within seconds, without 2M synchronous writes at post time.",
-    budget: 15,
     checks: [
       node(["client"], "Clients post and scroll", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -485,7 +464,6 @@ const SOCIAL = [
     name: "Follower graph reads",
     brief:
       "\"Who follows whom\" is read on every profile and feed render. Reads outnumber writes 1000:1.",
-    budget: 11,
     checks: [
       node(["client"], "Every render asks the graph", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -504,7 +482,6 @@ const SOCIAL = [
     name: "Notification delivery",
     brief:
       "Likes, follows, and mentions become pushes and badge counts. Bursty and fire-and-forget, but users notice missing ones.",
-    budget: 13,
     checks: [
       node(["client"], "Clients receive notifications", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -524,7 +501,6 @@ const SOCIAL = [
     name: "Public profile pages",
     brief:
       "Public profiles get scraped, embedded, and hot-linked. Avatars and bios should be globally fast and cheap.",
-    budget: 10,
     checks: [
       node(["client"], "Anyone loads a profile", 5),
       node(["cdn"], "Avatars and static assets sit on a CDN", 15),
@@ -543,7 +519,6 @@ const SOCIAL = [
     name: "Trending topics",
     brief:
       "Compute what's trending from a firehose of events; the answer updates every minute and is read from everywhere.",
-    budget: 13,
     checks: [
       node(["client"], "Clients read the trending list", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -563,7 +538,6 @@ const SOCIAL = [
     name: "Comment threads",
     brief:
       "Deep threads under viral posts: heavy reads, moderate writes, and pagination that can't melt the database.",
-    budget: 12,
     checks: [
       node(["client"], "Clients read and write comments", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -582,7 +556,6 @@ const SOCIAL = [
     name: "Reaction counters",
     brief:
       "Millions of likes per minute on hot content. Counts can lag a few seconds but must not lose increments.",
-    budget: 12,
     checks: [
       node(["client"], "Clients tap reactions", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -601,7 +574,6 @@ const SOCIAL = [
     name: "UGC moderation pipeline",
     brief:
       "Everything uploaded passes automated screening; flagged items wait for human review. Publishing is async but feels instant.",
-    budget: 14,
     checks: [
       node(["client"], "Users upload content", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -620,7 +592,6 @@ const SOCIAL = [
     name: "Photo tagging pipeline",
     brief:
       "Uploaded photos get faces and objects tagged by ML within a minute, entirely off the upload path.",
-    budget: 14,
     checks: [
       node(["client"], "Users upload photos", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -640,7 +611,6 @@ const SOCIAL = [
     name: "People search",
     brief:
       "Find-a-user by name with typo tolerance; the index lags profile edits by seconds at most.",
-    budget: 11,
     checks: [
       node(["client"], "Clients search for people", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -663,7 +633,6 @@ const REALTIME = [
     name: "Realtime chat delivery",
     brief:
       "1-on-1 and group messages with per-conversation ordering, offline catch-up, and delivery receipts.",
-    budget: 15,
     checks: [
       node(["client"], "Clients hold open connections", 5),
       edge(["client"], ["gateway"], "Persistent connections terminate at an edge gateway", 15),
@@ -689,7 +658,6 @@ const REALTIME = [
     name: "Presence service",
     brief:
       "Online/offline dots for millions of users via heartbeats. State is ephemeral. Losing it costs seconds of accuracy, not data.",
-    budget: 10,
     checks: [
       node(["client"], "Clients send heartbeats", 5),
       edge(["client"], ["gateway", "lb"], "Heartbeats terminate at the edge", 15),
@@ -713,7 +681,6 @@ const REALTIME = [
     name: "Live auction bids",
     brief:
       "Bids on a hot lot arrive in bursts; the current high bid must be authoritative and the audit trail complete.",
-    budget: 14,
     checks: [
       node(["client"], "Bidders watch and bid live", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -733,7 +700,6 @@ const REALTIME = [
     name: "Live sports scores",
     brief:
       "One score update fans out to millions of viewers within a second. Every read is identical. Cache everything.",
-    budget: 11,
     checks: [
       node(["client"], "Millions of clients poll or subscribe", 5),
       edge(["client"], ["cdn", "gateway", "lb"], "Traffic is absorbed at the edge", 10),
@@ -752,7 +718,6 @@ const REALTIME = [
     name: "Collaborative editing",
     brief:
       "Multiple cursors in one document: every keystroke is an operation that must apply in the same order for everyone.",
-    budget: 13,
     checks: [
       node(["client"], "Editors hold live connections", 5),
       edge(["client"], ["gateway"], "Connections terminate at an edge gateway", 15),
@@ -772,7 +737,6 @@ const REALTIME = [
     name: "Mobile push pipeline",
     brief:
       "Server events become APNs/FCM pushes. Provider rate limits and retries are your problem, not the callers'.",
-    budget: 12,
     checks: [
       node(["client"], "Devices receive pushes", 5),
       edge(["client"], ["gateway", "lb"], "Registration traffic enters at the edge", 10),
@@ -792,7 +756,6 @@ const REALTIME = [
     name: "Support live chat",
     brief:
       "Customers queue for the next free agent; transcripts persist; abandonment is watched closely.",
-    budget: 13,
     checks: [
       node(["client"], "Customers and agents connect", 5),
       edge(["client"], ["gateway"], "Connections terminate at an edge gateway", 10),
@@ -812,7 +775,6 @@ const REALTIME = [
     name: "Market data ticker",
     brief:
       "Exchange feed in, last-price out to every open dashboard. Milliseconds matter; the database is not on this path.",
-    budget: 11,
     checks: [
       node(["client"], "Dashboards subscribe to prices", 5),
       edge(["client"], ["gateway"], "Subscriptions terminate at an edge gateway", 15),
@@ -837,7 +799,6 @@ const REALTIME = [
     name: "Multiplayer lobby",
     brief:
       "Players gather, ready-up, and launch together; lobby state changes broadcast instantly and vanish when the match starts.",
-    budget: 12,
     checks: [
       node(["client"], "Players join lobbies", 5),
       edge(["client"], ["gateway"], "Connections terminate at an edge gateway", 15),
@@ -856,7 +817,6 @@ const REALTIME = [
     name: "Courier location stream",
     brief:
       "Courier apps ping GPS every 3 seconds; customers watch the dot move. Ingest must absorb rush hour.",
-    budget: 12,
     checks: [
       node(["client"], "Couriers ping, customers watch", 5),
       edge(["client"], ["gateway", "lb"], "Pings enter through a managed edge", 10),
@@ -879,7 +839,6 @@ const CONTENT = [
     name: "Media upload & transcode",
     brief:
       "Uploads return immediately; transcoding to multiple resolutions happens in the background; playback comes off the CDN.",
-    budget: 15,
     checks: [
       node(["client"], "Creators upload, viewers play", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -905,7 +864,6 @@ const CONTENT = [
     name: "Premium video playback",
     brief:
       "Premium video: segments must be cheap to serve worldwide but playable only by entitled viewers.",
-    budget: 11,
     checks: [
       node(["client"], "Viewers stream video", 5),
       node(["cdn"], "Segments live on a CDN", 20),
@@ -924,7 +882,6 @@ const CONTENT = [
     name: "Image resizing service",
     brief:
       "Every device wants a different size. Resize once, cache forever, serve from the edge.",
-    budget: 12,
     checks: [
       node(["client"], "Clients request sized images", 5),
       node(["cdn"], "Variants are served from the edge", 15),
@@ -943,7 +900,6 @@ const CONTENT = [
     name: "Podcast feed delivery",
     brief:
       "RSS feeds polled relentlessly by apps; audio files are large and static. Origin should barely notice.",
-    budget: 9,
     checks: [
       node(["client"], "Podcast apps poll feeds", 5),
       node(["cdn"], "Audio and feeds are served from the edge", 20),
@@ -961,7 +917,6 @@ const CONTENT = [
     name: "Live stream ingest",
     brief:
       "Streamers push live video; viewers watch with a few seconds' delay. Segment, store, distribute, continuously.",
-    budget: 14,
     checks: [
       node(["client"], "Streamers push, viewers watch", 5),
       edge(["client"], ["gateway"], "Ingest terminates at an edge gateway", 10),
@@ -981,7 +936,6 @@ const CONTENT = [
     name: "Multi-author blog",
     brief:
       "Classic read-heavy publishing: a post goes viral, the site stays up, the bill stays flat.",
-    budget: 9,
     checks: [
       node(["client"], "Readers load posts", 5),
       node(["cdn"], "Static assets ship from the edge", 15),
@@ -1000,7 +954,6 @@ const CONTENT = [
     name: "Breaking-news homepage",
     brief:
       "Editors update constantly during breaking news while traffic spikes 20×. Freshness within seconds, served mostly from cache.",
-    budget: 11,
     checks: [
       node(["client"], "Readers hammer the homepage", 5),
       node(["cdn"], "The edge absorbs most reads", 10),
@@ -1021,7 +974,6 @@ const CONTENT = [
     name: "UGC photo gallery",
     brief:
       "Public uploads with screening before visibility, thumbnails for every device, delivery from the edge.",
-    budget: 14,
     checks: [
       node(["client"], "Users upload and browse", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -1041,7 +993,6 @@ const CONTENT = [
     name: "Subtitle generation",
     brief:
       "Speech-to-text for every uploaded video, in 30+ languages, hours of audio per minute of wall clock.",
-    budget: 13,
     checks: [
       node(["client"], "Creators upload videos", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -1060,7 +1011,6 @@ const CONTENT = [
     name: "Software download center",
     brief:
       "Multi-GB installers, release-day spikes, and signed URLs so leeches can't hotlink.",
-    budget: 10,
     checks: [
       node(["client"], "Users download releases", 5),
       node(["cdn"], "Binaries ship from the edge", 20),
@@ -1079,7 +1029,6 @@ const CONTENT = [
     name: "Live + VOD streaming platform",
     brief:
       "A subscription streaming service with live channels and a VOD library. A live sports final brings 20× normal concurrency in five minutes. Enforce entitlements and device limits, keep rebuffering low, and see quality of experience as it happens.",
-    budget: 16,
     checks: [
       node(["client"], "Viewers watch on TV, web and mobile", 5),
       node(["cdn"], "Live and VOD segments ship from the edge", 10),
@@ -1108,7 +1057,6 @@ const CONTENT = [
     name: "Playback backend-for-frontend",
     brief:
       "Before a single frame plays, the player needs entitlement, a manifest URL, DRM details, ad config and a resume position. Web, mobile and TV players should make one call to a backend-for-frontend that composes it all fast.",
-    budget: 15,
     checks: [
       node(["client"], "Players on every platform press play", 5),
       edge(["client"], ["gateway", "lb"], "Players make one playback call through the edge", 10),
@@ -1134,7 +1082,6 @@ const CONTENT = [
     name: "Player quality telemetry",
     brief:
       "Millions of player sessions send startup, rebuffer, bitrate and error events. Turn them into a flawless-stream rate you can alert on, and let support find one viewer's session when they call in.",
-    budget: 14,
     checks: [
       node(["client"], "Players emit session events", 5),
       edge(["client"], ["gateway", "lb"], "Events arrive through a collection endpoint", 10),
@@ -1160,7 +1107,6 @@ const CONTENT = [
     name: "Ad-supported live channel",
     brief:
       "A free live channel with ad breaks. Breaks must land cleanly for a million concurrent viewers, ad blockers shouldn't skip them, and advertisers need independent viewing measurement. Decide where ads are inserted.",
-    budget: 18,
     checks: [
       node(["client"], "Viewers watch live", 5),
       edge(["encoder"], ["packager"], "A live encoder feeds a packager", 10),
@@ -1190,7 +1136,6 @@ const DATA = [
     name: "Clickstream ingestion",
     brief:
       "Every page view and tap from every user, ingested without back-pressure on the apps emitting them.",
-    budget: 13,
     checks: [
       node(["client"], "Apps emit events", 5),
       edge(["client"], ["gateway", "lb"], "Events enter through a managed edge", 15),
@@ -1208,7 +1153,6 @@ const DATA = [
     name: "Experiment assignment",
     brief:
       "Which variant does this user see? Answered on every request in microseconds, consistent per user for weeks.",
-    budget: 10,
     checks: [
       node(["client"], "Every request asks for its variant", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -1227,7 +1171,6 @@ const DATA = [
     name: "Metrics dashboard",
     brief:
       "Engineers stare at dashboards all day; queries aggregate millions of points but the same charts repeat.",
-    budget: 11,
     checks: [
       node(["client"], "Engineers load dashboards", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -1246,7 +1189,6 @@ const DATA = [
     name: "Log aggregation",
     brief:
       "Every service ships structured logs; engineers search them seconds later. Ingest spikes exactly when something breaks, when you need it most.",
-    budget: 13,
     checks: [
       node(["client"], "Services ship logs", 5),
       edge(["client"], ["gateway", "lb"], "Log traffic enters through a managed edge", 10),
@@ -1265,7 +1207,6 @@ const DATA = [
     name: "Recommendation pipeline",
     brief:
       "Models retrain nightly; serving must be a dumb, fast lookup.",
-    budget: 12,
     checks: [
       node(["client"], "Apps request recommendations", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -1285,7 +1226,6 @@ const DATA = [
     name: "Search index pipeline",
     brief:
       "Catalog edits appear in search within seconds. Reindexing the world happens without downtime.",
-    budget: 13,
     checks: [
       node(["client"], "Users search the catalog", 5),
       edge(["client"], ["gateway", "lb"], "Search traffic is load-balanced", 10),
@@ -1304,7 +1244,6 @@ const DATA = [
     name: "GDPR deletion pipeline",
     brief:
       "A deletion request must reach every store within 30 days, with proof. Partial completion is a lawsuit.",
-    budget: 13,
     checks: [
       node(["client"], "Users request deletion", 5),
       edge(["client"], ["gateway", "lb"], "Requests enter through a managed edge", 10),
@@ -1324,7 +1263,6 @@ const DATA = [
     name: "Nightly reporting",
     brief:
       "Heavy aggregation runs at 2am; results are ready before the first coffee. Failures page someone.",
-    budget: 11,
     checks: [
       node(["queue"], "The job graph is orchestrated through a queue", 15),
       biEdge(["queue"], ["worker"], "Batch workers consume jobs", 10),
@@ -1343,7 +1281,6 @@ const DATA = [
     name: "Anomaly alerting",
     brief:
       "Streaming metrics watched for spikes; alert within a minute, don't cry wolf.",
-    budget: 12,
     checks: [
       node(["client"], "Systems emit metrics", 5),
       edge(["client"], ["gateway", "lb"], "Metrics enter through a managed edge", 5),
@@ -1363,7 +1300,6 @@ const DATA = [
     name: "Self-serve data export",
     brief:
       "Users request a full export; it's gigabytes and takes minutes. Build it async, notify, and hand over an expiring link.",
-    budget: 13,
     checks: [
       node(["client"], "Users request and download exports", 5),
       edge(["client"], ["gateway", "lb"], "Requests enter through a managed edge", 10),
@@ -1386,7 +1322,6 @@ const INFRA = [
     name: "URL shortener at scale",
     brief:
       "Billions of redirects, 100:1 read-to-write, p99 under 20ms. A mapping never changes once created.",
-    budget: 10,
     checks: [
       node(["client"], "Clients follow short links", 5),
       edge(["client"], ["cdn", "lb", "gateway"], "Redirects are absorbed at the edge", 10),
@@ -1410,7 +1345,6 @@ const INFRA = [
     name: "Rate-limited public API",
     brief:
       "A public API with per-key quotas enforced before requests ever reach your services.",
-    budget: 11,
     checks: [
       node(["client"], "Third parties call the API", 5),
       node(["gateway"], "A gateway fronts everything", 20),
@@ -1429,7 +1363,6 @@ const INFRA = [
     name: "API key management",
     brief:
       "Issue, rotate, and validate keys. Validation happens on every request; issuance is rare.",
-    budget: 11,
     checks: [
       node(["client"], "Every API call presents a key", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through the edge", 10),
@@ -1448,7 +1381,6 @@ const INFRA = [
     name: "Webhook ingestion",
     brief:
       "Partners fire webhooks in unpredictable bursts and expect a fast 2xx. Process later, never lose one.",
-    budget: 13,
     checks: [
       node(["client"], "Partners fire webhooks", 5),
       edge(["client"], ["gateway", "lb"], "Webhooks enter through a managed edge", 15),
@@ -1472,7 +1404,6 @@ const INFRA = [
     name: "Feature flag service",
     brief:
       "Every request everywhere asks \"is this flag on?\". Reads must be near-free; changes propagate in seconds.",
-    budget: 10,
     checks: [
       node(["client"], "Every surface evaluates flags", 5),
       edge(["client"], ["gateway", "lb"], "Flag traffic is load-balanced", 10),
@@ -1491,7 +1422,6 @@ const INFRA = [
     name: "SSO login flow",
     brief:
       "Single sign-on for every product surface; sessions verified on every request without hammering the identity provider.",
-    budget: 11,
     checks: [
       node(["client"], "Users sign in once", 5),
       edge(["client"], ["gateway", "lb"], "Login traffic enters at the edge", 10),
@@ -1510,7 +1440,6 @@ const INFRA = [
     name: "Stateless app sessions",
     brief:
       "Any instance can serve any user mid-session; deploys and instance death must not log anyone out.",
-    budget: 10,
     checks: [
       node(["client"], "Users carry sessions across requests", 5),
       edge(["client"], ["lb", "gateway"], "Requests spread across instances", 15),
@@ -1528,7 +1457,6 @@ const INFRA = [
     name: "Public status page",
     brief:
       "When production burns, everyone loads this page at once. It must not share production's fate.",
-    budget: 8,
     checks: [
       node(["client"], "Everyone checks at the same time", 5),
       node(["cdn"], "The page itself is static, on a CDN", 25),
@@ -1545,7 +1473,6 @@ const INFRA = [
     name: "Resumable file transfer",
     brief:
       "Multi-GB uploads over flaky connections: chunked, resumable, and virus-scanned before anyone can download.",
-    budget: 14,
     checks: [
       node(["client"], "Users upload and download files", 5),
       edge(["client"], ["gateway", "lb"], "Chunks enter through a managed edge", 10),
@@ -1566,7 +1493,6 @@ const INFRA = [
     name: "Multi-tenant API gateway",
     brief:
       "Hundreds of tenants share one platform; one tenant's burst must not become everyone's outage.",
-    budget: 12,
     checks: [
       node(["client"], "Tenants call with their own keys", 5),
       node(["gateway"], "A gateway enforces per-tenant policy", 20),
@@ -1588,7 +1514,6 @@ const MOBILITY = [
     name: "Ride dispatch",
     brief:
       "Match riders to nearby drivers in seconds, under city-wide surge, without double-assigning a driver.",
-    budget: 15,
     checks: [
       node(["client"], "Riders request, drivers accept", 5),
       edge(["client"], ["gateway", "lb"], "Requests enter through a managed edge", 10),
@@ -1608,7 +1533,6 @@ const MOBILITY = [
     name: "Parcel tracking",
     brief:
       "Carrier scans arrive in bursts; customers refresh constantly. A stale-but-fast status beats a fresh-but-down page.",
-    budget: 13,
     checks: [
       node(["client"], "Customers refresh tracking pages", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -1627,7 +1551,6 @@ const MOBILITY = [
     name: "Fleet telemetry ingest",
     brief:
       "Ten thousand vehicles report every few seconds. Ingest is relentless; queries are rare but heavy.",
-    budget: 12,
     checks: [
       node(["client"], "Vehicles stream telemetry", 5),
       edge(["client"], ["gateway", "lb"], "Telemetry enters through a managed edge", 10),
@@ -1646,7 +1569,6 @@ const MOBILITY = [
     name: "ETA computation",
     brief:
       "ETAs are expensive to compute and requested constantly; the same route segments repeat all day.",
-    budget: 11,
     checks: [
       node(["client"], "Every screen shows an ETA", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -1665,7 +1587,6 @@ const MOBILITY = [
     name: "Surge pricing",
     brief:
       "Demand signals stream in; multipliers update per zone every few seconds and are read on every fare quote.",
-    budget: 12,
     checks: [
       node(["client"], "Every quote reads the multiplier", 5),
       edge(["client"], ["gateway", "lb"], "Quote traffic is load-balanced", 10),
@@ -1685,7 +1606,6 @@ const MOBILITY = [
     name: "Delivery slot booking",
     brief:
       "Limited delivery slots per neighborhood; everyone books Sunday evening. No overbooking, fair ordering.",
-    budget: 13,
     checks: [
       node(["client"], "Customers book delivery slots", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -1705,7 +1625,6 @@ const MOBILITY = [
     name: "Route memoization",
     brief:
       "The third-party routing API bills per call; your traffic repeats the same origin-destination pairs endlessly.",
-    budget: 10,
     checks: [
       node(["client"], "Apps request routes", 5),
       edge(["client"], ["gateway", "lb"], "Traffic is load-balanced", 10),
@@ -1722,7 +1641,6 @@ const MOBILITY = [
     name: "Driver onboarding",
     brief:
       "License checks, background checks, vehicle photos: a multi-day pipeline with humans in the loop.",
-    budget: 14,
     checks: [
       node(["client"], "Applicants upload documents", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -1742,7 +1660,6 @@ const MOBILITY = [
     name: "Geofence alerts",
     brief:
       "\"Your driver is nearby\": location events tested against thousands of fences, notifications within seconds.",
-    budget: 13,
     checks: [
       node(["client"], "Drivers emit locations, customers get alerts", 5),
       edge(["client"], ["gateway", "lb"], "Locations enter through a managed edge", 10),
@@ -1762,7 +1679,6 @@ const MOBILITY = [
     name: "Warehouse scan bursts",
     brief:
       "Shift start floods the system with barcode scans. Each adjusts inventory exactly once, in order per SKU.",
-    budget: 12,
     checks: [
       node(["client"], "Scanners fire at shift start", 5),
       edge(["client"], ["gateway", "lb"], "Scans enter through a managed edge", 10),
@@ -1784,7 +1700,6 @@ const GAMING = [
     name: "Global leaderboard",
     brief:
       "Millions of score submissions; top-100 and your-rank queries on every screen. Sorted reads must be instant.",
-    budget: 11,
     checks: [
       node(["client"], "Players submit and read scores", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -1803,7 +1718,6 @@ const GAMING = [
     name: "Skill matchmaking",
     brief:
       "Players wait in a pool while the system finds fair matches. Wait time and fairness trade off in real time.",
-    budget: 13,
     checks: [
       node(["client"], "Players queue for matches", 5),
       edge(["client"], ["gateway"], "Connections terminate at an edge gateway", 10),
@@ -1823,7 +1737,6 @@ const GAMING = [
     name: "Gameplay telemetry",
     brief:
       "Every match emits thousands of events for balance tuning. Lossy is fine for analytics. Lossless for purchases.",
-    budget: 12,
     checks: [
       node(["client"], "Game clients emit events", 5),
       edge(["client"], ["gateway", "lb"], "Events enter through a managed edge", 10),
@@ -1842,7 +1755,6 @@ const GAMING = [
     name: "Daily reward claims",
     brief:
       "Reset at midnight; everyone claims at 00:00:01. Exactly one reward per player per day.",
-    budget: 13,
     checks: [
       node(["client"], "Players claim at midnight", 5),
       edge(["client"], ["gateway", "lb"], "The claim spike enters at the edge", 10),
@@ -1862,7 +1774,6 @@ const GAMING = [
     name: "In-game store",
     brief:
       "Real-money purchases grant virtual items: provider charges, entitlement writes, and receipts that survive audits.",
-    budget: 17,
     checks: [
       node(["client"], "Players buy items", 5),
       edge(["client"], ["gateway", "lb"], "Purchases enter through a managed edge", 10),
@@ -1882,7 +1793,6 @@ const GAMING = [
     name: "Anti-cheat pipeline",
     brief:
       "Match events analyzed for impossible play; bans must be reviewable with full evidence.",
-    budget: 13,
     checks: [
       node(["client"], "Match servers stream events", 5),
       edge(["client"], ["gateway", "lb"], "Events enter through a managed edge", 10),
@@ -1901,7 +1811,6 @@ const GAMING = [
     name: "Cross-device save sync",
     brief:
       "Pick up on your phone where the console left off. Conflicts resolve deterministically. Last-write-wins is not enough.",
-    budget: 12,
     checks: [
       node(["client"], "Multiple devices sync saves", 5),
       edge(["client"], ["gateway", "lb"], "Sync traffic enters at the edge", 10),
@@ -1921,7 +1830,6 @@ const GAMING = [
     name: "Tournament brackets",
     brief:
       "Bracket updates fan out to every spectator the moment a match ends.",
-    budget: 12,
     checks: [
       node(["client"], "Spectators watch live brackets", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -1941,7 +1849,6 @@ const GAMING = [
     name: "In-game lobby chat",
     brief:
       "Low-stakes chat with moderation hooks and short retention.",
-    budget: 12,
     checks: [
       node(["client"], "Players chat in lobbies", 5),
       edge(["client"], ["gateway"], "Connections terminate at an edge gateway", 15),
@@ -1961,7 +1868,6 @@ const GAMING = [
     name: "Season pass progression",
     brief:
       "XP events from every match update progression tracks; players check progress obsessively.",
-    budget: 13,
     checks: [
       node(["client"], "Players earn and check progress", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -1984,7 +1890,6 @@ const SAAS = [
     name: "Tenant audit log",
     brief:
       "Every admin action recorded append-only; auditors export years of history without affecting the product.",
-    budget: 12,
     checks: [
       node(["client"], "Admin actions generate events", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -2004,7 +1909,6 @@ const SAAS = [
     name: "Usage metering",
     brief:
       "Billable events must be counted exactly once. Undercounting burns revenue, overcounting burns trust.",
-    budget: 13,
     checks: [
       node(["client"], "Product surfaces emit billable events", 5),
       edge(["client"], ["gateway", "lb"], "Events enter through a managed edge", 10),
@@ -2023,7 +1927,6 @@ const SAAS = [
     name: "Tenant bulk import",
     brief:
       "Customers upload million-row CSVs and watch a progress bar. Validation errors arrive as a report, not a timeout.",
-    budget: 13,
     checks: [
       node(["client"], "Customers upload CSVs", 5),
       edge(["client"], ["gateway", "lb"], "Uploads enter through a managed edge", 10),
@@ -2043,7 +1946,6 @@ const SAAS = [
     name: "Scheduled jobs platform",
     brief:
       "Tenants schedule recurring tasks; missing a run is a support ticket, running twice is a bug report.",
-    budget: 11,
     checks: [
       node(["client"], "Tenants manage schedules", 5),
       edge(["client"], ["gateway", "lb"], "The API sits behind a managed edge", 10),
@@ -2061,7 +1963,6 @@ const SAAS = [
     name: "Tenant document search",
     brief:
       "Full-text search across each tenant's documents, isolated per tenant, index fresh within a minute.",
-    budget: 13,
     checks: [
       node(["client"], "Users search their documents", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),
@@ -2081,7 +1982,6 @@ const SAAS = [
     name: "SCIM user provisioning",
     brief:
       "Enterprise IdPs push joiner/mover/leaver events; access must revoke within minutes, with an audit trail.",
-    budget: 13,
     checks: [
       node(["client"], "IdPs push SCIM events", 5),
       edge(["client"], ["gateway", "lb"], "Events enter through a managed edge", 10),
@@ -2100,7 +2000,6 @@ const SAAS = [
     name: "Email campaign sender",
     brief:
       "A million-recipient send is a marathon: throttled per provider, bounces handled, unsubscribes instant.",
-    budget: 13,
     checks: [
       node(["client"], "Marketers launch campaigns", 5),
       edge(["client"], ["gateway", "lb"], "The app sits behind a managed edge", 10),
@@ -2119,7 +2018,6 @@ const SAAS = [
     name: "Tenant billing & invoicing",
     brief:
       "Metered usage becomes a monthly invoice and a card charge. Disputes need line-item provenance.",
-    budget: 17,
     checks: [
       node(["client"], "Tenants view invoices", 5),
       edge(["client"], ["gateway", "lb"], "The billing UI sits behind a managed edge", 10),
@@ -2139,7 +2037,6 @@ const SAAS = [
     name: "Two-way CRM sync",
     brief:
       "Your app and the customer's CRM both edit the same records; sync both ways without loops or lost updates.",
-    budget: 13,
     checks: [
       node(["client"], "Both sides edit records", 5),
       edge(["client"], ["gateway", "lb"], "Webhooks and edits enter at the edge", 10),
@@ -2159,7 +2056,6 @@ const SAAS = [
     name: "Tenant analytics dashboards",
     brief:
       "Every tenant wants charts over their own data; one tenant's heavy query can't slow the others.",
-    budget: 12,
     checks: [
       node(["client"], "Tenant admins load dashboards", 5),
       edge(["client"], ["gateway", "lb"], "Traffic enters through a managed edge", 10),

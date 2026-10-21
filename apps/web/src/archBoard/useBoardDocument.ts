@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
+import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "@grip/core/boardHistory";
 import type { BoardEdge, BoardNode } from "./types";
 
 // Everything a saved board persists. Key order matters: snapshots compare as JSON.
@@ -11,6 +11,8 @@ export type BoardDoc = {
   talkSections: Record<string, string>;
   talkRating: number | null;
   talkGrade: number | null;
+  // A free board's own brief; empty on scenario boards.
+  brief: string;
 };
 
 type History = { past: BoardDoc[]; present: BoardDoc; future: BoardDoc[] };

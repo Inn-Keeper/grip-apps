@@ -97,7 +97,7 @@ export default function AboutScreen() {
         <Text style={{
             color: colors.textBright,
             fontSize: font.size.title,
-            fontWeight: "800",
+            fontWeight: "700",
             flex: 1
           }}>
           {t("about.title")}
@@ -152,7 +152,7 @@ export default function AboutScreen() {
                 <Text style={{
                     color: colors.textBright,
                     fontSize: font.size.body,
-                    fontWeight: "800"
+                    fontWeight: "700"
                   }}>{t(f.titleKey)}</Text>
                 <Text style={{
                     color: colors.textFaint,
@@ -192,7 +192,7 @@ export default function AboutScreen() {
           <Text style={{
               color: colors.textBright,
               fontSize: font.size.body,
-              fontWeight: "800"
+              fontWeight: "700"
             }}>{t("about.howItWorks")}</Text>
           <View style={{ gap: space.sm }}>
             {HOW_IT_WORKS.map((item) => (
@@ -200,7 +200,7 @@ export default function AboutScreen() {
                 <Text style={{
                     color: colors.accent,
                     fontSize: font.size.small,
-                    fontWeight: "800",
+                    fontWeight: "700",
                     marginBottom: 2
                   }}>
                   {t(item.labelKey)}

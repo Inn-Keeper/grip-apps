@@ -91,3 +91,13 @@ export function useDeleteBoardMutation(onDeleted: (id: string) => void, onError:
     onError,
   });
 }
+
+// Turns a board's public link on (returns the token) or off (null); same API as web.
+export function useShareBoardMutation(onError: (error: Error) => void) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, enable }: { id: string; enable: boolean }) => api.setBoardSharing(id, enable),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: boardQueryKeys.boards }),
+    onError,
+  });
+}

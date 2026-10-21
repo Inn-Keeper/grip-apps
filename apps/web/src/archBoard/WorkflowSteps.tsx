@@ -113,7 +113,7 @@ export function WorkflowSteps({
                 border: done || current ? "none" : `1px solid ${colors.borderSoft}`,
                 color: done || current ? colors.onAccent : colors.textFaint,
                 fontSize: font.size.caption,
-                fontWeight: 800,
+                fontWeight: 700,
                 lineHeight: 1,
               }}
             >
@@ -148,7 +148,7 @@ export function WorkflowSteps({
           }}
         >
           <span style={{
-              fontWeight: 800,
+              fontWeight: 700,
               color: round.overrun ? colors.dangerBright : colors.textBright,
               fontVariantNumeric: "tabular-nums"
             }}>
@@ -176,7 +176,7 @@ export function WorkflowSteps({
             borderRadius: 8,
             color: colors.onAccent,
             fontSize: font.size.small,
-            fontWeight: 800,
+            fontWeight: 700,
             cursor: action.disabled ? "default" : "pointer",
             opacity: action.disabled ? 0.6 : 1,
             ["--twinkle-color" as string]: colors.accentBright,

@@ -54,7 +54,7 @@ export function PrepPlanSection({
         }}>
         <Text style={{
             fontSize: font.size.label,
-            fontWeight: "800",
+            fontWeight: "700",
             color: colors.accentBright,
             letterSpacing: 0.5
           }}>
@@ -75,7 +75,7 @@ export function PrepPlanSection({
           }}>
           {t("plan.readiness")}{" "}
           <Text style={{
-              fontWeight: "800",
+              fontWeight: "700",
               color: colors.text
             }}>
             {readiness.overall === null ? "--" : `${readiness.overall}%`}
@@ -110,7 +110,7 @@ export function PrepPlanSection({
             <Text
               style={{
                 fontSize: font.size.label,
-                fontWeight: "800",
+                fontWeight: "700",
                 color: item.accuracy === null ? colors.warningBright : colors.textDim,
               }}
             >

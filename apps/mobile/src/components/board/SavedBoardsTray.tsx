@@ -6,7 +6,7 @@ import type { SavedBoard, Story } from "@grip/core/api";
 import { colors, font, shadow } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
-// Horizontal strip of saved boards, each with Load and Delete.
+// Horizontal strip of saved boards, each with Share, Load and Delete.
 type SavedBoardsTrayProps = {
   boards: SavedBoard[];
   scenarios: Scenario[];
@@ -14,9 +14,12 @@ type SavedBoardsTrayProps = {
   activeId: string | null;
   onLoad: (board: SavedBoard) => void;
   onDelete: (board: SavedBoard) => void;
+  // Null in demo mode: anonymous boards cannot be shared.
+  onShare: ((board: SavedBoard) => void) | null;
+  onUnshare: (board: SavedBoard) => void;
 };
 
-export function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelete }: SavedBoardsTrayProps) {
+export function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelete, onShare, onUnshare }: SavedBoardsTrayProps) {
   return (
     <Animated.View entering={FadeInDown.duration(180)} style={{ gap: 8 }}>
       <View style={{
@@ -93,6 +96,8 @@ export function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, 
                     justifyContent: "flex-end",
                     gap: 8
                   }}>
+                  {board.shareToken && <MiniButton label={t("board.unshare")} color={colors.textDim} onPress={() => onUnshare(board)} />}
+                  {onShare && <MiniButton label={t("board.share")} color={colors.success} onPress={() => onShare(board)} />}
                   <MiniButton label={t("common.load")} color={colors.accent} onPress={() => onLoad(board)} />
                   <MiniButton label={t("common.delete")} color={colors.danger} onPress={() => onDelete(board)} />
                 </View>

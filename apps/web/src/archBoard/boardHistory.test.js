@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "./editorState.js";
+import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "@grip/core/boardHistory";
 
 const snapshot = (nodes = [], edges = []) => ({
   scenarioId: "scenario",

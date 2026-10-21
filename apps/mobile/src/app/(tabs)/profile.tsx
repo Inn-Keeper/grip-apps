@@ -175,7 +175,7 @@ export default function ProfileScreen() {
               <Text style={{
                   color: colors.onAccent,
                   fontSize: font.size.title,
-                  fontWeight: "800"
+                  fontWeight: "700"
                 }}>
                 {(profile?.displayName || profile?.email || "?").slice(0, 1).toUpperCase()}
               </Text>
@@ -187,7 +187,7 @@ export default function ProfileScreen() {
               <Text style={{
                   color: colors.textBright,
                   fontSize: font.size.title,
-                  fontWeight: "800"
+                  fontWeight: "700"
                 }} numberOfLines={1}>
                 {profile?.displayName || t("profile.yourProfile")}
               </Text>
@@ -288,7 +288,7 @@ export default function ProfileScreen() {
             <Text style={{
                 color: colors.textBright,
                 fontSize: font.size.title,
-                fontWeight: "800"
+                fontWeight: "700"
               }}>GitHub</Text>
             <ConnectionBadge connected={githubConnected} />
           </View>
@@ -322,7 +322,7 @@ export default function ProfileScreen() {
             <Text style={{
                 color: githubConnected ? colors.successBright : colors.textBright,
                 fontSize: font.size.body,
-                fontWeight: "800"
+                fontWeight: "700"
               }}>
               {githubConnected ? t("profile.githubConnectedButton") : linkGitHubMutation.isPending ? t("profile.githubOpening") : t("profile.githubConnectButton")}
             </Text>
@@ -340,7 +340,7 @@ export default function ProfileScreen() {
               <Text style={{
                   color: colors.text,
                   fontSize: font.size.body,
-                  fontWeight: "800"
+                  fontWeight: "700"
                 }}>{t("profile.useGithubLabel")}</Text>
               <Text style={{
                   color: colors.textFaint,
@@ -363,7 +363,7 @@ export default function ProfileScreen() {
           <Text style={{
               color: colors.textBright,
               fontSize: font.size.title,
-              fontWeight: "800"
+              fontWeight: "700"
             }}>{t("profile.cvSection")}</Text>
           <Text style={{
               color: colors.textFaint,
@@ -387,7 +387,7 @@ export default function ProfileScreen() {
                 <Text style={{
                     color: colors.textBright,
                     fontSize: font.size.small,
-                    fontWeight: "800"
+                    fontWeight: "700"
                   }}>{t("profile.cvDetected")}</Text>
                 <TouchableOpacity onPress={() => cvTechsMutation.mutate([])} disabled={cvTechsMutation.isPending}>
                   <Text style={{
@@ -476,12 +476,12 @@ export default function ProfileScreen() {
           <Text style={{
               color: colors.textBright,
               fontSize: font.size.title,
-              fontWeight: "800"
+              fontWeight: "700"
             }}>{t("profile.preferences")}</Text>
           <Text style={{
               color: colors.textBright,
               fontSize: font.size.body,
-              fontWeight: "800"
+              fontWeight: "700"
             }}>{t("profile.language")}</Text>
           <View style={{
               flexDirection: "row",
@@ -524,7 +524,7 @@ export default function ProfileScreen() {
             <Text style={{
                 color: colors.textBright,
                 fontSize: font.size.body,
-                fontWeight: "800"
+                fontWeight: "700"
               }}>{t("profile.resetTitle")}</Text>
             <Text style={{
                 color: colors.textFaint,
@@ -547,7 +547,7 @@ export default function ProfileScreen() {
               <Text style={{
                   color: colors.dangerBright,
                   fontSize: font.size.body,
-                  fontWeight: "800"
+                  fontWeight: "700"
                 }}>
                 {resetMutation.isPending ? t("profile.resetting") : t("profile.resetScore")}
               </Text>
@@ -580,7 +580,7 @@ export default function ProfileScreen() {
             <Text style={{
                 color: colors.textBright,
                 fontSize: font.size.body,
-                fontWeight: "800"
+                fontWeight: "700"
               }}>{t("about.profileLinkTitle")}</Text>
             <Text style={{
                 color: colors.textFaint,

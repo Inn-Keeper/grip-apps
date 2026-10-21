@@ -1,7 +1,7 @@
 // The Arch Board scenario list both apps pick from: the 100 built-ins plus the
 // user's own, grouped by category, and the search filter for it.
 
-import { SCENARIOS, SCENARIO_CATEGORIES } from "./arch.js";
+import { FREE_SCENARIO, SCENARIOS, SCENARIO_CATEGORIES } from "./arch.js";
 
 export const CUSTOM_CATEGORY = "My scenarios";
 
@@ -10,16 +10,21 @@ export const CUSTOM_CATEGORY = "My scenarios";
  * @param {C[]} [customScenarios] rows from listCustomScenarios()
  */
 export function buildScenarioCatalog(customScenarios = []) {
+  // The free board leads the list, in a group of its own with no heading.
   const allScenarios = [
+    FREE_SCENARIO,
     ...SCENARIOS,
     ...customScenarios.map((s) => ({ ...s, category: CUSTOM_CATEGORY, custom: true })),
   ];
-  const groups = [...SCENARIO_CATEGORIES, CUSTOM_CATEGORY]
-    .map((category) => ({
-      label: category,
-      options: allScenarios.filter((s) => s.category === category).map((s) => ({ value: s.id, label: s.name })),
-    }))
-    .filter((group) => group.options.length > 0);
+  const groups = [
+    { label: null, options: [{ value: FREE_SCENARIO.id, label: FREE_SCENARIO.name }] },
+    ...[...SCENARIO_CATEGORIES, CUSTOM_CATEGORY]
+      .map((category) => ({
+        label: category,
+        options: allScenarios.filter((s) => s.category === category).map((s) => ({ value: s.id, label: s.name })),
+      }))
+      .filter((group) => group.options.length > 0),
+  ];
   return { allScenarios, groups };
 }
 

@@ -5,7 +5,7 @@ import { normalizeTalkTrack } from "../talkTrack.js";
 import { fail, type Db, type Tables, type TablesInsert } from "./shared";
 
 // Everything the UI maps; user_id stays server-side.
-const BOARD_COLUMNS = "id,title,scenario_id,story_id,nodes,edges,talk_track,talk_grade,share_token,created_at,updated_at";
+const BOARD_COLUMNS = "id,title,scenario_id,story_id,brief,nodes,edges,talk_track,talk_grade,share_token,created_at,updated_at";
 type BoardRow = Omit<Tables<"arch_boards">, "user_id">;
 type BoardSummaryRow = Pick<BoardRow, "id" | "title" | "scenario_id" | "story_id" | "share_token" | "created_at" | "updated_at">;
 
@@ -19,6 +19,7 @@ export function boardsApi(supabase: Db) {
     title: r.title,
     scenarioId: r.scenario_id,
     storyId: r.story_id ?? null,
+    brief: r.brief ?? "",
     nodes: asNodes(r.nodes),
     edges: asEdges(r.edges),
     talkTrack: normalizeTalkTrack(r.talk_track),
@@ -39,6 +40,7 @@ export function boardsApi(supabase: Db) {
       : null,
     // Only when the caller knows about the link, so clients without it (mobile) don't clear it.
     ...(b.storyId !== undefined && { story_id: b.storyId || null }),
+    ...(b.brief !== undefined && { brief: b.brief.trim() || null }),
   }) satisfies TablesInsert<"arch_boards">;
 
   const boardSummaryToUi = (r: BoardSummaryRow): BoardSummary => ({

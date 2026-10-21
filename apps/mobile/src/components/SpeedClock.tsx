@@ -45,7 +45,7 @@ export function SpeedClock({ shownAt }: { shownAt: number }) {
       <BrandIcon name="spark" color={tone} size={12} />
       <Text style={{
           fontSize: font.size.small,
-          fontWeight: "800",
+          fontWeight: "700",
           color: tone,
           fontVariant: ["tabular-nums"]
         }}>

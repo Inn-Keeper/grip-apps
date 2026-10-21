@@ -233,6 +233,7 @@ describe("createApi", () => {
         title: "Payment draft",
         scenarioId: "payment",
         storyId: null,
+        brief: "",
         nodes: [{ id: "n1", type: "client", x: 0, y: 0 }],
         edges: [],
         talkTrack: { sections: emptyTalkTrack(), rating: null },

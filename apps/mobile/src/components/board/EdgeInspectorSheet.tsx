@@ -1,5 +1,5 @@
 import { Modal, Pressable, Text, View } from "react-native";
-import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip/core/arch";
+import { EDGE_MODES, EDGE_PROTOCOLS, nodeLabel } from "@grip/core/arch";
 import type { BoardEdge, BoardNode } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, font, tints } from "@/theme";
@@ -45,7 +45,7 @@ export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose
               fontWeight: "700",
               color: colors.textBright
             }}>
-            {from ? meta(from.type).label : "?"} → {to ? meta(to.type).label : "?"}
+            {from ? nodeLabel(from) : "?"} → {to ? nodeLabel(to) : "?"}
           </Text>
         </View>
 

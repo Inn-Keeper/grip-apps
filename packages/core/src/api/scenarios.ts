@@ -3,22 +3,20 @@ import type { Check } from "../arch.js";
 import type { CustomScenario, SavedScenario } from "../api";
 import { fail, type Db, type Json, type Tables, type TablesInsert } from "./shared";
 
-type ScenarioRow = Pick<Tables<"custom_scenarios">, "id" | "name" | "brief" | "budget" | "checks">;
-const SCENARIO_COLUMNS = "id,name,brief,budget,checks";
+type ScenarioRow = Pick<Tables<"custom_scenarios">, "id" | "name" | "brief" | "checks">;
+const SCENARIO_COLUMNS = "id,name,brief,checks";
 
 export function scenariosApi(supabase: Db) {
   const scenarioToUi = (r: ScenarioRow): SavedScenario => ({
     id: r.id,
     name: r.name,
     brief: r.brief ?? "",
-    budget: r.budget,
     checks: (r.checks ?? []) as Check[],
   });
 
   const scenarioToDb = (s: CustomScenario) => ({
     name: s.name,
     brief: s.brief ?? "",
-    budget: s.budget,
     checks: (s.checks ?? []) as Json,
   }) satisfies TablesInsert<"custom_scenarios">;
 

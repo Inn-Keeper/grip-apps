@@ -1,3 +1,5 @@
+import type { FreeStyle } from "@grip/core/arch";
+
 export type BoardNode = {
   id: string;
   type: string;
@@ -5,6 +7,13 @@ export type BoardNode = {
   y: number;
   partitionKey?: string;
   replicas?: number;
+  label?: string;
+  shape?: "rect" | "diamond" | "ellipse" | "note";
+  w?: number;
+  h?: number;
+  x2?: number;
+  y2?: number;
+  style?: FreeStyle;
 };
 export type BoardEdge = {
   id: string;
@@ -28,7 +37,6 @@ export type AugmentedScenario = {
   id: string;
   name: string;
   brief: string;
-  budget: number;
   scale?: ScenarioScale;
   pushback?: string;
   checks: object[];
@@ -64,6 +72,8 @@ export type SavedBoard = {
   title: string;
   scenarioId: string;
   storyId?: string | null;
+  // A free board's own brief; empty on scenario boards.
+  brief?: string;
   nodes: BoardNode[];
   edges: BoardEdge[];
   talkTrack?: TalkTrackData;

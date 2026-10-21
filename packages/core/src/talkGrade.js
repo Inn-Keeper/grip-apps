@@ -8,6 +8,7 @@
 // that a caller can send facts that flatter its own answer, which is acceptable
 // for personal interview prep and not acceptable if anyone else reads the grade.
 
+import { isFreeType } from "./arch.js";
 import { deriveScale } from "./estimation.js";
 import { TALK_TRACK_SECTIONS } from "./talkTrack.js";
 
@@ -48,14 +49,18 @@ export function buildGradeFacts(scenario, nodes = [], result) {
     scenario_id: scenario.id,
     name: scenario.name,
     brief: scenario.brief,
-    dau: scenario.scale?.dau ?? 0,
-    payload_kb: scenario.scale?.payloadKb ?? 0,
-    retention_days: scenario.scale?.retentionDays ?? 0,
-    peak_qps: derived.peakQps,
-    storage_gb: derived.storageGb,
+    // No scale block (a free board, a custom scenario): no figures at all, so the
+    // grader checks the candidate's own arithmetic instead of comparing to zeros.
+    ...(scenario.scale && {
+      dau: scenario.scale.dau ?? 0,
+      payload_kb: scenario.scale.payloadKb ?? 0,
+      retention_days: scenario.scale.retentionDays ?? 0,
+      peak_qps: derived.peakQps,
+      storage_gb: derived.storageGb,
+    }),
     checks_passed: labelsWhere(true),
     checks_failed: labelsWhere(false),
-    node_types: [...new Set(nodes.map((node) => node.type))].slice(0, MAX_FACT_LIST),
+    node_types: [...new Set(nodes.filter((node) => !isFreeType(node.type)).map((node) => node.type))].slice(0, MAX_FACT_LIST),
     partition_keys: nodes
       .map((node) => node.partitionKey?.trim())
       .filter(Boolean)

@@ -46,7 +46,7 @@ export function BoardProgress({ step, title, sub, action }: Props) {
             >
               <Text style={{
                   fontSize: font.size.caption,
-                  fontWeight: "800",
+                  fontWeight: "700",
                   color: state === "todo" ? colors.textFaint : colors.onAccent
                 }}>
                 {state === "done" ? "✓" : item.step}
@@ -58,7 +58,7 @@ export function BoardProgress({ step, title, sub, action }: Props) {
           <Text style={{
               marginLeft: 4,
               fontSize: font.size.label,
-              fontWeight: "800",
+              fontWeight: "700",
               letterSpacing: 0.6,
               color: colors.accentBright
             }}>

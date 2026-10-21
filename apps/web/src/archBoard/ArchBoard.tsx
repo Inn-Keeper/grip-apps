@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { meta, SCENARIOS, evaluate } from "@grip/core/arch";
+import { SHAPE_SIZE, designOnly, findPlacement, nodeSize, isFreeScenario, meta, nodeLabel, SCENARIOS, evaluate, styleOf, type FreeStyle } from "@grip/core/arch";
 import * as boardEdits from "@grip/core/boardEdits";
 import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
@@ -8,20 +8,25 @@ import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/
 import { colors, font } from "@grip/core/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
-import { NODE_H, NODE_W, WORLD } from "./constants";
+import { NODE_H, NODE_W, TOOLS_INSET, WORLD } from "./constants";
 import { DesignTimer } from "./DesignTimer";
 import { EdgeInspector } from "./EdgeInspector";
+import { BoardTextNote } from "./BoardTextNote";
+import { CanvasTools } from "./CanvasTools";
+import { SHAPE_KEYS, TOOL_KEYS, type Shape, type Tool } from "./boardControls";
+import { StylePanel } from "./StylePanel";
+import { styleShortcut } from "./freeStyle.js";
+import { BoardShape } from "./BoardShape";
+import { BoardFreeArrows } from "./BoardFreeArrows";
+import { DrawLayer } from "./DrawLayer";
 import { EvalResults } from "./EvalResults";
 import { NodeInspector } from "./NodeInspector";
-import { NodePalette } from "./NodePalette";
 import { SavedBoardsPanel } from "./SavedBoardsPanel";
 import { ScenarioPanel } from "./ScenarioPanel";
 import { ScorePanel } from "./ScorePanel";
 import { TimerOffer } from "./TimerOffer";
-import { ScaleBrief } from "./ScaleBrief";
 import { ScenarioForm } from "./ScenarioForm";
 import { TalkTrack } from "./TalkTrack";
-import { findPlacement } from "./boardGeometry.js";
 import { useBoardViewport } from "./useBoardViewport";
 import { useFullscreen } from "./useFullscreen";
 import { useInView } from "./useInView";
@@ -35,7 +40,6 @@ import { BoardEdges } from "./BoardEdges";
 import { BoardNodeCard } from "./BoardNodeCard";
 import { useBoardDocument, type BoardDoc } from "./useBoardDocument";
 import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
-import { appendHandoff } from "./scaleHandoff.js";
 import { primaryActionKind } from "./primaryAction.js";
 import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
@@ -65,6 +69,12 @@ export default function ArchBoard() {
   useEffect(clearBoardHandoff, []);
   const [creatorOpen, setCreatorOpen] = useState(false);
   const [inspectingId, setInspectingId] = useState<string | null>(null);
+  // The armed tool: Text waits for a click, Arrow and Line for a drag.
+  const [tool, setTool] = useState<Tool | null>(null);
+  const [arrowDraft, setArrowDraft] = useState<{ x: number; y: number; x2: number; y2: number } | null>(null);
+  // The selected node: its resize handles and the style panel follow it.
+  // It survives blur so the panel's own buttons work.
+  const [styleTargetId, setStyleTargetId] = useState<string | null>(null);
   const [inspectingEdgeId, setInspectingEdgeId] = useState<string | null>(null);
   const [result, setResult] = useState<ReturnType<typeof evaluate> | null>(null);
   const [savedOpen, setSavedOpen] = useState(false);
@@ -97,19 +107,23 @@ export default function ArchBoard() {
       talkSections: emptyTalkTrack(),
       talkRating: null,
       talkGrade: null,
+      brief: "",
     }),
     () => { setResult(null); cancelConnection(); },
   );
   const { doc, commit, isDirty } = board;
-  const { scenarioId, storyId, nodes, edges, talkSections, talkRating, talkGrade } = doc;
+  const { scenarioId, storyId, nodes, edges, talkSections, talkRating, talkGrade, brief } = doc;
+  // A free board has no checklist: no steps, no Evaluate, no design score.
+  const free = isFreeScenario(scenarioId);
 
+  const boardPoint = (e: React.PointerEvent) => (canvasRef.current ? toBoard(e.clientX, e.clientY) : null);
   const nodesRef = useRef<BoardNode[]>([]);
   nodesRef.current = nodes;
   const { view, setView, toBoard, zoomStep, resetZoom, fit, consumePan } = useBoardViewport(canvasRef, nodesRef);
   const pointer = useCanvasPointer({
     nodes,
     setNodes: board.setNodes,
-    canvasPoint: (e) => (canvasRef.current ? toBoard(e.clientX, e.clientY) : null),
+    canvasPoint: (e) => boardPoint(e),
     addEdge: (from, to) => addEdge(from, to),
     onMoved: board.recordNodes,
   });
@@ -126,9 +140,20 @@ export default function ArchBoard() {
   const { allScenarios, scenarioOptions, error: scenariosError, isFetching: scenariosFetching } = useScenarioCatalog();
   const scenario: AugmentedScenario = allScenarios.find((s) => s.id === scenarioId) ?? (SCENARIOS[0] as AugmentedScenario);
   const nodeById = Object.fromEntries(nodes.map((n) => [n.id, n]));
-  const activeWorkflowStep = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
+  // Free boxes and text are notes, so they don't move the journey forward.
+  const design = designOnly(nodes, edges);
+  const activeWorkflowStep = workflowStep(design.nodes.length, design.edges.length, result !== null, talkGrade !== null);
 
-  useBoardShortcuts(board, isDirty, cancelConnection);
+  const toggleTool = (name: Tool) => setTool((current) => (current === name ? null : name));
+  useBoardShortcuts(
+    board,
+    isDirty,
+    () => { cancelConnection(); setTool(null); setStyleTargetId(null); },
+    (key) => {
+      if (SHAPE_KEYS[key]) addShape(SHAPE_KEYS[key]);
+      else if (TOOL_KEYS[key]) toggleTool(TOOL_KEYS[key]);
+    },
+  );
 
   // Fetched up front: Next Up offers to continue the latest saved board (e.g. the demo sample).
   const { data: savedBoards = [], error: boardsError, isLoading: boardsLoading, refetch: retryBoards } = useSavedBoardsQuery();
@@ -181,6 +206,7 @@ export default function ArchBoard() {
         talkSections: { ...emptyTalkTrack(), ...(saved.talkTrack?.sections ?? {}) },
         talkRating: saved.talkTrack?.rating ?? null,
         talkGrade: saved.talkGrade ?? null,
+        brief: saved.brief ?? "",
       },
       { id: saved.id ?? null, title: saved.title },
     );
@@ -203,26 +229,59 @@ export default function ArchBoard() {
     pendingBoardRef.current = null;
     loadHandedBoardRef.current(id);
   }, [scenariosFetching]);
-  const liveCost = nodes.reduce((s, n) => s + meta(n.type).cost, 0);
-  const liveMaint = nodes.reduce((s, n) => s + meta(n.type).maint, 0);
   const talkAnswered = scoreTalkTrack({ sections: talkSections, rating: talkRating }).answered.length;
 
   const switchScenario = (id: string) => {
     if (!mayDiscard()) return;
     setView({ scale: 1, x: 0, y: 0 });
     startDocument(
-      { scenarioId: id, storyId: null, nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null },
+      { scenarioId: id, storyId: null, nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null, brief: "" },
       { id: null, title: null },
     );
   };
 
   // New nodes land in the visible part of the board, wherever the user has panned or zoomed.
-  const addNode = (type: string) => {
-    const origin = { x: Math.max(0, -view.x / view.scale), y: Math.max(0, -view.y / view.scale) };
-    const visible = { width: (canvasRef.current?.clientWidth ?? 480) / view.scale, height: (canvasRef.current?.clientHeight ?? 560) / view.scale };
+  const placeNode = (type: string, size: { width: number; height: number }, extra?: Partial<BoardNode>) => {
+    // Below the floating tools, so a new node never lands under them.
+    const origin = { x: Math.max(0, -view.x / view.scale), y: Math.max(0, (TOOLS_INSET - view.y) / view.scale) };
+    const visible = { width: (canvasRef.current?.clientWidth ?? 480) / view.scale, height: ((canvasRef.current?.clientHeight ?? 560) - TOOLS_INSET) / view.scale };
     const shifted = nodes.map((n) => ({ ...n, x: n.x - origin.x, y: n.y - origin.y }));
-    const point = findPlacement(shifted, visible, { width: NODE_W, height: NODE_H });
-    edit(boardEdits.addNode({ nodes, edges }, type, { x: point.x + origin.x, y: point.y + origin.y }));
+    const point = findPlacement(shifted, visible, size, (n: BoardNode) => nodeSize(n, { width: NODE_W, height: NODE_H }));
+    const next = boardEdits.addNode({ nodes, edges }, type, { x: point.x + origin.x, y: point.y + origin.y }, extra);
+    edit(next);
+    return next.nodes[next.nodes.length - 1]!.id;
+  };
+  const addNode = (type: string) => { placeNode(type, { width: NODE_W, height: NODE_H }); };
+  // A new shape is selected, so its resize handles and the style panel show at once.
+  const addShape = (shape: Shape) => {
+    const { w, h } = SHAPE_SIZE[shape];
+    setStyleTargetId(placeNode("box", { width: w, height: h }, { shape, w, h }));
+  };
+  // A line is an arrow without heads; the draw tools are one-shot, like Text.
+  const addArrow = (points: { x: number; y: number; x2: number; y2: number }) => {
+    const next = boardEdits.addNode({ nodes, edges }, "arrow", { x: points.x, y: points.y }, { x2: points.x2, y2: points.y2, ...(tool === "line" ? { style: { heads: "none" as const } } : {}) });
+    edit(next);
+    setStyleTargetId(next.nodes[next.nodes.length - 1]!.id);
+    setTool(null);
+  };
+
+  const styleTarget = nodes.find((n) => n.id === styleTargetId) ?? null;
+  const setStyle = (patch: FreeStyle) => styleTarget && patchNode(styleTarget.id, { style: { ...styleTarget.style, ...patch } });
+  // Style shortcuts work while the target is focused or being typed in, so they run in the capture phase.
+  const onStyleShortcut = (event: React.KeyboardEvent) => {
+    if (!styleTarget || styleTarget.type === "arrow") return;
+    const patch = styleShortcut(event, styleOf(styleTarget));
+    if (!patch) return;
+    event.preventDefault();
+    event.stopPropagation();
+    if (Object.keys(patch).length) setStyle(patch);
+  };
+
+  // Text lands where the user clicked, with the caret roughly on the click; the tool is one-shot.
+  const addText = (clientX: number, clientY: number) => {
+    const point = toBoard(clientX, clientY);
+    edit(boardEdits.addNode({ nodes, edges }, "text", { x: Math.max(0, point.x - 6), y: Math.max(0, point.y - 14) }));
+    setTool(null);
   };
 
   // Structural edits follow core's rules; a commit also clears the score (applySnapshot).
@@ -234,6 +293,7 @@ export default function ArchBoard() {
     edit(boardEdits.removeNode({ nodes, edges }, id));
     if (connectFrom === id || connectDrag?.from === id) cancelConnection();
     if (inspectingId === id) setInspectingId(null);
+    if (styleTargetId === id) setStyleTargetId(null);
   };
   const patchNode = (id: string, patch: Partial<BoardNode>) => edit(boardEdits.patchNode({ nodes, edges }, id, patch));
   const addEdge = (from: string, to: string) => edit(boardEdits.addEdge({ nodes, edges }, from, to));
@@ -255,6 +315,7 @@ export default function ArchBoard() {
       edges,
       talkTrack: { sections: talkSections, rating: talkRating },
       talkGrade,
+      brief,
     });
   };
   const evaluateDesign = () => setResult(evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges));
@@ -265,7 +326,8 @@ export default function ArchBoard() {
     const checks = result ?? evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges);
     gradeMutation.mutate({
       boardId: activeBoardId,
-      facts: buildGradeFacts(scenario, nodes, checks),
+      // A free board is graded against the brief the user wrote.
+      facts: buildGradeFacts(free ? { ...scenario, brief: brief.trim() } : scenario, nodes, checks),
       sections: talkSections,
       selfRating: talkRating,
     });
@@ -273,8 +335,9 @@ export default function ArchBoard() {
   // Counts written sections, not "covered" ones: the grader's floor is any text at all.
   const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
   const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
-  const blockedKey = gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
-  const nodeName = (id: string | null) => meta(nodeById[id ?? ""]?.type ?? "client").label;
+  // The grader needs a brief; on a free board that is the user's own.
+  const blockedKey = free && !brief.trim() ? "board.gradeNeedsBrief" : gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
+  const nodeName = (id: string | null) => { const node = nodeById[id ?? ""]; return node ? nodeLabel(node) : meta("client").label; };
 
   // On an empty, unsaved canvas, the one main action is picking up where you left off.
   const latestBoard = nodes.length === 0 && !activeBoardId && !isDirty ? savedBoards[0] : undefined;
@@ -337,41 +400,30 @@ export default function ArchBoard() {
     ["--arch-page" as string]: colors.bg,
     ["--arch-text" as string]: colors.text,
     ["--arch-accent" as string]: colors.accentBright,
+    ["--arch-danger" as string]: colors.dangerBright,
   } as React.CSSProperties;
 
   return (
     <WorkspaceLayout
       mainLabel={t("board.title")}
+      fullWidth
       lockedHint={creatorOpen ? t("board.lockedHint") : null}
       left={
         <>
           <ScenarioPanel
             scenario={scenario}
-            scenarioCount={allScenarios.length}
+            // The free board is not a scenario, so it stays out of the count.
+            scenarioCount={allScenarios.length - 1}
             scenarioOptions={scenarioOptions}
             onSwitch={switchScenario}
             board={{ id: activeBoardId, storyId, onStoryChange: (id) => commit({ storyId: id }) }}
+            freeBrief={free ? { value: brief, onChange: (value) => commit({ brief: value, talkGrade: null }) } : null}
             onNewScenario={() => setCreatorOpen(true)}
             onDeleteScenario={() => window.confirm(t("board.deleteScenarioConfirm", { name: scenario.name })) && deleteScenarioMutation.mutate(scenario.id)}
             errors={[
               deleteScenarioMutation.error ? t("board.deleteFailed", { message: deleteScenarioMutation.error.message }) : null,
               scenariosError ? t("board.scenariosError") : null,
             ]}
-          />
-
-          <ScaleBrief
-            key={scenario.id}
-            scenario={scenario}
-            onUseInTalkTrack={(text) => {
-              // Same commit shape as typing in the section: the grade belongs to
-              // the text that earned it, so it clears.
-              commit({
-                talkSections: { ...talkSections, scale: appendHandoff(talkSections.scale ?? "", text) },
-                talkGrade: null,
-              });
-              setTalkOpen(true);
-              setFocusSection("scale");
-            }}
           />
 
           <SavedBoardsPanel
@@ -391,8 +443,8 @@ export default function ArchBoard() {
       }
       right={
         <>
-          {/* Right rail: the score first, then the round and the budget; inspectors sit beside the canvas (rule 13). */}
-          <ScorePanel result={result} cost={liveCost} budget={scenario.budget} maint={liveMaint} />
+          {/* Right rail: the score first, then the round; inspectors sit beside the canvas (rule 13). */}
+          {!free && <ScorePanel result={result} />}
 
           {round.started ? (
             <div ref={timerRef}>
@@ -408,7 +460,7 @@ export default function ArchBoard() {
               Inset on every side by the halo's own width. The rail scrolls its
               overflow and this is usually its last child, so without the room
               the ring is cut off at the sides and along the bottom edge. */}
-          {actionInRightRail && (
+          {actionInRightRail && !free && (
             <div ref={ctaRef} style={{ padding: 8 }}>
               <RailActionButton action={primaryAction} />
             </div>
@@ -451,6 +503,7 @@ export default function ArchBoard() {
               }}
               focusSection={focusSection}
               onFocused={clearFocusSection}
+              free={free}
             />
             </div>
           )}
@@ -484,6 +537,8 @@ export default function ArchBoard() {
           <>
             {/* Above both branches: the journey must stay on screen even when
                 the card is offering to resume an earlier board. */}
+            {!free && (
+            <>
             <WorkflowSteps
               activeStep={activeWorkflowStep}
               action={nextUpVisible || ctaVisible ? null : primaryAction}
@@ -502,6 +557,8 @@ export default function ArchBoard() {
                 onEvaluate={evaluateDesign}
               />
             </div>
+            </>
+            )}
 
             <BoardToolbar
               status={{ text: statusText, dirty: isDirty }}
@@ -531,8 +588,7 @@ export default function ArchBoard() {
                   : `${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</ErrorText>
             )}
 
-            <div className={styles.editor} ref={editorRef} data-fullscreen={isFullscreen || undefined}>
-              <NodePalette onAddNode={addNode} />
+            <div className={styles.editor} ref={editorRef} data-fullscreen={isFullscreen || undefined} onKeyDownCapture={onStyleShortcut}>
               <BoardSurface
                 canvasRef={canvasRef}
                 view={view}
@@ -542,8 +598,24 @@ export default function ArchBoard() {
                 onPointerUp={pointer.finishConnectionIfActive}
                 onPointerCancel={pointer.cancelPointer}
                 // A click that ends a pan is not a click on the board.
-                onCanvasClick={(onSurface) => { if (!consumePan() && onSurface) cancelConnection(); }}
+                onCanvasClick={(onSurface, e) => {
+                  if (consumePan() || !onSurface) return;
+                  setStyleTargetId(null);
+                  if (tool === "text") addText(e.clientX, e.clientY);
+                  else cancelConnection();
+                }}
+                // Double clicking bare board starts a text even with the tool off.
+                onCanvasDoubleClick={(onSurface, e) => { if (onSurface) addText(e.clientX, e.clientY); }}
+                textTool={tool === "text"}
                 controls={
+                  <>
+                  {(tool === "arrow" || tool === "line") && (
+                    <DrawLayer toBoard={boardPoint} onDraft={(p) => setArrowDraft(p)} onDone={addArrow} />
+                  )}
+                  <div className={styles.canvasTools}>
+                    <CanvasTools onAddNode={addNode} onAddShape={addShape} tool={tool} onTool={toggleTool} />
+                    {styleTarget && <StylePanel node={styleTarget} onChange={setStyle} onDelete={() => removeNode(styleTarget.id)} />}
+                  </div>
                   <ViewportControls
                     scale={view.scale}
                     onZoomIn={() => zoomStep(1)}
@@ -553,6 +625,7 @@ export default function ArchBoard() {
                     isFullscreen={isFullscreen}
                     onToggleFullscreen={canFullscreen ? toggleFullscreen : null}
                   />
+                  </>
                 }
               >
                 <BoardEdges
@@ -563,7 +636,43 @@ export default function ArchBoard() {
                   onToggle={(id) => setInspectingEdgeId((current) => (current === id ? null : id))}
                   size={WORLD}
                 />
-                {nodes.map((n) => (
+                <BoardFreeArrows
+                  arrows={nodes.filter((n) => n.type === "arrow")}
+                  selectedId={styleTargetId}
+                  draft={arrowDraft && { ...arrowDraft, heads: tool === "line" ? "none" : "end" }}
+                  size={WORLD}
+                  toBoard={boardPoint}
+                  onSelect={setStyleTargetId}
+                  onMove={(id, points) => patchNode(id, points)}
+                  onRemove={removeNode}
+                />
+                {nodes.filter((n) => n.type !== "arrow").map((n) => n.type === "text" ? (
+                  <BoardTextNote
+                    key={n.id}
+                    node={n}
+                    drag={{ down: (e) => pointer.onNodePointerDown(e, n), move: pointer.onNodePointerMove, up: pointer.onNodePointerUp }}
+                    onNudge={(dx, dy) => patchNode(n.id, { x: Math.max(0, n.x + dx), y: Math.max(0, n.y + dy) })}
+                    onRemove={() => removeNode(n.id)}
+                    onLabel={(label) => patchNode(n.id, { label })}
+                    onSelect={() => setStyleTargetId(n.id)}
+                  />
+                ) : n.type === "box" ? (
+                  <BoardShape
+                    key={n.id}
+                    node={n}
+                    selected={styleTargetId === n.id}
+                    isSource={connectFrom === n.id}
+                    drag={{ down: (e) => pointer.onNodePointerDown(e, n), move: pointer.onNodePointerMove, up: pointer.onNodePointerUp }}
+                    connect={{ start: (e) => pointer.startConnection(e, n), move: pointer.moveConnectionIfActive, finish: pointer.finishConnectionIfActive }}
+                    toBoard={boardPoint}
+                    onActivate={() => pointer.onNodeClick(n)}
+                    onNudge={(dx, dy) => patchNode(n.id, { x: Math.max(0, n.x + dx), y: Math.max(0, n.y + dy) })}
+                    onRemove={() => removeNode(n.id)}
+                    onLabel={(label) => patchNode(n.id, { label })}
+                    onResize={(r) => patchNode(n.id, r)}
+                    onSelect={() => setStyleTargetId(n.id)}
+                  />
+                ) : (
                   <BoardNodeCard
                     key={n.id}
                     node={n}
@@ -575,12 +684,16 @@ export default function ArchBoard() {
                     onNudge={(dx, dy) => patchNode(n.id, { x: Math.max(0, n.x + dx), y: Math.max(0, n.y + dy) })}
                     onRemove={() => removeNode(n.id)}
                     onToggleInspect={() => setInspectingId((current) => (current === n.id ? null : n.id))}
+                    selected={styleTargetId === n.id}
+                    toBoard={boardPoint}
+                    onResize={(r) => patchNode(n.id, r)}
+                    onSelect={() => setStyleTargetId(n.id)}
                   />
                 ))}
               </BoardSurface>
             </div>
 
-            {result && <EvalResults result={result} scenario={scenario} pushback={buildPushback(scenario, nodes)} showScore={false} />}
+            {result && !free && <EvalResults result={result} pushback={buildPushback(scenario, nodes)} showScore={false} />}
           </>
         )}
       </div>

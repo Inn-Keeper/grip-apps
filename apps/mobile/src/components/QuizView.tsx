@@ -215,7 +215,7 @@ function XpFloat({ xp }: { xp: number }) {
     <Animated.View pointerEvents="none" style={[{ position: "absolute", right: -4, top: -14 }, style]}>
       <Text style={{
           fontSize: font.size.label,
-          fontWeight: "800",
+          fontWeight: "700",
           color: colors.successBright
         }}>+{xp}</Text>
     </Animated.View>

@@ -1,4 +1,4 @@
-import { EDGE_MODES, EDGE_PROTOCOLS, meta } from "@grip/core/arch";
+import { EDGE_MODES, EDGE_PROTOCOLS, nodeLabel } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, shadow, font } from "@grip/core/tokens";
 import type { BoardEdge, BoardNode } from "./types";
@@ -60,7 +60,7 @@ export function EdgeInspector({
             fontWeight: 700,
             color: colors.textBright
           }}>
-          {from ? meta(from.type).label : "?"} → {to ? meta(to.type).label : "?"}
+          {from ? nodeLabel(from) : "?"} → {to ? nodeLabel(to) : "?"}
         </span>
       </div>
 

@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Alert, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Share, Text, TextInput, TouchableOpacity, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { setTabBarHidden } from "@/lib/uiStore";
-import { SCENARIOS, evaluate, meta } from "@grip/core/arch";
+import { SCENARIOS, SHAPE_SIZE, designOnly, findPlacement, nodeSize, evaluate, isFreeScenario, type FreeStyle } from "@grip/core/arch";
 import { buildPushback } from "@grip/core/pushback";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import * as boardEdits from "@grip/core/boardEdits";
@@ -16,19 +16,24 @@ import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult } from "@grip/core/arch";
 import type { SavedBoard } from "@grip/core/api";
 import { colors, font, layout } from "@/theme";
+import { ROUND_MINUTES } from "@grip/core/designTimer";
 import { Screen, ScreenHeader } from "@/components/ui";
 import { BrandIcon } from "@/components/BrandIcon";
+import { useBoardHistory } from "@/hooks/useBoardHistory";
+import { useIsDemo } from "@/lib/useIsDemo";
 import { BoardCanvas, type BoardCanvasHandle } from "@/components/board/BoardCanvas";
+import { NODE_H, NODE_W } from "@/components/board/NodeView";
 import { DesignTimerBar, useDesignTimer } from "@/components/board/DesignTimerBar";
 import { ResultSheet } from "@/components/board/ResultSheet";
 import { EdgeInspectorSheet } from "@/components/board/EdgeInspectorSheet";
 import { NodeInspectorSheet } from "@/components/board/NodeInspectorSheet";
-import { ScaleSheet } from "@/components/board/ScaleSheet";
 import { TalkTrackSheet } from "@/components/board/TalkTrackSheet";
 import { ScenarioSheet } from "@/components/board/ScenarioSheet";
 import { StorySheet } from "@/components/board/StorySheet";
 import { BoardProgress } from "@/components/board/BoardProgress";
-import { NodePalette } from "@/components/board/NodePalette";
+import { BoardTools, type Shape, type Tool } from "@/components/board/BoardTools";
+import { ComponentsSheet } from "@/components/board/ComponentsSheet";
+import { StyleBar } from "@/components/board/StyleBar";
 import { BoardToolbar, type Chrome } from "@/components/board/BoardToolbar";
 import { SavedBoardsTray } from "@/components/board/SavedBoardsTray";
 import { ZenOverlay } from "@/components/board/ZenOverlay";
@@ -40,8 +45,12 @@ import {
   useGradingStatusQuery,
   useSaveBoardMutation,
   useSavedBoardsQuery,
+  useShareBoardMutation,
   useScenarioCatalog,
 } from "@/queries/board";
+
+// Board share links open on web; empty env means the production site.
+const WEB_URL = process.env.EXPO_PUBLIC_WEB_URL || "https://grip-platform-web.vercel.app";
 
 export default function BoardScreen() {
   const locale = useLocale();
@@ -51,6 +60,12 @@ export default function BoardScreen() {
   // The story this board is designed for (one board per story), as on web.
   const [storyId, setStoryId] = useState<string | null>(null);
   const [storyOpen, setStoryOpen] = useState(false);
+  // A free board's own brief: what the AI grader reads the talk track against.
+  const [brief, setBrief] = useState("");
+  // The armed tool (Text waits for a tap, Arrow and Line for a drag) and the selected node.
+  const [tool, setTool] = useState<Tool | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [componentsOpen, setComponentsOpen] = useState(false);
   const canvasRef = useRef<BoardCanvasHandle>(null);
   // Bumped when a different board or scenario is shown, so the canvas re-frames (saving doesn't bump it).
   const [viewKey, setViewKey] = useState(0);
@@ -63,7 +78,6 @@ export default function BoardScreen() {
   const [inspectingEdgeId, setInspectingEdgeId] = useState<string | null>(null);
   const [savedOpen, setSavedOpen] = useState(false);
   const [talkOpen, setTalkOpen] = useState(false);
-  const [scaleOpen, setScaleOpen] = useState(false);
   const [inspectingId, setInspectingId] = useState<string | null>(null);
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
@@ -103,10 +117,12 @@ export default function BoardScreen() {
     },
     (error) => Alert.alert(t("common.delete"), error.message)
   );
-  const liveCost = nodes.reduce((sum, node) => sum + meta(node.type).cost, 0);
-  const liveMaint = nodes.reduce((sum, node) => sum + meta(node.type).maint, 0);
   const talkAnswered = scoreTalkTrack({ sections: talkSections, rating: talkRating }).answered.length;
-  const step = workflowStep(nodes.length, edges.length, result !== null, talkGrade !== null);
+  // Free boxes and text are notes, so they don't move the journey forward.
+  // A free board has no checklist: no steps and no Evaluate.
+  const free = isFreeScenario(scenario.id);
+  const design = designOnly(nodes, edges);
+  const step = workflowStep(design.nodes.length, design.edges.length, result !== null, talkGrade !== null);
 
   const gradeMutation = useGradeTalkTrackMutation((graded) => setTalkGrade(graded.score));
   const { data: gradingStatus } = useGradingStatusQuery(talkOpen);
@@ -115,7 +131,7 @@ export default function BoardScreen() {
     if (!activeBoardId) return;
     gradeMutation.mutate({
       boardId: activeBoardId,
-      facts: buildGradeFacts(scenario, nodes, result ?? evaluate(scenario, nodes, edges)),
+      facts: buildGradeFacts(free ? { ...scenario, brief: brief.trim() } : scenario, nodes, result ?? evaluate(scenario, nodes, edges)),
       sections: talkSections,
       selfRating: talkRating,
     });
@@ -123,7 +139,7 @@ export default function BoardScreen() {
   // Written, not "covered": the grader's floor is any text at all.
   const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
   const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
-  const blockedKey = gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
+  const blockedKey = free && !brief.trim() ? "board.gradeNeedsBrief" : gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
   const talkDetail = gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId);
   // Null for a board loaded from storage: the score persists, the breakdown does not.
   const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
@@ -145,6 +161,7 @@ export default function BoardScreen() {
       edges,
       talkTrack: { sections: talkSections, rating: talkRating },
       talkGrade,
+      brief,
     });
 
   const clearBoard = () => {
@@ -156,10 +173,12 @@ export default function BoardScreen() {
     setResult(null);
     setActiveBoardId(null);
     setActiveBoardTitle(null);
+    setSelectedId(null);
   };
 
   const switchScenario = (id: string) => {
     setScenarioId(id);
+    setBrief("");
     setStoryId(null);
     clearBoard();
     setViewKey((key) => key + 1);
@@ -173,11 +192,54 @@ export default function BoardScreen() {
     setResult(null);
   };
 
-  const addNode = (type: string) => {
-    const index = nodes.length;
-    const origin = canvasRef.current?.visibleOrigin() ?? { x: 0, y: 0 };
-    edit(boardEdits.addNode({ nodes, edges }, type, { x: origin.x + 20 + (index % 2) * 150, y: origin.y + 20 + Math.floor(index / 2) * 80 }));
+  const history = useBoardHistory({ nodes, edges }, viewKey, (doc) => {
+    setNodes(doc.nodes);
+    setEdges(doc.edges);
+    setResult(null);
+    setSelectedId(null);
+  });
+
+  // New nodes take the first free spot in view, clear of every node at its real size (core, shared with web).
+  const placeFor = (size: { width: number; height: number }) => {
+    const area = canvasRef.current?.visibleArea() ?? { x: 0, y: 0, width: 400, height: 600 };
+    const shifted = nodes.map((node) => ({ ...node, x: node.x - area.x, y: node.y - area.y }));
+    const point = findPlacement(shifted, area, size, (node: BoardNode) => nodeSize(node, { width: NODE_W, height: NODE_H }));
+    return { x: point.x + area.x, y: point.y + area.y };
   };
+
+  const addNode = (type: string) => {
+    const next = boardEdits.addNode({ nodes, edges }, type, placeFor({ width: NODE_W, height: NODE_H }));
+    edit(next);
+    // Free text opens straight into its editor; a box may stay empty, as on web.
+    if (type === "text") setInspectingId(next.nodes[next.nodes.length - 1].id);
+  };
+
+  // A shape lands at its starting size where the user is looking, selected so it can be styled at once.
+  const addShape = (shape: Shape) => {
+    const { w, h } = SHAPE_SIZE[shape];
+    const next = boardEdits.addNode({ nodes, edges }, "box", placeFor({ width: w, height: h }), { shape, w, h });
+    edit(next);
+    setSelectedId(next.nodes[next.nodes.length - 1].id);
+  };
+  // The Text tool places a text where the board was tapped and opens its editor; tools are one-shot, as on web.
+  const placeText = (x: number, y: number) => {
+    const next = boardEdits.addNode({ nodes, edges }, "text", { x: Math.max(0, x - 6), y: Math.max(0, y - 14) });
+    edit(next);
+    setInspectingId(next.nodes[next.nodes.length - 1].id);
+    setTool(null);
+  };
+  // A line is an arrow without heads.
+  const drawArrow = (points: { x: number; y: number; x2: number; y2: number }) => {
+    const next = boardEdits.addNode({ nodes, edges }, "arrow", { x: points.x, y: points.y }, { x2: points.x2, y2: points.y2, ...(tool === "line" ? { style: { heads: "none" as const } } : {}) });
+    edit(next);
+    setSelectedId(next.nodes[next.nodes.length - 1].id);
+    setTool(null);
+  };
+  // Live updates while a finger drags: free arrows and sizes never change the grade.
+  const patchLive = (id: string, patch: Partial<BoardNode>) =>
+    setNodes((current) => current.map((node) => (node.id === id ? { ...node, ...patch } : node)));
+  const selected = nodes.find((node) => node.id === selectedId) ?? null;
+  const setStyle = (patch: FreeStyle) => selected && patchNode(selected.id, { style: { ...selected.style, ...patch } });
 
   const moveNode = (id: string, x: number, y: number) =>
     setNodes((current) => current.map((node) => (node.id === id ? { ...node, x, y } : node)));
@@ -185,9 +247,19 @@ export default function BoardScreen() {
   const removeNode = (id: string) => {
     edit(boardEdits.removeNode({ nodes, edges }, id));
     if (inspectingId === id) setInspectingId(null);
+    if (selectedId === id) setSelectedId(null);
   };
 
   const patchNode = (id: string, patch: Partial<BoardNode>) => edit(boardEdits.patchNode({ nodes, edges }, id, patch));
+
+  const isDemo = useIsDemo();
+  const shareMutation = useShareBoardMutation((error) => Alert.alert(t("board.share"), error.message));
+  // Turns the link on if needed, then the iOS share sheet; the link opens web's read-only page.
+  const shareBoard = async (board: SavedBoard) => {
+    if (!board.id) return;
+    const token = board.shareToken ?? await shareMutation.mutateAsync({ id: board.id, enable: true }).catch(() => null);
+    if (token) await Share.share({ message: `${WEB_URL}/share/${token}` });
+  };
 
   const loadBoard = (board: SavedBoard) => {
     if (!allScenarios.some((item) => item.id === board.scenarioId)) {
@@ -196,6 +268,7 @@ export default function BoardScreen() {
     }
     setScenarioId(board.scenarioId);
     setStoryId(board.storyId ?? null);
+    setBrief(board.brief ?? "");
     setViewKey((key) => key + 1);
     setNodes(board.nodes);
     setEdges(board.edges);
@@ -220,7 +293,8 @@ export default function BoardScreen() {
 
   const currentStory = stories.find((story) => story.id === storyId);
   // The board's own link counts even if the story was since pointed at another scenario.
-  const storyCandidates = stories.filter((story) => story.scenarioId === scenario.id || story.id === storyId);
+  // A free board has no scenario to match, so any story can be its subject.
+  const storyCandidates = free ? stories : stories.filter((story) => story.scenarioId === scenario.id || story.id === storyId);
   const takenStories = new Set(savedBoards.filter((board) => board.id !== activeBoardId && board.storyId).map((board) => board.storyId));
 
   // A story's "New board" or "Open" arrives as route params. It waits for the saved boards
@@ -321,6 +395,30 @@ export default function BoardScreen() {
                 <BrandIcon name="arrowDown" color={colors.textFaint} size={12} />
               </TouchableOpacity>
             )}
+            {free && (
+              <TextInput
+                value={brief}
+                onChangeText={setBrief}
+                placeholder={t("board.freeBriefPlaceholder")}
+                placeholderTextColor={colors.textFaint}
+                accessibilityLabel={t("board.freeBriefLabel")}
+                accessibilityHint={t("board.freeBriefHint")}
+                multiline
+                maxLength={2000}
+                style={{
+                  marginTop: 8,
+                  minHeight: 44,
+                  paddingHorizontal: 12,
+                  paddingVertical: 10,
+                  borderRadius: 10,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: colors.bgDeep,
+                  color: colors.text,
+                  fontSize: font.size.body
+                }}
+              />
+            )}
           </ScreenHeader>
         </Animated.View>
       )}
@@ -334,7 +432,7 @@ export default function BoardScreen() {
           paddingBottom: chrome === "zen" ? insets.bottom + 4 : insets.bottom + layout.tabBarClearance,
         }}
       >
-      {chrome === "full" && (
+      {chrome === "full" && !free && (
         <BoardProgress
           step={step}
           title={stepCopy.title}
@@ -343,28 +441,41 @@ export default function BoardScreen() {
         />
       )}
 
-      {chrome !== "zen" && <DesignTimerBar timer={timer} />}
+      {/* As on web: the timer shows once a round starts; until then an offer, on the first step only. */}
+      {chrome !== "zen" && (timer.started ? <DesignTimerBar timer={timer} /> : step === 1 && (
+        <TouchableOpacity accessibilityHint={t("timer.offerHint", { minutes: ROUND_MINUTES })} onPress={timer.toggle} accessibilityRole="link" style={{
+            alignSelf: "flex-start",
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            paddingVertical: 6
+          }}>
+          <BrandIcon name="clock" color={colors.accentBright} size={16} />
+          <Text style={{
+              fontSize: font.size.small,
+              fontWeight: "600",
+              color: colors.accentBright,
+              textDecorationLine: "underline"
+            }}>{t("timer.offer")}</Text>
+        </TouchableOpacity>
+      ))}
 
       {chrome !== "zen" && (
         <BoardToolbar
           chrome={chrome}
           onChrome={setChrome}
           scenarioName={scenario.name}
-          cost={liveCost}
-          budget={scenario.budget}
-          maint={liveMaint}
           talkAnswered={talkAnswered}
-          scaleOpen={scaleOpen}
           talkOpen={talkOpen}
           savedOpen={savedOpen}
           saving={saveBoardMutation.isPending}
-          canEvaluate={nodes.length > 0}
-          onOpenScale={() => setScaleOpen(true)}
+          canEvaluate={nodes.length > 0 && !free}
           onOpenTalk={() => setTalkOpen(true)}
           onToggleSaved={() => setSavedOpen((value) => !value)}
           onSave={saveBoard}
           onClear={clearBoard}
           onEvaluate={evaluateBoard}
+          history={history}
         />
       )}
 
@@ -378,13 +489,14 @@ export default function BoardScreen() {
       )}
 
       {savedOpen && chrome !== "zen" && (
-        <SavedBoardsTray boards={savedBoards} scenarios={allScenarios} stories={stories} activeId={activeBoardId} onLoad={loadBoard} onDelete={confirmDeleteBoard} />
+        <SavedBoardsTray boards={savedBoards} scenarios={allScenarios} stories={stories} activeId={activeBoardId} onLoad={loadBoard} onDelete={confirmDeleteBoard} onShare={isDemo ? null : shareBoard} onUnshare={(board) => board.id && shareMutation.mutate({ id: board.id, enable: false })} />
       )}
 
       <View style={{ flex: 1 }}>
         <BoardCanvas
           ref={canvasRef}
           fitKey={viewKey}
+          onZen={chrome === "zen" ? undefined : () => setChrome("zen")}
           nodes={nodes}
           edges={edges}
           onMoveNode={moveNode}
@@ -392,14 +504,31 @@ export default function BoardScreen() {
           onAddEdge={addEdge}
           onTapEdge={setInspectingEdgeId}
           onInspectNode={(id) => setInspectingId(id)}
+          tool={tool}
+          selectedId={selectedId}
+          onSelect={setSelectedId}
+          onPlaceText={placeText}
+          onDrawArrow={drawArrow}
+          onMoveArrow={patchLive}
+          onResizeNode={patchLive}
         />
 
+        {/* Zen only: in the other modes the header already names the scenario, and this would cover nodes. */}
+        {chrome === "zen" && (
           <ZenOverlay
-            label={`${scenario.name} · ${liveCost}/${scenario.budget}${timer.started ? ` · ${timer.clock}` : ""}`}
+            label={`${scenario.name}${timer.started ? ` · ${timer.clock}` : ""}`}
             onExit={() => setChrome("compact")}
           />
+        )}
 
-        <NodePalette onAddNode={addNode} />
+        {selected && <StyleBar node={selected} onChange={setStyle} onDelete={() => removeNode(selected.id)} />}
+
+        <BoardTools
+          onOpenComponents={() => setComponentsOpen(true)}
+          onAddShape={addShape}
+          tool={tool}
+          onTool={(name) => setTool((current) => (current === name ? null : name))}
+        />
       </View>
 
         <EdgeInspectorSheet
@@ -418,10 +547,10 @@ export default function BoardScreen() {
           onRemove={() => inspectingId && removeNode(inspectingId)}
         />
 
-        <ScaleSheet key={scenario.id} visible={scaleOpen} scale={scenario.scale} onClose={() => setScaleOpen(false)} />
 
         <TalkTrackSheet
           visible={talkOpen}
+          free={free}
           sections={talkSections}
           rating={talkRating}
           onChangeSection={(id, value) => {
@@ -458,9 +587,10 @@ export default function BoardScreen() {
           onClose={() => setStoryOpen(false)}
         />
 
+        <ComponentsSheet visible={componentsOpen} onAdd={addNode} onClose={() => setComponentsOpen(false)} />
+
         <ResultSheet
           result={resultOpen ? result : null}
-          scenario={scenario}
           pushback={buildPushback(scenario, nodes)}
           onClose={() => setResultOpen(false)}
         />

@@ -1,3 +1,4 @@
+import { isFreeScenario } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
@@ -21,7 +22,8 @@ export function BoardStory({ boardId, scenarioId, storyId, onChange }: {
   const taken = new Set(boards.filter((b) => b.id !== boardId && b.storyId).map((b) => b.storyId));
   const current = stories.find((s) => s.id === storyId);
   // The board's own link counts even if the story was since pointed at another scenario.
-  const candidates = stories.filter((s) => s.scenarioId === scenarioId || s.id === storyId);
+  // A free board has no scenario to match, so any story can be its subject.
+  const candidates = isFreeScenario(scenarioId) ? stories : stories.filter((s) => s.scenarioId === scenarioId || s.id === storyId);
   if (candidates.length === 0) return null;
 
   return (

@@ -3,8 +3,8 @@ import { t } from "@grip/core/i18n";
 
 type History = { undo: () => void; redo: () => void };
 
-// Guards unsaved work on leave, and wires Escape plus undo/redo outside text fields.
-export function useBoardShortcuts(history: History, isDirty: boolean, cancelConnection: () => void) {
+// Guards unsaved work on leave, and wires Escape, the tool letters and undo/redo outside text fields.
+export function useBoardShortcuts(history: History, isDirty: boolean, onEscape: () => void, onLetter: (key: string) => void) {
   useEffect(() => {
     if (!isDirty) return;
     const warn = (event: BeforeUnloadEvent) => event.preventDefault();
@@ -19,7 +19,8 @@ export function useBoardShortcuts(history: History, isDirty: boolean, cancelConn
     const onKeyDown = (event: KeyboardEvent) => {
       const editable = event.target instanceof HTMLElement && (event.target.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(event.target.tagName));
       if (editable) return;
-      if (event.key === "Escape") cancelConnection();
+      if (event.key === "Escape") onEscape();
+      if (/^[a-z]$/i.test(event.key) && !event.metaKey && !event.ctrlKey && !event.altKey) onLetter(event.key.toLowerCase());
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z") {
         event.preventDefault();
         if (event.shiftKey) history.redo();

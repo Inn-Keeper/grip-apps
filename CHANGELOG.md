@@ -4,6 +4,56 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-10-21
+
+### Added
+
+- Arch Board (web): Free board, the first entry in the scenario picker. No checklist, step rail, Evaluate or design score; you write what you are designing, link any story, and the talk track and AI grading work against that brief. Share links, story links and Quest treat it as unscored. Mobile opens free boards, hides Evaluate and grades against the brief written on web. The talk track intro on a free board says only the reasoning is graded, against the brief.
+- Arch Board (web and mobile): free Box and Text tools in the palette. A box looks like a component, takes a typed name and connects to any node; text is a free note that takes no arrows. Neither is graded, and arrows touching a box are left out of grading too (en, sv, pt).
+- Arch Board (web): Text is now its own tool, whiteboard style. Press T or the T button on the canvas, click where the text goes and type in place; Enter adds a line, Escape or clicking away finishes. Double clicking bare board also starts a text, double clicking a text edits it, and a text left empty is removed. Mobile still adds text from the palette for now.
+- Arch Board (web): free shapes and drawing tools in the canvas tool bar: rectangle (R), diamond (D), ellipse (O), sticky note (N), arrow (A), line (L) and text (T). Shapes resize by dragging their corner, top and bottom handles, or with Alt + arrow keys; they take a name, a fill tint and text style, and connect to components like a box. Arrows and lines are drawn by dragging, keep loose ends, and take color, dashed and arrowheads (end, both, none). None of it is graded.
+- Arch Board (web): built-in components resize like shapes: corner, top and bottom handles on the selected card, or Alt + arrow keys, down to a minimum that keeps the icon and label readable. Arrows follow the new size; the grade does not change.
+- Arch Board (web): a selected component gets the style panel too: fill tint, label colour, size, alignment and bold. Its border keeps the type colour; style never changes the grade.
+- Arch Board (web): a trash bin at the end of the style panel deletes the selected component, shape, text, arrow or line (same as Delete). The panel is now announced as Style, since it serves more than text.
+- Arch Board (web and mobile): component cards drop the icon inside, so the label sits centred on its own; the type colour on the border tells components apart.
+- Arch Board (web): four connect circles per component and shape (top, right, bottom, left). Resizing moves to the four corners, and the corner ✕ hides while a node is selected (the style panel's trash bin covers it). Only left and right circles are Tab stops.
+- Arch Board (web and mobile): arrows pick the sides that face each other. Nodes side by side connect left to right as before; one above the other connects bottom to top with a vertical curve. Shared geometry in core, so existing boards redraw the same way on both apps.
+- Arch Board (web): typing a shape's name starts where the label will sit: in the middle by default, top left on a sticky note. The editor grows with its text instead of filling the shape, and shows only the cursor, no "Name this box" placeholder (still announced to screen readers).
+- Arch Board (web and mobile): component and shape labels are centred by default. Sticky notes and free text stay left aligned; the style panel still changes any of them.
+- Talk track grading: a board without scenario figures (free boards, custom scenarios) no longer sends zeros as the correct answers. It sends no figures, and grip-ai-api now checks the candidate's own arithmetic in that case instead of marking every estimate wrong.
+- Arch Board (web): a box can stay empty. It no longer opens for typing when added and shows no placeholder; double click or F2 names it. Screen readers still call it Box.
+- Arch Board (web): text style panel for free text and boxes: size S to XL on the type scale, five token colors, alignment and bold. It shows while a text or box is selected. Shortcuts: Ctrl/⌘ Shift > and < for size, Ctrl/⌘ B for bold, Alt Shift L, C and R to align. A box grows with its size and arrows follow it.
+
+### Changed
+
+- Mobile board (parity phase 3): undo and redo (icon buttons beside the Show arrow), using core's board history shared with web; a drag or resize counts as one step, and loading a board starts a fresh history. Saved boards can be shared: Share turns on the link and opens the iOS share sheet with web's read only page, Unshare turns it off. Not in demo mode. Web's history helpers moved to `@grip/core/boardHistory`. New optional `EXPO_PUBLIC_WEB_URL` (defaults to the production site).
+- Mobile board (parity phase 2): editing matches web. A tool row on the canvas holds the Components sheet, the four shapes, arrow, line and text tools; a style bar shows for the selected item (size, colour, fill, alignment, bold, dashes, heads, trash bin); selected nodes resize from their corners; four connect circles per node; free boards take an editable brief. Fit and the + and − buttons now glide instead of snapping, and fast taps stack correctly.
+- Mobile board: the round timer follows web's rule. It is hidden until a round starts; before that a Practise under time link with a clock icon shows on the first step only.
+- Mobile board: Zen moved from the Show row to the zoom controls, beside Fit, so it no longer reads as a pair with Show. Fit and Zen show icons only (full screen corners for Zen); screen readers still read their names. Show and Hide are an arrow icon too (down to show, up to hide).
+- Mobile board (parity phase 1): web boards now look the same on mobile. Shapes draw with their outline (rectangle, diamond, ellipse, sticky note), fill and saved size; resized components keep their size and arrows meet their real edges; text, shape and component styles (size, colour, alignment, bold) show; free arrows and lines draw with colour, dashes and heads. A new box no longer opens the label sheet, an empty box shows nothing, and small text moves from weight 800 to 700 (the readiness and mock scores keep 800). Editing all of this on mobile is phase 2.
+- Core: `nodeSize`, `FILL_ALPHA` and `headPoints` moved from the web app into core so both apps share them.
+- Core cleanup: dropped what only the removed scale panel used (`ESTIMATE_TARGETS`, `bandFor`, `gradeEstimate`, `formatCompact` and the `@grip/core/estimation` package export), the unused `SHAPES` list, the web icon entries for box and text, and the mobile cost icon. `TextStylePanel` is now `StylePanel`, and the card label sizes are `TEXT_FONT_TOKEN.card`.
+- Arch Board (web): drag from a node's side handle to draw an arrow, no Shift needed. The drop snaps to the nearest node, as on mobile. Clicking a node no longer starts a connection; Enter on a node, then Enter on another, still connects from the keyboard.
+- Arch Board (web): the built-in components moved into a Components dropdown in a tool bar on the canvas (with Box and Text), so the palette grid no longer takes room above the board. New nodes land below the tool bar.
+- Arch Board (web): plain canvas, the dot grid is gone. Typography follows DESIGN.md: free text at weight 400 and line height 1.45, node labels at `small` with line height 1.3.
+- Web rails: panel titles (WorkspaceTitle, so every screen's rails), Saved boards and the brief label drop from weight 800 to 700. At 11 to 13px Inter's 800 closes up the letters; DESIGN.md keeps 800 for hero numbers.
+- Web: the rest of the small text at 800 moves to 700 too: the Arch Board step rail, its main rail button and action button, Next Up (label, title, button; every screen) the Combobox group headers and the shared board page heading. The design timer's large clock keeps 800.
+- Arch Board (web and mobile): cost, upkeep and budget are gone: no palette prices, no cost or maintenance lines in the score panel, results or toolbar, no budget field on custom scenarios, and no Over budget warning. Mock loop no longer shows a budget.
+- Arch Board (web and mobile): removed the scale brief panel (the given numbers, the estimate inputs, Check my math and the hand off to the talk track). Scenario numbers still drive board and talk track grading.
+- Arch Board (web): the board uses the full window width, and the canvas grows to the screen height minus a strip left free for scrolling (before, it stopped at 420px).
+
+### Fixed
+
+- Arch Board (web): on a selected storage node the inspect button no longer covers the bottom right resize corner; it steps inside the card.
+- Mobile board: the empty board hint now says to drag from a handle to connect, not tap then tap (en, pt, sv).
+- Arch Board (web): full screen showed an empty page. Its layout still had a row for the old palette, so the canvas collapsed to 2px; it now takes the whole screen with its tools.
+- Mobile board: dragging a connection no longer snaps to an invisible free arrow drawn on web, which made the connection silently fail.
+
+### Database
+
+- `0025_arch_boards_brief.sql`: nullable `arch_boards.brief` for a free board's own brief.
+- `0024_custom_scenarios_budget_optional.sql`: `custom_scenarios.budget` is now nullable, since the app no longer writes it. Apply by hand before deploying the web app, or creating a custom scenario fails.
+
 ## 2026-10-09
 
 ### Changed

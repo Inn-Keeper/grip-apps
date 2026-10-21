@@ -1,9 +1,9 @@
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, font } from "@/theme";
-import { Button, MiniButton } from "@/components/ui";
+import { colors, font, radius } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
+import { Button, MiniButton } from "@/components/ui";
 
 export type Chrome = "full" | "compact" | "zen";
 
@@ -11,29 +11,24 @@ type Props = {
   chrome: Chrome;
   onChrome: (next: Chrome) => void;
   scenarioName: string;
-  cost: number;
-  budget: number;
-  maint: number;
   talkAnswered: number;
-  scaleOpen: boolean;
   talkOpen: boolean;
   savedOpen: boolean;
   saving: boolean;
   canEvaluate: boolean;
-  onOpenScale: () => void;
   onOpenTalk: () => void;
   onToggleSaved: () => void;
   onSave: () => void;
   onClear: () => void;
   onEvaluate: () => void;
+  history: { canUndo: boolean; canRedo: boolean; undo: () => void; redo: () => void };
 };
 
-// The board's action row: chrome toggles, live cost and upkeep, and the board actions.
+// The board's action row: chrome toggles and the board actions.
 export function BoardToolbar({
-  chrome, onChrome, scenarioName, cost, budget, maint, talkAnswered, scaleOpen, talkOpen, savedOpen,
-  saving, canEvaluate, onOpenScale, onOpenTalk, onToggleSaved, onSave, onClear, onEvaluate,
+  chrome, onChrome, scenarioName, talkAnswered, talkOpen, savedOpen,
+  saving, canEvaluate, onOpenTalk, onToggleSaved, onSave, onClear, onEvaluate, history,
 }: Props) {
-  const overBudget = cost > budget;
   return (
     // Wraps onto a second line on narrow screens so every action stays reachable.
     <View style={{
@@ -43,12 +38,22 @@ export function BoardToolbar({
         columnGap: 10,
         rowGap: 6
       }}>
-      <MiniButton
-        label={chrome === "full" ? t("board.chromeHide") : t("board.chromeShow")}
-        color={colors.textDim}
+      <TouchableOpacity
+        accessibilityRole="button"
+        accessibilityLabel={chrome === "full" ? t("board.chromeHide") : t("board.chromeShow")}
         onPress={() => onChrome(chrome === "full" ? "compact" : "full")}
-      />
-      <MiniButton label={t("board.zen")} color={colors.textDim} onPress={() => onChrome("zen")} />
+        hitSlop={6}
+        style={{
+          padding: 6,
+          borderWidth: 1,
+          borderColor: `${colors.textDim}50`,
+          borderRadius: radius.sm
+        }}
+      >
+        <BrandIcon name={chrome === "full" ? "arrowUp" : "arrowDown"} color={colors.textDim} size={16} />
+      </TouchableOpacity>
+      <HistoryButton icon="undo" label={t("board.undo")} enabled={history.canUndo} onPress={history.undo} />
+      <HistoryButton icon="redo" label={t("board.redo")} enabled={history.canRedo} onPress={history.redo} />
       {chrome === "compact" && (
         <Text numberOfLines={1} style={{
             fontSize: font.size.small,
@@ -61,42 +66,11 @@ export function BoardToolbar({
       )}
       <View style={{
           flexDirection: "row",
-          alignItems: "center",
-          gap: 4
-        }}>
-        <BrandIcon name="cost" color={overBudget ? colors.danger : colors.textDim} size={14} />
-        <Text style={{
-            fontSize: font.size.small,
-            fontWeight: "600",
-            color: overBudget ? colors.danger : colors.textDim
-          }}>
-          {cost}/{budget}
-        </Text>
-      </View>
-      <View style={{
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 4
-        }}>
-        <BrandIcon name="maintenance" color={colors.textDim} size={14} />
-        <Text style={{
-            fontSize: font.size.small,
-            fontWeight: "600",
-            color: colors.textDim
-          }}>{maint}</Text>
-      </View>
-      <View style={{
-          flexDirection: "row",
           flexWrap: "wrap",
           gap: 8,
           marginLeft: "auto",
           alignItems: "center"
         }}>
-        <MiniButton
-          label={t("scale.check")}
-          color={scaleOpen ? colors.accent : colors.textDim}
-          onPress={onOpenScale}
-        />
         <MiniButton
           label={`${t("talk.title")} ${talkAnswered}/${TALK_TRACK_SECTIONS.length}`}
           color={talkOpen ? colors.accent : colors.textDim}
@@ -112,5 +86,28 @@ export function BoardToolbar({
         <Button label={t("board.evaluate")} onPress={onEvaluate} disabled={!canEvaluate} />
       </View>
     </View>
+  );
+}
+
+// Same bordered icon button as the Show arrow.
+function HistoryButton({ icon, label, enabled, onPress }: { icon: "undo" | "redo"; label: string; enabled: boolean; onPress: () => void }) {
+  return (
+    <TouchableOpacity
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled: !enabled }}
+      disabled={!enabled}
+      onPress={onPress}
+      hitSlop={6}
+      style={{
+        padding: 6,
+        borderWidth: 1,
+        borderColor: `${colors.textDim}50`,
+        borderRadius: radius.sm,
+        opacity: enabled ? 1 : 0.4
+      }}
+    >
+      <BrandIcon name={icon} color={colors.textDim} size={16} />
+    </TouchableOpacity>
   );
 }

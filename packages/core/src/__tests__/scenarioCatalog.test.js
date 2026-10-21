@@ -1,10 +1,12 @@
-import { SCENARIOS } from "../arch.js";
+import { FREE_SCENARIO, SCENARIOS } from "../arch.js";
 import { buildScenarioCatalog, CUSTOM_CATEGORY, filterGroups } from "../scenarioCatalog.js";
 
 describe("buildScenarioCatalog", () => {
-  it("lists the built-ins, then the user's scenarios under their own group", () => {
+  it("leads with the free board, then the built-ins, then the user's scenarios under their own group", () => {
     const { allScenarios, groups } = buildScenarioCatalog([{ id: "c1", name: "My ledger" }]);
-    expect(allScenarios).toHaveLength(SCENARIOS.length + 1);
+    expect(allScenarios).toHaveLength(SCENARIOS.length + 2);
+    expect(allScenarios[0]).toBe(FREE_SCENARIO);
+    expect(groups[0]).toEqual({ label: null, options: [{ value: "free", label: "Free board" }] });
     expect(allScenarios.at(-1)).toMatchObject({ id: "c1", category: CUSTOM_CATEGORY, custom: true });
     expect(groups.at(-1)).toEqual({ label: CUSTOM_CATEGORY, options: [{ value: "c1", label: "My ledger" }] });
   });

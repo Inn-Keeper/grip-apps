@@ -14,7 +14,7 @@ export function RailActionButton({ action }: { action: RailAction }) {
       style={{
         display: "flex", alignItems: "center", justifyContent: "center", gap: 7, width: "100%", padding: "11px 14px",
         background: colors.accent, border: "none", borderRadius: 8, color: colors.onAccent,
-        fontSize: font.size.body, fontWeight: 800, cursor: "pointer",
+        fontSize: font.size.body, fontWeight: 700, cursor: "pointer",
         ["--twinkle-color" as string]: colors.accentBright,
       } as React.CSSProperties}
     >

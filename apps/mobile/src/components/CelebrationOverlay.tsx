@@ -121,7 +121,7 @@ const styles = StyleSheet.create({
   title: {
     color: colors.textBright,
     fontSize: font.size.headingLg,
-    fontWeight: "800",
+    fontWeight: "700",
     textAlign: "center",
   },
   subtitle: {

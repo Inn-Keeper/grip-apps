@@ -28,12 +28,13 @@ type Props = {
   gradeBlocked: string | null;
   /** Null hides grading: no AI service is configured. */
   onGrade: (() => void) | null;
+  /** A free board has no checklist, so the intro can't promise a board score. */
+  free?: boolean;
 };
 
 export function TalkTrackSheet({
   visible, sections, rating, onChangeSection, onChangeRating, onClose,
-  grade, gradeDetail, grading, gradeError, gradeBlocked, onGrade,
-}: Props) {
+  grade, gradeDetail, grading, gradeError, gradeBlocked, onGrade, free = false }: Props) {
   if (!visible) return null;
   const { answered } = scoreTalkTrack({ sections, rating });
   const gradeColor = grade === null ? colors.textDim : grade >= 80 ? colors.successBright : grade >= 50 ? colors.warningBright : colors.dangerBright;
@@ -84,7 +85,7 @@ export function TalkTrackSheet({
               color: colors.textFaint,
               marginBottom: 12
             }}>
-            {t("talk.intro")}
+            {t(free ? "talk.introFree" : "talk.intro")}
           </Text>
 
           <ScrollView style={{ flexGrow: 0 }} contentContainerStyle={{ gap: 14, paddingBottom: 8 }}>

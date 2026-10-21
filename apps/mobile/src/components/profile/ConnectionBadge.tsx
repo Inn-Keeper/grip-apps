@@ -27,7 +27,7 @@ export function ConnectionBadge({ connected }: { connected: boolean }) {
       <Text style={{
           color: connected ? colors.successBright : colors.textFaint,
           fontSize: font.size.label,
-          fontWeight: "800"
+          fontWeight: "700"
         }}>
         {connected ? t("profile.connectionLinked") : t("profile.connectionOptional")}
       </Text>

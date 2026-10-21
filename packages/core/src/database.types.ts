@@ -49,6 +49,7 @@ export type Database = {
       }
       arch_boards: {
         Row: {
+          brief: string | null
           created_at: string
           edges: Json
           id: string
@@ -63,6 +64,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          brief?: string | null
           created_at?: string
           edges?: Json
           id?: string
@@ -77,6 +79,7 @@ export type Database = {
           user_id?: string
         }
         Update: {
+          brief?: string | null
           created_at?: string
           edges?: Json
           id?: string
@@ -151,7 +154,7 @@ export type Database = {
       custom_scenarios: {
         Row: {
           brief: string
-          budget: number
+          budget: number | null
           checks: Json
           created_at: string
           id: string
@@ -161,7 +164,7 @@ export type Database = {
         }
         Insert: {
           brief?: string
-          budget: number
+          budget?: number | null
           checks?: Json
           created_at?: string
           id?: string
@@ -171,7 +174,7 @@ export type Database = {
         }
         Update: {
           brief?: string
-          budget?: number
+          budget?: number | null
           checks?: Json
           created_at?: string
           id?: string
