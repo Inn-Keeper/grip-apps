@@ -44,6 +44,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Mobile board: Fit no longer pulls the canvas edge into the middle of the screen. Nodes near the edge could not be dragged left past it, and the next pan snapped the view; Fit now keeps to the same limits as panning.
 - Arch Board (web): on a selected storage node the inspect button no longer covers the bottom right resize corner; it steps inside the card.
 - Mobile board: the empty board hint now says to drag from a handle to connect, not tap then tap (en, pt, sv).
 - Arch Board (web): full screen showed an empty page. Its layout still had a row for the old palette, so the canvas collapsed to 2px; it now takes the whole screen with its tools.

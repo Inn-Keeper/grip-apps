@@ -207,10 +207,11 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
       MIN_SCALE,
       Math.min(boardSize.width / (maxX - minX), usableHeight / (maxY - minY), baseScale)
     );
+    // Clamped like a pan: centring a node near the origin would pull the canvas edge into view.
     glideTo(
       fitScale,
-      (boardSize.width - (maxX - minX) * fitScale) / 2 - minX * fitScale,
-      (usableHeight - (maxY - minY) * fitScale) / 2 - minY * fitScale
+      clampTranslate((boardSize.width - (maxX - minX) * fitScale) / 2 - minX * fitScale, boardSize.width, CANVAS.width, fitScale),
+      clampTranslate((usableHeight - (maxY - minY) * fitScale) / 2 - minY * fitScale, boardSize.height, CANVAS.height, fitScale)
     );
   };
 
