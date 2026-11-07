@@ -27,6 +27,7 @@ because they have to be applied by hand.
 - Saved Arch Board assessments reject malformed sections, invalid scores and mismatched board identities before rendering; damaged feedback no longer crashes the board.
 - Story, contact and retro forms stay open with their text when a save fails, show the error beside Save, block a second Save while one is pending, and ask before Back, Cancel, a tab change or a reload discards changes. Web and mobile.
 - Web Arch Board: undo then redo right after grading keeps the grade and its feedback instead of dropping them.
+- Dependencies: pnpm overrides move node-forge to 1.4.3 (Expo CLI) and decode-uri-component to 0.5.1 (expo-router), closing 13 Dependabot advisories.
 
 ### Database
 
