@@ -15,6 +15,8 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Web Poe keeps his original artwork with subtle breathing, occasional head movement and blinking instead of a continuous whole-body float. Incorrect answers get a gentle sympathetic lean. Reduced motion shows the original still image.
+
 - Readiness no longer shows a composite "Ready" percentage. The prep plan lists role tech accuracy, story competencies covered (`n of 8`) and assessed design separately, with "Not assessed" and "Unavailable" in place of zeros. Prep's headline reads "Accuracy on your stack".
 - Editing the talk track, rating or story link keeps the topology evaluation; node and edge edits still clear it. Any change to what was graded clears the reasoning grade, including node edits on web and mobile. A grading response that arrives after the board or its inputs changed is ignored.
 - On phones the Arch Board shows the scenario brief above the canvas. Talk track fields no longer force a 300px minimum width.

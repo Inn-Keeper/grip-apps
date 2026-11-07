@@ -7,6 +7,7 @@ import {
   poeVisibleByDefault,
 } from "./poeAssistantUtils";
 import styles from "./PoeAssistant.module.css";
+import { PoeIdle } from "./PoeIdle";
 
 const REACTION_MS = 3600;
 const SHINE_MS = 1400;
@@ -58,9 +59,12 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
     };
   }, []);
 
-  useEffect(() => () => {
-    if (resetTimer.current) window.clearTimeout(resetTimer.current);
-  }, []);
+  useEffect(
+    () => () => {
+      if (resetTimer.current) window.clearTimeout(resetTimer.current);
+    },
+    [],
+  );
 
   useEffect(() => {
     if (shineTimer.current) window.clearTimeout(shineTimer.current);
@@ -69,13 +73,16 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
     if (!visible || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return undefined;
 
     const scheduleShine = () => {
-      shineTimer.current = window.setTimeout(() => {
-        setShining(true);
-        shineEndTimer.current = window.setTimeout(() => {
-          setShining(false);
-          scheduleShine();
-        }, SHINE_MS);
-      }, SHINE_MIN_MS + Math.random() * SHINE_SPREAD_MS);
+      shineTimer.current = window.setTimeout(
+        () => {
+          setShining(true);
+          shineEndTimer.current = window.setTimeout(() => {
+            setShining(false);
+            scheduleShine();
+          }, SHINE_MS);
+        },
+        SHINE_MIN_MS + Math.random() * SHINE_SPREAD_MS,
+      );
     };
 
     scheduleShine();
@@ -100,14 +107,15 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
         const visible = entry.boundingClientRect.height * entry.intersectionRatio;
         setFooterLift(Math.round(visible));
       },
-      { threshold: Array.from({ length: 101 }, (_, i) => i / 100) }
+      { threshold: Array.from({ length: 101 }, (_, i) => i / 100) },
     );
     observer.observe(footer);
     return () => observer.disconnect();
   }, []);
 
   const imageSrc = (poseByMood as Record<string, string>)[mood] ?? poseByMood.idle;
-  const accent = mood === "wrong" ? colors.warningBright : mood === "levelUp" ? colors.successBright : colors.accentBright;
+  const accent =
+    mood === "wrong" ? colors.warningBright : mood === "levelUp" ? colors.successBright : colors.accentBright;
   const label = useMemo(() => `${brand.mascotName}, ${brand.productName}'s raven guide`, []);
 
   if (!visible) return null;
@@ -122,7 +130,12 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
       style={{ "--poe-lift": `${footerLift}px` } as React.CSSProperties}
     >
       {message && (
-        <div key={messageKey} className={styles.quote} style={{ "--poe-accent": accent } as React.CSSProperties} aria-live="polite">
+        <div
+          key={messageKey}
+          className={styles.quote}
+          style={{ "--poe-accent": accent } as React.CSSProperties}
+          aria-live="polite"
+        >
           {message}
         </div>
       )}
@@ -133,7 +146,16 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
         aria-label={`Ask ${brand.mascotName} for a thought`}
         title={`Ask ${brand.mascotName} for a thought`}
       >
-        <img className={styles.image} src={imageSrc} alt="" draggable="false" />
+        {mood === "idle" ? (
+          <PoeIdle />
+        ) : (
+          <img
+            className={styles.image}
+            src={imageSrc}
+            alt=""
+            draggable="false"
+          />
+        )}
       </button>
     </aside>
   );

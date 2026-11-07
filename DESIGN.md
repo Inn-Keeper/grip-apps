@@ -175,7 +175,8 @@ Animations are a first-class feature (see PLAN.md's showcase). Principles:
 - **Staggered entrances** on lists: per-index delay, capped (`Math.min(i * 50, 250)`).
 - **Celebrate sparingly**: confetti and rank-glow only for perfect drills and rank-ups.
 - Web approximates with ~150ms ease transitions; no parallax, no idle animation — except the
-  active category's Drill button on Prep, which gets a shine sweep every 10s to point at the next step.
+  active category's Drill button on Prep, which gets a shine sweep every 10s to point at the next step,
+  and Poe's restrained blinking, breathing and occasional head movement.
 
 ## Components (mobile primitives in `ui.tsx`)
 
