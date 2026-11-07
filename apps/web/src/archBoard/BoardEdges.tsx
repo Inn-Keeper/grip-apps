@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { bezierPath, edgeGeometry } from "@grip/core/edgeGeometry";
 import { NODE_H, NODE_W } from "./constants";
 import { nodeSize } from "@grip/core/arch";

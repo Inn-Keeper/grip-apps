@@ -20,7 +20,7 @@ import type { NextUpKind } from "@grip/core/nextUp";
 import { ProgressSaveStatus } from "./ProgressSaveStatus";
 import { useScores } from "./useScores";
 import { CelebrationOverlay } from "../components/CelebrationOverlay";
-import { colors, font, layout } from "@grip/core/tokens";
+import { colors, font, layout } from "../lib/tokens";
 import { WorkspaceLayout, WorkspacePanel } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
 import { PoeAssistant } from "../components/poe/PoeAssistant";

@@ -1,6 +1,6 @@
 import { isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ContactPanel, ContactSummary, type ContactActions } from "./ContactCard";
 import { PrepPlanSection } from "./PrepPlanSection";

@@ -1,6 +1,6 @@
 import { t } from "@grip/core/i18n";
 import type { CSSProperties } from "react";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import styles from "../components/Metric.module.css";
 

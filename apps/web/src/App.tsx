@@ -17,7 +17,7 @@ import { clearSeenQuestions } from "./interviewPrep/questionDeck";
 import StoryBank from "./storyBank/StoryBank";
 import Profile from "./profile/Profile";
 import About from "./about/About";
-import { brand, colors, layout, shadow, font } from "@grip/core/tokens";
+import { brand, colors, layout, shadow, font } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { DemoBanner } from "./components/DemoBanner";

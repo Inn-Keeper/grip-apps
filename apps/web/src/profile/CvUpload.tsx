@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { categories } from "@grip/core/prepData";
 import { extractTechsFromText } from "@grip/core/techMatch";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 import { readCvText, CvParseError } from "./cvParser";
 

@@ -1,6 +1,6 @@
 import { meta, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import type { BoardNode } from "./types";

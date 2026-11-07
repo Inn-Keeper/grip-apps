@@ -10,7 +10,7 @@ import {
   reviewImportRows,
   type ReviewRow,
 } from "@grip/core/importReview";
-import { colors, font, radius, space } from "@grip/core/tokens";
+import { colors, font, radius, space } from "../../lib/tokens";
 import { srOnly, textareaFieldStyle } from "../../components/fieldStyles";
 import { ledgerImport, postingReader } from "../../lib/api";
 import { useImportContactsMutation } from "../queries";
@@ -27,8 +27,8 @@ const theme = {
   "--import-md": `${space.md}px`,
   "--import-lg": `${space.lg}px`,
   "--import-xl": `${space.xl}px`,
-  "--import-body": `${font.size.body}px`,
-  "--import-small": `${font.size.small}px`,
+  "--import-body": font.size.body,
+  "--import-small": font.size.small,
 } as CSSProperties;
 const button = (primary: boolean) => ({
   minHeight: 40,

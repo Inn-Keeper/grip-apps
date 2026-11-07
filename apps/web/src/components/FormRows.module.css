@@ -1,0 +1,6 @@
+/* Fields keep readable widths, then stack within narrow forms and workspace columns. */
+.row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+  gap: 16px;
+}

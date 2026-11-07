@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, tints, font } from "@grip/core/tokens";
+import { colors, tints, font } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 
 export function ConnectionBadge({ connected }: { connected: boolean }) {

@@ -22,7 +22,7 @@ export const colors = {
   textBright: "#F4F7FC", // headings, emphasized values
   text: "#E8ECF4", // body
   textDim: "#9AA5BC", // secondary
-  textFaint: "#6B7690", // captions, placeholders
+  textFaint: "#8B96AC", // readable captions and hints, including on surfaceHi
 
   textHighlight: "#0de6c9", // teal highlight for links, selected text, etc.
   textHighlightDim: "#7cb1ab", // dimmer teal for hover, active, etc.

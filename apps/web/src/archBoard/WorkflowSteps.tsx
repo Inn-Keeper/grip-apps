@@ -1,6 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { formatClock } from "@grip/core/designTimer";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";

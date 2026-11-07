@@ -1,5 +1,5 @@
 import React from "react";
-import { colors, space, font } from "@grip/core/tokens";
+import { colors, space, font } from "../lib/tokens";
 
 export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (

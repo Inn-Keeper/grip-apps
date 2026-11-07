@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { RANKS, rankForXp } from "@grip/core/gamification";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { AccuracyChart } from "./AccuracyChart";

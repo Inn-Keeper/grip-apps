@@ -1,4 +1,4 @@
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
 import { startTour } from "./tour";

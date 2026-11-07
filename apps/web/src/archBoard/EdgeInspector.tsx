@@ -1,6 +1,6 @@
 import { EDGE_MODES, EDGE_PROTOCOLS, nodeLabel } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font } from "../lib/tokens";
 import type { BoardEdge, BoardNode } from "./types";
 
 export function EdgeInspector({

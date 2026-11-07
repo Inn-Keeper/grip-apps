@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { colors, font, tints } from "@grip/core/tokens";
+import { colors, font, tints } from "../lib/tokens";
 
 // An inline error under the control it belongs to; announced by screen readers.
 export function ErrorText({ children, margin = 0, size = "small" }: { children: ReactNode; margin?: CSSProperties["margin"]; size?: "small" | "label" }) {

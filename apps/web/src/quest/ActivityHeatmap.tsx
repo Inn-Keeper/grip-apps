@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { activityByDay, activityLevel } from "@grip/core/activity";
 import { getLocale, t } from "@grip/core/i18n";
-import { colors, font, layout } from "@grip/core/tokens";
+import { colors, font, layout } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 

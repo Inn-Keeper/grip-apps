@@ -3,7 +3,7 @@ import { STATUSES, todayDDMMYYYY, isDue } from "@grip/core/contacts";
 import { toScoredBoards } from "@grip/core/readiness";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { miniBtn, workspaceFocusStyle } from "../components/fieldStyles";
 import { ledgerImport } from "../lib/api";
@@ -232,6 +232,7 @@ export default function Quest() {
           <div style={{
               display: "flex",
               alignItems: "baseline",
+              flexWrap: "wrap",
               gap: 12,
               marginBottom: 6
             }}>

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import styles from "./BrandMark.module.css";
 
-// Poe's raven, the same file as the favicon, with a periodic shine and blink.
+// Poe's raven, the same still artwork as the favicon.
 export function BrandMark({ size, style }: { size: number; style?: CSSProperties }) {
   return (
     <span className={styles.mark} style={{

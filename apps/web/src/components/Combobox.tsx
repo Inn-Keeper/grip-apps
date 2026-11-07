@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { useId, useRef, useState } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font } from "@grip/core/tokens";
+import { colors, tints, font } from "../lib/tokens";
 import { BrandIcon } from "./BrandIcon";
 import { filterGroups } from "@grip/core/scenarioCatalog";
 import { fieldStyle } from "./fieldStyles";

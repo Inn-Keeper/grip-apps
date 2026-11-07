@@ -2,7 +2,7 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { FILL_ALPHA, MIN_SHAPE, TEXT_FONT_TOKEN, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { NODE_H, NODE_W } from "./constants";
 import styles from "./ArchBoard.module.css";
 import { ResizeHandles } from "./ResizeHandles";

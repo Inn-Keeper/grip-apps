@@ -13,6 +13,7 @@ import { FormActions } from "../components/FormActions";
 import { mayLeave, useUnsavedGuard } from "../lib/useUnsavedGuard";
 import { EMPTY_FORM } from "./types";
 import type { StoryForm as StoryFormType } from "./types";
+import formRows from "../components/FormRows.module.css";
 
 export function StoryForm({
   initial,
@@ -56,11 +57,7 @@ export function StoryForm({
         gap: 10,
       }}
     >
-      <div style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
-          gap: 10
-        }}>
+      <div className={formRows.row}>
         <Field label={t("stories.fieldTitle")}>
           <input
             style={inputStyle}

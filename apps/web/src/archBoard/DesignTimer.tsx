@@ -1,7 +1,7 @@
 import { DESIGN_PHASES, ROUND_MINUTES, formatClock } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./DesignTimer.module.css";
 import type { DesignRound } from "./useDesignRound";

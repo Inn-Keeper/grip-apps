@@ -1,5 +1,5 @@
 import { useEffect, type CSSProperties } from "react";
-import { colors, font, space } from "@grip/core/tokens";
+import { colors, font, space } from "../lib/tokens";
 
 const DISMISS_MS = 2100;
 

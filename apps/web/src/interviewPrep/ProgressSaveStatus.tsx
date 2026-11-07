@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@grip/core/tokens";
+import { colors, font, tints } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import type { SaveStatus } from "./useScores";
 

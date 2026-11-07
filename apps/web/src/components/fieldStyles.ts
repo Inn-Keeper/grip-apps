@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { colors, space, font, radius } from "@grip/core/tokens";
+import { colors, space, font, radius } from "../lib/tokens";
 
 // The field standard (SCREEN-GUIDELINES.md, Forms): 40px tall, 8px corners like panels,
 // dark inset background. Focus rings come from the global :focus-visible rule in index.html.

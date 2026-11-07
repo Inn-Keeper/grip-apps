@@ -1,7 +1,7 @@
 import { Fragment, type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
 import { computeReadiness } from "@grip/core/readiness";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { categoryIconName } from "../components/brandIconNames";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
@@ -118,6 +118,7 @@ export function PrepLeftRail({
                     onClick={() => onCategory(cat.name)}
                     style={{
                       flex: 1,
+                      minWidth: 0,
                       display: "flex",
                       alignItems: "center",
                       gap: 9,

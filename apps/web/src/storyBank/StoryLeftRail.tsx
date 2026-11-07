@@ -1,4 +1,4 @@
-import { colors, font, tints } from "@grip/core/tokens";
+import { colors, font, tints } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints, shadow } from "@grip/core/tokens";
+import { colors, font, tints, shadow } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import hover from "../components/HoverCard.module.css";
 import { ActionButton } from "./shared";

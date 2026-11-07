@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { COMPETENCIES } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";

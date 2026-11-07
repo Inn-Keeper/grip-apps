@@ -1,6 +1,6 @@
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { Combobox } from "../components/Combobox";
 import styles from "./ArchBoard.module.css";
@@ -68,7 +68,10 @@ export function BoardToolbar({ status, history, talk, save, onClear, arrows }: P
           disabled={empty}
           placeholder={empty ? t("board.edgeNone") : t("board.edgeSelect")}
           options={[{ label: empty ? t("board.edgeNone") : t("board.edgeSelect"), value: "" }, ...arrows.options]}
-          style={{ minWidth: 240 }}
+          style={{
+            width: 240,
+            maxWidth: "100%"
+          }}
           triggerStyle={{ minHeight: 32, padding: "5px 9px", fontSize: font.size.small }}
         />
       </div>

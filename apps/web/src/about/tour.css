@@ -526,10 +526,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .grip-tour .grip-tour-poe-figure,
-  .grip-tour .grip-tour-poe-stage::before,
-  .grip-tour .grip-tour-poe-stage::after,
-  .grip-tour .grip-tour-poe-mark {
+  .grip-tour.driver-popover .grip-tour-poe .grip-tour-poe-figure,
+  .grip-tour.driver-popover .grip-tour-poe .grip-tour-poe-stage::before,
+  .grip-tour.driver-popover .grip-tour-poe .grip-tour-poe-stage::after,
+  .grip-tour.driver-popover .grip-tour-poe .grip-tour-poe-mark {
     animation: none;
   }
 }

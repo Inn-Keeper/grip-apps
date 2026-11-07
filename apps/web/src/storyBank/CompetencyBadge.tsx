@@ -1,7 +1,7 @@
 import React from "react";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 
 export function CompetencyBadge({ competency }: { competency: string }) {
   const color = COMPETENCY_COLORS[competency] || colors.textFaint;

@@ -1,6 +1,6 @@
 import { PROFILE_FIELDS } from "@grip/core/user";
 import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ErrorText } from "../components/ErrorText";
 import { fieldStyle as inputStyle, srOnly } from "../components/fieldStyles";
@@ -62,7 +62,7 @@ export function AccountSection({
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 260px), 1fr))",
           gap: 16,
         }}
       >

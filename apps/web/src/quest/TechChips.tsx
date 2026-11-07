@@ -1,4 +1,4 @@
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 
 // Small removable/toggleable tech chip row shared by the posting detector and
 // the retro struggle tagger.

@@ -1,5 +1,5 @@
 import type React from "react";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
 import type { RailAction } from "./WorkflowSteps";

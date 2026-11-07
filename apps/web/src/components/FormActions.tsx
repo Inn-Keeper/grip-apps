@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { ErrorText } from "./ErrorText";
 
 // Cancel and Save for an inline form, with the pending label and the failure beside Save.

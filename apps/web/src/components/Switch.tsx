@@ -1,4 +1,5 @@
 import { colors } from "@grip/core/tokens";
+import styles from "./Switch.module.css";
 
 // The app's one on/off control (Profile connections, Poe, Prep's Auto-next): a button with
 // role="switch", so it reads as on/off and toggles with Space/Enter. 48×28 clears the 24px tap minimum.
@@ -16,6 +17,7 @@ export function Switch({
   return (
     <button
       type="button"
+      className={styles.control}
       role="switch"
       aria-checked={checked}
       aria-label={label}
@@ -34,10 +36,10 @@ export function Switch({
           : "inset 0 1px 0 rgba(255,255,255,0.04)",
         cursor: disabled ? "default" : "pointer",
         opacity: disabled ? 0.5 : 1,
-        transition: "background 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease",
       }}
     >
       <span
+        className={styles.thumb}
         aria-hidden="true"
         style={{
           display: "block",
@@ -47,7 +49,6 @@ export function Switch({
           background: checked ? colors.onAccent : colors.textFaint,
           boxShadow: checked ? "0 4px 12px rgba(0,0,0,0.28)" : "0 3px 9px rgba(0,0,0,0.35)",
           transform: checked ? "translateX(20px)" : "translateX(0)",
-          transition: "transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), background 0.18s ease",
         }}
       />
     </button>

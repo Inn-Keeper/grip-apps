@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font } from "@grip/core/tokens";
+import { colors, tints, font } from "../lib/tokens";
 import type { QuizQuestion as Question } from "./types";
 import styles from "./QuizQuestion.module.css";
 import { srOnly } from "../components/fieldStyles";

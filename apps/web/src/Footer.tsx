@@ -1,6 +1,6 @@
 import React, { type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
-import { brand, colors, font } from "@grip/core/tokens";
+import { brand, colors, font } from "./lib/tokens";
 import { BrandMark } from "./components/BrandMark";
 import { quietText } from "./components/fieldStyles";
 

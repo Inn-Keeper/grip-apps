@@ -4,7 +4,7 @@ import { extractTechsFromText } from "@grip/core/techMatch";
 import { findDuplicate } from "@grip/core/duplicates";
 import { PREP_TECHS } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font } from "../lib/tokens";
 import { Combobox } from "../components/Combobox";
 import { DateInput, Field } from "./shared";
 import { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "../components/fieldStyles";
@@ -13,6 +13,7 @@ import { FormActions } from "../components/FormActions";
 import { mayLeave, useUnsavedGuard } from "../lib/useUnsavedGuard";
 import type { Contact } from "./types";
 import { EMPTY_FORM } from "./types";
+import formRows from "../components/FormRows.module.css";
 
 const POSTING_TECH_LIMIT = 12;
 
@@ -66,11 +67,7 @@ export function ContactForm({
         gap: 10,
       }}
     >
-      <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: 10
-        }}>
+      <div className={formRows.row}>
         <Field label={t("contacts.fieldName")}>
           <input style={inputStyle} value={form.name} onChange={set("name")} autoFocus />
         </Field>
@@ -119,11 +116,7 @@ export function ContactForm({
         limit={POSTING_TECH_LIMIT}
         onChange={(postingTechs) => setForm((current) => ({ ...current, postingTechs }))}
       />
-      <div style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
-          gap: 10
-        }}>
+      <div className={formRows.row}>
         <Field label={t("contacts.fieldNote")}>
           <input style={inputStyle} value={form.note} onChange={set("note")} />
         </Field>
@@ -131,11 +124,7 @@ export function ContactForm({
           <DateInput value={form.date} onChange={(date) => setForm((current) => ({ ...current, date }))} />
         </Field>
       </div>
-      <div style={{
-          display: "grid",
-          gridTemplateColumns: "2fr 1fr",
-          gap: 10
-        }}>
+      <div className={formRows.row}>
         <Field label={t("contacts.fieldNextAction")}>
           <input
             style={inputStyle}

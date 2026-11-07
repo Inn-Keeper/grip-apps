@@ -2,7 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { FILL_ALPHA, MIN_CARD, STATEFUL_TYPES, TEXT_FONT_TOKEN, TYPE_COLORS, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { NODE_H, NODE_W } from "./constants";
 import styles from "./ArchBoard.module.css";

@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
 import { supabase } from "./lib/supabase";
-import { brand, colors, font } from "@grip/core/tokens";
+import { brand, colors, font } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { Turnstile } from "./components/Turnstile";

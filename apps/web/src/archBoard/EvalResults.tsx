@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font, tints } from "@grip/core/tokens";
+import { colors, shadow, font, tints } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 import { scrollBehavior } from "../lib/motion";

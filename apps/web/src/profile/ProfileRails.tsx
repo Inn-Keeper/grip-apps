@@ -1,6 +1,6 @@
 import { PROFILE_FIELDS } from "@grip/core/user";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";

@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { HeadlineMetric } from "../components/HeadlineMetric";
 import { WorkspacePanel } from "../components/WorkspaceLayout";
 

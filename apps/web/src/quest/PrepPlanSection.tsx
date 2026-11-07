@@ -1,7 +1,7 @@
 import { buildPrepPlan } from "@grip/core/prepPlan";
 import { computeReadiness, readinessSignals } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font } from "@grip/core/tokens";
+import { colors, tints, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { writePrepPlan } from "../lib/prepPlanHandoff";
 import type { Contact, ScoredBoard } from "./types";

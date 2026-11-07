@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { groupStoriesByCompetency } from "@grip/core/stories";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { t } from "@grip/core/i18n";
 

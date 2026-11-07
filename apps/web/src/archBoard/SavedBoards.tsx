@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font } from "../lib/tokens";
 import { useAuthUserQuery } from "../profile/queries";
 import { useStoriesQuery } from "../storyBank/queries";
 import { useShareBoardMutation } from "./queries";

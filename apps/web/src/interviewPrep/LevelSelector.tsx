@@ -1,6 +1,6 @@
 import { DIFFICULTIES } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { SettingSection } from "./SettingSection";
 import styles from "./InterviewPrep.module.css";

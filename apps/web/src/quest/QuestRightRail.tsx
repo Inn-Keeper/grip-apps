@@ -1,6 +1,6 @@
 import { PACE_GOAL_PER_WEEK, PACE_WINDOW_DAYS } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import type { VelocityReport } from "@grip/core/pipeline";
 import { velocityEmptyKey } from "./velocityState.js";
 import { ActivityHeatmap } from "./ActivityHeatmap";

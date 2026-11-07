@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { SavedBoards } from "./SavedBoards";
 import styles from "./ArchBoard.module.css";

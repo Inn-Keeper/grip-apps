@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { CustomScenario } from "@grip/core/api";
 import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";

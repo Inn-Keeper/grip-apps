@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import styles from "./InterviewPrep.module.css";
 
 // One section of the Practice settings card: a quiet caps heading (its value or control on

@@ -2,7 +2,7 @@ import { useEffect, useEffectEvent } from "react";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { SPEED_MULTIPLIER, difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow, tints } from "@grip/core/tokens";
+import { colors, font, shadow, tints } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { DrillState } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";

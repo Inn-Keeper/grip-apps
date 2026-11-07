@@ -1,6 +1,6 @@
 import { STATUSES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font, radius, space } from "@grip/core/tokens";
+import { colors, font, radius, space } from "../../lib/tokens";
 import { fieldStyle } from "../../components/fieldStyles";
 import { DateInput } from "../shared";
 import type { ReviewRow } from "@grip/core/importReview";

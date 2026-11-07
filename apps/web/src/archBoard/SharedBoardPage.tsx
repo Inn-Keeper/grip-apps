@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { FREE_SCENARIO, SCENARIOS, TYPE_COLORS, evaluate, isFreeScenario, isFreeType, meta, nodeLabel, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { brand, colors, font } from "@grip/core/tokens";
+import { brand, colors, font } from "../lib/tokens";
 import { getSharedBoard } from "../lib/api";
 import { BrandMark } from "../components/BrandMark";
 import { EvalResults } from "./EvalResults";

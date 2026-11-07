@@ -1,6 +1,6 @@
 import { ROUND_MINUTES } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 
 // Off by default: most sessions are not timed, and a clock in the rail implies you

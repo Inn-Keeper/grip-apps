@@ -1,7 +1,7 @@
 import React from "react";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { ACCURACY_GOOD_PCT, type PrepItem, type ScoreEntry } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
 import styles from "./InterviewPrep.module.css";

@@ -1,7 +1,7 @@
 import { categories } from "@grip/core/prepData";
 import { addTech } from "@grip/core/techList";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { Combobox } from "../components/Combobox";
 import { TechChips } from "./TechChips";
 

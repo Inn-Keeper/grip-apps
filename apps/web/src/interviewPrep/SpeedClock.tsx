@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { SPEED_LIMIT_MS, SPEED_MULTIPLIER } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@grip/core/tokens";
+import { colors, font, tints } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./InterviewPrep.module.css";
 

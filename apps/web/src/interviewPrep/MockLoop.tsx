@@ -4,7 +4,7 @@ import { PROMPTS } from "@grip/core/stories";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font, shadow } from "@grip/core/tokens";
+import { colors, tints, font, shadow } from "../lib/tokens";
 import { DrillSession } from "./DrillSession";
 import type { DrillState } from "./types";
 

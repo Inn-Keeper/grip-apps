@@ -1,6 +1,6 @@
 import { evaluate, isFreeScenario } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import { useScenarioCatalog } from "../archBoard/useScenarioCatalog";
 import { openInBoard } from "../lib/boardHandoff";

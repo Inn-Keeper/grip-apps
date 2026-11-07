@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { InfoTip } from "./InfoTip";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import { GlowBar } from "./GlowBar";
 import styles from "./Metric.module.css";
@@ -31,6 +31,7 @@ export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hin
       <div style={{
           display: "flex",
           alignItems: "baseline",
+          flexWrap: "wrap",
           justifyContent: "space-between",
           gap: 10
         }}>

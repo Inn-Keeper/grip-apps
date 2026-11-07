@@ -1,6 +1,6 @@
 import type { ComponentProps } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { Combobox } from "../components/Combobox";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";

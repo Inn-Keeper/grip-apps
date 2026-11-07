@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { Field } from "../components/shared";
 import { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "../components/fieldStyles";
 import { TechChips } from "./TechChips";

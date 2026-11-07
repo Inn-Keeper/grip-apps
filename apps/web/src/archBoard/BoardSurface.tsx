@@ -1,7 +1,7 @@
 import type React from "react";
 import type { ReactNode, RefObject } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { WORLD } from "./constants";
 import styles from "./ArchBoard.module.css";
 

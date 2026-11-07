@@ -5,7 +5,7 @@ import { t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
 import { workspaceFocusStyle } from "../components/fieldStyles";
 import { NODE_H, NODE_W, TOOLS_INSET, WORLD } from "./constants";

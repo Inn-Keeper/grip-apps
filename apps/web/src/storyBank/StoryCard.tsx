@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import hover from "../components/HoverCard.module.css";
 import { CompetencyBadge } from "./CompetencyBadge";
@@ -94,6 +94,7 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
           <div style={{
               marginLeft: "auto",
               display: "flex",
+              flexWrap: "wrap",
               gap: 6
             }}>
             {onOpen && <button type="button" onClick={onOpen} style={miniBtn(colors.accentBright ?? "")}>{t("stories.open")}</button>}

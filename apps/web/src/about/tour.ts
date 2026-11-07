@@ -45,9 +45,10 @@ function renderPoeReaction(popover: PopoverDOM, stepIndex = 0) {
 }
 
 export function startTour(onNavigate: (page: string) => void) {
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const d = driver({
-    animate: true,
-    smoothScroll: true,
+    animate: !reduceMotion,
+    smoothScroll: !reduceMotion,
     showProgress: true,
     allowClose: true,
     overlayOpacity: 0.7,

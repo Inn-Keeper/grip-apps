@@ -1,6 +1,6 @@
 import { STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { QuestAgenda } from "./QuestAgenda";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";

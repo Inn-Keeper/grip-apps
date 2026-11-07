@@ -85,7 +85,7 @@ export function MyComponent() {
 **Inline with tokens:**
 
 ```tsx
-import { colors, space, font } from "@grip/core/tokens";
+import { colors, space, font } from "./lib/tokens";
 
 export function Header() {
   return (
@@ -139,7 +139,7 @@ import { inputStyle, miniBtn } from "./shared.tsx";
 
 ## Design Tokens
 
-**Never hardcode values.** Always use tokens from `@grip/core/tokens`:
+**Never hardcode values.** Shared tokens come from `@grip/core/tokens`. Web components that use font sizes import the web adapter (`src/lib/tokens.ts`, with the relative path for the component); it maps sizes to rem so text follows user preferences. Native keeps numeric font sizes. Other token values are unchanged:
 
 ### Colors
 
@@ -176,7 +176,7 @@ import { space } from "@grip/core/tokens";
 ### Typography
 
 ```tsx
-import { font } from "@grip/core/tokens";
+import { font } from "./lib/tokens";
 
 // Correct
 <h1 style={{ fontSize: font.size.heading, fontWeight: "700" }}>Title</h1>

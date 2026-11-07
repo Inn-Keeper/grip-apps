@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow, font } from "../lib/tokens";
 import { AbbrText } from "../components/AbbrText";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";

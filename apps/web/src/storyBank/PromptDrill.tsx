@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { StoryCard } from "./StoryCard";

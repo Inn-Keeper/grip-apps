@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@grip/core/tokens";
+import { colors, font, shadow } from "../lib/tokens";
 import { BrandIcon } from "./BrandIcon";
 import hover from "./HoverCard.module.css";
 import { quietText } from "./fieldStyles";

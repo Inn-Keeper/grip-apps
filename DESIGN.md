@@ -47,7 +47,7 @@ Colored glows stay reserved for board nodes (glow = node identity).
 | `textBright` | `#F4F7FC` | Headings, emphasized values |
 | `text` | `#E8ECF4` | Body |
 | `textDim` | `#9AA5BC` | Secondary |
-| `textFaint` | `#6B7690` | Captions, placeholders, hints |
+| `textFaint` | `#8B96AC` | Captions, placeholders, hints |
 
 ### Brand
 
@@ -93,7 +93,7 @@ Decorative ramps (confetti) are local constants, teal-led:
 ## Typography
 
 System font on mobile (SF Pro — native feel under the native tab bar), Inter on web.
-Sizes come from `font.size`:
+Sizes come from `font.size` (numeric on native; rem via the web token adapter):
 
 | Token | px | Use |
 | --- | --- | --- |
@@ -165,7 +165,7 @@ Extract repeated inline style objects to `components/fieldStyles.ts`, or to a sm
 - Spacing (gap, padding, margin) — use `space.*` from tokens
 - Border radius — use `radius.*` from tokens
 
-All values from `@grip/core/tokens`.
+Native values come from `@grip/core/tokens`; web components use `src/lib/tokens.ts`, which maps only font sizes to rem. At the default 16px root, the visual sizes match native tokens. Never fix the root font size in pixels.
 
 ## Motion
 

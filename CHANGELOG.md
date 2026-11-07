@@ -25,6 +25,10 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Styling accessibility: the guided tour and shared web switches respect reduced motion, and header/footer brand marks stay still.
+- Shared caption colors now meet normal-text contrast across the elevation ladder. Web font tokens use rem so default text-size preferences scale the interface; native font tokens remain numeric.
+- Contact and story forms stack fields in narrow containers; Profile account fields stay inside their card at 320px.
+
 - Prep retries stay tied to the account cache they started in: late failures and stale Retry actions cannot restore or resend another account's answers or bonus writes.
 - Saved Arch Board assessments reject malformed sections, invalid scores and mismatched board identities before rendering; damaged feedback no longer crashes the board.
 - Story, contact and retro forms stay open with their text when a save fails, show the error beside Save, block a second Save while one is pending, and ask before Back, Cancel, a tab change or a reload discards changes. Web and mobile.

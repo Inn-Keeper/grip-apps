@@ -2,7 +2,7 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { TEXT_FONT_TOKEN, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@grip/core/tokens";
+import { colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
 import { focusAtEnd, nudgeFromKey } from "./boardControls";

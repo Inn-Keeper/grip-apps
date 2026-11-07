@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { buildAgenda } from "@grip/core/agenda";
 import { parseDDMMYYYY } from "@grip/core/contacts";
 import { getLocale, t } from "@grip/core/i18n";
-import { colors, font, radius, space } from "@grip/core/tokens";
+import { colors, font, radius, space } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Contact } from "./types";
