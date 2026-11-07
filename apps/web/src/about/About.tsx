@@ -1,3 +1,4 @@
+import { useSyncExternalStore } from "react";
 import { colors, shadow, font } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
@@ -8,12 +9,18 @@ import { quietText } from "../components/fieldStyles";
 
 // Phones get each feature's bullets folded behind "What's inside", so the page reads as five
 // short cards instead of a wall of 31 bullets. Wider screens start them open.
-const wide = typeof window !== "undefined" && window.matchMedia("(min-width: 821px)").matches;
+const wideQuery = typeof window !== "undefined" ? window.matchMedia("(min-width: 821px)") : null;
+const getWide = () => wideQuery?.matches ?? false;
+const subscribeWide = (onChange: () => void) => {
+  wideQuery?.addEventListener("change", onChange);
+  return () => wideQuery?.removeEventListener("change", onChange);
+};
 
 type TKey = Parameters<typeof t>[0];
 
 type FeatureCardProps = {
   index: number;
+  wide: boolean;
   icon: string;
   color: string;
   titleKey: TKey;
@@ -23,7 +30,7 @@ type FeatureCardProps = {
   onNavigate: (page: string) => void;
 };
 
-function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, page, onNavigate }: FeatureCardProps) {
+function FeatureCard({ index, wide, icon, color, titleKey, taglineKey, bulletKeys, page, onNavigate }: FeatureCardProps) {
   return (
     <article
       className={hover.hoverCard}
@@ -174,7 +181,7 @@ function FeatureCard({ index, icon, color, titleKey, taglineKey, bulletKeys, pag
   );
 }
 
-const FEATURES: Omit<FeatureCardProps, "index" | "onNavigate">[] = [
+const FEATURES: Omit<FeatureCardProps, "index" | "wide" | "onNavigate">[] = [
   {
     icon: "layers",
     color: colors.deco7 ?? "",
@@ -261,6 +268,7 @@ const QUICK_START: { labelKey: TKey; detailKey: TKey }[] = [
 ];
 
 export default function About({ onNavigate }: { onNavigate: (page: string) => void }) {
+  const wide = useSyncExternalStore(subscribeWide, getWide, () => false);
   return (
     <main
       style={{
@@ -460,6 +468,7 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
       >
         {FEATURES.map((f, index) => (
           <FeatureCard
+            wide={wide}
             key={f.page}
             index={index}
             {...f}

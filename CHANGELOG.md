@@ -25,6 +25,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Fly Me feature disclosures follow live viewport changes instead of keeping the width sampled when the module loaded, fixing collapsed desktop cards after Safari window restoration/resizing.
 - Styling accessibility: the guided tour and shared web switches respect reduced motion, and header/footer brand marks stay still.
 - Shared caption colors now meet normal-text contrast across the elevation ladder. Web font tokens use rem so default text-size preferences scale the interface; native font tokens remain numeric.
 - Contact and story forms stack fields in narrow containers; Profile account fields stay inside their card at 320px.
