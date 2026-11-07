@@ -21,7 +21,7 @@ jest.mock("@/lib/api", () => ({
 }));
 
 jest.mock("@/lib/useScores", () => ({
-  useScores: jest.fn(() => ({ scores: { xp: 0, answers: {} }, record: jest.fn(), addXp: jest.fn() })),
+  useScores: jest.fn(() => ({ scores: { xp: 0, answers: {} }, saveStatus: { pending: 0, failed: 0, bonusFailed: 0, loadFailed: false, retry: jest.fn() }, record: jest.fn(), addXp: jest.fn() })),
 }));
 
 describe("PrepScreen", () => {

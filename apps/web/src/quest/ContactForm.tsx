@@ -9,6 +9,8 @@ import { Combobox } from "../components/Combobox";
 import { DateInput, Field } from "./shared";
 import { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "../components/fieldStyles";
 import { TechPicker } from "./TechPicker";
+import { FormActions } from "../components/FormActions";
+import { mayLeave, useUnsavedGuard } from "../lib/useUnsavedGuard";
 import type { Contact } from "./types";
 import { EMPTY_FORM } from "./types";
 
@@ -17,19 +19,25 @@ const POSTING_TECH_LIMIT = 12;
 export function ContactForm({
   initial,
   contacts,
+  saving,
+  error,
   onSave,
   onCancel,
 }: {
   initial: Partial<Contact>;
   contacts: Contact[];
+  saving: boolean;
+  error: string | null;
   onSave: (form: Omit<Contact, "id" | "retros">) => void;
   onCancel: () => void;
 }) {
-  const [form, setForm] = useState<Omit<Contact, "id" | "retros">>({ ...EMPTY_FORM, ...initial });
+  const [start] = useState<Omit<Contact, "id" | "retros">>({ ...EMPTY_FORM, ...initial });
+  const [form, setForm] = useState(start);
   // The pasted posting is parsed locally and never stored — only detected techs persist.
   const [posting, setPosting] = useState("");
   // Warns, never blocks: a second application to the same company can be real.
   const duplicate = findDuplicate({ ...form, id: initial.id }, contacts);
+  useUnsavedGuard(!!posting.trim() || JSON.stringify(form) !== JSON.stringify(start));
   const set = (field: string) => (event: React.ChangeEvent<HTMLInputElement>) =>
     setForm((current) => ({ ...current, [field]: event.target.value }));
 
@@ -41,9 +49,13 @@ export function ContactForm({
     setForm((current) => ({ ...current, postingTechs: detected.map((d: { tech: string }) => d.tech) }));
   };
 
+  // A fieldset freezes the submitted values until the save settles.
   return (
-    <div
+    <fieldset
+      disabled={saving}
       style={{
+        margin: 0,
+        minWidth: 0,
         background: colors.surface,
         border: `1px solid ${colors.borderSoft}`,
         boxShadow: shadow.card,
@@ -140,45 +152,7 @@ export function ContactForm({
         </Field>
       </div>
 
-      <div style={{
-          display: "flex",
-          gap: 8,
-          justifyContent: "flex-end",
-          marginTop: 4
-        }}>
-        <button
-          onClick={onCancel}
-          style={{
-            padding: "8px 16px",
-            background: "transparent",
-            border: `1px solid ${colors.borderSoft}`,
-            borderRadius: 8,
-            color: colors.textDim,
-            fontSize: font.size.body,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          {t("common.cancel")}
-        </button>
-        <button
-          onClick={() => onSave(form)}
-          disabled={!form.name.trim()}
-          style={{
-            padding: "8px 16px",
-            background: colors.accent,
-            border: "none",
-            borderRadius: 8,
-            color: colors.onAccent,
-            fontSize: font.size.body,
-            fontWeight: 600,
-            cursor: form.name.trim() ? "pointer" : "not-allowed",
-            opacity: form.name.trim() ? 1 : 0.5,
-          }}
-        >
-          {t("common.save")}
-        </button>
-      </div>
-    </div>
+      <FormActions canSave={!!form.name.trim()} saving={saving} error={error} onSave={() => onSave(form)} onCancel={() => mayLeave() && onCancel()} />
+    </fieldset>
   );
 }

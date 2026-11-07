@@ -57,6 +57,7 @@ export type Database = {
           scenario_id: string
           share_token: string | null
           story_id: string | null
+          talk_assessment: Json | null
           talk_grade: number | null
           talk_track: Json
           title: string
@@ -72,6 +73,7 @@ export type Database = {
           scenario_id: string
           share_token?: string | null
           story_id?: string | null
+          talk_assessment?: Json | null
           talk_grade?: number | null
           talk_track?: Json
           title: string
@@ -87,6 +89,7 @@ export type Database = {
           scenario_id?: string
           share_token?: string | null
           story_id?: string | null
+          talk_assessment?: Json | null
           talk_grade?: number | null
           talk_track?: Json
           title?: string

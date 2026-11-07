@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { COMPETENCIES, COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "@grip/core/tokens";
+import { colors, shadow } from "@grip/core/tokens";
 import { Combobox } from "../components/Combobox";
 import { ScenarioForm } from "../archBoard/ScenarioForm";
 import { useSaveScenarioMutation } from "../archBoard/queries";
@@ -9,19 +9,27 @@ import { useScenarioCatalog } from "../archBoard/useScenarioCatalog";
 import { Field } from "../components/shared";
 import { fieldStyle as inputStyle, miniBtn } from "../components/fieldStyles";
 import { textareaStyle } from "./styles";
+import { FormActions } from "../components/FormActions";
+import { mayLeave, useUnsavedGuard } from "../lib/useUnsavedGuard";
 import { EMPTY_FORM } from "./types";
 import type { StoryForm as StoryFormType } from "./types";
 
 export function StoryForm({
   initial,
+  saving,
+  error,
   onSave,
   onCancel,
 }: {
   initial: Partial<StoryFormType>;
+  saving: boolean;
+  error: string | null;
   onSave: (form: StoryFormType) => void;
   onCancel: () => void;
 }) {
-  const [form, setForm] = useState<StoryFormType>({ ...EMPTY_FORM, ...initial });
+  const [start] = useState<StoryFormType>({ ...EMPTY_FORM, ...initial });
+  const [form, setForm] = useState<StoryFormType>(start);
+  useUnsavedGuard(JSON.stringify(form) !== JSON.stringify(start));
   const [creatingScenario, setCreatingScenario] = useState(false);
   const { scenarioOptions } = useScenarioCatalog();
   const saveScenario = useSaveScenarioMutation((saved) => {
@@ -31,9 +39,13 @@ export function StoryForm({
   const set = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [field]: e.target.value }));
 
+  // A fieldset freezes the submitted values until the save settles.
   return (
-    <div
+    <fieldset
+      disabled={saving}
       style={{
+        margin: 0,
+        minWidth: 0,
         background: colors.surface,
         border: `1px solid ${colors.borderSoft}`,
         boxShadow: shadow.card,
@@ -113,45 +125,7 @@ export function StoryForm({
         />
       )}
 
-      <div style={{
-          display: "flex",
-          gap: 8,
-          justifyContent: "flex-end",
-          marginTop: 4
-        }}>
-        <button
-          onClick={onCancel}
-          style={{
-            padding: "8px 16px",
-            background: "transparent",
-            border: `1px solid ${colors.borderSoft}`,
-            borderRadius: 8,
-            color: colors.textDim,
-            fontSize: font.size.body,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          {t("common.cancel")}
-        </button>
-        <button
-          onClick={() => onSave(form)}
-          disabled={!form.title.trim()}
-          style={{
-            padding: "8px 16px",
-            background: colors.accent,
-            border: "none",
-            borderRadius: 8,
-            color: colors.onAccent,
-            fontSize: font.size.body,
-            fontWeight: 600,
-            cursor: form.title.trim() ? "pointer" : "not-allowed",
-            opacity: form.title.trim() ? 1 : 0.5,
-          }}
-        >
-          {t("common.save")}
-        </button>
-      </div>
-    </div>
+      <FormActions canSave={!!form.title.trim()} saving={saving} error={error} onSave={() => onSave(form)} onCancel={() => mayLeave() && onCancel()} />
+    </fieldset>
   );
 }

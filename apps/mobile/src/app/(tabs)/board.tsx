@@ -11,10 +11,10 @@ import * as boardEdits from "@grip/core/boardEdits";
 import { t } from "@grip/core/i18n";
 import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { buildGradeFacts } from "@grip/core/talkGrade";
-import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
+import { assessmentFor, gradeBlockedKey, gradeInputsKey, gradeStillApplies, gradeVerdict, makeAssessment, resumeTime, topologyChanged } from "@grip/core/gradeState";
 import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult } from "@grip/core/arch";
-import type { SavedBoard } from "@grip/core/api";
+import type { SavedBoard, TalkAssessment } from "@grip/core/api";
 import { colors, font, layout } from "@/theme";
 import { ROUND_MINUTES } from "@grip/core/designTimer";
 import { Screen, ScreenHeader } from "@/components/ui";
@@ -72,7 +72,7 @@ export default function BoardScreen() {
   const [nodes, setNodes] = useState<BoardNode[]>([]);
   const [edges, setEdges] = useState<BoardEdge[]>([]);
   // The last evaluation stays after its sheet closes: it moves the board past step 3.
-  // Any edit clears it, as on web.
+  // Structural edits clear it, as on web; the talk track does not.
   const [result, setResult] = useState<EvalResult | null>(null);
   const [resultOpen, setResultOpen] = useState(false);
   const [inspectingEdgeId, setInspectingEdgeId] = useState<string | null>(null);
@@ -82,6 +82,8 @@ export default function BoardScreen() {
   const [talkSections, setTalkSections] = useState<Record<string, string>>(emptyTalkTrack);
   const [talkRating, setTalkRating] = useState<number | null>(null);
   const [talkGrade, setTalkGrade] = useState<number | null>(null);
+  // The detail behind talkGrade, saved with the board and tied to the inputs it graded.
+  const [talkAssessment, setTalkAssessment] = useState<TalkAssessment | null>(null);
   const [activeBoardId, setActiveBoardId] = useState<string | null>(null);
   const [activeBoardTitle, setActiveBoardTitle] = useState<string | null>(null);
   // Chrome levels: full (pills + brief), compact (slim row), zen (board only,
@@ -122,13 +124,28 @@ export default function BoardScreen() {
   // A free board has no checklist: no steps and no Evaluate.
   const free = isFreeScenario(scenario.id);
   const design = designOnly(nodes, edges);
-  const step = workflowStep(design.nodes.length, design.edges.length, result !== null, talkGrade !== null);
+  // What the reasoning grade depends on; a saved assessment whose inputs changed no longer counts.
+  const gradeDoc = { scenarioId, nodes, edges, talkSections, talkRating, brief, talkGrade, talkAssessment };
+  const assessmentStale = talkAssessment !== null && assessmentFor(gradeDoc, activeBoardId) === null;
+  const liveGrade = assessmentStale ? null : talkGrade;
+  const clearGrade = () => { setTalkGrade(null); setTalkAssessment(null); };
+  const step = workflowStep(design.nodes.length, design.edges.length, result !== null, liveGrade !== null);
 
-  const gradeMutation = useGradeTalkTrackMutation((graded) => setTalkGrade(graded.score));
+  // A late answer applies only to the board and inputs it was asked about.
+  const submittedGradeRef = useRef<{ boardId: string; inputs: string } | null>(null);
+  const liveRef = useRef({ doc: gradeDoc, boardId: activeBoardId });
+  liveRef.current = { doc: gradeDoc, boardId: activeBoardId };
+  const gradeMutation = useGradeTalkTrackMutation((graded) => {
+    const { doc, boardId } = liveRef.current;
+    if (!gradeStillApplies(submittedGradeRef.current, boardId, doc)) return;
+    setTalkGrade(graded.score);
+    setTalkAssessment(makeAssessment(doc, graded));
+  });
   const { data: gradingStatus } = useGradingStatusQuery(talkOpen);
   // The grader checks the arithmetic against the design checks, so evaluate here if needed.
   const gradeTalkTrack = () => {
     if (!activeBoardId) return;
+    submittedGradeRef.current = { boardId: activeBoardId, inputs: gradeInputsKey(gradeDoc) };
     gradeMutation.mutate({
       boardId: activeBoardId,
       facts: buildGradeFacts(free ? { ...scenario, brief: brief.trim() } : scenario, nodes, result ?? evaluate(scenario, nodes, edges)),
@@ -140,8 +157,8 @@ export default function BoardScreen() {
   const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
   const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
   const blockedKey = free && !brief.trim() ? "board.gradeNeedsBrief" : gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
-  const talkDetail = gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId);
-  // Null for a board loaded from storage: the score persists, the breakdown does not.
+  // Null once what it graded changed, or on a legacy score-only board.
+  const talkDetail = assessmentFor(gradeDoc, activeBoardId);
   const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
   const weakestLabel = TALK_TRACK_SECTIONS.find((section) => section.id === verdict?.weakest?.section)?.label ?? "";
   // Steps 1 to 3 end in Evaluate, already in the toolbar; from 4 the action is the talk track.
@@ -160,7 +177,8 @@ export default function BoardScreen() {
       nodes,
       edges,
       talkTrack: { sections: talkSections, rating: talkRating },
-      talkGrade,
+      talkGrade: liveGrade,
+      talkAssessment: assessmentStale ? null : talkAssessment,
       brief,
     });
 
@@ -169,7 +187,7 @@ export default function BoardScreen() {
     setEdges([]);
     setTalkSections(emptyTalkTrack());
     setTalkRating(null);
-    setTalkGrade(null);
+    clearGrade();
     setResult(null);
     setActiveBoardId(null);
     setActiveBoardTitle(null);
@@ -186,16 +204,24 @@ export default function BoardScreen() {
 
   // New nodes land in the visible part of the canvas, wherever the user has panned.
   // Structural edits follow core's rules (shared with web) and invalidate the score.
+  // As on web: the topology result drops only when the diagram's meaning changed (not a move,
+  // resize or style). A saved assessment goes stale on its own (assessmentFor); a legacy
+  // score-only grade has no fingerprint, so it is cleared when what it graded changes.
+  const invalidate = (patch: Partial<typeof gradeDoc>) => {
+    const next = { ...gradeDoc, ...patch };
+    if (topologyChanged(gradeDoc, next)) setResult(null);
+    if (!talkAssessment && gradeInputsKey(gradeDoc) !== gradeInputsKey(next)) clearGrade();
+  };
   const edit = (next: { nodes: BoardNode[]; edges: BoardEdge[] }) => {
+    invalidate(next);
     setNodes(next.nodes);
     setEdges(next.edges);
-    setResult(null);
   };
 
   const history = useBoardHistory({ nodes, edges }, viewKey, (doc) => {
+    invalidate(doc);
     setNodes(doc.nodes);
     setEdges(doc.edges);
-    setResult(null);
     setSelectedId(null);
   });
 
@@ -275,6 +301,7 @@ export default function BoardScreen() {
     setTalkSections({ ...emptyTalkTrack(), ...(board.talkTrack?.sections ?? {}) });
     setTalkRating(board.talkTrack?.rating ?? null);
     setTalkGrade(board.talkGrade ?? null);
+    setTalkAssessment(board.talkAssessment ?? null);
     setResult(null);
     setActiveBoardId(board.id ?? null);
     setActiveBoardTitle(board.title);
@@ -398,7 +425,7 @@ export default function BoardScreen() {
             {free && (
               <TextInput
                 value={brief}
-                onChangeText={setBrief}
+                onChangeText={(value) => { invalidate({ brief: value }); setBrief(value); }}
                 placeholder={t("board.freeBriefPlaceholder")}
                 placeholderTextColor={colors.textFaint}
                 accessibilityLabel={t("board.freeBriefLabel")}
@@ -437,7 +464,12 @@ export default function BoardScreen() {
           step={step}
           title={stepCopy.title}
           sub={stepCopy.sub}
-          action={step >= 4 ? { label: t("board.explainAction"), onPress: () => setTalkOpen(true) } : null}
+          action={
+            step >= 4
+              ? { label: t("board.explainAction"), onPress: () => setTalkOpen(true) }
+              // As on web, an empty board's first action opens the Components picker.
+              : step === 1 ? { label: t("board.addComponentAction"), onPress: () => setComponentsOpen(true) } : null
+          }
         />
       )}
 
@@ -568,14 +600,14 @@ export default function BoardScreen() {
           rating={talkRating}
           onChangeSection={(id, value) => {
             setTalkSections((prev) => ({ ...prev, [id]: value }));
-            setTalkGrade(null);
+            clearGrade();
           }}
           onChangeRating={(value) => {
             setTalkRating(value);
-            setTalkGrade(null);
+            clearGrade();
           }}
           onClose={() => setTalkOpen(false)}
-          grade={talkGrade}
+          grade={liveGrade}
           gradeDetail={talkDetail}
           grading={gradeMutation.isPending}
           gradeError={gradeMutation.error}

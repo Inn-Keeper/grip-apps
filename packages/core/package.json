@@ -38,6 +38,7 @@
     "./designTimer": "./src/designTimer.js",
     "./workflowState": "./src/workflowState.js",
     "./gradeState": "./src/gradeState.js",
+    "./scoreStore": "./src/scoreStore.ts",
     "./gamification": "./src/gamification.js",
     "./funnel": "./src/funnel.js",
     "./activity": "./src/activity.js",

@@ -1,66 +1,43 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CORRECT_XP } from "@grip/core/gamification";
-import { difficultyByKey } from "@grip/core/difficulty";
-import { addXp as addXpApi, getScores, recordAnswer } from "../lib/api";
+import { useEffect } from "react";
+import { useIsMutating, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import type { Scores } from "@grip/core/api";
+import {
+  EMPTY_SCORES, freshUnsaved, SCORES_KEY, UNSAVED_KEY, WRITE_KEY,
+  newRequestId, scoreMutations, watchScoreWrites, type SaveStatus, type Unsaved,
+} from "@grip/core/scoreStore";
+import { addXp, getScores, recordAnswer } from "../lib/api";
 
-type ScoreState = { 
-  xp: number; 
-  answers: Record<string, { correct: number; wrong: number }> 
-};
-type RecordArgs = { 
-  requestId: string; tech: string; isCorrect: boolean; source: string; difficulty: string | null };
+const scoreApi = { getScores, recordAnswer, addXp };
 
-const EMPTY: ScoreState = { xp: 0, answers: {} };
+export type { SaveStatus };
 
-// Quiz score store backed by Supabase (profiles + answer_events).
-// Mutations apply optimistically so the quiz UI never waits on the network.
+// Quiz score store backed by Supabase (profiles + answer_events); writes apply optimistically.
 export function useScores() {
   const queryClient = useQueryClient();
-  const { data, isFetched } = useQuery({ queryKey: ["scores"], queryFn: getScores });
-  const scores = data ?? EMPTY;
+  const { data, isError } = useQuery<Scores>({ queryKey: SCORES_KEY, queryFn: scoreApi.getScores });
+  const { data: unsaved } = useQuery<Unsaved>({ queryKey: UNSAVED_KEY, queryFn: freshUnsaved, initialData: freshUnsaved, staleTime: Infinity, gcTime: Infinity });
+  const pending = useIsMutating({ mutationKey: WRITE_KEY });
+  useEffect(() => watchScoreWrites(queryClient), [queryClient]);
 
-  const patch = (updater: (s: ScoreState) => ScoreState) =>
-    queryClient.setQueryData(["scores"], (old: ScoreState | undefined) => updater(old ?? EMPTY));
-  const rollback = () => queryClient.invalidateQueries({ queryKey: ["scores"] });
+  const store = scoreMutations(queryClient, scoreApi);
+  const recordMutation = useMutation(store.record);
+  const xpMutation = useMutation(store.xp);
 
-  const recordMutation = useMutation({
-    mutationFn: ({ requestId, tech, isCorrect, source, difficulty }: RecordArgs) =>
-      recordAnswer(tech, isCorrect, source, difficulty, requestId),
-    onMutate: ({ tech, isCorrect, difficulty }: RecordArgs) =>
-      patch((s) => ({
-        xp: s.xp + (isCorrect ? (difficultyByKey(difficulty ?? "")?.xp ?? CORRECT_XP) : 0),
-        answers: {
-          ...s.answers,
-          [tech]: {
-            correct: (s.answers[tech]?.correct ?? 0) + (isCorrect ? 1 : 0),
-            wrong: (s.answers[tech]?.wrong ?? 0) + (isCorrect ? 0 : 1),
-          },
-        },
-      })),
-    onError: rollback,
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey: ["accuracy-timeline"] });
-      queryClient.invalidateQueries({ queryKey: ["review-queue"] });
-    },
-  });
-
-  const xpMutation = useMutation({
-    mutationFn: addXpApi,
-    onMutate: (points: number) => patch((s) => ({ ...s, xp: s.xp + points })),
-    onError: rollback,
-  });
+  const saveStatus: SaveStatus = {
+    pending,
+    failed: unsaved.answers.length,
+    bonusFailed: unsaved.bonusFailed,
+    loadFailed: isError && !data,
+    retry: () => store.retry(unsaved, recordMutation.mutate),
+  };
 
   return {
-    scores,
-    scoresReady: isFetched,
+    scores: data ?? EMPTY_SCORES,
+    // False until the real scores arrive; `scores` is EMPTY until then.
+    scoresReady: data !== undefined,
+    saveStatus,
     record: (tech: string, isCorrect: boolean, source = "card", difficulty: string | null = null) =>
-      recordMutation.mutate({
-        requestId: `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`,
-        tech,
-        isCorrect,
-        source,
-        difficulty,
-      }),
-    addXp: (points: number) => xpMutation.mutate(points),
+      recordMutation.mutate({ scope: unsaved.scope, requestId: newRequestId(), tech, isCorrect, source, difficulty }),
+    addXp: (points: number) => xpMutation.mutate({ points, scope: unsaved.scope }),
   };
 }

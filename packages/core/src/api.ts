@@ -64,6 +64,20 @@ export type AccuracyPoint = {
 
 export type TalkTrack = { sections: Record<string, string>; rating: number | null };
 
+/** What grip-ai-api returns from /api/v1/ai/grade-talk-track. */
+export type TalkGradeResult = {
+  board_id: string;
+  score: number;
+  divergence: number | null;
+  suggestion: {
+    sections: { section: string; verdict: "covered" | "thin" | "missing"; evidence: string; gap: string }[];
+    hardest_followup: string;
+  };
+};
+
+/** A saved grading result and the fingerprint of the inputs it graded (see gradeState.js). */
+export type TalkAssessment = { version: number; inputs: string; result: TalkGradeResult };
+
 export type SavedBoard = {
   id?: string;
   title: string;
@@ -76,6 +90,8 @@ export type SavedBoard = {
   edges: BoardEdge[];
   talkTrack?: TalkTrack;
   talkGrade?: number | null;
+  /** the detail behind talkGrade; undefined leaves the stored value untouched */
+  talkAssessment?: TalkAssessment | null;
   shareToken?: string | null;
   createdAt?: string;
   updatedAt?: string;

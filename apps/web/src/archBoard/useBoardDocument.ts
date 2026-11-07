@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "@grip/core/boardHistory";
-import type { BoardEdge, BoardNode } from "./types";
+import { applyBoardPatch, makeAssessment } from "@grip/core/gradeState";
+import type { BoardEdge, BoardNode, TalkAssessment, TalkGradeResult } from "./types";
 
 // Everything a saved board persists. Key order matters: snapshots compare as JSON.
 export type BoardDoc = {
@@ -13,13 +14,16 @@ export type BoardDoc = {
   talkGrade: number | null;
   // A free board's own brief; empty on scenario boards.
   brief: string;
+  // The detail behind talkGrade, tied to the inputs it graded.
+  talkAssessment: TalkAssessment | null;
 };
 
 type History = { past: BoardDoc[]; present: BoardDoc; future: BoardDoc[] };
 
 // The board as an undoable document: one state object, its history, and the last saved copy.
-// onApply runs whenever a commit, undo or redo replaces the document (derived UI state resets).
-export function useBoardDocument(initial: () => BoardDoc, onApply: () => void) {
+// onApply runs whenever a commit, undo or redo replaces the document, with the documents before
+// and after, so derived state resets only when what it depends on changed.
+export function useBoardDocument(initial: () => BoardDoc, onApply: (prev: BoardDoc, next: BoardDoc) => void) {
   const [doc, setDoc] = useState(initial);
   const history = useRef<History | null>(null);
   const saved = useRef<BoardDoc | null>(null);
@@ -30,9 +34,10 @@ export function useBoardDocument(initial: () => BoardDoc, onApply: () => void) {
   }
 
   const apply = (next: History) => {
+    const prev = doc;
     history.current = next;
     setDoc(next.present);
-    onApply();
+    onApply(prev, next.present);
     rerender((value) => value + 1);
   };
 
@@ -41,8 +46,8 @@ export function useBoardDocument(initial: () => BoardDoc, onApply: () => void) {
     isDirty: !sameSnapshot(doc, saved.current),
     canUndo: history.current.past.length > 0,
     canRedo: history.current.future.length > 0,
-    // One undo step; no-op when nothing changed.
-    commit: (patch: Partial<BoardDoc>) => apply(commitSnapshot({ ...history.current!, present: doc }, { ...doc, ...patch })),
+    // One undo step; no-op when nothing changed. Clears the reasoning grade when what it graded changed.
+    commit: (patch: Partial<BoardDoc>) => apply(commitSnapshot({ ...history.current!, present: doc }, applyBoardPatch(doc, patch))),
     undo: () => apply(undo(history.current)),
     redo: () => apply(redo(history.current)),
     // Live drag frames: shown at once, recorded only by recordNodes on drop.
@@ -51,8 +56,13 @@ export function useBoardDocument(initial: () => BoardDoc, onApply: () => void) {
       history.current = commitSnapshot(history.current, { ...doc, nodes });
       rerender((value) => value + 1);
     },
-    // A grade arrives from the server; it dirties the board so Save persists it.
-    setTalkGrade: (talkGrade: number | null) => setDoc((current) => ({ ...current, talkGrade })),
+    // A grade arrives from the server; it dirties the board so Save persists it with its detail.
+    // It replaces the present snapshot (no undo step), so undo then redo keeps the grade.
+    setAssessment: (result: TalkGradeResult) => {
+      const next = { ...doc, talkGrade: result.score, talkAssessment: makeAssessment(doc, result) };
+      history.current = { ...history.current!, present: next };
+      setDoc(next);
+    },
     // Load or start fresh: the new document is both the history root and the saved copy.
     reset: (next: BoardDoc) => {
       history.current = createHistory(next);

@@ -14,14 +14,15 @@ import { EMPTY_FORM } from "./types";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "./queries";
 import type { Story, StoryForm as StoryFormType } from "./types";
 import { scrollBehavior } from "../lib/motion";
-import { ErrorBanner, ErrorText } from "../components/ErrorText";
+import { ErrorBanner } from "../components/ErrorText";
+import { mayLeave } from "../lib/useUnsavedGuard";
 
 // The focused view (rule 8): writing, editing or reading one story in place of the list.
 type Focus = { mode: "detail" | "edit"; id: string } | { mode: "new"; competency?: string } | null;
 
 export default function StoryBank() {
   const [mode, setMode] = useState<StoryMode>("stories");
-  const [focus, setFocus] = useState<Focus>(null);
+  const [focus, setFocusState] = useState<Focus>(null);
   // Confirmation after a change (rule 14); the story a failed save belongs to (rule 13).
   const [notice, setNotice] = useState<{ id: number; text: string } | null>(null);
   const [touched, setTouched] = useState<string | null>(null);
@@ -29,6 +30,11 @@ export default function StoryBank() {
   const { data: stories = null, error: loadError } = useStoriesQuery();
   const saveMutation = useSaveStoryMutation();
   const deleteMutation = useDeleteStoryMutation();
+  // A failed save belongs to the form it came from, not the next one opened.
+  const setFocus = (next: Focus) => {
+    if (!saveMutation.isPending) saveMutation.reset();
+    setFocusState(next);
+  };
   const mutationError = saveMutation.error || deleteMutation.error;
   const errorFor = (id: string | undefined) => (mutationError && touched === id ? t("stories.saveError", { message: mutationError.message }) : null);
 
@@ -45,11 +51,16 @@ export default function StoryBank() {
   const announce = (text: string) => setNotice({ id: Date.now(), text });
 
   const handleSave = (form: StoryFormType) => {
-    if (!form.title.trim()) return;
+    if (!form.title.trim() || saveMutation.isPending) return;
     const id = focus?.mode === "edit" ? focus.id : undefined;
     setTouched(id ?? "new");
-    saveMutation.mutate({ ...form, id }, { onSuccess: () => announce(t("stories.saved", { title: form.title })) });
-    setFocus(id ? { mode: "detail", id } : null);
+    // The form stays open until the save lands, so a failure keeps the draft.
+    saveMutation.mutate({ ...form, id }, {
+      onSuccess: () => {
+        announce(t("stories.saved", { title: form.title }));
+        setFocus(id ? { mode: "detail", id } : null);
+      },
+    });
   };
 
   const handleDelete = (story: Story) => {
@@ -106,7 +117,7 @@ export default function StoryBank() {
 
       {focus ? (
         <div style={workspaceFocusStyle}>
-          <button type="button" onClick={() => setFocus(null)} style={{
+          <button type="button" onClick={() => mayLeave() && setFocus(null)} style={{
               marginBottom: 14,
               padding: 0,
               background: "transparent",
@@ -121,11 +132,10 @@ export default function StoryBank() {
           {noticeLine}
           {focus.mode === "new" && (
             <>
-              <StoryForm initial={{ ...EMPTY_FORM, competency: focus.competency ?? EMPTY_FORM.competency }} onSave={handleSave} onCancel={() => setFocus(null)} />
-              {errorFor("new") && <ErrorText>{errorFor("new")}</ErrorText>}
+              <StoryForm initial={{ ...EMPTY_FORM, competency: focus.competency ?? EMPTY_FORM.competency }} saving={saveMutation.isPending} error={errorFor("new")} onSave={handleSave} onCancel={() => setFocus(null)} />
             </>
           )}
-          {focused && focus.mode === "edit" && <StoryForm initial={focused} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />}
+          {focused && focus.mode === "edit" && <StoryForm initial={focused} saving={saveMutation.isPending} error={errorFor(focused.id)} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />}
           {focused && focus.mode === "detail" && (
             <StoryDetail story={focused} error={errorFor(focused.id)} onEdit={() => setFocus({ mode: "edit", id: focus.id })} onDelete={() => handleDelete(focused)} />
           )}

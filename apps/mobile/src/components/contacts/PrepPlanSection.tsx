@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { useRouter } from "expo-router";
 import { buildPrepPlan } from "@grip/core/prepPlan";
-import { computeReadiness } from "@grip/core/readiness";
+import { readinessSignals } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
 import { colors, font, tints } from "@/theme";
 import { setPrepPlan } from "@/lib/uiStore";
@@ -15,15 +15,17 @@ export function PrepPlanSection({
   contact,
   answers,
   stories,
+  boards,
 }: {
   contact: Contact;
-  answers: Record<string, { correct: number; wrong: number }>;
-  stories: StoryItem[];
+  answers: Record<string, { correct: number; wrong: number }> | null;
+  stories: StoryItem[] | null;
+  boards: { topology: number; talkGrade: number | null }[] | null;
 }) {
   const router = useRouter();
-  const plan = buildPrepPlan({ techs: contact.postingTechs, answers, deadline: contact.nextActionDate });
-  // ponytail: no board scores on the mobile card — arch drops out of the average.
-  const readiness = computeReadiness({ postingTechs: contact.postingTechs, answers, stories });
+  const plan = buildPrepPlan({ techs: contact.postingTechs, answers: answers ?? {}, deadline: contact.nextActionDate });
+  // Separate evidence, no composite score; null inputs read as unavailable, not 0.
+  const signals = readinessSignals({ postingTechs: contact.postingTechs, answers, stories, boards });
   const focus = plan.items.slice(0, PLAN_TECH_COUNT);
 
   const startPlanDrill = () => {
@@ -69,18 +71,21 @@ export function PrepPlanSection({
             ? t("plan.deadline", { date: contact.nextActionDate, days: plan.daysLeft ?? 0 })
             : t("plan.noDeadline")}
         </Text>
-        <Text style={{
-            fontSize: font.size.label,
-            color: colors.textDim
-          }}>
-          {t("plan.readiness")}{" "}
-          <Text style={{
-              fontWeight: "700",
-              color: colors.text
+      </View>
+
+      <View style={{ gap: 2 }}>
+        {signals.map((signal) => (
+          <Text key={signal.id} accessibilityHint={signal.hint} style={{
+              fontSize: font.size.label,
+              color: colors.textDim
             }}>
-            {readiness.overall === null ? "--" : `${readiness.overall}%`}
+            {signal.label}{" "}
+            <Text style={{
+                fontWeight: "700",
+                color: signal.missing ? colors.textFaint : colors.text
+              }}>{signal.value}</Text>
           </Text>
-        </Text>
+        ))}
       </View>
 
       <View style={{

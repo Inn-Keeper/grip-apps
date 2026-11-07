@@ -6,7 +6,8 @@ import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
 import { colors, layout } from "@/theme";
-import { Button, Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
+import { FormActions } from "@/components/FormActions";
+import { Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
 import { Combobox } from "@/components/Combobox";
 import { DateField } from "@/components/DateField";
 import type { Contact } from "@grip/core/api";
@@ -28,10 +29,11 @@ export const EMPTY_CONTACT_FORM: Contact = {
   postingTechs: [],
 };
 
-type ContactFormProps = { initial: Contact; onSave: (contact: Contact) => void; onCancel: () => void };
+type ContactFormProps = { initial: Contact; saving: boolean; error: string | null; onSave: (contact: Contact) => void; onCancel: () => void };
 
-export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
-  const [form, setForm] = useState({ ...EMPTY_CONTACT_FORM, ...initial });
+export function ContactForm({ initial, saving, error, onSave, onCancel }: ContactFormProps) {
+  const [start] = useState({ ...EMPTY_CONTACT_FORM, ...initial });
+  const [form, setForm] = useState(start);
   // The pasted posting is parsed on-device and never stored — only detected techs persist.
   const [posting, setPosting] = useState("");
   const insets = useSafeAreaInsets();
@@ -49,6 +51,8 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
 
   return (
     <ScrollView
+      // Frozen while saving so the submitted values are what lands.
+      pointerEvents={saving ? "none" : "auto"}
       style={{
         flex: 1,
         backgroundColor: colors.bg
@@ -57,7 +61,7 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
       keyboardShouldPersistTaps="handled"
     >
       <Field label={t("contacts.fieldName")}>
-        <TextInput style={inputStyle} value={form.name} onChangeText={set("name")} autoFocus />
+        <TextInput accessibilityLabel={t("contacts.fieldName")} style={inputStyle} value={form.name} onChangeText={set("name")} autoFocus />
       </Field>
       <Field label={t("contacts.fieldStatus")}>
         <View style={{
@@ -134,15 +138,14 @@ export function ContactForm({ initial, onSave, onCancel }: ContactFormProps) {
       </Field>
       <DateField label={t("contacts.nextActionDue")} value={form.nextActionDate} onChange={set("nextActionDate")} clearable />
 
-      <View style={{
-          flexDirection: "row",
-          gap: 8,
-          justifyContent: "flex-end",
-          marginTop: 8
-        }}>
-        <Button label={t("common.cancel")} variant="ghost" onPress={onCancel} />
-        <Button label={t("common.save")} onPress={() => onSave(form)} disabled={!form.name.trim()} />
-      </View>
+      <FormActions
+        canSave={!!form.name.trim()}
+        saving={saving}
+        error={error}
+        dirty={!!posting.trim() || JSON.stringify(form) !== JSON.stringify(start)}
+        onSave={() => onSave(form)}
+        onCancel={onCancel}
+      />
     </ScrollView>
   );
 }

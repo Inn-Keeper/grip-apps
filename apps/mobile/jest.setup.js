@@ -1,11 +1,13 @@
 // MAINTENANCE WARNING: the mocks below reach into React Native private
 // internals (react-native/Libraries/* paths) because jest-expo's preset
-// alone does not boot RN 0.85 components under the node test environment
+// alone does not boot RN 0.86 components under the node test environment
 // (verified: removing them fails all suites). If tests break mysteriously
 // after an Expo SDK / RN upgrade, start here.
 global.__DEV__ = true;
 global.IS_REACT_ACT_ENVIRONMENT = true;
 global.IS_REACT_NATIVE_TEST_ENVIRONMENT = true;
+// RN 0.86 (SDK 57) reads this at module load; the RN jest preset stubs it the same way.
+global.nativeFabricUIManager = global.nativeFabricUIManager || {};
 global.__fbBatchedBridgeConfig = { remoteModuleConfig: [], localModulesConfig: [] };
 global.requestAnimationFrame = global.requestAnimationFrame || ((callback) => setTimeout(callback, 0));
 global.cancelAnimationFrame = global.cancelAnimationFrame || ((id) => clearTimeout(id));
@@ -39,6 +41,9 @@ const mockNativeAnimatedModule = {
 };
 
 
+
+// RN 0.86 loads its app bootstrap (timers, error handling, DevTools) on import; tests need none of it.
+jest.mock("react-native/Libraries/Core/InitializeCore", () => ({}));
 
 jest.mock("react-native/Libraries/EventEmitter/NativeEventEmitter", () => {
   return class NativeEventEmitter {
@@ -114,6 +119,11 @@ jest.mock("react-native-reanimated", () => {
 // Native OAuth + live Supabase session: screens only need a signed-in, non-demo user.
 jest.mock("@/lib/oauth", () => ({ signInWithGitHub: jest.fn(), linkGitHubIdentity: jest.fn() }));
 jest.mock("@/lib/useIsDemo", () => ({ useIsDemo: () => false }));
+
+// Forms run their focus effect once, as if their screen were focused; no navigator in tests.
+jest.mock("expo-router", () => ({
+  useFocusEffect: (effect) => require("react").useEffect(effect, [effect]),
+}));
 
 jest.mock("expo-haptics", () => ({
   notificationAsync: jest.fn(() => Promise.resolve()),

@@ -17,6 +17,7 @@ import {
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
+import { ProgressSaveStatus } from "./ProgressSaveStatus";
 import { useScores } from "./useScores";
 import { CelebrationOverlay } from "../components/CelebrationOverlay";
 import { colors, font, layout } from "@grip/core/tokens";
@@ -99,7 +100,7 @@ export default function InterviewPrep() {
   const restartRef = useRef<(() => void) | null>(null);
   // A session replaces the card grid; bring it into view even if it was started from far down.
   const sessionRef = useRef<HTMLDivElement>(null);
-  const { scores, scoresReady, record, addXp } = useScores();
+  const { scores, scoresReady, saveStatus, record, addXp } = useScores();
   const { data: accuracy = [] } = useAccuracyTimelineQuery();
   const { data: reviewQueue = [] } = useReviewQueueQuery();
   const { data: prepContacts = [] } = usePrepContactsQuery();
@@ -342,6 +343,7 @@ export default function InterviewPrep() {
         />
       }
     >
+      <ProgressSaveStatus status={saveStatus} />
       {!drill && (
         <NextUpCard
           reviewDueCount={reviewDueTechs.length}

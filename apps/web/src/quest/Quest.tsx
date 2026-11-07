@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { STATUSES, todayDDMMYYYY, isDue } from "@grip/core/contacts";
-import { SCENARIOS, evaluate } from "@grip/core/arch";
+import { toScoredBoards } from "@grip/core/readiness";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@grip/core/tokens";
@@ -31,13 +31,14 @@ import {
 } from "./queries";
 import type { Contact, Retro, ScoredBoard } from "./types";
 import { scrollBehavior } from "../lib/motion";
-import { ErrorBanner, ErrorText } from "../components/ErrorText";
+import { ErrorBanner } from "../components/ErrorText";
+import { mayLeave } from "../lib/useUnsavedGuard";
 
 // The focused view (rule 8): a contact's detail, a form, or a retro, in place of the list.
 type Focus = { mode: "detail" | "edit" | "retro"; id: string } | { mode: "new" } | null;
 
 export default function Quest() {
-  const [focus, setFocus] = useState<Focus>(null);
+  const [focus, setFocusState] = useState<Focus>(null);
   const [filter, setFilter] = useState<string | null>(null);
   const [importing, setImporting] = useState(false);
   // Confirmation after a change (rule 14); the contact a failed save belongs to (rule 13).
@@ -45,30 +46,27 @@ export default function Quest() {
   const [touched, setTouched] = useState<string | null>(null);
 
   const { data: contacts = null, error: loadError } = useContactsQuery();
-  const { data: stories = [] } = useContactStoriesQuery();
+  const { data: stories = null } = useContactStoriesQuery();
   // The funnel falls back to contacts when events are missing; the heatmap needs the real state.
   const { data: statusEvents = [], isPending: statusEventsLoading, error: statusEventsError } = useStatusEventsQuery();
   const { data: velocity, error: velocityError, isFetching: velocityLoading } = usePipelineVelocityQuery();
   const { data: scores } = useScoresQuery();
-  const { data: boards = [] } = useBoardsQuery();
+  const { data: boards = null } = useBoardsQuery();
   const funnel = buildFunnelSummary(contacts ?? [], statusEvents);
 
-  // Saved boards re-scored against their scenarios feed the readiness meter.
-  // The deterministic topology score remains visible for every board. Design
-  // readiness is computed only when a separate reasoning assessment exists.
-  // ponytail: default scenarios only — custom-scenario boards are skipped.
-  const scoredBoards = boards
-    .map((board) => {
-      const scenario = SCENARIOS.find((s: { id: string }) => s.id === board.scenarioId);
-      if (!scenario) return null;
-      return { topology: evaluate(scenario, board.nodes, board.edges).score, talkGrade: board.talkGrade ?? null };
-    })
-    .filter((entry): entry is ScoredBoard => entry !== null);
+  // Null while loading or failed, so readiness says "Unavailable" instead of 0.
+  const scoredBoards: ScoredBoard[] | null = boards && toScoredBoards(boards);
 
   const saveMutation = useSaveContactMutation();
   const deleteMutation = useDeleteContactMutation();
   const retroAddMutation = useAddRetroMutation();
   const retroDeleteMutation = useDeleteRetroMutation();
+  // A failed save belongs to the form it came from, not the next one opened.
+  const setFocus = (next: Focus) => {
+    if (!saveMutation.isPending) saveMutation.reset();
+    if (!retroAddMutation.isPending) retroAddMutation.reset();
+    setFocusState(next);
+  };
   const mutationError = saveMutation.error || deleteMutation.error || retroAddMutation.error || retroDeleteMutation.error;
   const errorFor = (id: string | undefined) =>
     mutationError && touched === id ? t("quest.saveError", { message: mutationError.message }) : null;
@@ -87,14 +85,19 @@ export default function Quest() {
   const announce = (text: string) => setNotice({ id: Date.now(), text });
 
   const handleSave = (form: Omit<Contact, "id" | "retros">) => {
-    if (!form.name.trim()) return;
+    if (!form.name.trim() || saveMutation.isPending) return;
     const id = focus?.mode === "edit" ? focus.id : undefined;
     setTouched(id ?? "new");
+    // The form stays open until the save lands, so a failure keeps the draft.
     saveMutation.mutate(
       { ...form, id, date: form.date || todayDDMMYYYY() },
-      { onSuccess: () => announce(t("quest.saved", { name: form.name })) }
+      {
+        onSuccess: () => {
+          announce(t("quest.saved", { name: form.name }));
+          setFocus(id ? { mode: "detail", id } : null);
+        },
+      }
     );
-    setFocus(id ? { mode: "detail", id } : null);
   };
 
   const handleDelete = (contact: Contact) => {
@@ -124,13 +127,18 @@ export default function Quest() {
   };
 
   const handleAddRetro = (contact: Contact, retro: Omit<Retro, "id" | "date">) => {
-    if (!contact.id) return;
-    setTouched(contact.id);
+    const contactId = contact.id;
+    if (!contactId || retroAddMutation.isPending) return;
+    setTouched(contactId);
     retroAddMutation.mutate(
-      { contactId: contact.id, retro },
-      { onSuccess: () => announce(t("quest.retroSaved", { name: contact.name })) }
+      { contactId, retro },
+      {
+        onSuccess: () => {
+          announce(t("quest.retroSaved", { name: contact.name }));
+          setFocus({ mode: "detail", id: contactId });
+        },
+      }
     );
-    setFocus({ mode: "detail", id: contact.id });
   };
 
   const handleDeleteRetro = (contact: Contact, retroId: string) => {
@@ -179,7 +187,7 @@ export default function Quest() {
         <div style={workspaceFocusStyle}>
           <button
             type="button"
-            onClick={() => setFocus(null)}
+            onClick={() => mayLeave() && setFocus(null)}
             style={{
               marginBottom: 14,
               padding: 0,
@@ -196,21 +204,20 @@ export default function Quest() {
           {noticeLine}
           {focus.mode === "new" && (
             <>
-              <ContactForm initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }} contacts={contacts ?? []} onSave={handleSave} onCancel={() => setFocus(null)} />
-              {errorFor("new") && <ErrorText>{errorFor("new")}</ErrorText>}
+              <ContactForm initial={{ ...EMPTY_FORM, date: todayDDMMYYYY() }} contacts={contacts ?? []} saving={saveMutation.isPending} error={errorFor("new")} onSave={handleSave} onCancel={() => setFocus(null)} />
             </>
           )}
           {focused && focus.mode === "edit" && (
-            <ContactForm initial={focused} contacts={contacts ?? []} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
+            <ContactForm initial={focused} contacts={contacts ?? []} saving={saveMutation.isPending} error={errorFor(focused.id)} onSave={handleSave} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
           )}
           {focused && focus.mode === "retro" && (
-            <RetroForm onSave={(retro) => handleAddRetro(focused, retro)} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
+            <RetroForm saving={retroAddMutation.isPending} error={errorFor(focused.id)} onSave={(retro) => handleAddRetro(focused, retro)} onCancel={() => setFocus({ mode: "detail", id: focus.id })} />
           )}
           {focused && focus.mode === "detail" && (
             <ContactDetail
               contact={focused}
               stories={stories}
-              answers={scores?.answers ?? {}}
+              answers={scores?.answers ?? null}
               boards={scoredBoards}
               error={errorFor(focused.id)}
               onDeleteRetro={(retroId) => handleDeleteRetro(focused, retroId)}

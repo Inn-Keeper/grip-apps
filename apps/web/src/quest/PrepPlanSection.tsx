@@ -1,5 +1,5 @@
 import { buildPrepPlan } from "@grip/core/prepPlan";
-import { computeReadiness } from "@grip/core/readiness";
+import { computeReadiness, readinessSignals } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
 import { colors, tints, font } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
@@ -9,9 +9,9 @@ import type { Contact, ScoredBoard } from "./types";
 // How many weakest posting techs the plan surfaces and hands to the Prep drill.
 const PLAN_TECH_COUNT = 5;
 
-function ReadinessStat({ label, value }: { label: string; value: number | null }) {
+function ReadinessStat({ label, value, hint, missing }: { label: string; value: string; hint: string; missing: boolean }) {
   return (
-    <span style={{
+    <span title={hint} style={{
         display: "inline-flex",
         alignItems: "baseline",
         gap: 4,
@@ -21,9 +21,9 @@ function ReadinessStat({ label, value }: { label: string; value: number | null }
       {label}
       <span style={{
           fontWeight: 800,
-          color: value === null ? colors.textFaint : colors.text
+          color: missing ? colors.textFaint : colors.text
         }}>
-        {value === null ? "--" : `${value}%`}
+        {value}
       </span>
     </span>
   );
@@ -36,21 +36,20 @@ export function PrepPlanSection({
   boards,
 }: {
   contact: Contact;
-  answers: Record<string, { correct: number; wrong: number }>;
-  stories: { competency: string }[];
-  boards: ScoredBoard[];
+  answers: Record<string, { correct: number; wrong: number }> | null;
+  stories: { competency: string }[] | null;
+  boards: ScoredBoard[] | null;
 }) {
   const plan = buildPrepPlan({
     techs: contact.postingTechs,
-    answers,
+    answers: answers ?? {},
     deadline: contact.nextActionDate,
   });
-  const readiness = computeReadiness({
-    postingTechs: contact.postingTechs,
-    answers,
-    stories,
-    boards,
-  });
+  // Separate evidence, no composite score: each signal says what it measures.
+  const signals = readinessSignals({ postingTechs: contact.postingTechs, answers, stories, boards });
+  const split = boards && computeReadiness({ boards });
+  const topology = split?.archTopology;
+  const talk = split?.archTalk;
   const focus = plan.items.slice(0, PLAN_TECH_COUNT);
 
   const startPlanDrill = () => {
@@ -102,13 +101,11 @@ export function PrepPlanSection({
             marginLeft: "auto",
             display: "flex",
             alignItems: "baseline",
-            gap: 10
+            gap: 10,
+            flexWrap: "wrap"
           }}>
-          <ReadinessStat label={t("plan.readiness")} value={readiness.overall} />
-          <ReadinessStat label={t("plan.readinessPrep")} value={readiness.prep} />
-          <ReadinessStat label={t("plan.readinessStories")} value={readiness.stories} />
-          <ReadinessStat label={t("plan.readinessBoards")} value={readiness.arch} />
-          {readiness.archTopology !== null && (
+          {signals.map((signal) => <ReadinessStat key={signal.id} {...signal} />)}
+          {topology != null && (
             <span
               style={{
                 fontSize: font.size.label,
@@ -117,8 +114,8 @@ export function PrepPlanSection({
               title={t("plan.readinessBoardsSplitHint")}
             >
               {t("plan.readinessBoardsSplit", {
-                design: readiness.archTopology,
-                talk: readiness.archTalk === null ? "--" : `${readiness.archTalk}%`,
+                design: topology,
+                talk: talk == null ? "--" : `${talk}%`,
               })}
             </span>
           )}

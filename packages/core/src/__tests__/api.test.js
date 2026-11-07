@@ -238,6 +238,7 @@ describe("createApi", () => {
         edges: [],
         talkTrack: { sections: emptyTalkTrack(), rating: null },
         talkGrade: 72,
+        talkAssessment: null,
         shareToken: null,
         createdAt: "2026-01-01",
         updatedAt: "2026-01-02",
@@ -275,6 +276,30 @@ describe("createApi", () => {
     expect(calls.inserts[0].rows.talk_grade).toBe(72);
   });
 
+  it("round-trips a talk assessment and drops a malformed one", async () => {
+    const assessment = {
+      version: 1,
+      inputs: "fingerprint",
+      result: { board_id: "b", score: 72, divergence: null, suggestion: { sections: ["requirements", "scale", "api", "dataModel", "bottleneck", "tradeoff"].map((section) => ({ section, verdict: "thin", evidence: "e", gap: "g" })), hardest_followup: "Why?" } },
+    };
+    const { client, calls } = fakeSupabase({
+      arch_boards: [
+        { id: "good", title: "G", scenario_id: "s", nodes: [], edges: [], talk_grade: 72, talk_assessment: assessment },
+        { id: "bad", title: "B", scenario_id: "s", nodes: [], edges: [], talk_grade: 72, talk_assessment: { version: 7 } },
+      ],
+    });
+    const api = createApi(client);
+
+    const [good, bad] = await api.listBoards();
+    expect(good.talkAssessment).toEqual(assessment);
+    expect(bad.talkAssessment).toBeNull();
+
+    await api.upsertBoard({ title: "T", scenarioId: "s", nodes: [], edges: [], talkGrade: 72, talkAssessment: assessment });
+    await api.upsertBoard({ title: "Old client", scenarioId: "s", nodes: [], edges: [] });
+    expect(calls.inserts[0].rows.talk_assessment).toEqual(assessment);
+    expect("talk_assessment" in calls.inserts[1].rows).toBe(false);
+  });
+
   it("normalizes a legacy board with no talk_track into blank sections", async () => {
     const { client } = fakeSupabase({
       arch_boards: [{ id: "board-1", title: "Old", scenario_id: "catalog", nodes: [], edges: [] }],
@@ -284,6 +309,7 @@ describe("createApi", () => {
     const [board] = await api.listBoards();
     expect(board.talkTrack).toEqual({ sections: emptyTalkTrack(), rating: null });
     expect(board.talkGrade).toBeNull();
+    expect(board.talkAssessment).toBeNull();
   });
 
   it("rejects an out-of-range self-rating on the way to the database", async () => {

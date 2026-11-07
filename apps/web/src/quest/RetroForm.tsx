@@ -6,6 +6,8 @@ import { colors, font } from "@grip/core/tokens";
 import { Field } from "../components/shared";
 import { fieldStyle as inputStyle, textareaFieldStyle as textareaStyle } from "../components/fieldStyles";
 import { TechChips } from "./TechChips";
+import { FormActions } from "../components/FormActions";
+import { mayLeave, useUnsavedGuard } from "../lib/useUnsavedGuard";
 import type { Retro } from "./types";
 import { EMPTY_RETRO } from "./types";
 
@@ -35,13 +37,18 @@ export function RetroLine({ label, text }: { label: string; text?: string }) {
 }
 
 export function RetroForm({
+  saving,
+  error,
   onSave,
   onCancel,
 }: {
+  saving: boolean;
+  error: string | null;
   onSave: (retro: Omit<Retro, "id" | "date">) => void;
   onCancel: () => void;
 }) {
   const [form, setForm] = useState<Omit<Retro, "id" | "date">>(EMPTY_RETRO);
+  useUnsavedGuard(JSON.stringify(form) !== JSON.stringify(EMPTY_RETRO));
   // Techs manually toggled off — struggles are detected from the retro text,
   // and everything detected counts unless the user opts a tech out.
   const [excluded, setExcluded] = useState<string[]>([]);
@@ -57,9 +64,13 @@ export function RetroForm({
       current.includes(tech) ? current.filter((item) => item !== tech) : [...current, tech]
     );
 
+  // A fieldset freezes the submitted values until the save settles.
   return (
-    <div
+    <fieldset
+      disabled={saving}
       style={{
+        margin: 0,
+        minWidth: 0,
         marginTop: 10,
         padding: "12px 14px",
         background: colors.well,
@@ -104,42 +115,7 @@ export function RetroForm({
             }}>{t("retro.struggledHint")}</p>
         </div>
       )}
-      <div style={{
-          display: "flex",
-          gap: 8,
-          justifyContent: "flex-end"
-        }}>
-        <button
-          onClick={onCancel}
-          style={{
-            padding: "6px 14px",
-            background: "transparent",
-            border: `1px solid ${colors.borderSoft}`,
-            borderRadius: 8,
-            color: colors.textDim,
-            fontSize: font.size.small,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          {t("common.cancel")}
-        </button>
-        <button
-          onClick={() => onSave({ ...form, struggledTechs })}
-          style={{
-            padding: "6px 14px",
-            background: colors.accent,
-            border: "none",
-            borderRadius: 8,
-            color: colors.onAccent,
-            fontSize: font.size.small,
-            fontWeight: 600,
-            cursor: "pointer",
-          }}
-        >
-          {t("contacts.saveRetro")}
-        </button>
-      </div>
-    </div>
+      <FormActions compact canSave saveLabel={t("contacts.saveRetro")} saving={saving} error={error} onSave={() => onSave({ ...form, struggledTechs })} onCancel={() => mayLeave() && onCancel()} />
+    </fieldset>
   );
 }

@@ -2,10 +2,12 @@
 import type { BoardEdge, BoardNode } from "../arch.js";
 import type { BoardOverview, BoardSummary, SavedBoard, SharedBoard } from "../api";
 import { normalizeTalkTrack } from "../talkTrack.js";
+import { parseAssessment } from "../gradeState.js";
 import { fail, type Db, type Tables, type TablesInsert } from "./shared";
+import type { Json } from "../database.types";
 
 // Everything the UI maps; user_id stays server-side.
-const BOARD_COLUMNS = "id,title,scenario_id,story_id,brief,nodes,edges,talk_track,talk_grade,share_token,created_at,updated_at";
+const BOARD_COLUMNS = "id,title,scenario_id,story_id,brief,nodes,edges,talk_track,talk_grade,talk_assessment,share_token,created_at,updated_at";
 type BoardRow = Omit<Tables<"arch_boards">, "user_id">;
 type BoardSummaryRow = Pick<BoardRow, "id" | "title" | "scenario_id" | "story_id" | "share_token" | "created_at" | "updated_at">;
 
@@ -24,6 +26,7 @@ export function boardsApi(supabase: Db) {
     edges: asEdges(r.edges),
     talkTrack: normalizeTalkTrack(r.talk_track),
     talkGrade: Number.isFinite(r.talk_grade) ? r.talk_grade : null,
+    talkAssessment: parseAssessment(r.talk_assessment),
     shareToken: r.share_token ?? null,
     createdAt: r.created_at,
     updatedAt: r.updated_at,
@@ -38,6 +41,7 @@ export function boardsApi(supabase: Db) {
     talk_grade: typeof b.talkGrade === "number" && Number.isFinite(b.talkGrade) && b.talkGrade >= 0 && b.talkGrade <= 100
       ? Math.round(b.talkGrade)
       : null,
+    ...(b.talkAssessment !== undefined && { talk_assessment: (parseAssessment(b.talkAssessment) ?? null) as Json }),
     // Only when the caller knows about the link, so clients without it (mobile) don't clear it.
     ...(b.storyId !== undefined && { story_id: b.storyId || null }),
     ...(b.brief !== undefined && { brief: b.brief.trim() || null }),

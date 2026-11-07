@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import type { SavedBoard } from "@grip/core/api";
+import type { SavedBoard, TalkGradeResult } from "@grip/core/api";
 import type { Scenario } from "@grip/core/arch";
 import { buildScenarioCatalog } from "@grip/core/scenarioCatalog";
 import { api, talkGrade } from "@/lib/api";
@@ -12,16 +12,7 @@ export const boardQueryKeys = {
   gradingStatus: ["talk-grade-status"] as const,
 };
 
-/** What grip-ai-api returns from /api/v1/ai/grade-talk-track. */
-export type TalkGradeResult = {
-  board_id: string;
-  score: number;
-  divergence: number | null;
-  suggestion: {
-    sections: { section: string; verdict: "covered" | "thin" | "missing"; evidence: string; gap: string }[];
-    hardest_followup: string;
-  };
-};
+export type { TalkGradeResult };
 
 export type GradingStatus = { grading: "available" | "unavailable"; retry_after?: number };
 

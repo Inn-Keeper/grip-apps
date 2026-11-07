@@ -220,6 +220,12 @@ export function TalkTrackSheet({
                   {t("talk.gradeDivergence", { points: gradeDetail.divergence })}
                 </Text>
               )}
+              {grade !== null && !gradeDetail && (
+                <Text style={{
+                    fontSize: font.size.small,
+                    color: colors.textFaint
+                  }}>{t("talk.gradeDetailUnavailable")}</Text>
+              )}
               {gradeDetail && (
                 <Text style={{
                     fontSize: font.size.small,

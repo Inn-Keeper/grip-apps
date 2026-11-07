@@ -72,6 +72,14 @@
     position: static;
     max-height: none;
   }
+
+  /* Arch Board: the scenario brief before the canvas it describes. */
+  .leftFirst {
+    grid-template-areas:
+      "left"
+      "main"
+      "right";
+  }
 }
 
 /* Touch-first screens (tablets in landscape keep three columns): no sticky rails with their

@@ -39,7 +39,7 @@ import { useCanvasPointer } from "./useCanvasPointer";
 import { BoardEdges } from "./BoardEdges";
 import { BoardNodeCard } from "./BoardNodeCard";
 import { useBoardDocument, type BoardDoc } from "./useBoardDocument";
-import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "@grip/core/gradeState";
+import { assessmentFor, gradeBlockedKey, gradeInputsKey, gradeStillApplies, gradeVerdict, resumeTime, topologyChanged } from "@grip/core/gradeState";
 import { primaryActionKind } from "./primaryAction.js";
 import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
@@ -79,6 +79,8 @@ export default function ArchBoard() {
   const [result, setResult] = useState<ReturnType<typeof evaluate> | null>(null);
   const [savedOpen, setSavedOpen] = useState(false);
   const [talkOpen, setTalkOpen] = useState(false);
+  // Bumped by the empty board's "Add component" to open the canvas's Components picker.
+  const [componentsRequest, setComponentsRequest] = useState(0);
   const editorRef = useRef<HTMLDivElement>(null);
   // The whole editor goes fullscreen, palette included: a board you cannot add
   // to is a picture, not a workspace.
@@ -96,7 +98,7 @@ export default function ArchBoard() {
   const canvasRef = useRef<HTMLDivElement>(null);
   const submittedSnapshotRef = useRef<BoardDoc | null>(null);
 
-  // Any replaced document (commit, undo, redo) invalidates the score and a half-drawn arrow.
+  // A replaced document (commit, undo, redo) drops a half-drawn arrow, and the topology result only when the diagram changed.
   const board = useBoardDocument(
     () => ({
       scenarioId: handoff?.scenarioId ?? (SCENARIOS[0] as AugmentedScenario).id,
@@ -108,8 +110,9 @@ export default function ArchBoard() {
       talkRating: null,
       talkGrade: null,
       brief: "",
+      talkAssessment: null,
     }),
-    () => { setResult(null); cancelConnection(); },
+    (prev, next) => { if (topologyChanged(prev, next)) setResult(null); cancelConnection(); },
   );
   const { doc, commit, isDirty } = board;
   const { scenarioId, storyId, nodes, edges, talkSections, talkRating, talkGrade, brief } = doc;
@@ -179,7 +182,13 @@ export default function ArchBoard() {
   // Answered from the service's memory of the last refusal, so asking is free.
   const { data: gradingStatus } = useGradingStatusQuery();
   // The score joins the snapshot, so the board turns dirty and Save persists it.
-  const gradeMutation = useGradeTalkTrackMutation((graded) => board.setTalkGrade(graded.score));
+  // A late answer applies only to the board and inputs it was asked about.
+  const submittedGradeRef = useRef<{ boardId: string; inputs: string } | null>(null);
+  const liveRef = useRef({ doc, boardId: activeBoardId });
+  liveRef.current = { doc, boardId: activeBoardId };
+  const gradeMutation = useGradeTalkTrackMutation((graded) => {
+    if (gradeStillApplies(submittedGradeRef.current, liveRef.current.boardId, liveRef.current.doc)) board.setAssessment(graded);
+  });
 
   const mayDiscard = () => !isDirty || window.confirm(t("board.discardConfirm"));
   // Replaces the whole document (load or new scenario) and clears everything derived from it.
@@ -207,6 +216,7 @@ export default function ArchBoard() {
         talkRating: saved.talkTrack?.rating ?? null,
         talkGrade: saved.talkGrade ?? null,
         brief: saved.brief ?? "",
+        talkAssessment: saved.talkAssessment ?? null,
       },
       { id: saved.id ?? null, title: saved.title },
     );
@@ -235,7 +245,7 @@ export default function ArchBoard() {
     if (!mayDiscard()) return;
     setView({ scale: 1, x: 0, y: 0 });
     startDocument(
-      { scenarioId: id, storyId: null, nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null, brief: "" },
+      { scenarioId: id, storyId: null, nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null, brief: "", talkAssessment: null },
       { id: null, title: null },
     );
   };
@@ -315,6 +325,7 @@ export default function ArchBoard() {
       edges,
       talkTrack: { sections: talkSections, rating: talkRating },
       talkGrade,
+      talkAssessment: doc.talkAssessment,
       brief,
     });
   };
@@ -324,6 +335,7 @@ export default function ArchBoard() {
   const gradeTalkTrack = () => {
     if (!activeBoardId) return;
     const checks = result ?? evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges);
+    submittedGradeRef.current = { boardId: activeBoardId, inputs: gradeInputsKey(doc) };
     gradeMutation.mutate({
       boardId: activeBoardId,
       // A free board is graded against the brief the user wrote.
@@ -342,8 +354,8 @@ export default function ArchBoard() {
   // On an empty, unsaved canvas, the one main action is picking up where you left off.
   const latestBoard = nodes.length === 0 && !activeBoardId && !isDirty ? savedBoards[0] : undefined;
   // Next Up coaches the current workflow step; evaluating is the one main action (rule 1).
-  const talkDetail = gradeDetailFor(talkGrade, gradeMutation.data ?? null, activeBoardId);
-  // Null on a board loaded from storage: the score persists, the breakdown does not.
+  // Saved with the board; null once what it graded changed, or on a legacy score-only board.
+  const talkDetail = assessmentFor(doc, activeBoardId);
   const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
   const weakestLabel = verdict?.weakest
     ? TALK_TRACK_SECTIONS.find((section) => section.id === verdict.weakest.section)?.label ?? ""
@@ -376,10 +388,12 @@ export default function ArchBoard() {
   const actionInRightRail = activeWorkflowStep >= 4 && !talkOpen;
   // One definition of the step's main action. The Next Up card renders it, and
   // the sticky rail repeats it only once that card has scrolled away.
-  const kind = primaryActionKind({ hasLatestBoard: Boolean(latestBoard), hasWeakest: Boolean(verdict?.weakest), explaining });
+  const kind = primaryActionKind({ hasLatestBoard: Boolean(latestBoard), hasWeakest: Boolean(verdict?.weakest), explaining, empty: design.nodes.length === 0, free });
   const primaryAction: RailAction =
     kind === "continue" && latestBoard
       ? { label: t("board.continueAction"), icon: "story", onClick: () => requestBoard(latestBoard), disabled: false, highlight: true }
+      : kind === "add"
+      ? { label: t("board.addComponentAction"), icon: "layers", onClick: () => setComponentsRequest((n) => n + 1), disabled: false, highlight: true }
       : {
           label: t(kind === "answer" ? "board.answerAction" : kind === "explain" ? "board.explainAction" : "board.evaluateDesign"),
           icon: explaining ? "spark" : "evaluate",
@@ -407,6 +421,7 @@ export default function ArchBoard() {
     <WorkspaceLayout
       mainLabel={t("board.title")}
       fullWidth
+      leftFirstOnPhone
       lockedHint={creatorOpen ? t("board.lockedHint") : null}
       left={
         <>
@@ -417,7 +432,7 @@ export default function ArchBoard() {
             scenarioOptions={scenarioOptions}
             onSwitch={switchScenario}
             board={{ id: activeBoardId, storyId, onStoryChange: (id) => commit({ storyId: id }) }}
-            freeBrief={free ? { value: brief, onChange: (value) => commit({ brief: value, talkGrade: null }) } : null}
+            freeBrief={free ? { value: brief, onChange: (value) => commit({ brief: value }) } : null}
             onNewScenario={() => setCreatorOpen(true)}
             onDeleteScenario={() => window.confirm(t("board.deleteScenarioConfirm", { name: scenario.name })) && deleteScenarioMutation.mutate(scenario.id)}
             errors={[
@@ -496,10 +511,10 @@ export default function ArchBoard() {
               gradeBlocked={blockedKey ? t(blockedKey, limit ? { time: resumeTime(limit.retry_after) } : undefined) : null}
               onGrade={talkGradeEnabled ? gradeTalkTrack : null}
               onChangeSection={(id, value) => {
-                commit({ talkSections: { ...talkSections, [id]: value }, talkGrade: null });
+                commit({ talkSections: { ...talkSections, [id]: value } });
               }}
               onChangeRating={(value) => {
-                commit({ talkRating: value, talkGrade: null });
+                commit({ talkRating: value });
               }}
               focusSection={focusSection}
               onFocused={clearFocusSection}
@@ -570,7 +585,7 @@ export default function ArchBoard() {
               }}
               talk={{ open: talkOpen, answered: talkAnswered, onToggle: () => setTalkOpen((value) => !value) }}
               save={{ pending: saveBoardMutation.isPending, onSave: saveBoard }}
-              onClear={() => commit({ nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null, talkGrade: null })}
+              onClear={() => commit({ nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null })}
               arrows={{
                 options: edges.map((edge) => ({
                   label: `${nodeName(edge.from)} → ${nodeName(edge.to)}${edge.protocol ? ` · ${edge.protocol}` : ""}`,
@@ -613,7 +628,7 @@ export default function ArchBoard() {
                     <DrawLayer toBoard={boardPoint} onDraft={(p) => setArrowDraft(p)} onDone={addArrow} />
                   )}
                   <div className={styles.canvasTools}>
-                    <CanvasTools onAddNode={addNode} onAddShape={addShape} tool={tool} onTool={toggleTool} />
+                    <CanvasTools onAddNode={addNode} onAddShape={addShape} tool={tool} onTool={toggleTool} openRequest={componentsRequest} />
                     {styleTarget && <StylePanel node={styleTarget} onChange={setStyle} onDelete={() => removeNode(styleTarget.id)} />}
                   </div>
                   <ViewportControls

@@ -11,9 +11,9 @@ import type { Contact, ScoredBoard } from "./types";
 // One contact in the focused view (rule 8): everything that used to expand inside the card.
 export function ContactDetail({ contact, stories, answers, boards, error, onDeleteRetro, ...actions }: ContactActions & {
   contact: Contact;
-  stories: Story[];
-  answers: Record<string, { correct: number; wrong: number }>;
-  boards: ScoredBoard[];
+  stories: Story[] | null;
+  answers: Record<string, { correct: number; wrong: number }> | null;
+  boards: ScoredBoard[] | null;
   error?: string | null;
   onDeleteRetro: (retroId: string) => void;
 }) {
@@ -26,7 +26,7 @@ export function ContactDetail({ contact, stories, answers, boards, error, onDele
         <PrepPlanSection contact={contact} answers={answers} stories={stories} boards={boards} />
       )}
 
-      <StoryMatchSection stories={stories} />
+      <StoryMatchSection stories={stories ?? []} />
 
       <h3 style={{
           margin: "20px 0 8px",

@@ -1,4 +1,4 @@
-import { gradeBlockedKey, gradeDetailFor, gradeVerdict, resumeTime } from "../gradeState.js";
+import { gradeBlockedKey, gradeVerdict, resumeTime } from "../gradeState.js";
 
 describe("gradeBlockedKey", () => {
   it("blocks an unsaved board: the service takes its id", () =>
@@ -20,21 +20,13 @@ it("resumeTime adds the wait to now", () => {
   );
 });
 
-describe("gradeDetailFor", () => {
-  const detail = { board_id: "board-1", score: 50 };
-  it("shows detail alongside the grade it produced", () =>
-    expect(gradeDetailFor(50, detail, "board-1")).toBe(detail));
-  it("drops it once editing clears the grade", () => expect(gradeDetailFor(null, detail, "board-1")).toBeNull());
-  it("never shows another board's grade", () => expect(gradeDetailFor(50, detail, "board-2")).toBeNull());
-});
-
 describe("gradeVerdict", () => {
   const withVerdicts = (...verdicts) => ({
     suggestion: { sections: verdicts.map(([section, verdict], i) => ({ section, verdict, evidence: "", gap: `gap ${i}` })) },
   });
   const IDS = ["a", "b", "c"];
 
-  it("is null without detail: a loaded board keeps its score, not its breakdown", () =>
+  it("is null without detail, as on a legacy score-only board", () =>
     expect(gradeVerdict(null, IDS)).toBeNull());
   it("counts only the sections that earned credit", () => {
     const v = gradeVerdict(withVerdicts(["a", "covered"], ["b", "thin"], ["c", "covered"]), IDS);

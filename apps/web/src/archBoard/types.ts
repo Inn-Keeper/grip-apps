@@ -1,4 +1,5 @@
 import type { FreeStyle } from "@grip/core/arch";
+import type { TalkAssessment } from "@grip/core/api";
 
 export type BoardNode = {
   id: string;
@@ -57,15 +58,7 @@ export type GradingStatus = {
 };
 
 /** What grip-ai-api returns from /api/v1/ai/grade-talk-track. */
-export type TalkGradeResult = {
-  board_id: string;
-  score: number;
-  divergence: number | null;
-  suggestion: {
-    sections: { section: string; verdict: "covered" | "thin" | "missing"; evidence: string; gap: string }[];
-    hardest_followup: string;
-  };
-};
+export type { TalkAssessment, TalkGradeResult } from "@grip/core/api";
 
 export type SavedBoard = {
   id?: string;
@@ -78,6 +71,7 @@ export type SavedBoard = {
   edges: BoardEdge[];
   talkTrack?: TalkTrackData;
   talkGrade?: number | null;
+  talkAssessment?: TalkAssessment | null;
   shareToken?: string | null;
   createdAt?: string;
   updatedAt?: string;

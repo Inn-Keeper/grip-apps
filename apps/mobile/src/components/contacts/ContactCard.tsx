@@ -12,9 +12,12 @@ import { PrepPlanSection } from "./PrepPlanSection";
 
 type ContactCardProps = {
   contact: Contact;
-  stories: StoryItem[];
-  answers: Record<string, { correct: number; wrong: number }>;
+  stories: StoryItem[] | null;
+  answers: Record<string, { correct: number; wrong: number }> | null;
+  boards: { topology: number; talkGrade: number | null }[] | null;
   retroFormOpen: boolean;
+  retroSaving: boolean;
+  retroError: string | null;
   onEdit: () => void;
   onDelete: () => void;
   onAdvance: () => void;
@@ -28,7 +31,10 @@ export function ContactCard({
   contact,
   stories,
   answers,
+  boards,
   retroFormOpen,
+  retroSaving,
+  retroError,
   onEdit,
   onDelete,
   onAdvance,
@@ -132,10 +138,10 @@ export function ContactCard({
       )}
 
       {contact.status === "Interviewing" && contact.postingTechs.length > 0 && (
-        <PrepPlanSection contact={contact} answers={answers} stories={stories} />
+        <PrepPlanSection contact={contact} answers={answers} stories={stories} boards={boards} />
       )}
 
-      <StoryMatchSection stories={stories} />
+      <StoryMatchSection stories={stories ?? []} />
 
       <View style={{
           flexDirection: "row",
@@ -192,7 +198,7 @@ export function ContactCard({
           </View>
         ))}
 
-      {retroFormOpen && <RetroForm onSave={onAddRetro} onCancel={onToggleRetroForm} />}
+      {retroFormOpen && <RetroForm saving={retroSaving} error={retroError} onSave={onAddRetro} onCancel={onToggleRetroForm} />}
     </View>
   );
 }

@@ -1,18 +1,12 @@
 import { useEffect } from "react";
 import { t } from "@grip/core/i18n";
+import { useUnsavedGuard } from "../lib/useUnsavedGuard";
 
 type History = { undo: () => void; redo: () => void };
 
 // Guards unsaved work on leave, and wires Escape, the tool letters and undo/redo outside text fields.
 export function useBoardShortcuts(history: History, isDirty: boolean, onEscape: () => void, onLetter: (key: string) => void) {
-  useEffect(() => {
-    if (!isDirty) return;
-    const warn = (event: BeforeUnloadEvent) => event.preventDefault();
-    const guardNavigation = (event: Event) => { if (!window.confirm(t("board.discardConfirm"))) event.preventDefault(); };
-    window.addEventListener("beforeunload", warn);
-    window.addEventListener("grip:navigate", guardNavigation);
-    return () => { window.removeEventListener("beforeunload", warn); window.removeEventListener("grip:navigate", guardNavigation); };
-  }, [isDirty]);
+  useUnsavedGuard(isDirty, t("board.discardConfirm"));
 
   // No deps on purpose: rebinds each render so the handlers never go stale.
   useEffect(() => {

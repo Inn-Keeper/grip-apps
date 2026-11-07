@@ -11,6 +11,8 @@ type Props = {
   onAddShape: (shape: Shape) => void;
   tool: Tool | null;
   onTool: (tool: Tool) => void;
+  // Bumped by "Add component" elsewhere on the page to open the picker.
+  openRequest?: number;
 };
 
 const SHAPE_ICONS: Record<Shape, string> = { rect: "shapeRect", diamond: "shapeDiamond", ellipse: "shapeEllipse", note: "shapeNote" };
@@ -19,10 +21,16 @@ const keyFor = (map: Record<string, string>, value: string) => Object.keys(map).
 
 // The board's tools, floating top left on the canvas: the built-in components behind
 // one dropdown (so the canvas keeps the room), then free shapes, arrows, lines and text.
-export function CanvasTools({ onAddNode, onAddShape, tool, onTool }: Props) {
+export function CanvasTools({ onAddNode, onAddShape, tool, onTool, openRequest = 0 }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!openRequest) return;
+    buttonRef.current?.scrollIntoView({ block: "nearest" });
+    setOpen(true);
+  }, [openRequest]);
 
   useEffect(() => {
     if (!open) return;

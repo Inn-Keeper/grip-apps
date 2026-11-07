@@ -124,7 +124,8 @@ export function TalkTrack({
 
       <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+          // Never wider than its container, so a phone-width rail has no sideways scroll.
+          gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))",
           gap: 14
         }}>
         {TALK_TRACK_SECTIONS.map((section) => {
@@ -324,6 +325,17 @@ export function TalkTrack({
             <ErrorText margin="10px 0 0">
               {`${t("talk.gradeFailed")}: ${gradeError.message}`}
             </ErrorText>
+          )}
+
+          {/* A score saved before feedback was stored with it (or by an older app version). */}
+          {grade !== null && !gradeDetail && (
+            <p style={{
+                margin: "10px 0 0",
+                fontSize: font.size.small,
+                color: colors.textFaint
+              }}>
+              {t("talk.gradeDetailUnavailable")}
+            </p>
           )}
 
           {gradeDetail && (

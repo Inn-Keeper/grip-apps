@@ -4,6 +4,34 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-07
+
+### Added
+
+- Product UX repair plan (`docs/superpowers/plans/2026-11-07-product-ux-repairs.md`) and its implementation below.
+- Prep shows "Progress not saved" with Retry when an answer fails to save, on web and mobile. Retry reuses the answer's request id, so it is never awarded twice. A failed bonus is reported, not retried, and a failed score load says so instead of showing zeros.
+- Arch Board grading feedback (section verdicts, evidence, follow-up) is saved with the board and shown again after reload, only while the board still matches what was graded. Score-only boards say detailed feedback is unavailable.
+- An empty scored Arch Board offers "Add a component", which opens the Components picker, instead of a disabled Evaluate.
+
+### Changed
+
+- Readiness no longer shows a composite "Ready" percentage. The prep plan lists role tech accuracy, story competencies covered (`n of 8`) and assessed design separately, with "Not assessed" and "Unavailable" in place of zeros. Prep's headline reads "Accuracy on your stack".
+- Editing the talk track, rating or story link keeps the topology evaluation; node and edge edits still clear it. Any change to what was graded clears the reasoning grade, including node edits on web and mobile. A grading response that arrives after the board or its inputs changed is ignored.
+- On phones the Arch Board shows the scenario brief above the canvas. Talk track fields no longer force a 300px minimum width.
+- Sign-in subtitle now describes the whole product: "Prepare for technical interviews and track your applications."
+- Mobile moves to Expo SDK 57 (React Native 0.86.3, expo-router 57, Reanimated 4.5.1, Worklets 0.10.1, Screens 4.26). `@expo/dom-webview` is now a direct dependency so its SDK 57 version resolves. Jest stubs RN 0.86's app bootstrap (`InitializeCore`) and `nativeFabricUIManager`. Native builds need Xcode 26.4 or newer.
+
+### Fixed
+
+- Prep retries stay tied to the account cache they started in: late failures and stale Retry actions cannot restore or resend another account's answers or bonus writes.
+- Saved Arch Board assessments reject malformed sections, invalid scores and mismatched board identities before rendering; damaged feedback no longer crashes the board.
+- Story, contact and retro forms stay open with their text when a save fails, show the error beside Save, block a second Save while one is pending, and ask before Back, Cancel, a tab change or a reload discards changes. Web and mobile.
+- Web Arch Board: undo then redo right after grading keeps the grade and its feedback instead of dropping them.
+
+### Database
+
+- `0026_arch_boards_talk_assessment.sql`: nullable `arch_boards.talk_assessment` jsonb for the saved grading feedback. Applied on 2026-11-07, before the new clients deployed; older clients keep working. `database.types.ts` was edited by hand to match; regenerate with `pnpm --filter @grip/core generate:db` (needs the Supabase CLI).
+
 ## 2026-10-21
 
 ### Added

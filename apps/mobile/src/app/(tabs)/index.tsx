@@ -27,6 +27,7 @@ import { DrillSession, type Drill } from "@/components/DrillSession";
 import { MockLoop } from "@/components/MockLoop";
 import { AccuracyChart } from "@/components/AccuracyChart";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
+import { ProgressSaveStatus } from "@/components/ProgressSaveStatus";
 import { Screen, ScreenHeader, SegmentedPills, inputStyle } from "@/components/ui";
 import { categoryIconName } from "@/components/BrandIcon";
 import {
@@ -70,7 +71,7 @@ export default function PrepScreen() {
   const previousRank = useRef<ReturnType<typeof rankForXp> | null>(null);
   // What "Drill again" repeats: the same techs and tier as the drill just finished.
   const lastDrillRef = useRef<{ difficulty: string; techs: string[]; fallbackToAll: boolean } | null>(null);
-  const { scores, loaded: scoresLoaded, record, addXp } = useScores();
+  const { scores, loaded: scoresLoaded, saveStatus, record, addXp } = useScores();
   const { data: accuracy = [] } = useAccuracyTimelineQuery();
   const { data: reviewQueue = [] } = useReviewQueueQuery();
   const { data: prepContacts = [] } = usePrepContactsQuery();
@@ -227,6 +228,7 @@ export default function PrepScreen() {
 
   return (
     <Screen key={locale}>
+      <ProgressSaveStatus status={saveStatus} />
       {!drill && (
         <ScreenHeader title={t("tabs.prep")} subtitle={t("screen.prepSubtitle")}>
           <TextInput

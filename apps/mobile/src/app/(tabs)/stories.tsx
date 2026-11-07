@@ -11,6 +11,7 @@ import { Badge, Button, Field, HeaderAction, MiniButton, Pill, Screen, ScreenHea
 import type { Story } from "@grip/core/api";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "@/queries/stories";
 import { useScenarioCatalog } from "@/queries/board";
+import { FormActions } from "@/components/FormActions";
 import { ScenarioSheet } from "@/components/board/ScenarioSheet";
 import { StoryLinks } from "@/components/StoryLinks";
 
@@ -32,15 +33,17 @@ export default function StoriesScreen() {
       { text: t("common.delete"), style: "destructive", onPress: () => story.id && deleteMutation.mutate(story.id) },
     ]);
 
+  // The form stays open until the save lands, so a failure keeps the draft.
   const handleSave = (form: Story) => {
-    if (form.title.trim()) saveMutation.mutate(form);
-    setEditing(null);
+    if (!form.title.trim() || saveMutation.isPending) return;
+    saveMutation.mutate(form, { onSuccess: () => setEditing(null) });
   };
+  const openForm = (story: Story | null) => { saveMutation.reset(); setEditing(story); };
 
   if (editing) {
     return (
       <Screen key={locale}>
-        <StoryForm initial={editing} onSave={handleSave} onCancel={() => setEditing(null)} />
+        <StoryForm initial={editing} saving={saveMutation.isPending} error={saveMutation.error ? t("stories.saveError", { message: saveMutation.error.message }) : null} onSave={handleSave} onCancel={() => openForm(null)} />
       </Screen>
     );
   }
@@ -50,7 +53,7 @@ export default function StoriesScreen() {
       <ScreenHeader
         title={t("tabs.stories")}
         subtitle={t("screen.storiesSubtitle")}
-        right={<HeaderAction icon="story" label={t("stories.addStory")} onPress={() => setEditing(EMPTY_FORM)} />}
+        right={<HeaderAction icon="story" label={t("stories.addStory")} onPress={() => openForm(EMPTY_FORM)} />}
       >
         <SegmentedPills
           options={[
@@ -89,7 +92,7 @@ export default function StoriesScreen() {
         // No entrance animation: the list remounts after an edit and refetches mid-spring,
         // which left a card stuck invisible at its starting frame.
         renderItem={({ item }) => (
-          <StoryCard story={item} onEdit={() => setEditing(item)} onDelete={() => confirmDelete(item)} />
+          <StoryCard story={item} onEdit={() => openForm(item)} onDelete={() => confirmDelete(item)} />
         )}
       />
     </Screen>
@@ -155,9 +158,9 @@ function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
   );
 }
 
-type StoryFormProps = { initial: Story; onSave: (story: Story) => void; onCancel: () => void };
+type StoryFormProps = { initial: Story; saving: boolean; error: string | null; onSave: (story: Story) => void; onCancel: () => void };
 
-function StoryForm({ initial, onSave, onCancel }: StoryFormProps) {
+function StoryForm({ initial, saving, error, onSave, onCancel }: StoryFormProps) {
   const [form, setForm] = useState({ ...initial });
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const { allScenarios, groups: scenarioGroups } = useScenarioCatalog();
@@ -167,6 +170,8 @@ function StoryForm({ initial, onSave, onCancel }: StoryFormProps) {
 
   return (
     <ScrollView
+      // Frozen while saving so the submitted values are what lands.
+      pointerEvents={saving ? "none" : "auto"}
       style={{
         flex: 1,
         backgroundColor: colors.bg
@@ -240,15 +245,14 @@ function StoryForm({ initial, onSave, onCancel }: StoryFormProps) {
         onClose={() => setScenarioOpen(false)}
       />
 
-      <View style={{
-          flexDirection: "row",
-          gap: 8,
-          justifyContent: "flex-end",
-          marginTop: 8
-        }}>
-        <Button label={t("common.cancel")} variant="ghost" onPress={onCancel} />
-        <Button label={t("common.save")} onPress={() => onSave(form)} disabled={!form.title.trim()} />
-      </View>
+      <FormActions
+        canSave={!!form.title.trim()}
+        saving={saving}
+        error={error}
+        dirty={JSON.stringify(form) !== JSON.stringify(initial)}
+        onSave={() => onSave(form)}
+        onCancel={onCancel}
+      />
     </ScrollView>
   );
 }

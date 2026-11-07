@@ -4,7 +4,8 @@ import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "@/theme";
-import { Button, Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
+import { FormActions } from "@/components/FormActions";
+import { Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
 
 const ALL_TECHS: string[] = categories.flatMap((c: { items: { tech: string }[] }) =>
   c.items.map((item) => item.tech)
@@ -18,9 +19,9 @@ export const EMPTY_RETRO = {
   struggledTechs: [] as string[],
 };
 
-type RetroFormProps = { onSave: (retro: typeof EMPTY_RETRO) => void; onCancel: () => void };
+type RetroFormProps = { saving: boolean; error: string | null; onSave: (retro: typeof EMPTY_RETRO) => void; onCancel: () => void };
 
-export function RetroForm({ onSave, onCancel }: RetroFormProps) {
+export function RetroForm({ saving, error, onSave, onCancel }: RetroFormProps) {
   const [form, setForm] = useState({ ...EMPTY_RETRO });
   // Techs manually toggled off — struggles are detected from the retro text,
   // and everything detected counts unless the user opts a tech out.
@@ -39,6 +40,7 @@ export function RetroForm({ onSave, onCancel }: RetroFormProps) {
 
   return (
     <View
+      pointerEvents={saving ? "none" : "auto"}
       style={{
         padding: 12,
         backgroundColor: colors.well,
@@ -85,14 +87,15 @@ export function RetroForm({ onSave, onCancel }: RetroFormProps) {
             }}>{t("retro.struggledHint")}</Text>
         </Field>
       )}
-      <View style={{
-          flexDirection: "row",
-          gap: 8,
-          justifyContent: "flex-end"
-        }}>
-        <Button label={t("common.cancel")} variant="ghost" onPress={onCancel} />
-        <Button label={t("contacts.saveRetro")} onPress={() => onSave({ ...form, struggledTechs })} />
-      </View>
+      <FormActions
+        canSave
+        saveLabel={t("contacts.saveRetro")}
+        saving={saving}
+        error={error}
+        dirty={JSON.stringify(form) !== JSON.stringify(EMPTY_RETRO)}
+        onSave={() => onSave({ ...form, struggledTechs })}
+        onCancel={onCancel}
+      />
     </View>
   );
 }

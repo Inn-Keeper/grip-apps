@@ -14,6 +14,8 @@ type WorkspaceLayoutProps = {
   lockedHint?: string | null;
   // Ignore the page max width, e.g. for the Arch Board canvas.
   fullWidth?: boolean;
+  // Phones show the left rail above the content, for a brief the content depends on.
+  leftFirstOnPhone?: boolean;
 };
 
 // Main workspace layout with 3 columns: left rail, main content, right rail. The rails can be locked (inert) with a hint.
@@ -26,12 +28,13 @@ export function WorkspaceLayout({
   leftRailBottomInset,
   lockedHint,
   fullWidth,
+  leftFirstOnPhone,
 }: WorkspaceLayoutProps) {
   const compact = density === "compact";
 
   return (
     <main
-      className={styles.shell}
+      className={`${styles.shell}${leftFirstOnPhone ? ` ${styles.leftFirst}` : ""}`}
       style={
         {
           background: colors.bg,

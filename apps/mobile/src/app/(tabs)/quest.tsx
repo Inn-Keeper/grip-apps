@@ -23,6 +23,8 @@ import {
   useStatusEventsQuery,
 } from "@/queries/contacts";
 import { useScores } from "@/lib/useScores";
+import { useSavedBoardsQuery } from "@/queries/board";
+import { toScoredBoards } from "@grip/core/readiness";
 
 export default function QuestScreen() {
   const locale = useLocale();
@@ -39,8 +41,10 @@ export default function QuestScreen() {
   const deleteRetroMutation = useDeleteRetroMutation();
 
   const { data: statusEvents = [] } = useStatusEventsQuery();
-  const { data: stories = [] } = useContactStoriesQuery();
-  const { scores } = useScores();
+  const { data: stories = null } = useContactStoriesQuery();
+  const { scores, loaded: scoresLoaded } = useScores();
+  const { data: savedBoards } = useSavedBoardsQuery();
+  const scoredBoards = savedBoards ? toScoredBoards(savedBoards) : null;
   const funnel = buildFunnelSummary(contacts ?? [], statusEvents);
   const sorted = [...(contacts ?? [])].sort((a, b) => Number(isDue(b)) - Number(isDue(a)));
   const dueCount = funnel.due;
@@ -51,12 +55,13 @@ export default function QuestScreen() {
       { text: t("common.delete"), style: "destructive", onPress: () => contact.id && deleteMutation.mutate(contact.id) },
     ]);
 
+  // The form stays open until the save lands, so a failure keeps the draft.
   const handleSave = (form: Contact) => {
-    if (form.name.trim()) {
-      saveMutation.mutate({ ...form, date: form.date || todayDDMMYYYY() });
-    }
-    setEditing(null);
+    if (!form.name.trim() || saveMutation.isPending) return;
+    saveMutation.mutate({ ...form, date: form.date || todayDDMMYYYY() }, { onSuccess: () => setEditing(null) });
   };
+  const openForm = (contact: Contact | null) => { saveMutation.reset(); setEditing(contact); };
+  const toggleRetro = (id: string | null) => { addRetroMutation.reset(); setRetroFor(id); };
 
   const advanceStatus = (contact: Contact) => {
     const next = STATUSES[STATUSES.indexOf(contact.status) + 1];
@@ -69,7 +74,7 @@ export default function QuestScreen() {
   if (editing) {
     return (
       <Screen key={locale}>
-        <ContactForm initial={editing} onSave={handleSave} onCancel={() => setEditing(null)} />
+        <ContactForm initial={editing} saving={saveMutation.isPending} error={saveMutation.error ? t("quest.saveError", { message: saveMutation.error.message }) : null} onSave={handleSave} onCancel={() => openForm(null)} />
       </Screen>
     );
   }
@@ -80,7 +85,7 @@ export default function QuestScreen() {
       <ScreenHeader
         title={t("tabs.quest")}
         subtitle={t("screen.questSubtitle")}
-        right={<HeaderAction icon="contact" label={t("contacts.addContact")} onPress={() => setEditing({ ...EMPTY_CONTACT_FORM, date: todayDDMMYYYY() })} />}
+        right={<HeaderAction icon="contact" label={t("contacts.addContact")} onPress={() => openForm({ ...EMPTY_CONTACT_FORM, date: todayDDMMYYYY() })} />}
       >
         {ledgerImport && <Button label={t("quest.importButton")} variant="ghost" onPress={() => { setImportMessage(""); setImportOpen(true); }} />}
         {!!importMessage && <Text accessibilityLiveRegion="polite" style={{
@@ -128,16 +133,19 @@ export default function QuestScreen() {
           <ContactCard
             contact={item}
             stories={stories}
-            answers={scores.answers}
+            answers={scoresLoaded ? scores.answers : null}
+            boards={scoredBoards}
             retroFormOpen={retroFor === item.id}
-            onEdit={() => setEditing(item)}
+            onEdit={() => openForm(item)}
             onDelete={() => confirmDelete(item)}
             onAdvance={() => advanceStatus(item)}
             onClearAction={() => clearNextAction(item)}
-            onToggleRetroForm={() => setRetroFor(retroFor === item.id ? null : item.id!)}
+            retroSaving={addRetroMutation.isPending}
+            retroError={addRetroMutation.error ? t("quest.saveError", { message: addRetroMutation.error.message }) : null}
+            onToggleRetroForm={() => toggleRetro(retroFor === item.id ? null : item.id!)}
             onAddRetro={(retro) => {
-              addRetroMutation.mutate({ contactId: item.id!, retro });
-              setRetroFor(null);
+              if (addRetroMutation.isPending) return;
+              addRetroMutation.mutate({ contactId: item.id!, retro }, { onSuccess: () => setRetroFor(null) });
             }}
             onDeleteRetro={(retroId) => deleteRetroMutation.mutate(retroId)}
           />
