@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { Badge } from "@/components/ui";
 
 type FunnelSummary = ReturnType<typeof buildFunnelSummary>;
@@ -12,6 +12,7 @@ function percent(value: number) {
 }
 
 function Metric({ label, value, color }: { label: string; value: string; color: string }) {
+  const { colors } = useTheme();
   return (
     <View
       style={{
@@ -41,6 +42,7 @@ function Metric({ label, value, color }: { label: string; value: string; color: 
 }
 
 function ConversionRow({ label, value, detail, color }: { label: string; value: number; detail: string; color: string }) {
+  const { colors } = useTheme();
   return (
     <View style={{ gap: 4 }}>
       <View style={{
@@ -86,6 +88,7 @@ function ConversionRow({ label, value, detail, color }: { label: string; value: 
 }
 
 export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
+  const { colors, shadow } = useTheme();
   return (
     <View
       style={{

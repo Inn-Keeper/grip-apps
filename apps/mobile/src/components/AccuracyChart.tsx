@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import { Text, View } from "react-native";
 import { Canvas, Circle, Path } from "@shopify/react-native-skia";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@/theme";
+import { font, useTheme } from "@/theme";
 
 type Point = { date: string; accuracy: number; total: number };
 
@@ -13,6 +13,7 @@ const PAD_X = 12;
 const PAD_Y = 14;
 
 export function AccuracyChart({ points }: Props) {
+  const { colors, shadow } = useTheme();
   const [width, setWidth] = useState(0);
   const latest = points.at(-1);
   const chart = useMemo(() => {

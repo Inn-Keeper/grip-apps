@@ -2,7 +2,7 @@ import { Modal, Pressable, Text, View } from "react-native";
 import { EDGE_MODES, EDGE_PROTOCOLS, nodeLabel } from "@grip/core/arch";
 import type { BoardEdge, BoardNode } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { Button, MiniButton } from "@/components/ui";
 
 type Props = {
@@ -15,6 +15,7 @@ type Props = {
 };
 
 export function EdgeInspectorSheet({ edge, from, to, onChange, onRemove, onClose }: Props) {
+  const { colors, tints } = useTheme();
   if (!edge) return null;
 
   return (

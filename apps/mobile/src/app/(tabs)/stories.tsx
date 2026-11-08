@@ -5,9 +5,9 @@ import Animated, { FadeInDown } from "react-native-reanimated";
 import { COMPETENCIES, COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { colors, font, layout, shadow } from "@/theme";
+import { font, layout, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
-import { Badge, Button, Field, HeaderAction, MiniButton, Pill, Screen, ScreenHeader, Section, SegmentedPills, inputStyle, multilineStyle } from "@/components/ui";
+import { Badge, Button, Field, HeaderAction, MiniButton, Pill, Screen, ScreenHeader, Section, SegmentedPills, useInputStyle, multilineStyle } from "@/components/ui";
 import type { Story } from "@grip/core/api";
 import { useDeleteStoryMutation, useSaveStoryMutation, useStoriesQuery } from "@/queries/stories";
 import { useScenarioCatalog } from "@/queries/board";
@@ -18,6 +18,7 @@ import { StoryLinks } from "@/components/StoryLinks";
 const EMPTY_FORM: Story = { title: "", competency: "Conflict", situation: "", task: "", action: "", result: "" };
 
 export default function StoriesScreen() {
+  const { colors } = useTheme();
   const locale = useLocale();
   const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<"stories" | "drill">("stories");
@@ -102,6 +103,7 @@ export default function StoriesScreen() {
 type StoryCardProps = { story: Story; onEdit?: () => void; onDelete?: () => void };
 
 function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
+  const { colors, shadow } = useTheme();
   const [expanded, setExpanded] = useState(false);
   const color = COMPETENCY_COLORS[story.competency] ?? colors.textFaint;
 
@@ -161,6 +163,8 @@ function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
 type StoryFormProps = { initial: Story; saving: boolean; error: string | null; onSave: (story: Story) => void; onCancel: () => void };
 
 function StoryForm({ initial, saving, error, onSave, onCancel }: StoryFormProps) {
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const [form, setForm] = useState({ ...initial });
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const { allScenarios, groups: scenarioGroups } = useScenarioCatalog();
@@ -258,6 +262,7 @@ function StoryForm({ initial, saving, error, onSave, onCancel }: StoryFormProps)
 }
 
 function PromptDrill({ stories }: { stories: Story[] }) {
+  const { colors, shadow } = useTheme();
   const [promptIndex, setPromptIndex] = useState(() => Math.floor(Math.random() * PROMPTS.length));
   const [revealed, setRevealed] = useState(false);
 

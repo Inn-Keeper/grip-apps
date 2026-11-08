@@ -3,9 +3,9 @@ import { Text, TextInput, View } from "react-native";
 import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { FormActions } from "@/components/FormActions";
-import { Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
+import { Field, Pill, useInputStyle, multilineStyle } from "@/components/ui";
 
 const ALL_TECHS: string[] = categories.flatMap((c: { items: { tech: string }[] }) =>
   c.items.map((item) => item.tech)
@@ -22,6 +22,8 @@ export const EMPTY_RETRO = {
 type RetroFormProps = { saving: boolean; error: string | null; onSave: (retro: typeof EMPTY_RETRO) => void; onCancel: () => void };
 
 export function RetroForm({ saving, error, onSave, onCancel }: RetroFormProps) {
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const [form, setForm] = useState({ ...EMPTY_RETRO });
   // Techs manually toggled off — struggles are detected from the retro text,
   // and everything detected counts unless the user opts a tech out.

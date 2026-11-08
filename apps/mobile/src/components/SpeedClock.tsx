@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { SPEED_LIMIT_MS, SPEED_MULTIPLIER } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 // The clock shows whole seconds; a 250ms tick keeps each change close to the real second.
@@ -12,6 +12,7 @@ const URGENT_MS = 10_000;
 
 // Thunderstorm countdown, the twin of web's SpeedClock. The parent keys it per question.
 export function SpeedClock({ shownAt }: { shownAt: number }) {
+  const { colors, tints } = useTheme();
   const [now, setNow] = useState(() => Date.now());
   const remainingMs = Math.max(0, SPEED_LIMIT_MS - (now - shownAt));
   const timeUp = remainingMs === 0;

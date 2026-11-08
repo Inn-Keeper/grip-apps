@@ -6,12 +6,14 @@ import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 import { Turnstile } from "@/components/Turnstile";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 
 // Email + password with in-app account creation. No email delivery anywhere:
 // requires "Confirm email" to be disabled in Supabase so signUp returns a
 // live session immediately.
 export function SignIn() {
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -271,7 +273,9 @@ export function SignIn() {
   );
 }
 
-const inputStyle = {
+function useInputStyle() {
+  const { colors } = useTheme();
+  return {
   backgroundColor: colors.surface,
   borderWidth: 1,
   borderColor: colors.border,
@@ -280,3 +284,4 @@ const inputStyle = {
   color: colors.text,
   fontSize: font.size.bodyLg,
 } as const;
+}

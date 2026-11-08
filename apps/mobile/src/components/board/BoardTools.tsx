@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 
 export type Tool = "text" | "arrow" | "line";
@@ -28,6 +28,7 @@ const TOOLS: { tool: Tool; icon: BrandIconName }[] = [
 ];
 
 function ToolButton({ label, hint, active, onPress, children }: { label: string; hint?: string; active?: boolean; onPress: () => void; children: ReactNode }) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -56,6 +57,7 @@ function ToolButton({ label, hint, active, onPress, children }: { label: string;
 // components behind one sheet, then the four shapes (added at once) and the draw tools
 // (armed until used). Scrolls sideways on narrow phones.
 export function BoardTools({ onOpenComponents, onAddShape, tool, onTool }: Props) {
+  const { colors } = useTheme();
   return (
     <View style={{
         position: "absolute",

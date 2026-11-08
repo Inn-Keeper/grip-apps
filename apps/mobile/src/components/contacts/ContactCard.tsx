@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, shadow, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, MiniButton, Section } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
@@ -43,6 +43,7 @@ export function ContactCard({
   onAddRetro,
   onDeleteRetro,
 }: ContactCardProps) {
+  const { colors, shadow, tints } = useTheme();
   const [showRetros, setShowRetros] = useState(false);
   const status = STATUS_STYLES[contact.status] ?? STATUS_STYLES.Contacted;
   const nextStatus = STATUSES[STATUSES.indexOf(contact.status) + 1];

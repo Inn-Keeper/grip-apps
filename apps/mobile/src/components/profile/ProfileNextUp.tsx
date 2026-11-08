@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 
 type Props = {
   title: string;
@@ -12,6 +12,7 @@ type Props = {
 
 // The one next thing that makes the profile more useful, styled like Prep's Next Up.
 export function ProfileNextUp({ title, sub, action, disabled }: Props) {
+  const { colors, shadow } = useTheme();
   return (
     <View
       accessibilityLabel={t("nextUp.label")}

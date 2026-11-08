@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { DIFFICULTIES, difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 
 type Props = {
@@ -12,6 +12,7 @@ type Props = {
 // Persistent, sassy difficulty selector. The chosen tier drives both the quiz
 // cards and the drill, so the whole screen runs at one level.
 export function DifficultyPicker({ level, onLevel }: Props) {
+  const { colors, shadow } = useTheme();
   const tier = difficultyByKey(level);
   return (
     <View

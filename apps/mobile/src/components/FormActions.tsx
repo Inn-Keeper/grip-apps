@@ -2,7 +2,7 @@ import { useCallback, useRef } from "react";
 import { useFocusEffect } from "expo-router";
 import { Alert, BackHandler, Keyboard, Text, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { Button } from "@/components/ui";
 
 // Runs onDiscard straight away when clean, after a confirm when the draft has changes.
@@ -25,6 +25,7 @@ export function FormActions({ saveLabel = t("common.save"), canSave, saving, err
   onSave: () => void;
   onCancel: () => void;
 }) {
+  const { colors } = useTheme();
   const cancel = () => { if (!saving) confirmDiscard(dirty, onCancel); };
 
   // Only while this screen is focused: tabs stay mounted, so a hidden form must not take Back.

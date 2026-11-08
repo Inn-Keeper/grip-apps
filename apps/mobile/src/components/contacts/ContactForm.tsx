@@ -5,9 +5,9 @@ import { ROLE_POSITIONS, STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors, layout } from "@/theme";
+import { layout, useTheme } from "@/theme";
 import { FormActions } from "@/components/FormActions";
-import { Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
+import { Field, Pill, useInputStyle, multilineStyle } from "@/components/ui";
 import { Combobox } from "@/components/Combobox";
 import { DateField } from "@/components/DateField";
 import type { Contact } from "@grip/core/api";
@@ -32,6 +32,8 @@ export const EMPTY_CONTACT_FORM: Contact = {
 type ContactFormProps = { initial: Contact; saving: boolean; error: string | null; onSave: (contact: Contact) => void; onCancel: () => void };
 
 export function ContactForm({ initial, saving, error, onSave, onCancel }: ContactFormProps) {
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const [start] = useState({ ...EMPTY_CONTACT_FORM, ...initial });
   const [form, setForm] = useState(start);
   // The pasted posting is parsed on-device and never stored — only detected techs persist.

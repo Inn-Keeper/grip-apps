@@ -1,16 +1,19 @@
 import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button, MiniButton } from "@/components/ui";
 import type { TalkGradeResult } from "@/queries/board";
 
-const VERDICTS = {
+function useVerdicts() {
+  const { colors } = useTheme();
+  return {
   covered: { color: colors.successBright, key: "talk.verdictCovered" },
   thin: { color: colors.warningBright, key: "talk.verdictThin" },
   missing: { color: colors.textFaint, key: "talk.verdictMissing" },
 } as const;
+}
 
 type Props = {
   visible: boolean;
@@ -35,6 +38,8 @@ type Props = {
 export function TalkTrackSheet({
   visible, sections, rating, onChangeSection, onChangeRating, onClose,
   grade, gradeDetail, grading, gradeError, gradeBlocked, onGrade, free = false }: Props) {
+  const VERDICTS = useVerdicts();
+  const { colors, tints } = useTheme();
   if (!visible) return null;
   const { answered } = scoreTalkTrack({ sections, rating });
   const gradeColor = grade === null ? colors.textDim : grade >= 80 ? colors.successBright : grade >= 50 ? colors.warningBright : colors.dangerBright;

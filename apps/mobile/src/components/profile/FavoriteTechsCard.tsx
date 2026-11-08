@@ -3,7 +3,7 @@ import type { User } from "@grip/core/api";
 import { t } from "@grip/core/i18n";
 import { categories } from "@grip/core/prepData";
 import { toggleFavoriteTech } from "@grip/core/user";
-import { colors, font, radius, space, tints } from "@/theme";
+import { font, radius, space, useTheme } from "@/theme";
 import { Card } from "@/components/ui";
 import { useSaveFavoriteTechsMutation } from "@/queries/profile";
 
@@ -14,6 +14,7 @@ const TECHS = categories
 
 // Toggle chips for the profile's favorite techs; they feed Prep's From My Favorites category.
 export function FavoriteTechsCard({ profile }: { profile: User | null }) {
+  const { colors, tints } = useTheme();
   const mutation = useSaveFavoriteTechsMutation();
   const favorites = profile?.favoriteTechs ?? [];
   // Blocks taps mid-save so a toggle never starts from a stale list.

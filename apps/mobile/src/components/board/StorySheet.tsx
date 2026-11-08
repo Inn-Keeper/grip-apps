@@ -2,7 +2,7 @@ import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "reac
 import type { Story } from "@grip/core/api";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, Section } from "@/components/ui";
 
@@ -19,6 +19,7 @@ type Props = {
 // The story this board is designed for, like the web rail's picker: its STAR on top,
 // then the stories linked to the scenario (or none). Taken stories show but can't be picked.
 export function StorySheet({ visible, candidates, current, taken, onPick, onClose }: Props) {
+  const { colors, tints } = useTheme();
   const options: { id: string | null; label: string; disabled: boolean }[] = [
     { id: null, label: t("board.noStory"), disabled: false },
     ...candidates.map((story) => {

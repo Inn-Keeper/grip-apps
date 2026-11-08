@@ -4,7 +4,7 @@ import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier, speedBonusXp } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
@@ -42,6 +42,7 @@ const RESULT_MS = 1700;
 // A study card, as on web: what the tech is, its interview notes and its quiz on one face.
 // Tapping the card starts the quiz in place; the run summary shows, then the card returns.
 export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizActiveChange, onPerfect }: Props) {
+  const { colors, shadow } = useTheme();
   const press = useSharedValue(1);
   const [phase, setPhase] = useState<"card" | "quiz" | "result">("card");
   const [result, setResult] = useState<{ correct: number; total: number; xp: number } | null>(null);

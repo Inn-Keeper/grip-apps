@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { groupStoriesByCompetency } from "@grip/core/stories";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
 export type StoryItem = { id?: string; title: string; competency: string };
 
 export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
+  const { colors } = useTheme();
   const [open, setOpen] = useState(false);
   const grouped = groupStoriesByCompetency(stories);
   const covered = grouped.filter((g) => g.stories.length > 0);

@@ -1,9 +1,10 @@
 import { Text, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font, radius, tints } from "@/theme";
+import { font, radius, useTheme } from "@/theme";
 
 // Linked or optional, for an account connection such as GitHub.
 export function ConnectionBadge({ connected }: { connected: boolean }) {
+  const { colors, tints } = useTheme();
   return (
     <View
       style={{

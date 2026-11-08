@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 export type BrandIconName =
   | "accuracy"
@@ -192,7 +192,9 @@ export const categoryIconName = (name: string): BrandIconName => {
   return map[name.split(" ")[0] ?? name] ?? "spark";
 };
 
-export function BrandIcon({ name, color = colors.textDim, size = 18, muted = false }: Props) {
+export function BrandIcon({ name, color: colorProp, size = 18, muted = false }: Props) {
+  const { colors } = useTheme();
+  const color = colorProp ?? colors.textDim;
   const scale = size / 24;
   return (
     <View style={{

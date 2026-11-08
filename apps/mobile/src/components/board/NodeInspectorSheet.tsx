@@ -2,7 +2,7 @@ import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View
 import { TYPE_COLORS, isFreeType, nodeLabel } from "@grip/core/arch";
 import type { BoardNode } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 import { Button, MiniButton } from "@/components/ui";
 
@@ -17,6 +17,7 @@ type Props = {
 };
 
 export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props) {
+  const { colors, tints } = useTheme();
   if (!node) return null;
   const free = isFreeType(node.type);
   const color = TYPE_COLORS[node.type] ?? colors.textDim;

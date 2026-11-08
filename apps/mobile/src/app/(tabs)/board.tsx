@@ -15,7 +15,7 @@ import { assessmentFor, gradeBlockedKey, gradeInputsKey, gradeStillApplies, grad
 import { useLocale } from "@/lib/useLocale";
 import type { BoardEdge, BoardNode, EvalResult } from "@grip/core/arch";
 import type { SavedBoard, TalkAssessment } from "@grip/core/api";
-import { colors, font, layout } from "@/theme";
+import { font, layout, useTheme } from "@/theme";
 import { ROUND_MINUTES } from "@grip/core/designTimer";
 import { Screen, ScreenHeader } from "@/components/ui";
 import { BrandIcon } from "@/components/BrandIcon";
@@ -52,6 +52,7 @@ import { WEB_URL } from "@/lib/webUrl";
 
 
 export default function BoardScreen() {
+  const { colors } = useTheme();
   const locale = useLocale();
   const insets = useSafeAreaInsets();
   const [scenarioId, setScenarioId] = useState(SCENARIOS[0].id);

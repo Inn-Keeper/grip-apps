@@ -3,7 +3,7 @@ import { Switch, Text, TouchableOpacity, View } from "react-native";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { AUTO_NEXT_MS } from "@grip/core/quizPrefs";
-import { colors, font, shadow } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { DifficultyIcon } from "@/components/DifficultyIcon";
 import { DifficultyPicker } from "@/components/DifficultyPicker";
 import { QuizSizePicker } from "@/components/QuizSizePicker";
@@ -20,6 +20,7 @@ type Props = {
 
 // Settings collapse to one summary row so the cards sit near the top; tap to change them.
 export function PrepSettings({ level, onLevel, quizSize, poolSize, onQuizSize, autoNext, onAutoNext }: Props) {
+  const { colors, shadow } = useTheme();
   const [open, setOpen] = useState(false);
   const tier = difficultyByKey(level);
 

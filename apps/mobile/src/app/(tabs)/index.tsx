@@ -16,7 +16,7 @@ import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, read
 import { getAutoNext, getQuizSize, setAutoNext, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
-import { alpha, colors, font, layout } from "@/theme";
+import { alpha, font, layout, useTheme } from "@/theme";
 import { PrepCard } from "@/components/PrepCard";
 import { StatsBar } from "@/components/StatsBar";
 import { needsSetup } from "@grip/core/firstRun";
@@ -30,7 +30,7 @@ import { MockLoop } from "@/components/MockLoop";
 import { AccuracyChart } from "@/components/AccuracyChart";
 import { CelebrationOverlay } from "@/components/CelebrationOverlay";
 import { ProgressSaveStatus } from "@/components/ProgressSaveStatus";
-import { Screen, ScreenHeader, SegmentedPills, inputStyle } from "@/components/ui";
+import { Screen, ScreenHeader, SegmentedPills, useInputStyle } from "@/components/ui";
 import { categoryIconName } from "@/components/BrandIcon";
 import {
   useAccuracyTimelineQuery,
@@ -52,6 +52,8 @@ type PrepItem = {
 type PrepCategory = { name: string; emoji?: string; color: string; items: PrepItem[] };
 
 export default function PrepScreen() {
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const locale = useLocale();
   const insets = useSafeAreaInsets();
   const storiesQuery = useStoriesQuery();
@@ -136,7 +138,6 @@ export default function PrepScreen() {
       setCelebration({
         title: t("celebration.rankTitle", { rank: t(`enum.rank.${current.name}` as Parameters<typeof t>[0]) }),
         subtitle: t("celebration.rankSubtitle", { xp: scores.xp }),
-        accent: colors.accent,
       });
     }
     previousRank.current = current;

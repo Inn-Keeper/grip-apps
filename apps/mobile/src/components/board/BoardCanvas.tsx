@@ -22,12 +22,15 @@ const edgeGeometry = (a: BoardNode, b: BoardNode) => geometryFor(a, b, sizeOf(a)
 const trianglePath = (points: string) => `M ${points.split(" ").join(" L ").replace(/,/g, " ")} Z`;
 type EdgeGeometry = ReturnType<typeof edgeGeometry>;
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { NODE_H, NODE_W, NodeView } from "./NodeView";
 import type { Tool } from "./BoardTools";
 
-const EDGE_COLOR = colors.textDim;
+function useEdgeColor() {
+  const { colors } = useTheme();
+  return colors.textDim;
+}
 const EDGE_TAP_TOLERANCE = 18;
 // Dropping a dragged wire within this distance of a node's center snaps to it.
 const SNAP_RADIUS = 90;
@@ -92,6 +95,8 @@ type Props = {
 };
 
 export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge, onTapEdge, onInspectNode, tool, selectedId, onSelect, onPlaceText, onDrawArrow, onMoveArrow, onResizeNode, fitKey, onZen, ref }: Props) {
+  const EDGE_COLOR = useEdgeColor();
+  const { colors } = useTheme();
   const [draft, setDraft] = useState<Points | null>(null);
   const [boardSize, setBoardSize] = useState({ width: 0, height: 0 });
   const [pending, setPending] = useState<PendingEdge | null>(null);
@@ -591,6 +596,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
 }
 
 function ZoomButton({ label, accessibilityLabel, onPress }: { label: string; accessibilityLabel: string; onPress: () => void }) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       onPress={onPress}

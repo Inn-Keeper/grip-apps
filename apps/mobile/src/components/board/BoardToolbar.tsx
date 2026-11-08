@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { alpha, colors, font, radius } from "@/theme";
+import { alpha, font, radius, useTheme } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 
 export type Chrome = "full" | "compact" | "zen";
@@ -27,6 +27,7 @@ export function BoardToolbar({
   chrome, onChrome, talkAnswered, talkOpen, savedOpen,
   saving, canEvaluate, onOpenTalk, onToggleSaved, onSave, onClear, onEvaluate, history,
 }: Props) {
+  const { colors } = useTheme();
   return (
     <View style={{
         flexDirection: "row",
@@ -69,6 +70,7 @@ type IconButtonProps = {
 
 // Bordered icon button; the label is for screen readers.
 function IconButton({ icon, label, onPress, enabled = true, tint, filled, badge }: IconButtonProps) {
+  const { colors } = useTheme();
   const color = filled ? colors.onAccent : tint ?? colors.textDim;
   return (
     <TouchableOpacity

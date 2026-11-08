@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
 import type { PrepPlan } from "@/lib/uiStore";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { tints } from "@grip/core/tokens";
 import { BrandIcon } from "@/components/BrandIcon";
 
@@ -28,6 +28,7 @@ const ALT_LABEL: Record<NextUpKind, Parameters<typeof t>[0]> = {
 
 // The one suggested action at the top of Prep; the other available actions stay one tap away.
 export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, onStart, onMock, onDismissPlan }: Props) {
+  const { colors, shadow } = useTheme();
   const { primary, alternatives } = pickNextUp({ reviewDueCount, hasPlan: !!plan, attempts, needsSetup });
 
   const copy = {
@@ -146,6 +147,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, o
 
 // The playbook is Grip's standout feature, so its alternative is a pill, not a quiet "or" link.
 function SetupPill({ onPress, disabled }: { onPress: () => void; disabled: boolean }) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       onPress={onPress}

@@ -4,12 +4,14 @@ import type { ReviewRow as ImportRow } from "@grip/core/importReview";
 import { STATUSES } from "@grip/core/contacts";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors, font, radius, space } from "@/theme";
-import { Field, inputStyle } from "@/components/ui";
+import { font, radius, space, useTheme } from "@/theme";
+import { Field, useInputStyle } from "@/components/ui";
 import { Combobox } from "@/components/Combobox";
 import { DateField } from "@/components/DateField";
 
 export function ReviewRow({ row, onChange }: { row: ImportRow; onChange: (patch: Partial<ImportRow>) => void }) {
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const [sourceOpen, setSourceOpen] = useState(false);
   const [techQuery, setTechQuery] = useState("");
   const techOptions = categories

@@ -1,12 +1,13 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = { label: string; onExit: () => void };
 
 // Zen mode: a translucent title over the canvas and a button back to compact.
 export function ZenOverlay({ label, onExit }: Props) {
+  const { colors } = useTheme();
   return (
     <>
       <View

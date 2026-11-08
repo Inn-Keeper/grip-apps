@@ -1,7 +1,7 @@
 import { Modal, Pressable, ScrollView, Text, View } from "react-native";
 import type { EvalResult } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme, type Theme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button } from "@/components/ui";
 
@@ -11,15 +11,16 @@ type Props = {
   onClose: () => void;
 };
 
-function verdict(score: number): { label: string; color: string } {
+function verdict(score: number, colors: Theme["colors"]): { label: string; color: string } {
   if (score >= 80) return { label: t("board.verdictShip"), color: colors.success };
   if (score >= 50) return { label: t("board.verdictReview"), color: colors.warning };
   return { label: t("board.verdictWhiteboard"), color: colors.danger };
 }
 
 export function ResultSheet({ result, pushback = [], onClose }: Props) {
+  const { colors, tints } = useTheme();
   if (!result) return null;
-  const { label, color } = verdict(result.score);
+  const { label, color } = verdict(result.score, colors);
 
   return (
     // Modal's native slide animation — Reanimated entering animations

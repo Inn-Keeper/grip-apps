@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { buildPrepPlan } from "@grip/core/prepPlan";
 import { readinessSignals } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { setPrepPlan } from "@/lib/uiStore";
 import type { Contact } from "@grip/core/api";
 import type { StoryItem } from "./StoryMatchSection";
@@ -22,6 +22,7 @@ export function PrepPlanSection({
   stories: StoryItem[] | null;
   boards: { topology: number; talkGrade: number | null }[] | null;
 }) {
+  const { colors, tints } = useTheme();
   const router = useRouter();
   const plan = buildPrepPlan({ techs: contact.postingTechs, answers: answers ?? {}, deadline: contact.nextActionDate });
   // Separate evidence, no composite score; null inputs read as unavailable, not 0.

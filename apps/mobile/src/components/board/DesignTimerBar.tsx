@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { DESIGN_PHASES, ROUND_MINUTES, ROUND_MS, formatClock, phaseAt, roundProgress } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { MiniButton } from "@/components/ui";
 
@@ -57,6 +57,7 @@ export function useDesignTimer() {
 type Props = { timer: ReturnType<typeof useDesignTimer> };
 
 export function DesignTimerBar({ timer }: Props) {
+  const { colors } = useTheme();
   const { running, started, clock, phase, index, phaseRemainingMs, overrun, toggle, reset } = timer;
   const clockColor = overrun
     ? colors.danger

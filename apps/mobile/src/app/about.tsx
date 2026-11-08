@@ -3,14 +3,14 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { alpha, colors, font, radius, space, shadow } from "@/theme";
+import { alpha, font, radius, space, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type TKey = Parameters<typeof t>[0];
 
 type Feature = {
   icon: "layers" | "story" | "board" | "contact" | "rank";
-  color: string;
+  color: "deco2" | "deco3" | "deco5" | "deco6" | "deco7"; // token key, resolved per theme
   titleKey: TKey;
   taglineKey: TKey;
   bulletKeys: TKey[];
@@ -19,35 +19,35 @@ type Feature = {
 const FEATURES: Feature[] = [
   {
     icon: "layers",
-    color: colors.deco7,
+    color: "deco7",
     titleKey: "about.prep.title",
     taglineKey: "about.prep.tagline",
     bulletKeys: ["about.prep.b1", "about.prep.b2", "about.prep.b3", "about.prep.b4", "about.prep.b5", "about.prep.b6"],
   },
   {
     icon: "story",
-    color: colors.deco2,
+    color: "deco2",
     titleKey: "about.stories.title",
     taglineKey: "about.stories.tagline",
     bulletKeys: ["about.stories.b1", "about.stories.b2", "about.stories.b3", "about.stories.b4", "about.stories.b5"],
   },
   {
     icon: "board",
-    color: colors.deco3,
+    color: "deco3",
     titleKey: "about.board.title",
     taglineKey: "about.board.tagline",
     bulletKeys: ["about.board.b1", "about.board.b2", "about.board.b3", "about.board.b4", "about.board.b5"],
   },
   {
     icon: "contact",
-    color: colors.deco5,
+    color: "deco5",
     titleKey: "about.quest.title",
     taglineKey: "about.quest.tagline",
     bulletKeys: ["about.quest.b1", "about.quest.b2", "about.quest.b3", "about.quest.b4", "about.quest.b5"],
   },
   {
     icon: "rank",
-    color: colors.deco6,
+    color: "deco6",
     titleKey: "about.profile.title",
     taglineKey: "about.profile.tagline",
     bulletKeys: ["about.profile.b1", "about.profile.b2", "about.profile.b3", "about.profile.b4", "about.profile.b5"],
@@ -62,6 +62,7 @@ const HOW_IT_WORKS: { labelKey: TKey; detailKey: TKey }[] = [
 ];
 
 export default function AboutScreen() {
+  const { colors, shadow } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const locale = useLocale();
@@ -139,14 +140,14 @@ export default function AboutScreen() {
                   width: 36,
                   height: 36,
                   borderRadius: radius.sm,
-                  backgroundColor: alpha(f.color, 0.09),
+                  backgroundColor: alpha(colors[f.color], 0.09),
                   borderWidth: 1,
-                  borderColor: alpha(f.color, 0.19),
+                  borderColor: alpha(colors[f.color], 0.19),
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <BrandIcon name={f.icon} color={f.color} size={18} />
+                <BrandIcon name={f.icon} color={colors[f.color]} size={18} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={{

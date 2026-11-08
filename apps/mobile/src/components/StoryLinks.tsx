@@ -3,14 +3,19 @@ import { useRouter } from "expo-router";
 import type { Story } from "@grip/core/api";
 import { evaluate, isFreeScenario } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { MiniButton } from "@/components/ui";
 import { useSavedBoardsQuery, useScenarioCatalog } from "@/queries/board";
 
-const captionStyle = { fontSize: font.size.caption, fontWeight: "700", letterSpacing: 0.8, color: colors.textFaint } as const;
+function useCaptionStyle() {
+  const { colors } = useTheme();
+  return { fontSize: font.size.caption, fontWeight: "700", letterSpacing: 0.8, color: colors.textFaint } as const;
+}
 
 // The system behind a story, as on web: its Arch Board scenario and the one board designed for it.
 export function StoryLinks({ story }: { story: Story }) {
+  const captionStyle = useCaptionStyle();
+  const { colors } = useTheme();
   const router = useRouter();
   const { allScenarios, isFetching } = useScenarioCatalog();
   const { data: boards = [] } = useSavedBoardsQuery();

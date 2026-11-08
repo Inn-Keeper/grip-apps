@@ -1,7 +1,7 @@
 import { Text, View } from "react-native";
 import { WORKFLOW_STEPS, stepState } from "@grip/core/workflowState";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
 type Props = {
@@ -15,6 +15,7 @@ type Props = {
 // The web rail and Next Up card in one compact block: five numbered dots with the
 // current step named, then what to do now. Finished steps stay marked done.
 export function BoardProgress({ step, title, sub, action }: Props) {
+  const { colors, tints } = useTheme();
   const current = WORKFLOW_STEPS.find((item) => item.step === step);
   return (
     <View style={{

@@ -5,7 +5,7 @@ import { STATUSES, isDue, todayDDMMYYYY } from "@grip/core/contacts";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { alpha, colors, font, layout, tints } from "@/theme";
+import { alpha, font, layout, useTheme } from "@/theme";
 import { Button, HeaderAction, Screen, ScreenHeader } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
 import { ContactCard } from "@/components/contacts/ContactCard";
@@ -27,6 +27,7 @@ import { useSavedBoardsQuery } from "@/queries/board";
 import { toScoredBoards } from "@grip/core/readiness";
 
 export default function QuestScreen() {
+  const { colors, tints } = useTheme();
   const locale = useLocale();
   const insets = useSafeAreaInsets();
   const [editing, setEditing] = useState<Contact | null>(null);

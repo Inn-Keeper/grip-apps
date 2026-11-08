@@ -2,9 +2,9 @@ import { useState } from "react";
 import { KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import { filterGroups } from "@grip/core/scenarioCatalog";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
-import { inputStyle } from "@/components/ui";
+import { useInputStyle } from "@/components/ui";
 
 // label null: the free board's group, shown without a heading.
 type Group = { label: string | null; options: { value: string; label: string }[] };
@@ -20,6 +20,8 @@ type Props = {
 // Picks one of the 100+ scenarios: a search field over the list, grouped by category.
 // Typing a category name ("fintech") shows that whole group, like the web picker.
 export function ScenarioSheet({ visible, groups, activeId, onPick, onClose }: Props) {
+  const inputStyle = useInputStyle();
+  const { colors, tints } = useTheme();
   const [query, setQuery] = useState("");
   const visibleGroups = filterGroups(groups, query.trim().toLowerCase());
   // The search starts empty every time the sheet opens.

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ScrollView, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { colors, font, radius, space, tints } from "@/theme";
+import { font, radius, space, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
-import { inputStyle } from "@/components/ui";
+import { useInputStyle } from "@/components/ui";
 
 const DEFAULT_MAX_HEIGHT = 180;
 
@@ -34,6 +34,8 @@ export function Combobox({
   searchable = false,
   maxHeight = DEFAULT_MAX_HEIGHT,
 }: ComboboxProps) {
+  const inputStyle = useInputStyle();
+  const { colors, tints } = useTheme();
   const [open, setOpen] = useState(false);
 
   const selected = options.find((option) => option.value === value);

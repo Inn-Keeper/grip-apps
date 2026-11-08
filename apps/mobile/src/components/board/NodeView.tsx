@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { FILL_ALPHA, MIN_CARD, MIN_SHAPE, TEXT_FONT_TOKEN, TYPE_COLORS, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import type { BoardNode } from "@grip/core/arch";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 export const NODE_W = 124;
@@ -97,6 +97,7 @@ export function NodeView({
   onConnectMove,
   onConnectEnd,
 }: Props) {
+  const { colors } = useTheme();
   const isText = node.type === "text";
   const isShape = node.type === "box";
   const shape = node.shape ?? "rect";

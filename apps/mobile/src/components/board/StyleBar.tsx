@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ARROW_HEADS, FILL_COLORS, TEXT_ALIGNS, TEXT_COLORS, TEXT_SIZES, styleOf, type BoardNode, type FreeStyle } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = { node: BoardNode; onChange: (patch: FreeStyle) => void; onDelete: () => void };
@@ -13,6 +13,7 @@ const ALIGN_ICONS = { left: "alignLeft", center: "alignCenter", right: "alignRig
 const HEAD_GLYPHS: Record<string, string> = { end: "→", both: "↔", none: "—" };
 
 function Option({ label, pressed, onPress, children }: { label: string; pressed: boolean; onPress: () => void; children: ReactNode }) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       accessibilityRole="button"
@@ -36,6 +37,7 @@ function Option({ label, pressed, onPress, children }: { label: string; pressed:
 }
 
 function Swatch({ color }: { color: string | undefined }) {
+  const { colors } = useTheme();
   return <View style={{
       width: 16,
       height: 16,
@@ -46,18 +48,22 @@ function Swatch({ color }: { color: string | undefined }) {
     }} />;
 }
 
-const Divider = () => <View style={{
+const Divider = () => {
+  const { colors } = useTheme();
+  return <View style={{
     width: 1,
     alignSelf: "stretch",
     marginVertical: 6,
     marginHorizontal: 2,
     backgroundColor: colors.border
   }} />;
+};
 
 // The selected item's style, floating at the top of the canvas (web's style panel): size,
 // colour, fill, alignment and bold for text, shapes and components; colour, dashes and
 // heads for arrows and lines; the trash bin last. Scrolls sideways on narrow phones.
 export function StyleBar({ node, onChange, onDelete }: Props) {
+  const { colors } = useTheme();
   const style = styleOf(node);
   const arrow = node.type === "arrow";
   const text = (value: string, bold = false) => (

@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { normalizeQuizSize, QUIZ_SIZE_OPTIONS } from "@grip/core/quizPrefs";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = {
@@ -10,6 +10,7 @@ type Props = {
 };
 
 export function QuizSizePicker({ quizSize, poolSize, onQuizSize }: Props) {
+  const { colors, shadow } = useTheme();
   const detail =
     poolSize === null
       ? "Open a card to count."

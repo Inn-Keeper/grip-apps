@@ -4,7 +4,7 @@ import Animated, { Easing, FadeInRight, useAnimatedStyle, useReducedMotion, useS
 import * as Haptics from "expo-haptics";
 import { techLinks } from "@grip/core/techLinks";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { AnswerOption, type OptionState } from "./AnswerOption";
 import { SpeedClock } from "./SpeedClock";
 
@@ -37,6 +37,7 @@ function optionState(i: number, answered: number | null, correct: number): Optio
 }
 
 export function QuizView({ tech, color, question, questionNumber, total, answered, xp, timedFrom, onAnswer, onNext, isLast, autoNextMs }: Props) {
+  const { colors } = useTheme();
   const isCorrect = answered !== null && answered === question.correct;
   const link = techLinks[tech];
   const feedbackFor = (right: boolean) =>
@@ -177,6 +178,7 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
 
 // One segment per question: done, current (full color) and upcoming.
 function ProgressSegments({ color, current, total }: { color: string; current: number; total: number }) {
+  const { colors } = useTheme();
   return (
     <View
       style={{
@@ -203,6 +205,7 @@ function ProgressSegments({ color, current, total }: { color: string; current: n
 
 // "+XP" chip that drifts up and fades out once.
 function XpFloat({ xp }: { xp: number }) {
+  const { colors } = useTheme();
   const progress = useSharedValue(0);
   useEffect(() => {
     progress.value = withTiming(1, { duration: 900 });

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
-import { alpha, colors, font, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 // idle: not answered yet · correct/wrong: the right answer and a wrong pick · dimmed: other options after answering.
@@ -11,15 +11,19 @@ type Props = { letter: string; text: string; state: OptionState; color: string; 
 
 const PRESS_SPRING = { damping: 18, stiffness: 320 };
 
-const LOOK = {
+function useLook() {
+  const { colors, tints } = useTheme();
+  return {
   idle: { bg: colors.surfaceHi, border: colors.border, text: colors.text },
   dimmed: { bg: colors.surfaceHi, border: colors.border, text: colors.textDim },
   correct: { bg: tints.successSoft, border: alpha(colors.success, 0.5), text: colors.successBright },
   wrong: { bg: tints.dangerSoft, border: alpha(colors.danger, 0.5), text: colors.dangerBright },
 };
+}
 
 // One answer: shrinks while pressed, pops when it is the right answer, shakes when it was a wrong pick.
 export function AnswerOption({ letter, text, state, color, onPress }: Props) {
+  const LOOK = useLook();
   const scale = useSharedValue(1);
   const shift = useSharedValue(0);
 

@@ -1,11 +1,12 @@
 import { Text, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@/theme";
+import { font, useTheme } from "@/theme";
 
 type Props = { label: string; pct: number; count: number };
 
 // Prep's headline, as on web: how ready the chosen techs are. Untested techs count as 0.
 export function ReadinessCard({ label, pct, count }: Props) {
+  const { colors, shadow } = useTheme();
   return (
     <View
       accessible

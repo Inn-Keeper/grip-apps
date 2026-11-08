@@ -1,7 +1,7 @@
 import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NODE_TYPES, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 
 type Props = { visible: boolean; onAdd: (type: string) => void; onClose: () => void };
@@ -9,6 +9,7 @@ type Props = { visible: boolean; onAdd: (type: string) => void; onClose: () => v
 // The built-in components, one tap away from the tool row (web's Components dropdown).
 // Picking one adds it and closes the sheet.
 export function ComponentsSheet({ visible, onAdd, onClose }: Props) {
+  const { colors, tints } = useTheme();
   if (!visible) return null;
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onClose}>

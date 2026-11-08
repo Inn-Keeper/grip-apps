@@ -13,7 +13,7 @@ import { clearSeenQuestions } from "@/lib/questionDeck";
 import { supabase } from "@/lib/supabase";
 import { restoreLocale } from "@/lib/useLocale";
 import { SignIn } from "@/components/SignIn";
-import { colors } from "@/theme";
+import { useTheme } from "@/theme";
 
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 
@@ -27,6 +27,7 @@ const queryClient = new QueryClient({
 const persister = createAsyncStoragePersister({ storage: AsyncStorage });
 
 export default function RootLayout() {
+  const { colors } = useTheme();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const previousUserId = useRef<string | null | undefined>(undefined);
 

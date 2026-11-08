@@ -7,8 +7,8 @@ import { LOCALE_LABELS, t } from "@grip/core/i18n";
 import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@grip/core/user";
 import { supabase } from "@/lib/supabase";
 import { changeLocale, useLocale } from "@/lib/useLocale";
-import { alpha, colors, font, layout, radius, space, tints, shadow } from "@/theme";
-import { Button, Card, Field, HeaderAction, Screen, ScreenHeader, inputStyle } from "@/components/ui";
+import { alpha, font, layout, radius, space, useTheme } from "@/theme";
+import { Button, Card, Field, HeaderAction, Screen, ScreenHeader, useInputStyle } from "@/components/ui";
 import { Switch } from "@/components/Switch";
 import { ConnectionBadge } from "@/components/profile/ConnectionBadge";
 import {
@@ -27,6 +27,8 @@ import { FavoriteTechsCard } from "@/components/profile/FavoriteTechsCard";
 type ProfileForm = Record<string, string>;
 
 export default function ProfileScreen() {
+  const inputStyle = useInputStyle();
+  const { colors, shadow, tints } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [form, setForm] = useState<ProfileForm>(EMPTY_PROFILE_FORM);

@@ -1,8 +1,9 @@
 import { TouchableOpacity, View } from "react-native";
-import { colors, radius } from "@/theme";
+import { radius, useTheme } from "@/theme";
 
 // The app's toggle, drawn in brand colours (the native Switch follows the OS palette).
 export function Switch({ checked, disabled, onChange }: { checked: boolean; disabled: boolean; onChange: (checked: boolean) => void }) {
+  const { colors } = useTheme();
   return (
     <TouchableOpacity
       accessibilityRole="switch"

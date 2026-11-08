@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from "react-native-reanimated";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 
 type Props = {
   title: string;
@@ -21,13 +21,13 @@ type Props = {
 };
 
 // Decorative confetti ramp — centralized in core tokens (deco1–6) — see DESIGN.md.
-const PARTICLE_COLORS = [colors.deco1, colors.deco2, colors.deco3, colors.deco4, colors.deco5, colors.deco6];
+const PARTICLE_KEYS = ["deco1", "deco2", "deco3", "deco4", "deco5", "deco6"] as const;
 const PARTICLES = Array.from({ length: 54 }, (_, index) => ({
   angle: (Math.PI * 2 * index) / 54 + (index % 5) * 0.08,
   distance: 72 + (index % 9) * 17,
   size: 2.5 + (index % 4),
   delay: (index % 6) * 0.045,
-  color: PARTICLE_COLORS[index % PARTICLE_COLORS.length],
+  colorKey: PARTICLE_KEYS[index % PARTICLE_KEYS.length]!,
 }));
 
 const BURST_MS = 1250;
@@ -63,7 +63,10 @@ function Particle({ progress, center, angle, distance, size, delay, color }: Par
   return <Circle cx={cx} cy={cy} r={r} color={color} />;
 }
 
-export function CelebrationOverlay({ title, subtitle, accent = colors.accent, onDone }: Props) {
+export function CelebrationOverlay({ title, subtitle, accent: accentProp, onDone }: Props) {
+  const styles = useStyles();
+  const { colors } = useTheme();
+  const accent = accentProp ?? colors.accent;
   const [layout, setLayout] = useState({ width: 0, height: 0 });
   const progress = useSharedValue(0);
 
@@ -86,7 +89,7 @@ export function CelebrationOverlay({ title, subtitle, accent = colors.accent, on
       {layout.width > 0 && (
         <Canvas style={StyleSheet.absoluteFill}>
           {PARTICLES.map((particle, index) => (
-            <Particle key={String(index)} progress={progress} center={center} {...particle} />
+            <Particle key={String(index)} progress={progress} center={center} {...particle} color={colors[particle.colorKey]} />
           ))}
         </Canvas>
       )}
@@ -99,7 +102,9 @@ export function CelebrationOverlay({ title, subtitle, accent = colors.accent, on
   );
 }
 
-const styles = StyleSheet.create({
+function useStyles() {
+  const { colors } = useTheme();
+  return StyleSheet.create({
   root: {
     ...StyleSheet.absoluteFill,
     alignItems: "center",
@@ -131,3 +136,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+}

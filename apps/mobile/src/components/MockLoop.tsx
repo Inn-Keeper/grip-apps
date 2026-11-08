@@ -4,8 +4,8 @@ import { SCENARIOS } from "@grip/core/arch";
 import { COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, shadow, tints } from "@/theme";
-import { Button, inputStyle } from "@/components/ui";
+import { alpha, font, useTheme } from "@/theme";
+import { Button, useInputStyle } from "@/components/ui";
 import { DrillSession, type Drill } from "./DrillSession";
 
 // One timed session, as on web: a quiz round, an Arch Board scenario and a behavioral
@@ -24,6 +24,9 @@ type Props = {
 };
 
 export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
+  const cardStyle = useCardStyle();
+  const inputStyle = useInputStyle();
+  const { colors, tints } = useTheme();
   const [stage, setStage] = useState<Stage>("quiz");
   const [{ scenario, prompt }] = useState(
     () => composeMockLoop({ scenarios: SCENARIOS, prompts: PROMPTS }) as { scenario: Scenario; prompt: Prompt }
@@ -223,7 +226,9 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
   );
 }
 
-const cardStyle = {
+function useCardStyle() {
+  const { colors, shadow } = useTheme();
+  return {
   backgroundColor: colors.surface,
   borderWidth: 1,
   borderColor: colors.borderSoft,
@@ -232,8 +237,10 @@ const cardStyle = {
   padding: 18,
   gap: 12,
 } as const;
+}
 
 function StageLabel({ text }: { text: string }) {
+  const { colors } = useTheme();
   return <Text style={{
       fontSize: font.size.label,
       fontWeight: "700",
@@ -243,6 +250,8 @@ function StageLabel({ text }: { text: string }) {
 }
 
 function StageCard({ label, onExit, children }: { label: string; onExit: () => void; children: ReactNode }) {
+  const cardStyle = useCardStyle();
+  const { colors } = useTheme();
   return (
     <View style={cardStyle}>
       <View style={{

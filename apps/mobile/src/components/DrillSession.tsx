@@ -6,7 +6,7 @@ import { difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { AUTO_NEXT_MS } from "@grip/core/quizPrefs";
 import { useCountUp } from "@/lib/useCountUp";
-import { alpha, colors, font, shadow } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizView } from "./QuizView";
@@ -37,6 +37,7 @@ type Props = {
 };
 
 export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoNext = false }: Props) {
+  const { colors, shadow } = useTheme();
   const tier = difficultyByKey(drill.difficulty);
   const perAnswerXp = tier?.xp ?? CORRECT_XP;
   const shownCorrect = useCountUp(drill.done ? drill.correctCount : 0);

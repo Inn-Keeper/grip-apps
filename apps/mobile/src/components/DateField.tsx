@@ -3,9 +3,9 @@ import { Modal, Platform, Pressable, Text, TouchableOpacity, View } from "react-
 import DateTimePicker, { type DateTimePickerEvent } from "@react-native-community/datetimepicker";
 import { formatDDMMYYYY, parseDDMMYYYY, todayDDMMYYYY } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
-import { Field, MiniButton, inputStyle } from "@/components/ui";
+import { Field, MiniButton, useInputStyle } from "@/components/ui";
 
 type Props = {
   label: string;
@@ -22,6 +22,8 @@ type Props = {
  * An empty field fills with today the moment it's tapped.
  */
 export function DateField({ label, value, onChange, clearable = false }: Props) {
+  const inputStyle = useInputStyle();
+  const { colors, tints } = useTheme();
   const [pickerOpen, setPickerOpen] = useState(false);
   const date = parseDDMMYYYY(value) ?? new Date();
 

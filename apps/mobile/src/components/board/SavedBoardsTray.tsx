@@ -3,7 +3,7 @@ import { ScrollView, Text, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import type { Scenario } from "@grip/core/arch";
 import type { SavedBoard, Story } from "@grip/core/api";
-import { colors, font, shadow } from "@/theme";
+import { font, useTheme } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
 // Horizontal strip of saved boards, each with Share, Load and Delete.
@@ -20,6 +20,7 @@ type SavedBoardsTrayProps = {
 };
 
 export function SavedBoardsTray({ boards, scenarios, stories, activeId, onLoad, onDelete, onShare, onUnshare }: SavedBoardsTrayProps) {
+  const { colors, shadow } = useTheme();
   return (
     <Animated.View entering={FadeInDown.duration(180)} style={{ gap: 8 }}>
       <View style={{

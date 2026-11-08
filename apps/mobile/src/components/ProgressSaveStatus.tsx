@@ -1,11 +1,12 @@
 import { Text, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font, tints } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 import { MiniButton } from "@/components/ui";
 import type { SaveStatus } from "@/lib/useScores";
 
 // Unsaved answers, a failed bonus or a failed score load, above the active task.
 export function ProgressSaveStatus({ status }: { status: SaveStatus }) {
+  const { colors, tints } = useTheme();
   const { pending, failed, bonusFailed, loadFailed, retry } = status;
   if (!failed && !bonusFailed && !loadFailed) return null;
   return (

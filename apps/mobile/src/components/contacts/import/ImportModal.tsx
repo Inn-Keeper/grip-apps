@@ -28,8 +28,8 @@ import {
 } from "@grip/core/importReview";
 import { importSummary } from "@grip/core/ledgerImport";
 import { t } from "@grip/core/i18n";
-import { colors, font, radius, space } from "@/theme";
-import { Field, inputStyle } from "@/components/ui";
+import { font, radius, space, useTheme } from "@/theme";
+import { Field, useInputStyle } from "@/components/ui";
 import { ledgerImport, postingReader } from "@/lib/api";
 import { useImportContactsMutation } from "@/queries/contacts";
 import { ReviewRow } from "./ReviewRow";
@@ -46,6 +46,8 @@ function Action({
   primary?: boolean;
   disabled?: boolean;
 }) {
+  const styles = useStyles();
+  const { colors } = useTheme();
   return (
     <Pressable
       accessibilityRole="button"
@@ -77,6 +79,9 @@ export function ImportModal({
   onClose: () => void;
   onImported: (count: number) => void;
 }) {
+  const styles = useStyles();
+  const inputStyle = useInputStyle();
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const abort = useRef<AbortController | null>(null);
   const mounted = useRef(true);
@@ -439,7 +444,9 @@ export function ImportModal({
   );
 }
 
-const styles = StyleSheet.create({
+function useStyles() {
+  const { colors } = useTheme();
+  return StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.surface },
   header: { flexDirection: "row", alignItems: "center", gap: space.md, padding: space.lg },
   title: { flex: 1, color: colors.textBright, fontSize: font.size.heading, fontWeight: "700" },
@@ -461,3 +468,4 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
 });
+}

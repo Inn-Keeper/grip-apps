@@ -3,10 +3,9 @@ import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { t } from "@grip/core/i18n";
 import { useTabBarHidden } from "@/lib/uiStore";
 import { useLocale } from "@/lib/useLocale";
-import { alpha, colors, font } from "@/theme";
+import { alpha, font, useTheme } from "@/theme";
 
 const { Icon, Label } = NativeTabs.Trigger;
-const tabChrome = alpha(colors.bgDeep, 0.9);
 // iOS 26 draws the bar in Liquid Glass; a custom background would paint over it,
 // so the dark blurred chrome is only for older iOS and Android.
 const liquidGlass = Platform.OS === "ios" && Number.parseInt(String(Platform.Version), 10) >= 26;
@@ -15,6 +14,8 @@ const liquidGlass = Platform.OS === "ios" && Number.parseInt(String(Platform.Ver
 // native bottom navigation on Android). Icons follow the web header's brand icons.
 // The Arch Board's zen mode hides it for an edge-to-edge canvas.
 export default function TabLayout() {
+  const { colors } = useTheme();
+  const tabChrome = alpha(colors.bgDeep, 0.9);
   const locale = useLocale();
   const hidden = useTabBarHidden();
 

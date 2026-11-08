@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { alpha, colors, font, radius, shadow, space, tints } from "@/theme";
+import { alpha, font, radius, space, useTheme } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useIsDemo } from "@/lib/useIsDemo";
@@ -12,6 +12,7 @@ import { useIsDemo } from "@/lib/useIsDemo";
  * on the side of the screen.
  */
 export function Screen({ children }: { children: ReactNode }) {
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const isDemo = useIsDemo();
   return (
@@ -30,7 +31,9 @@ export function Screen({ children }: { children: ReactNode }) {
   );
 }
 
-export const inputStyle = {
+export function useInputStyle() {
+  const { colors } = useTheme();
+  return {
   backgroundColor: colors.well,
   borderWidth: 1,
   borderColor: colors.border,
@@ -39,13 +42,16 @@ export const inputStyle = {
   color: colors.text,
   fontSize: font.size.body,
 } as const;
+}
 
 export const multilineStyle = { minHeight: 70, textAlignVertical: "top" } as const;
 
 type PillProps = { label: string; active: boolean; activeColor?: string; icon?: BrandIconName; onPress: () => void };
 
 /** Selectable chip — category filters, mode toggles, competency/status pickers. */
-export function Pill({ label, active, activeColor = colors.accent, icon, onPress }: PillProps) {
+export function Pill({ label, active, activeColor: activeColorProp, icon, onPress }: PillProps) {
+  const { colors } = useTheme();
+  const activeColor = activeColorProp ?? colors.accent;
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -75,6 +81,7 @@ type HeaderActionProps = { label: string; onPress: () => void; icon?: BrandIconN
 
 /** Compact action for a screen header right slot. */
 export function HeaderAction({ label, onPress, icon, tone = "accent", disabled = false }: HeaderActionProps) {
+  const { colors, tints } = useTheme();
   const color = tone === "danger" ? colors.dangerBright : tone === "muted" ? colors.textDim : colors.accentBright;
   const borderColor = tone === "danger" ? alpha(colors.danger, 0.31) : tone === "muted" ? colors.border : alpha(colors.accent, 0.31);
 
@@ -109,6 +116,7 @@ type ScreenHeaderProps = { title: string; subtitle?: string; right?: ReactNode; 
 
 /** In-tab header: title/action row plus optional segmented controls. */
 export function ScreenHeader({ title, subtitle, right, children }: ScreenHeaderProps) {
+  const { colors } = useTheme();
   return (
     <View
       style={{
@@ -223,6 +231,7 @@ type ButtonProps = { label: string; onPress: () => void; variant?: "primary" | "
 
 /** Form-level action button. */
 export function Button({ label, onPress, variant = "primary", disabled = false }: ButtonProps) {
+  const { colors } = useTheme();
   const primary = variant === "primary";
   return (
     <TouchableOpacity
@@ -251,6 +260,7 @@ type FieldProps = { label: string; children: ReactNode };
 
 /** Labeled form field. */
 export function Field({ label, children }: FieldProps) {
+  const { colors } = useTheme();
   return (
     <View style={{ gap: space.xs }}>
       <Text style={{
@@ -268,6 +278,7 @@ type SectionProps = { label: string; text: string };
 
 /** Labeled read-only text block — STAR sections, retro fields. */
 export function Section({ label, text }: SectionProps) {
+  const { colors } = useTheme();
   if (!text) return null;
   return (
     <View>
@@ -291,6 +302,7 @@ export function Section({ label, text }: SectionProps) {
 
 /** A raised panel: the standard section container on long screens such as Profile. */
 export function Card({ children }: { children: ReactNode }) {
+  const { colors, shadow } = useTheme();
   return (
     <View style={{
         backgroundColor: colors.surface,
