@@ -31,6 +31,8 @@ import { Card } from "./Card";
 import { DrillSession } from "./DrillSession";
 import { MockLoop } from "./MockLoop";
 import { NextUpCard } from "./NextUpCard";
+import { needsSetup } from "@grip/core/firstRun";
+import { useStoriesQuery } from "../storyBank/queries";
 import { PrepLeftRail } from "./PrepLeftRail";
 import { PrepRightRail } from "./PrepRightRail";
 import {
@@ -45,7 +47,8 @@ import { clearPrepPlan, readPrepPlan, type StoredPrepPlan } from "../lib/prepPla
 import { summarizeScores } from "./summarizeScores";
 import { scrollBehavior } from "../lib/motion";
 
-export default function InterviewPrep() {
+export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => void } = {}) {
+  const storiesQuery = useStoriesQuery();
   // Track the selected category by name, not list index: the profile and favorites
   // categories are prepended once it loads, which would shift every index underneath it.
   const [activeCategoryName, setActiveCategoryName] = useState(categories[0]?.name ?? "");
@@ -225,7 +228,8 @@ export default function InterviewPrep() {
   const startPlanDrill = () => prepPlan && runDrill(level, prepPlan.techs);
 
   const startNextUp = (kind: NextUpKind) => {
-    if (kind === "review") startReviewDrill();
+    if (kind === "setup") onOpenSetup?.();
+    else if (kind === "review") startReviewDrill();
     else if (kind === "plan") startPlanDrill();
     else startDrill(level);
   };
@@ -349,6 +353,7 @@ export default function InterviewPrep() {
           reviewDueCount={reviewDueTechs.length}
           plan={prepPlan}
           attempts={summary.attempts}
+          needsSetup={!!onOpenSetup && needsSetup(storiesQuery.data)}
           busy={pending === "nextup"}
           disabled={drillLoading}
           error={drillError?.source === "nextup" ? drillError.message : null}

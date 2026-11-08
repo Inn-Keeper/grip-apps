@@ -8,6 +8,8 @@ type Props = {
   reviewDueCount: number;
   plan: StoredPrepPlan | null;
   attempts: number;
+  /** No generated playbook yet: offer the first-run wizard. */
+  needsSetup: boolean;
   // busy: a session this card started is loading; disabled: any session is loading.
   busy: boolean;
   disabled: boolean;
@@ -22,11 +24,12 @@ const ALT_LABEL: Record<NextUpKind, Parameters<typeof t>[0]> = {
   plan: "nextUp.altPlan",
   weakest: "nextUp.altWeakest",
   warmup: "nextUp.altWarmup",
+  setup: "nextUp.altSetup",
 };
 
 // The one suggested action at the top of Prep; the other available actions stay one click away.
-export function NextUpCard({ reviewDueCount, plan, attempts, busy, disabled, error, onStart, onMock, onDismissPlan }: Props) {
-  const { primary, alternatives } = pickNextUp({ reviewDueCount, hasPlan: !!plan, attempts });
+export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, disabled, error, onStart, onMock, onDismissPlan }: Props) {
+  const { primary, alternatives } = pickNextUp({ reviewDueCount, hasPlan: !!plan, attempts, needsSetup });
 
   const copy = {
     review: { title: t("nextUp.reviewTitle", { count: reviewDueCount }), sub: t("nextUp.reviewSub"), action: t("prep.reviewNow"), tone: colors.warning },
@@ -38,6 +41,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, busy, disabled, err
     },
     weakest: { title: t("nextUp.weakestTitle"), sub: t("nextUp.weakestSub"), action: t("prep.drillWeakest"), tone: colors.accent },
     warmup: { title: t("nextUp.warmupTitle"), sub: t("nextUp.warmupSub"), action: t("nextUp.warmupAction"), tone: colors.accent },
+    setup: { title: t("nextUp.setupTitle"), sub: t("nextUp.setupSub"), action: t("nextUp.setupAction"), tone: colors.accent },
   }[primary];
 
   return (

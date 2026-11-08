@@ -52,7 +52,17 @@ export default function App() {
   const previousUserId = useRef<string | null | undefined>(undefined);
   const navRef = useRef<HTMLElement | null>(null);
   // "auto" follows the profile flag; "open" is a manual rerun; "closed" hides it for this visit.
-  const [setup, setSetup] = useState<"auto" | "open" | "closed">("auto");
+  // ?setup=1 (the mobile Next Up link) opens it directly.
+  const [setup, setSetup] = useState<"auto" | "open" | "closed">(() =>
+    typeof window !== "undefined" && new URLSearchParams(window.location.search).get("setup") === "1" ? "open" : "auto"
+  );
+  useEffect(() => {
+    // Read once; drop it so a reload doesn't reopen the wizard.
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has("setup")) return;
+    params.delete("setup");
+    window.history.replaceState({}, "", `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`);
+  }, []);
   const headerRef = useRef<HTMLElement | null>(null);
 
   const pages = PAGE_DEFS.map((p) => ({ ...p, label: t(p.labelKey as Parameters<typeof t>[0]) }));
@@ -341,7 +351,7 @@ export default function App() {
         {session && (
           <React.Fragment key={locale}>
             {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}
-            {!showWizard && page === "prep" && <InterviewPrep />}
+            {!showWizard && page === "prep" && <InterviewPrep onOpenSetup={openSetup} />}
             {!showWizard && page === "stories" && <StoryBank onOpenSetup={openSetup} />}
             {!showWizard && page === "board" && <ArchBoard />}
             {!showWizard && page === "quest" && <Quest />}
