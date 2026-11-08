@@ -14,6 +14,7 @@ because they have to be applied by hand.
 - Prep (web and mobile) lists "From My Goals" first: the wizard's stack plus the target role's techs, saved on the profile. Favorites stay separate and are edited in Profile.
 - Next Up on Prep (web and mobile) suggests "Get your interview playbook" until the user has one: first for brand-new users who chose "Explore first", then as the last alternative. On mobile it opens the web wizard (`?setup=1`), which is web-only for now.
 - Generated stories carry a "Sample" tag until edited and a permanent playbook label. Stories offers "Generate my playbook" and Profile offers "Set up your practice" to run the wizard again; reruns add, never replace.
+- Light theme groundwork (plan in `docs/light-mode.md`, phase 1): `tokens.js` exports `themes.dark` and `themes.light` with the same keys, plus an `alpha()` helper for translucent colors. Token tests check both themes for matching keys, formats and text contrast. Dark stays the default and nothing renders differently yet.
 - grip-ai-api: `POST /api/v1/ai/first-run/playbook` with output validated against Grip's competencies and components, an input cache, a per-user daily cap (`AI_PLAYBOOK_DAILY_CAP`, default 3) and a concurrency cap (`AI_MAX_CONCURRENT`, default 2). `/api/v1/ai/status` reports the provider.
 
 ### Changed

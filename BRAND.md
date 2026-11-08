@@ -97,7 +97,8 @@ When Poe "speaks," use phrases like:
 ### Existing Tokens (from `packages/core/src/tokens.js`)
 - **Accent (Teal):** `#14B8A6` — action, progress, Poe highlights
 - **Accent Bright:** `#2DD4BF` — glow, celebration
-- **Dark grade:** `#10131A` → `#272C3A` — elevation, breathing room
+- **Dark grade:** `#10131A` → `#272C3A` — elevation, breathing room (default theme)
+- **Light theme:** optional, chosen in Profile. Same teal, pale ladder; values in DESIGN.md
 
 ### New Brand Colors (Optional Additions)
 - **Poe Gold:** `#D4A574` — warmth, literary depth, highlights in mascot

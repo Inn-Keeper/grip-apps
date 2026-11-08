@@ -39,11 +39,11 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 
 ## Look
 
-21. Borders are dark and quiet everywhere.
+21. Borders are quiet everywhere, close to the background they sit on.
 22. Coloured or bright borders are **only** for boxes that warn or point somewhere: the "Next up" suggestion, overdue items, errors, the current step and selected items.
 23. Cards sit slightly raised off the page with a soft shadow. Cards with buttons rise a gentle **1px** on hover or keyboard focus, easing in over about a quarter of a second, never with a jump.
-24. A recessed, darker look is **only** for areas inside a card, like a progress track, or for canvases. Boxes placed directly on the page are cards.
-25. Progress bars use the dark-to-bright teal gradient. Big headline numbers are teal.
+24. A recessed look (the `well` token) is **only** for areas inside a card, like a progress track, or for canvases. Boxes placed directly on the page are cards.
+25. Progress bars use the teal gradient (`accentDeep` to `accent`). Big headline numbers are teal.
 26. Text uses **only** the sizes and weights defined in DESIGN.md. Nothing people need to read is smaller than **11px**.
 
 ## Forms
@@ -74,7 +74,7 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 41. Everything that works with a mouse also works with a keyboard, including hover effects.
 42. Locked areas cannot be reached by keyboard or screen reader.
 43. Screen readers announce confirmations, errors and loading states.
-44. Text keeps readable contrast on the dark background.
+44. Text keeps readable contrast on the background, in both dark and light themes.
 45. Every button and control is at least **24px** tall, so it can be hit with a finger. Text links inside a sentence are the only exception.
 
 ## Before calling a screen done

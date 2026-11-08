@@ -8,7 +8,8 @@ rules behind them. How screens are structured, react and move lives in
 
 ## Identity
 
-Focused, calm, dark-first. The product is a training room for the job hunt: it should feel
+Focused, calm, dark-first. Dark is the default theme; a light theme is available from Profile
+(see [docs/light-mode.md](docs/light-mode.md)). The product is a training room for the job hunt: it should feel
 like a place to do deep work, with bursts of celebration when progress lands. **Teal is the
 brand** — it means focus, progress, and "your move". The grade is dark but never murky:
 every layer of the UI sits one visible luminance step above the layer below it.
@@ -17,6 +18,10 @@ Tone: serious tool, playful register. Gamified naming (Quest, XP, ranks, drills)
 iconography, spring physics everywhere — but information density and contrast come first.
 
 ## Color
+
+Every color token exists in both themes with the same name (`themes.dark`, `themes.light` in
+`tokens.js`). Pick tokens by role, never by how they look in one theme. The hex values below are
+dark; the light table follows the ladder.
 
 ### Elevation ladder
 
@@ -40,6 +45,17 @@ keyboard focus. Light, colored edges are only for containers that inform or poin
 due follow-ups, errors, the prep plan, the active workflow step); everything else uses `borderSoft`.
 Colored glows stay reserved for board nodes (glow = node identity).
 
+**Light theme.** The ladder keeps its roles but inverts in luminance: cards are white on a pale page,
+and `well` reads carved in by being slightly darker than `surface`. The card shadow drops the
+top-edge highlight, which vanishes on white.
+
+| Token | Light hex |
+| --- | --- |
+| `bgDeep` / `bg` | `#EEF1F5` / `#F5F7FA` |
+| `well` / `surface` / `surfaceHi` | `#EDF0F5` / `#FFFFFF` / `#F1F4F8` |
+| `border` / `borderSoft` | `#CDD3DE` / `#E2E6ED` |
+| `textBright` / `text` / `textDim` / `textFaint` | `#0B0F17` / `#1C2230` / `#4B5568` / `#5D6779` |
+
 ### Text
 
 | Token | Hex | Role |
@@ -54,7 +70,7 @@ Colored glows stay reserved for board nodes (glow = node identity).
 | Token | Hex | Role |
 | --- | --- | --- |
 | `accent` | `#14B8A6` | Focus teal: primary actions, fills, active states, the XP bar |
-| `accentBright` | `#2DD4BF` | Links, glow, active accents on dark planes |
+| `accentBright` | `#2DD4BF` | Links, glow, active accents. Light: `#0F766E` |
 | `accentDeep` | `#0F766E` | Deep end of teal gradients (progress fills) |
 | `onAccent` | `#0F141C` | Text/icons **on** accent or category-color fills. Never use white on teal — it fails contrast (~2.5:1); `onAccent` clears 7:1. |
 
@@ -63,17 +79,24 @@ Canonical product constants live in `brand` / `brandColors`: Grip, Poe, "Get a g
 ### Status
 
 `success #22C55E` · `danger #EF4444` · `warning #F59E0B`, each with a `*Bright` variant
-(`#86EFAC` / `#FCA5A5` / `#FBBF24`) for text on dark planes. Danger-red is reserved for
+(`#86EFAC` / `#FCA5A5` / `#FBBF24`) for text on the plane. Danger-red is reserved for
 errors and destructive actions — never for data-viz meaning.
+
+**`*Bright` means "readable on the plane", not "brighter".** In the light theme every `*Bright`
+token is darker than its base (`accentBright #0F766E`, `successBright #15803D`,
+`dangerBright #B91C1C`, `warningBright #B45309`). Use it wherever text or a thin line sits on a
+background.
 
 ### Alpha & tints
 
-Every `colors` value is a **6-digit hex** — this is load-bearing: UI code derives
-translucency by string-appending a 2-digit alpha (`` `${colors.accent}60` ``).
+Every `colors` value is a **6-digit hex**. Derive translucency with `alpha(color, opacity)` from
+`tokens.js` (`alpha(colors.accent, 0.38)`): it appends hex alpha to hex and returns `color-mix()`
+for a CSS variable, so it keeps working once web colors become variables. Older code still
+string-appends a 2-digit alpha (`` `${colors.accent}60` ``); that is being migrated.
 Standard suffixes: `20` chips · `30`/`40` colored borders · `50`/`60` strong borders ·
 `80` emphasis borders · `a8`–`f2` overlays. Pre-baked soft backgrounds live in `tints`
 (`accentSoft`, `successSoft`, `dangerSoft`, `warningSoft`) — 8-digit, never concatenate
-onto them. Modal scrims are the one allowed raw value: `#00000090`.
+onto them. `tints` also differ per theme; the modal scrim is `tints.modalScrim`.
 `packages/core/src/__tests__/tokens.test.js` enforces the formats.
 
 ## Data-viz ramps

@@ -1,11 +1,11 @@
 // Design tokens — single source of truth for both apps. Rules live in /DESIGN.md.
 //
-// INVARIANT: every value in `colors` is a 6-digit hex. UI code derives tints by
-// appending a 2-digit alpha (e.g. `${colors.accent}60`). Pre-baked translucent
-// tints live in `tints` (8-digit) — never concatenate alpha onto those.
+// INVARIANT: every value in `colors` is a 6-digit hex. Derive translucency with
+// `alpha()`. Pre-baked translucent tints live in `tints` (8-digit).
+// Two themes share the same keys (`themes.dark`, `themes.light`); dark is the default.
 
 /** @type {Record<string, string>} */
-export const colors = {
+const darkColors = {
   // Elevation ladder — each step a visible luminance lift.
   bgVoid: "#07090D", // darkest edge of the sign-in backdrop
   bgDeep: "#10131A", // sunken: web header, board canvas
@@ -51,13 +51,66 @@ export const colors = {
   deco7: "#818CF8", // indigo
 };
 
+// Light: the ladder inverts (white cards on a pale page), and `*Bright` means
+// "readable on the plane", so those go darker here.
+/** @type {Record<string, string>} */
+const lightColors = {
+  bgVoid: "#E4E8EF",
+  bgDeep: "#EEF1F5",
+  bg: "#F5F7FA",
+  well: "#EDF0F5",
+  surface: "#FFFFFF",
+  surfaceHi: "#F1F4F8",
+  border: "#CDD3DE",
+  borderSoft: "#E2E6ED",
+  borderStrong: "#A9B2C2",
+  borderDeep: "#D5DBE4",
+
+  textBright: "#0B0F17",
+  text: "#1C2230",
+  textDim: "#4B5568",
+  textFaint: "#5D6779",
+
+  textHighlight: "#0F766E",
+  textHighlightDim: "#115E59",
+
+  accent: "#14B8A6",
+  accentBright: "#0F766E",
+  accentDeep: "#0D9488",
+  onAccent: "#0F141C",
+
+  success: "#16A34A",
+  successBright: "#15803D",
+  danger: "#DC2626",
+  dangerBright: "#B91C1C",
+  warning: "#D97706",
+  warningBright: "#B45309",
+
+  deco1: "#0D9488",
+  deco2: "#16A34A",
+  deco3: "#D97706",
+  deco4: "#DB2777",
+  deco5: "#0284C7",
+  deco6: "#7C3AED",
+  deco7: "#4F46E5",
+};
+
 /** Pre-baked translucent tints (8-digit hex). @type {Record<string, string>} */
-export const tints = {
+const darkTints = {
   accentSoft: "#14B8A622",
   successSoft: "#22C55E26",
   dangerSoft: "#EF44441F",
   warningSoft: "#F59E0B1A",
   modalScrim: "#00000090",
+};
+
+/** @type {Record<string, string>} */
+const lightTints = {
+  accentSoft: "#14B8A61F",
+  successSoft: "#16A34A1F",
+  dangerSoft: "#DC26261A",
+  warningSoft: "#D977061A",
+  modalScrim: "#0F172A66",
 };
 
 /** Canonical Grip brand palette. @type {Record<string, string>} */
@@ -123,7 +176,7 @@ export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 20, xxl: 28 };
 export const radius = { sm: 8, md: 12, lg: 16, pill: 999 };
 
 // Card lift: a faint top-edge highlight plus a soft drop shadow (hover goes one step deeper).
-export const shadow = {
+const darkShadow = {
   card: "inset 0 1px 0 #FFFFFF0A, 0 8px 20px -12px #000000B3",
   cardHover: "inset 0 1px 0 #FFFFFF0D, 0 10px 24px -12px #000000C2",
   // Floating layers: tooltips and popovers, then controls resting over the canvas.
@@ -131,6 +184,36 @@ export const shadow = {
   floating: "0 8px 24px rgba(0, 0, 0, 0.25)",
   header: "0 14px 38px rgba(0, 0, 0, 0.18)",
 };
+
+// Light: no top-edge highlight (it vanishes on white), softer slate drops.
+const lightShadow = {
+  card: "0 1px 2px #0F172A0F, 0 8px 20px -12px #0F172A33",
+  cardHover: "0 1px 2px #0F172A14, 0 10px 24px -12px #0F172A47",
+  popover: "0 14px 28px rgba(15, 23, 42, 0.16)",
+  floating: "0 8px 24px rgba(15, 23, 42, 0.12)",
+  header: "0 14px 38px rgba(15, 23, 42, 0.08)",
+};
+
+export const themes = {
+  dark: { colors: darkColors, tints: darkTints, shadow: darkShadow },
+  light: { colors: lightColors, tints: lightTints, shadow: lightShadow },
+};
+
+// ponytail: dark aliases keep current imports working; each app moves to themes in its plumbing phase.
+export const colors = darkColors;
+export const tints = darkTints;
+export const shadow = darkShadow;
+
+/**
+ * Translucent version of a token color. Hex in, 8-digit hex out; a CSS variable
+ * in, `color-mix()` out. Example: alpha(colors.accent, 0.38)
+ * @param {string} color 6-digit hex or `var(--...)`
+ * @param {number} opacity 0 to 1
+ */
+export function alpha(color, opacity) {
+  if (color.startsWith("#")) return color + Math.round(opacity * 255).toString(16).padStart(2, "0").toUpperCase();
+  return `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`;
+}
 
 export const layout = {
   webHeaderHeight: 72,
