@@ -1,12 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { brand } from "@grip/core/tokens";
 import { colors } from "../../lib/tokens";
-import {
-  POE_ASSISTANT_PREF_EVENT,
-  POE_ASSISTANT_VISIBLE_KEY,
-  poeLineFor,
-  poeVisibleByDefault,
-} from "./poeAssistantUtils";
+import { poeLineFor } from "./poeAssistantUtils";
+import { useFooterLift, usePoeMascotVisible } from "./usePoeHooks";
 import styles from "./PoeAssistant.module.css";
 import { PoeIdle } from "./PoeIdle";
 
@@ -25,12 +21,12 @@ const poseByMood = {
 
 type Cue = { type: string; id?: number } | null;
 export function PoeAssistant({ cue }: { cue: Cue }) {
-  const [visible, setVisible] = useState(poeVisibleByDefault);
+  const visible = usePoeMascotVisible();
   const [mood, setMood] = useState("idle");
   const [message, setMessage] = useState("");
   const [messageKey, setMessageKey] = useState(0);
   const [shining, setShining] = useState(false);
-  const [footerLift, setFooterLift] = useState(0);
+  const footerLift = useFooterLift();
   const resetTimer = useRef<number | null>(null);
   const shineTimer = useRef<number | null>(null);
   const shineEndTimer = useRef<number | null>(null);
@@ -45,19 +41,6 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
       setMood("idle");
       setMessage("");
     }, REACTION_MS);
-  }, []);
-
-  useEffect(() => {
-    const onPreference = (event: Event) => setVisible((event as CustomEvent).detail?.visible ?? poeVisibleByDefault());
-    const onStorage = (event: StorageEvent) => {
-      if (event.key === POE_ASSISTANT_VISIBLE_KEY) setVisible(poeVisibleByDefault());
-    };
-    window.addEventListener(POE_ASSISTANT_PREF_EVENT, onPreference);
-    window.addEventListener("storage", onStorage);
-    return () => {
-      window.removeEventListener(POE_ASSISTANT_PREF_EVENT, onPreference);
-      window.removeEventListener("storage", onStorage);
-    };
   }, []);
 
   useEffect(
@@ -97,22 +80,6 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
     if (!cue?.type) return;
     showReaction(cue.type, cue.id ?? Date.now());
   }, [cue, showReaction]);
-
-  // Slide Poe up when the footer scrolls into view so he never covers it.
-  useEffect(() => {
-    const footer = document.querySelector("footer");
-    if (!footer) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry) return;
-        const visible = entry.boundingClientRect.height * entry.intersectionRatio;
-        setFooterLift(Math.round(visible));
-      },
-      { threshold: Array.from({ length: 101 }, (_, i) => i / 100) },
-    );
-    observer.observe(footer);
-    return () => observer.disconnect();
-  }, []);
 
   const imageSrc = (poseByMood as Record<string, string>)[mood] ?? poseByMood.idle;
   const accent =

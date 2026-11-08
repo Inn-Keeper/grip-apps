@@ -1051,4 +1051,13 @@ export const sv = {
   "firstRun.profile.resetting": "Återställer…",
   "firstRun.profile.resetConfirm": "Det raderar dina mål, alla berättelser som inställningen skapade (även redigerade), dess scenarier och deras tavlor, och startar inställningen igen. Dina egna berättelser, tavlor, svar och XP finns kvar. Det går inte att ångra.",
   "firstRun.profile.resetTitle": "Återställa dina mål?",
+
+  // Poe guide chat
+  "poe.chat.label": "Chatta med Poe",
+  "poe.chat.greeting": "Vilse? Fråga mig hur allt i Grip fungerar.",
+  "poe.chat.privacy": "Dela inte personliga uppgifter.",
+  "poe.chat.placeholder": "Fråga Poe...",
+  "poe.chat.send": "Skicka",
+  "poe.chat.close": "Stäng chatten",
+  "poe.chat.error": "Det fungerade inte, men du klarar det. Försök igen om en stund.",
 };

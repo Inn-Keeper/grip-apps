@@ -1051,4 +1051,13 @@ export const pt = {
   "firstRun.profile.resetting": "Redefinindo…",
   "firstRun.profile.resetConfirm": "Isso apaga seus objetivos, todas as histórias geradas pela configuração (mesmo as editadas), seus cenários e os quadros deles, e começa a configuração de novo. Suas próprias histórias, quadros, respostas e XP ficam. Não dá para desfazer.",
   "firstRun.profile.resetTitle": "Redefinir seus objetivos?",
+
+  // Poe guide chat
+  "poe.chat.label": "Converse com o Poe",
+  "poe.chat.greeting": "Perdido? Pergunte como qualquer coisa no Grip funciona.",
+  "poe.chat.privacy": "Não compartilhe dados pessoais.",
+  "poe.chat.placeholder": "Pergunte ao Poe...",
+  "poe.chat.send": "Enviar",
+  "poe.chat.close": "Fechar conversa",
+  "poe.chat.error": "Não deu certo, mas você consegue. Tente de novo em instantes.",
 };

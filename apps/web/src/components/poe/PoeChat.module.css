@@ -1,0 +1,177 @@
+.bubble {
+  position: fixed;
+  right: clamp(14px, 2.2vw, 30px);
+  bottom: calc(max(20px, env(safe-area-inset-bottom)) + var(--poe-lift, 0px));
+  z-index: 22;
+  width: 56px;
+  height: 56px;
+  padding: 6px;
+  border: 1px solid color-mix(in srgb, var(--c-accent) 55%, var(--c-border-soft));
+  border-radius: 50%;
+  background: var(--c-surface);
+  box-shadow: var(--shadow-floating);
+  cursor: pointer;
+  transition:
+    bottom 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 160ms ease;
+}
+
+.bubble:hover {
+  transform: translateY(-2px);
+}
+
+.bubble:focus-visible,
+.close:focus-visible,
+.send:focus-visible,
+.input:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.bubble img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.panel {
+  position: fixed;
+  z-index: 23;
+  width: min(340px, calc(100vw - 32px));
+  height: min(440px, calc(100dvh - 140px));
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 12px;
+  background: var(--c-bg-deep);
+  color: var(--c-text);
+  box-shadow: var(--shadow-popover);
+  animation: poeChatIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* Above the bubble on most screens. */
+.right {
+  right: clamp(14px, 2.2vw, 30px);
+  bottom: calc(max(20px, env(safe-area-inset-bottom)) + 68px + var(--poe-lift, 0px));
+}
+
+/* On Prep, above the mascot, which follows the centered page on the left. */
+.left {
+  left: max(clamp(14px, 2.2vw, 30px), calc((100% - var(--page-max, 100%)) / 2 + 24px));
+  bottom: calc(max(22px, env(safe-area-inset-bottom)) + clamp(160px, 14vw, 196px) + var(--poe-lift, 0px));
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--c-border-soft);
+  color: var(--brand-gold);
+  font-weight: 700;
+}
+
+.close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--c-text-faint);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+}
+
+.messages p {
+  margin: 0;
+  max-width: 85%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: var(--fs-small);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.poe {
+  align-self: flex-start;
+  background: var(--c-surface);
+}
+
+.user {
+  align-self: flex-end;
+  background: color-mix(in srgb, var(--c-accent) 22%, var(--c-surface));
+}
+
+.typing {
+  color: var(--c-text-faint);
+}
+
+.error {
+  border: 1px solid color-mix(in srgb, var(--brand-gold) 45%, var(--c-border-soft));
+}
+
+.privacy {
+  margin: 0;
+  padding: 0 12px 6px;
+  color: var(--c-text-faint);
+  font-size: var(--fs-small);
+}
+
+.form {
+  display: flex;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 8px;
+  background: var(--c-surface);
+  color: var(--c-text);
+  font: inherit;
+  font-size: var(--fs-small);
+}
+
+.send {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 8px;
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.send:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+@keyframes poeChatIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel,
+  .bubble {
+    animation: none;
+    transition: none;
+  }
+}

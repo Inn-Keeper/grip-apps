@@ -1051,4 +1051,13 @@ export const en = {
   "firstRun.profile.resetting": "Resetting…",
   "firstRun.profile.resetConfirm": "This deletes your goals, every story the setup generated (edited ones too), its scenarios and their boards, then starts the setup again. Your own stories, boards, answers and XP stay. This can't be undone.",
   "firstRun.profile.resetTitle": "Reset your goals?",
+
+  // Poe guide chat
+  "poe.chat.label": "Chat with Poe",
+  "poe.chat.greeting": "Lost? Ask me how anything in Grip works.",
+  "poe.chat.privacy": "Don't share personal details.",
+  "poe.chat.placeholder": "Ask Poe...",
+  "poe.chat.send": "Send",
+  "poe.chat.close": "Close chat",
+  "poe.chat.error": "That didn't work, but you've got this. Try again in a moment.",
 };

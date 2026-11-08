@@ -22,6 +22,8 @@ import type { Landing } from "./firstRun/GenerateStep";
 import { shouldShowWizard } from "./firstRun/gating.js";
 import { openInBoard } from "./lib/boardHandoff";
 import About from "./about/About";
+import { PoeChat, PoeChatProvider } from "./components/poe/PoeChat";
+import { usePoeMascotVisible } from "./components/poe/usePoeHooks";
 import { alpha, brand, colors, layout, shadow, font } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
@@ -123,6 +125,8 @@ export default function App() {
   }, []);
 
   const profileQuery = useProfileQuery(!!session);
+  const mascotVisible = usePoeMascotVisible();
+  const onPrepWithMascot = page === "prep" && mascotVisible;
   const saveProfile = useSaveProfileMutation();
   const showWizard =
     setup !== "closed" &&
@@ -361,6 +365,7 @@ export default function App() {
         )}
         {session === null && <SignIn />}
         {session && (
+          <PoeChatProvider key={session.user.id}>
           <React.Fragment key={locale}>
             {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}
             {!showWizard && page === "prep" && <InterviewPrep onOpenSetup={openSetup} />}
@@ -370,6 +375,9 @@ export default function App() {
             {!showWizard && page === "about" && <About onNavigate={selectPage} />}
             {!showWizard && page === "profile" && <Profile onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
           </React.Fragment>
+          {/* On Prep the mascot opens the chat, so the bubble steps aside. */}
+          {!showWizard && <PoeChat side={onPrepWithMascot ? "left" : "right"} showBubble={!onPrepWithMascot} />}
+          </PoeChatProvider>
         )}
       </div>
 
