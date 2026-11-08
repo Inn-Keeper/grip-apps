@@ -14,7 +14,7 @@ const liquidGlass = Platform.OS === "ios" && Number.parseInt(String(Platform.Ver
 // native bottom navigation on Android). Icons follow the web header's brand icons.
 // The Arch Board's zen mode hides it for an edge-to-edge canvas.
 export default function TabLayout() {
-  const { colors } = useTheme();
+  const { colors, scheme } = useTheme();
   const tabChrome = alpha(colors.bgDeep, 0.9);
   const locale = useLocale();
   const hidden = useTabBarHidden();
@@ -25,7 +25,7 @@ export default function TabLayout() {
       hidden={hidden}
       tintColor={colors.accent}
       backgroundColor={liquidGlass ? undefined : tabChrome}
-      blurEffect={liquidGlass ? undefined : "systemUltraThinMaterialDark"}
+      blurEffect={liquidGlass ? undefined : scheme === "light" ? "systemUltraThinMaterialLight" : "systemUltraThinMaterialDark"}
       shadowColor={liquidGlass ? undefined : alpha(colors.border, 0.5)}
       // iOS 26: the bar shrinks to a pill while you scroll down, and returns when you scroll up.
       minimizeBehavior="onScrollDown"

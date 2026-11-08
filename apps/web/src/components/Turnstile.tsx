@@ -45,7 +45,7 @@ export function Turnstile({ onToken }: { onToken: (token: string | null) => void
         if (cancelled || !ref.current || !window.turnstile) return;
         widgetId = window.turnstile.render(ref.current, {
           sitekey: TURNSTILE_SITE_KEY,
-          theme: "dark",
+          theme: document.documentElement.dataset.theme === "light" ? "light" : "dark",
           size: "flexible",
           // Invisible unless Cloudflare needs a click; the submit button waits for the token either way.
           appearance: "interaction-only",

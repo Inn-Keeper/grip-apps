@@ -23,7 +23,7 @@ type Props = {
  */
 export function DateField({ label, value, onChange, clearable = false }: Props) {
   const inputStyle = useInputStyle();
-  const { colors, tints } = useTheme();
+  const { colors, scheme, tints } = useTheme();
   const [pickerOpen, setPickerOpen] = useState(false);
   const date = parseDDMMYYYY(value) ?? new Date();
 
@@ -91,7 +91,7 @@ export function DateField({ label, value, onChange, clearable = false }: Props) 
               value={date}
               mode="date"
               display="inline"
-              themeVariant="dark"
+              themeVariant={scheme}
               accentColor={colors.accent}
               onChange={handlePicked}
             />

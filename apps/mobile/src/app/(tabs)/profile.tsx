@@ -7,7 +7,9 @@ import { LOCALE_LABELS, t } from "@grip/core/i18n";
 import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@grip/core/user";
 import { supabase } from "@/lib/supabase";
 import { changeLocale, useLocale } from "@/lib/useLocale";
-import { alpha, font, layout, radius, space, useTheme } from "@/theme";
+import { THEME_PREFS, alpha, font, layout, radius, space, useTheme } from "@/theme";
+
+const THEME_LABEL_KEYS = { dark: "profile.themeDark", light: "profile.themeLight", system: "profile.themeSystem" } as const;
 import { Button, Card, Field, HeaderAction, Screen, ScreenHeader, useInputStyle } from "@/components/ui";
 import { Switch } from "@/components/Switch";
 import { ConnectionBadge } from "@/components/profile/ConnectionBadge";
@@ -28,7 +30,7 @@ type ProfileForm = Record<string, string>;
 
 export default function ProfileScreen() {
   const inputStyle = useInputStyle();
-  const { colors, shadow, tints } = useTheme();
+  const { colors, shadow, tints, pref: themePref, setPref: setThemePref } = useTheme();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const [form, setForm] = useState<ProfileForm>(EMPTY_PROFILE_FORM);
@@ -513,6 +515,42 @@ export default function ProfileScreen() {
                       fontWeight: "700",
                       color: active ? colors.textBright : colors.textDim
                     }}>{label}</Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+          <Text style={{
+              color: colors.textBright,
+              fontSize: font.size.body,
+              fontWeight: "700"
+            }}>{t("profile.theme")}</Text>
+          <View style={{
+              flexDirection: "row",
+              gap: space.sm,
+              flexWrap: "wrap"
+            }}>
+            {THEME_PREFS.map((option) => {
+              const active = themePref === option;
+              return (
+                <TouchableOpacity
+                  key={option}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: active }}
+                  onPress={() => setThemePref(option)}
+                  style={{
+                    paddingVertical: 6,
+                    paddingHorizontal: 12,
+                    borderRadius: radius.sm,
+                    borderWidth: 1,
+                    borderColor: active ? colors.accent : colors.border,
+                    backgroundColor: active ? alpha(colors.accent, 0.13) : "transparent",
+                  }}
+                >
+                  <Text style={{
+                      fontSize: font.size.body,
+                      fontWeight: "700",
+                      color: active ? colors.textBright : colors.textDim
+                    }}>{t(THEME_LABEL_KEYS[option])}</Text>
                 </TouchableOpacity>
               );
             })}

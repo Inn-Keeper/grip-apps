@@ -6,7 +6,7 @@ import { useTheme } from "@/theme";
 // Turnstile has no native SDK, so the widget runs in a small WebView and posts its token back.
 // Tokens are single-use: remount this (change its key) after each auth attempt.
 export function Turnstile({ onToken }: { onToken: (token: string | null) => void }) {
-  const { colors } = useTheme();
+  const { colors, scheme } = useTheme();
   if (!TURNSTILE_SITE_KEY) return null;
 
   const html = `<!DOCTYPE html><html><head>
@@ -18,7 +18,7 @@ function send(token){ window.ReactNativeWebView.postMessage(token || ""); }
 function start(){
   turnstile.render("#w", {
     sitekey: ${JSON.stringify(TURNSTILE_SITE_KEY)},
-    theme: "dark",
+    theme: "${scheme}",
     size: "flexible",
     callback: send,
     "expired-callback": function(){ send(""); },

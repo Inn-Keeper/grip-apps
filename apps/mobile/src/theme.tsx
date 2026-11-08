@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { useColorScheme } from "react-native";
+import { Appearance, useColorScheme } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { shade, themes } from "@grip/core/tokens";
 
@@ -38,6 +38,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const scheme: Scheme = pref === "system" ? (os === "light" ? "light" : "dark") : pref;
+
+  // Native chrome (tab bar glass, keyboard, alerts, pickers) follows the app's choice, not the OS.
+  useEffect(() => {
+    Appearance.setColorScheme(pref === "system" ? "unspecified" : pref);
+  }, [pref]);
   const value = useMemo(
     () =>
       buildTheme(scheme, pref, (next) => {

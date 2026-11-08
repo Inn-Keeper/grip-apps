@@ -13,7 +13,7 @@ import { clearSeenQuestions } from "@/lib/questionDeck";
 import { supabase } from "@/lib/supabase";
 import { restoreLocale } from "@/lib/useLocale";
 import { SignIn } from "@/components/SignIn";
-import { useTheme } from "@/theme";
+import { ThemeProvider, useTheme } from "@/theme";
 
 const CACHE_TTL = 24 * 60 * 60 * 1000;
 
@@ -27,7 +27,15 @@ const queryClient = new QueryClient({
 const persister = createAsyncStoragePersister({ storage: AsyncStorage });
 
 export default function RootLayout() {
-  const { colors } = useTheme();
+  return (
+    <ThemeProvider>
+      <RootContent />
+    </ThemeProvider>
+  );
+}
+
+function RootContent() {
+  const { colors, scheme } = useTheme();
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const previousUserId = useRef<string | null | undefined>(undefined);
 
@@ -55,7 +63,7 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <StatusBar style="light" />
+      <StatusBar style={scheme === "light" ? "dark" : "light"} />
       {session === undefined && (
         <View style={{
             flex: 1,
