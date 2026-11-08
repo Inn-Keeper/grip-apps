@@ -1,4 +1,4 @@
-import { createPlaybookApi, FIRST_RUN_LIMITS, landingFor, playbookLabel, redactCv, savePlaybook } from "../firstRun.js";
+import { cleanJobText, createPlaybookApi, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv, savePlaybook } from "../firstRun.js";
 
 describe("redactCv", () => {
   test("redacts email, phone, url and address", () => {
@@ -70,7 +70,7 @@ describe("savePlaybook", () => {
     expect(scenarios[0].checks[0]).toMatchObject({ kind: "edge", from: ["client"], to: ["service"] });
     expect(saved[0]).toMatchObject({ title: "Q1", scenarioId: "sc1", isSample: true, playbook: "Backend Engineer" });
     expect(saved[1].scenarioId).toBeNull();
-    expect(result).toEqual({ scenarioId: "sc1", saved: ["Q1", "Q2"], failed: [] });
+    expect(result).toEqual({ scenarioId: "sc1", boardId: null, saved: ["Q1", "Q2"], failed: [] });
   });
 
   test("retry reuses scenarioId and skips saved stories", async () => {
@@ -88,7 +88,7 @@ describe("savePlaybook", () => {
     const second = await savePlaybook(playbook, deps, first);
     expect(deps.upsertCustomScenario).toHaveBeenCalledTimes(1);
     expect(deps.upsertStory).toHaveBeenCalledTimes(3);
-    expect(second).toEqual({ scenarioId: "sc1", saved: ["Q1", "Q2"], failed: [] });
+    expect(second).toEqual({ scenarioId: "sc1", boardId: null, saved: ["Q1", "Q2"], failed: [] });
   });
 });
 
@@ -120,5 +120,53 @@ describe("createPlaybookApi", () => {
 
   test("limits match the API caps", () => {
     expect(FIRST_RUN_LIMITS).toEqual({ brief: 500, role: 120, jobText: 4000, cvText: 3000, notes: 3, note: 500 });
+  });
+});
+
+describe("cleanJobText", () => {
+  test("drops short navigation lines and duplicates so the description comes first", () => {
+    const page = ["Accept", "Reject", "Sign in", "We build Europe's legal AI and need a frontend developer.", "We build Europe's legal AI and need a frontend developer.", "- Ship React and TypeScript", "Show more"].join("\n");
+    expect(cleanJobText(page)).toBe("We build Europe's legal AI and need a frontend developer.\n- Ship React and TypeScript");
+  });
+});
+
+describe("formatCvText", () => {
+  test("turns PDF double spaces and inline bullets into lines", () => {
+    expect(formatCvText("PROFILE  Senior engineer.  EXPERIENCE  Nooga - Built extensions. - Improved dashboards.")).toBe(
+      "PROFILE\nSenior engineer.\nEXPERIENCE\nNooga\n- Built extensions.\n- Improved dashboards."
+    );
+  });
+});
+
+describe("redactCv links", () => {
+  test("redacts bare domains but keeps Node.js and Next.js", () => {
+    const out = redactCv("Portfolio innkeeper-forge.vercel.app, Node.js and Next.js", "");
+    expect(out).toBe("Portfolio [link], Node.js and Next.js");
+  });
+});
+
+describe("savePlaybook starter board", () => {
+  test("creates a board with the starter components and returns its id", async () => {
+    const boards = [];
+    const book = { ...playbook, scenario: { ...playbook.scenario, starter: ["client", "gateway", "service"] } };
+    const result = await savePlaybook(book, {
+      label: "X",
+      upsertCustomScenario: async (s) => ({ ...s, id: "sc1" }),
+      upsertBoard: async (b) => (boards.push(b), { ...b, id: "b1" }),
+      upsertStory: async () => {},
+    });
+    expect(boards[0]).toMatchObject({ title: "Payments", scenarioId: "sc1", storyId: null, edges: [] });
+    expect(boards[0].nodes.map((n) => n.type)).toEqual(["client", "gateway", "service"]);
+    expect(new Set(boards[0].nodes.map((n) => n.id)).size).toBe(3);
+    expect(result.boardId).toBe("b1");
+  });
+
+  test("retry does not create a second board", async () => {
+    const upsertBoard = jest.fn(async (b) => ({ ...b, id: "b1" }));
+    const deps = { label: "X", upsertCustomScenario: async (s) => ({ ...s, id: "sc1" }), upsertBoard, upsertStory: async () => {} };
+    const book = { ...playbook, scenario: { ...playbook.scenario, starter: ["client"] } };
+    const first = await savePlaybook(book, deps);
+    await savePlaybook(book, deps, first);
+    expect(upsertBoard).toHaveBeenCalledTimes(1);
   });
 });
