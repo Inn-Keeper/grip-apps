@@ -41,11 +41,14 @@
   height: min(440px, calc(100dvh - 140px));
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--c-border-soft);
+  /* Darker edge plus a deep ambient shadow so the panel lifts off busy pages. */
+  border: 1px solid var(--c-bg-void);
   border-radius: 12px;
   background: var(--c-bg-deep);
   color: var(--c-text);
-  box-shadow: var(--shadow-popover);
+  box-shadow:
+    var(--shadow-popover),
+    0 24px 56px color-mix(in srgb, var(--c-bg-void) 70%, transparent);
   /* Always bottom-right, above the bubble's spot, so it never covers navigation. */
   right: clamp(14px, 2.2vw, 30px);
   bottom: calc(max(20px, env(safe-area-inset-bottom)) + 68px + var(--poe-lift, 0px));
