@@ -1,4 +1,8 @@
-import { alpha, brandColors, themes } from "../tokens.js";
+import { TYPE_COLORS } from "../arch.js";
+import { DIFFICULTIES } from "../difficulty.js";
+import { categories } from "../prepData.js";
+import { COMPETENCY_COLORS } from "../stories.js";
+import { alpha, brandColors, shade, themes } from "../tokens.js";
 
 const keys = (obj) => Object.keys(obj).sort();
 
@@ -64,3 +68,26 @@ function contrast(fg, bg) {
   const [hi, lo] = [luminance(fg), luminance(bg)].sort((a, b) => b - a);
   return (hi + 0.05) / (lo + 0.05);
 }
+
+describe("shade", () => {
+  it("mixes hex with black like CSS color-mix", () => {
+    expect(shade("#FACC15", 0)).toBe("#FACC15");
+    expect(shade("#FACC15", 0.5)).toBe("#7D660B");
+  });
+});
+
+// Pastel data colors are used as text and icons, so shaded they must read on light planes.
+it("keeps shaded data colors readable in the light theme", () => {
+  const { colors, dataShade } = themes.light;
+  const data = [
+    ...Object.values(TYPE_COLORS),
+    ...Object.values(COMPETENCY_COLORS),
+    ...DIFFICULTIES.map((d) => d.color),
+    ...categories.map((c) => c.color),
+  ];
+  for (const color of data) {
+    for (const background of [colors.bg, colors.surface, colors.surfaceHi]) {
+      expect({ color, ratio: contrast(shade(color, dataShade), background) >= 4.5 }).toEqual({ color, ratio: true });
+    }
+  }
+});

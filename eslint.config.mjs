@@ -79,7 +79,7 @@ export default tseslint.config(
   // Light mode: web colors are CSS variables, so hex alpha concatenation and core hex palettes break.
   {
     files: ["apps/web/src/**/*.{ts,tsx}"],
-    ignores: ["apps/web/src/lib/tokens.ts", "apps/web/src/lib/tokenVars.ts"],
+    ignores: ["apps/web/src/lib/tokens.ts", "apps/web/src/lib/tokenVars.ts", "apps/web/src/lib/theme.ts"],
     rules: {
       "no-restricted-syntax": [
         "error",

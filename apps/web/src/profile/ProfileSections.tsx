@@ -2,6 +2,7 @@ import { PROFILE_FIELDS } from "@grip/core/user";
 import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
 import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
+import { ThemePicker } from "./ThemePicker";
 import { ErrorText } from "../components/ErrorText";
 import { fieldStyle as inputStyle, srOnly } from "../components/fieldStyles";
 import { InfoTip } from "../components/InfoTip";
@@ -480,6 +481,26 @@ export function PreferencesSection({
               );
             })}
           </div>
+        </div>
+        <div
+          style={{
+            marginTop: 16,
+            paddingTop: 16,
+            borderTop: `1px solid ${colors.borderSoft}`,
+          }}
+        >
+          <div
+            id="theme-picker-label"
+            style={{
+              color: colors.textBright,
+              fontSize: font.size.body,
+              fontWeight: 800,
+              marginBottom: 10,
+            }}
+          >
+            {t("profile.theme")}
+          </div>
+          <ThemePicker />
         </div>
       </WorkspacePanel>
 

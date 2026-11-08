@@ -60,10 +60,10 @@ const lightColors = {
   well: "#EDF0F5",
   surface: "#FFFFFF",
   surfaceHi: "#F1F4F8",
-  border: "#CDD3DE",
-  borderSoft: "#E2E6ED",
+  border: "#C3CAD6",
+  borderSoft: "#D5DBE4",
   borderStrong: "#A9B2C2",
-  borderDeep: "#D5DBE4",
+  borderDeep: "#E2E6ED",
 
   textBright: "#0B0F17",
   text: "#1C2230",
@@ -194,9 +194,11 @@ const lightShadow = {
   header: "0 14px 38px rgba(15, 23, 42, 0.08)",
 };
 
+// dataShade: share of black mixed into pastel data colors (node types, categories,
+// competencies, difficulty) so they stay readable on light planes.
 export const themes = {
-  dark: { colors: darkColors, tints: darkTints, shadow: darkShadow },
-  light: { colors: lightColors, tints: lightTints, shadow: lightShadow },
+  dark: { colors: darkColors, tints: darkTints, shadow: darkShadow, dataShade: 0 },
+  light: { colors: lightColors, tints: lightTints, shadow: lightShadow, dataShade: 0.5 },
 };
 
 // ponytail: dark aliases keep current imports working; each app moves to themes in its plumbing phase.
@@ -210,6 +212,17 @@ export const shadow = darkShadow;
  * @param {string} color 6-digit hex or `var(--...)`
  * @param {number} opacity 0 to 1
  */
+/**
+ * Mixes a hex data color with black, matching CSS `color-mix(in srgb, hex, black N%)`.
+ * @param {string} hex 6-digit hex
+ * @param {number} amount 0 to 1, usually a theme's `dataShade`
+ */
+export function shade(hex, amount) {
+  if (!amount) return hex;
+  const channel = (offset) => Math.round(parseInt(hex.slice(offset, offset + 2), 16) * (1 - amount));
+  return `#${[1, 3, 5].map((offset) => channel(offset).toString(16).padStart(2, "0")).join("").toUpperCase()}`;
+}
+
 export function alpha(color, opacity) {
   if (color.startsWith("#")) return color + Math.round(opacity * 255).toString(16).padStart(2, "0").toUpperCase();
   return `color-mix(in srgb, ${color} ${Math.round(opacity * 100)}%, transparent)`;

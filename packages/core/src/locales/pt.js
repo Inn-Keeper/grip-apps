@@ -648,6 +648,10 @@ export const pt = {
   "edge.clickHint": "Clique para rotular ou remover esta conexão",
 
   "profile.language": "Idioma",
+  "profile.theme": "Tema",
+  "profile.themeDark": "Escuro",
+  "profile.themeLight": "Claro",
+  "profile.themeSystem": "Sistema",
   "profile.resetConfirm": "Redefinir todo XP e histórico de respostas? Esta ação não pode ser desfeita.",
   "profile.yourProfile": "Seu perfil",
   "profile.loading": "Carregando...",

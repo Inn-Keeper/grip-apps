@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Theme before first paint (no flash). Mirrors lib/theme.ts: dark unless "light", or "system" on a light OS. -->
+    <script>
+      try {
+        var pref = localStorage.getItem("grip.theme");
+        if (pref === "light" || (pref === "system" && matchMedia("(prefers-color-scheme: light)").matches)) document.documentElement.dataset.theme = "light";
+      } catch (e) {}
+    </script>
     <title>Grip - Get a grip. Code up.</title>
     <meta name="description" content="Navigate the job hunt with confidence, one skill at a time." />
     <meta property="og:title" content="Grip" />
@@ -16,7 +23,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: var(--c-bg, #14171F); } /* fallback = dark bg, before tokenVars runs */
+      /* Fallbacks = tokens bg per theme, until tokenVars runs. */
+      body { background: var(--c-bg, #14171F); }
+      :root[data-theme="light"] body { background: var(--c-bg, #F5F7FA); }
       /* Field focus ring (accentBright); fields set no outline of their own. */
       input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 1px; }
       /* Scroll targets clear the sticky header; App.tsx measures it into --header-h. At

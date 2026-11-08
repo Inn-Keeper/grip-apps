@@ -53,7 +53,7 @@ top-edge highlight, which vanishes on white.
 | --- | --- |
 | `bgDeep` / `bg` | `#EEF1F5` / `#F5F7FA` |
 | `well` / `surface` / `surfaceHi` | `#EDF0F5` / `#FFFFFF` / `#F1F4F8` |
-| `border` / `borderSoft` | `#CDD3DE` / `#E2E6ED` |
+| `border` / `borderSoft` | `#C3CAD6` / `#D5DBE4` |
 | `textBright` / `text` / `textDim` / `textFaint` | `#0B0F17` / `#1C2230` / `#4B5568` / `#5D6779` |
 
 ### Text
@@ -86,6 +86,11 @@ errors and destructive actions — never for data-viz meaning.
 token is darker than its base (`accentBright #0F766E`, `successBright #15803D`,
 `dangerBright #B91C1C`, `warningBright #B45309`). Use it wherever text or a thin line sits on a
 background.
+
+**Data colors in light.** Pastel data colors (node types, prep categories, competencies,
+difficulty) stay Tailwind-400 hex in core. The light theme mixes them with black by its
+`dataShade` (50%): web through `--data-shade` (`apps/web/src/lib/dataColors.ts`), mobile through
+`shade()`. A new core color map must be added to those and to the token contrast test.
 
 ### Alpha & tints
 

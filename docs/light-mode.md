@@ -63,11 +63,12 @@ Plan each phase before starting it.
 
 - Phase 1 done 2026-11-08.
 - Phase 2 done 2026-11-08. Sign-in and the share page match the pre-phase-2 build pixel for pixel, except a 2/255 drift from rounding alpha suffixes to two-decimal opacities.
-- For phase 3:
-  - Core data colors are fixed dark hex and do not follow the theme: `TYPE_COLORS` (arch.js), difficulty tiers (`colors.deco*` in difficulty.js) and other prep data colors.
-  - Raw black shadows and white top glints remain in about 20 places (tour.css, Switch, Combobox, PoeAssistant glows, Metric and ArchBoard shine). Tune them during the light review.
+- Phase 3 done 2026-11-08. Light borders raised after review (`borderSoft #D5DBE4`, `border #C3CAD6`). Data colors use `dataShade` 0.5, the lowest value where every one clears 4.5:1 on light planes. Raw black shadows and white glints were left: shadows read fine on light planes and glints vanish harmlessly.
+- Carried over from phase 2 (now resolved unless noted):
+  - Resolved: core data colors are fixed dark hex and did not follow the theme: `TYPE_COLORS` (arch.js), difficulty tiers (`colors.deco*` in difficulty.js) and other prep data colors.
+  - Left as is: raw black shadows and white top glints remain in about 20 places (tour.css, Switch, Combobox, PoeAssistant glows, Metric and ArchBoard shine). Tune them during the light review.
   - Only Chromium was available to test; WebKit and Firefox are unchecked.
-  - Signed-in screens were not screenshotted (doing so would create an anonymous user in Supabase).
+  - Open: signed-in screens were not screenshotted in either theme (doing so would create an anonymous user in Supabase). Review them in light by hand.
 
 ## Proposed light palette
 
@@ -77,7 +78,7 @@ A starting point, tuned during phase 3.
 | --- | --- | --- |
 | `bgVoid` / `bgDeep` / `bg` | `#07090D` / `#10131A` / `#14171F` | `#E4E8EF` / `#EEF1F5` / `#F5F7FA` |
 | `well` / `surface` / `surfaceHi` | `#191D27` / `#1E222D` / `#272C3A` | `#EDF0F5` / `#FFFFFF` / `#F1F4F8` |
-| `borderSoft` / `border` / `borderStrong` / `borderDeep` | `#262A36` / `#353C4D` / `#4A5268` / `#141926` | `#E2E6ED` / `#CDD3DE` / `#A9B2C2` / `#D5DBE4` |
+| `borderSoft` / `border` / `borderStrong` / `borderDeep` | `#262A36` / `#353C4D` / `#4A5268` / `#141926` | `#D5DBE4` / `#C3CAD6` / `#A9B2C2` / `#E2E6ED` |
 | `textBright` / `text` | `#F4F7FC` / `#E8ECF4` | `#0B0F17` / `#1C2230` |
 | `textDim` / `textFaint` | `#9AA5BC` / `#8B96AC` | `#4B5568` / `#5D6779` |
 | `textHighlight` / `textHighlightDim` | `#0de6c9` / `#7cb1ab` | `#0F766E` / `#115E59` |

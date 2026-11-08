@@ -648,6 +648,10 @@ export const en = {
   "edge.clickHint": "Click to label or remove this connection",
 
   "profile.language": "Language",
+  "profile.theme": "Theme",
+  "profile.themeDark": "Dark",
+  "profile.themeLight": "Light",
+  "profile.themeSystem": "System",
   "profile.resetConfirm": "Reset all XP and answer history? This cannot be undone.",
   "profile.yourProfile": "Your profile",
   "profile.loading": "Loading...",

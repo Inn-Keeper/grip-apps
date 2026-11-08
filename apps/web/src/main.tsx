@@ -2,9 +2,13 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import App from "./App";
+import { themeDataColors } from "./lib/dataColors";
+import { initTheme } from "./lib/theme";
 import { applyTokenVars } from "./lib/tokenVars";
 
 applyTokenVars();
+themeDataColors();
+initTheme();
 
 const queryClient = new QueryClient({
   defaultOptions: {

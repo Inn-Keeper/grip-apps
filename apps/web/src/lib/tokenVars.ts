@@ -3,13 +3,16 @@ import { kebab } from "./tokens";
 
 // Tokens as CSS variables, since stylesheets can't import them. Theme tokens
 // (--c-<color>, --tint-<tint>, --shadow-<name>) live in one stylesheet with a block per
-// `data-theme`; the rest (--brand-<color>, --fs-<size>, --page-max) sit on :root.
+// `data-theme`, with color-scheme (native controls) and --data-shade (see dataColors); the rest (--brand-<color>, --fs-<size>, --page-max) sit on :root.
 const block = (values: Record<string, string>, prefix: string) =>
   Object.entries(values).map(([name, value]) => `--${prefix}-${kebab(name)}: ${value};`).join(" ");
 
 export function themeCss() {
   return Object.entries(themes)
-    .map(([name, t]) => `:root[data-theme="${name}"] { ${block(t.colors, "c")} ${block(t.tints, "tint")} ${block(t.shadow, "shadow")} }`)
+    .map(
+      ([name, t]) =>
+        `:root[data-theme="${name}"] { color-scheme: ${name}; --data-shade: ${t.dataShade * 100}%; ${block(t.colors, "c")} ${block(t.tints, "tint")} ${block(t.shadow, "shadow")} }`,
+    )
     .join("\n");
 }
 

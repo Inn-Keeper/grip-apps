@@ -648,6 +648,10 @@ export const sv = {
   "edge.clickHint": "Klicka för att märka eller ta bort kopplingen",
 
   "profile.language": "Språk",
+  "profile.theme": "Tema",
+  "profile.themeDark": "Mörkt",
+  "profile.themeLight": "Ljust",
+  "profile.themeSystem": "System",
   "profile.resetConfirm": "Återställ all XP och svarshistorik? Detta kan inte ångras.",
   "profile.yourProfile": "Din profil",
   "profile.loading": "Laddar...",
