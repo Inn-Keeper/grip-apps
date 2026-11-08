@@ -114,7 +114,7 @@ The whole API runs on the free Gemini tier: about 20 requests per day per model 
 
 ## One Poe per corner (decided)
 
-`PoeAssistant` already sits bottom-left on Interview Prep (under the left rail), reacting to answers and rank-ups. On Prep the chat panel opens anchored left, above it.
+`PoeAssistant` already sits bottom-left on Interview Prep (under the left rail), reacting to answers and rank-ups. The chat panel still opens bottom-right on Prep, so it never covers the left rail.
 
 - On Prep there is one Poe. Clicking the mascot opens the chat and does nothing else: the random "Ask Poe for a thought" line is removed.
 - Hovering (or keyboard focus) shows a "Chat with Poe" label. The button's accessible name says the same, since touch has no hover.

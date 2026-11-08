@@ -46,19 +46,10 @@
   background: var(--c-bg-deep);
   color: var(--c-text);
   box-shadow: var(--shadow-popover);
-  animation: poeChatIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-}
-
-/* Above the bubble on most screens. */
-.right {
+  /* Always bottom-right, above the bubble's spot, so it never covers navigation. */
   right: clamp(14px, 2.2vw, 30px);
   bottom: calc(max(20px, env(safe-area-inset-bottom)) + 68px + var(--poe-lift, 0px));
-}
-
-/* On Prep, above the mascot, which follows the centered page on the left. */
-.left {
-  left: max(clamp(14px, 2.2vw, 30px), calc((100% - var(--page-max, 100%)) / 2 + 24px));
-  bottom: calc(max(22px, env(safe-area-inset-bottom)) + clamp(160px, 14vw, 196px) + var(--poe-lift, 0px));
+  animation: poeChatIn 200ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
 .header {

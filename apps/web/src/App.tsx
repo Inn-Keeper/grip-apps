@@ -376,7 +376,7 @@ export default function App() {
             {!showWizard && page === "profile" && <Profile onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
           </React.Fragment>
           {/* On Prep the mascot opens the chat, so the bubble steps aside. */}
-          {!showWizard && <PoeChat side={onPrepWithMascot ? "left" : "right"} showBubble={!onPrepWithMascot} />}
+          {!showWizard && <PoeChat showBubble={!onPrepWithMascot} />}
           </PoeChatProvider>
         )}
       </div>

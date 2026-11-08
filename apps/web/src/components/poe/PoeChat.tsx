@@ -62,7 +62,7 @@ export function PoeChatProvider({ children }: { children: React.ReactNode }) {
   return <PoeChatContext.Provider value={value}>{children}</PoeChatContext.Provider>;
 }
 
-export function PoeChat({ side, showBubble }: { side: "left" | "right"; showBubble: boolean }) {
+export function PoeChat({ showBubble }: { showBubble: boolean }) {
   const chat = usePoeChat();
   const lift = useFooterLift();
   if (!chat || !poeChat || chat.unavailable) return null;
@@ -72,7 +72,6 @@ export function PoeChat({ side, showBubble }: { side: "left" | "right"; showBubb
     <>
       {chat.open && (
         <PoeChatPanel
-          side={side}
           style={position}
         />
       )}
@@ -97,7 +96,7 @@ export function PoeChat({ side, showBubble }: { side: "left" | "right"; showBubb
   );
 }
 
-function PoeChatPanel({ side, style }: { side: "left" | "right"; style: React.CSSProperties }) {
+function PoeChatPanel({ style }: { style: React.CSSProperties }) {
   const chat = usePoeChat()!;
   const [draft, setDraft] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -120,7 +119,7 @@ function PoeChatPanel({ side, style }: { side: "left" | "right"; style: React.CS
     <div
       role="dialog"
       aria-label={t("poe.chat.label")}
-      className={`${styles.panel} ${side === "left" ? styles.left : styles.right}`}
+      className={styles.panel}
       style={style}
       onKeyDown={(event) => {
         if (event.key === "Escape") chat.setOpen(false);
