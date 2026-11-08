@@ -16,6 +16,11 @@ import { SharedBoardPage } from "./archBoard/SharedBoardPage";
 import { clearSeenQuestions } from "./interviewPrep/questionDeck";
 import StoryBank from "./storyBank/StoryBank";
 import Profile from "./profile/Profile";
+import { useProfileQuery, useSaveProfileMutation } from "./profile/queries";
+import { FirstRunWizard } from "./firstRun/FirstRunWizard";
+import type { Landing } from "./firstRun/GenerateStep";
+import { shouldShowWizard } from "./firstRun/gating.js";
+import { openInBoard } from "./lib/boardHandoff";
 import About from "./about/About";
 import { brand, colors, layout, shadow, font } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
@@ -46,6 +51,8 @@ export default function App() {
   const [session, setSession] = useState<Session | null | undefined>(undefined);
   const previousUserId = useRef<string | null | undefined>(undefined);
   const navRef = useRef<HTMLElement | null>(null);
+  // "auto" follows the profile flag; "open" is a manual rerun; "closed" hides it for this visit.
+  const [setup, setSetup] = useState<"auto" | "open" | "closed">("auto");
   const headerRef = useRef<HTMLElement | null>(null);
 
   const pages = PAGE_DEFS.map((p) => ({ ...p, label: t(p.labelKey as Parameters<typeof t>[0]) }));
@@ -104,6 +111,23 @@ export default function App() {
     const next = `${window.location.pathname}${params.toString() ? `?${params}` : ""}${window.location.hash}`;
     window.history.replaceState({}, "", next);
   }, []);
+
+  const profileQuery = useProfileQuery(!!session);
+  const saveProfile = useSaveProfileMutation();
+  const showWizard =
+    setup !== "closed" &&
+    shouldShowWizard({ session, profile: profileQuery.isSuccess ? profileQuery.data : undefined, openedManually: setup === "open" });
+  const openSetup = () => setSetup("open");
+  const landFromSetup = ({ page: target, scenarioId }: Landing) => {
+    saveProfile.mutate({ onboardingCompleted: true });
+    setSetup("closed");
+    if (target === "board" && scenarioId) openInBoard({ scenarioId });
+    else selectPage(target);
+  };
+  const exploreFirst = () => {
+    saveProfile.mutate({ onboardingCompleted: true });
+    setSetup("closed");
+  };
 
   // Public read-only share links (/share/:token) render standalone — no session.
   const shareToken = window.location.pathname.startsWith("/share/")
@@ -211,7 +235,8 @@ export default function App() {
               </span>
             </span>
           </div>
-          {session && (
+          {/* The wizard owns the screen until it lands or the user explores; tabs would do nothing. */}
+          {session && !showWizard && (
             <>
               <nav
                 ref={navRef}
@@ -314,12 +339,13 @@ export default function App() {
         {session === null && <SignIn />}
         {session && (
           <React.Fragment key={locale}>
-            {page === "prep" && <InterviewPrep />}
-            {page === "stories" && <StoryBank />}
-            {page === "board" && <ArchBoard />}
-            {page === "quest" && <Quest />}
-            {page === "about" && <About onNavigate={selectPage} />}
-            {page === "profile" && <Profile githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
+            {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}
+            {!showWizard && page === "prep" && <InterviewPrep />}
+            {!showWizard && page === "stories" && <StoryBank onOpenSetup={openSetup} />}
+            {!showWizard && page === "board" && <ArchBoard />}
+            {!showWizard && page === "quest" && <Quest />}
+            {!showWizard && page === "about" && <About onNavigate={selectPage} />}
+            {!showWizard && page === "profile" && <Profile onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
           </React.Fragment>
         )}
       </div>

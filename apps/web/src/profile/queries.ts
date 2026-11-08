@@ -19,8 +19,8 @@ export const profileQueryKeys = {
 
 export type AuthIdentity = UserIdentity;
 
-export function useProfileQuery() {
-  return useQuery({ queryKey: profileQueryKeys.profile, queryFn: api.getUser });
+export function useProfileQuery(enabled = true) {
+  return useQuery({ queryKey: profileQueryKeys.profile, queryFn: api.getUser, enabled });
 }
 
 export function useAuthIdentitiesQuery() {

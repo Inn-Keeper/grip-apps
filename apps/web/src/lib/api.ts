@@ -4,6 +4,7 @@ import { createPipelineApi } from "@grip/core/pipeline";
 import { createLedgerImportApi } from "@grip/core/ledgerImport";
 import { createPostingReaderApi } from "@grip/core/postingReader";
 import { createTalkGradeApi } from "@grip/core/talkGrade";
+import { createPlaybookApi } from "@grip/core/firstRun";
 import { supabase } from "./supabase";
 
 const pipelineUrl = import.meta.env.VITE_PIPELINE_URL ?? "";
@@ -27,10 +28,11 @@ const talkGrade = aiUrl ? createTalkGradeApi(getToken, aiUrl) : null;
 // Same service and same rule: no AI URL, no import button.
 const ledgerImport = aiUrl ? createLedgerImportApi(getToken, aiUrl) : null;
 const postingReader = aiUrl ? createPostingReaderApi(getToken, aiUrl) : null;
+const playbookApi = aiUrl ? createPlaybookApi(getToken, aiUrl) : null;
 
 const api = createApi(supabase);
 
-export { dateToUi, dateToDb, pipeline, talkGrade, ledgerImport, postingReader };
+export { dateToUi, dateToDb, pipeline, talkGrade, ledgerImport, postingReader, playbookApi };
 export const {
   listBoards,
   listBoardSummaries,

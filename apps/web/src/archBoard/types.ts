@@ -51,6 +51,8 @@ export type TalkTrackData = { sections: Record<string, string>; rating: number |
 /** What grip-ai-api returns from /api/v1/ai/status. */
 export type GradingStatus = {
   grading: "available" | "unavailable";
+  /** Which provider receives the text; named at the first-run consent point. */
+  provider?: "gemini" | "ollama";
   code?: string;
   message?: string;
   /** Seconds until the provider limit lapses. */

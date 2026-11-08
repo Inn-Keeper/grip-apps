@@ -137,3 +137,12 @@ reference art.
 
 Bump minor for a new pose or treatment. Bump major when the canonical identity
 in section 1 changes, since that invalidates existing renders.
+
+## Pixel sprite (first-run wizard)
+
+The playbook generation screen shows Poe walking in a 90s video game pixel-art style:
+`apps/web/public/mascot/poe-walk.png`, a 4-frame walk cycle, 32×32 px per frame (128×32 sheet),
+transparent background, drawn at 2x with `image-rendering: pixelated`. The current file is a
+generated placeholder; replace it with hand-drawn art in the same sheet layout. Body in the
+dark surface tones, eye in Poe Gold `#D4A574`.
+

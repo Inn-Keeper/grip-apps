@@ -1,0 +1,41 @@
+/* 90s pixel walk: a 4-frame sprite (32px each, drawn at 2x) stepping across the track. */
+.track {
+  position: relative;
+  height: 72px;
+  overflow: hidden;
+}
+
+.poe {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  background: url("/mascot/poe-walk.png") 0 0 / 256px 64px no-repeat;
+  image-rendering: pixelated;
+  animation:
+    poe-steps 0.6s steps(4) infinite,
+    poe-cross 6s linear infinite;
+}
+
+@keyframes poe-steps {
+  to {
+    background-position: -256px 0;
+  }
+}
+
+@keyframes poe-cross {
+  from {
+    left: -64px;
+  }
+  to {
+    left: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poe {
+    animation: none;
+    left: calc(50% - 32px);
+  }
+}
