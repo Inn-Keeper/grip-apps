@@ -4,9 +4,29 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-08
+
+### Added
+
+- Standalone first-open journey mockup (`docs/first-open-mockup.html`) for UI validation; prototype only.
+- First-run wizard on web (design in `docs/superpowers/specs/2026-11-08-first-run-wizard-design.md`): stack, goal (with an optional design brief), target role with a job link or description, and optional experience (a CV redacted in the browser plus a few notes). Review names the AI provider before anything is sent. Gemini then writes a playbook of likely interview questions as sample STAR stories and one scored Arch Board scenario, which technical stories link to. Poe walks across the screen in pixel-art style while it waits (placeholder sprite). The user lands on Prep, Stories or the board, depending on the goal.
+- Generated stories carry a "Sample" tag until edited and a permanent playbook label. Stories offers "Generate my playbook" and Profile offers "Set up your practice" to run the wizard again; reruns add, never replace.
+- grip-ai-api: `POST /api/v1/ai/first-run/playbook` with output validated against Grip's competencies and components, an input cache, a per-user daily cap (`AI_PLAYBOOK_DAILY_CAP`, default 3) and a concurrency cap (`AI_MAX_CONCURRENT`, default 2). `/api/v1/ai/status` reports the provider.
+
+### Changed
+
+- Saving the profile no longer marks onboarding as complete; finishing the wizard or "Explore first" does.
+- SCREEN-GUIDELINES rule 34 allows Poe's walk on the playbook generation screen.
+
+### Database
+
+- `0027_first_run.sql`: adds `stories.is_sample` and `stories.playbook`, and resets `profiles.onboarding_completed` so every user sees the wizard once. Applied to grip-platform on 2026-11-08.
+
 ## 2026-11-07
 
 ### Added
+
+- Proposed personalized first-run journey and AI preparation roadmap (`docs/superpowers/plans/2026-11-07-personalized-first-run.md`); planning only, not implemented.
 
 - Product UX repair plan (`docs/superpowers/plans/2026-11-07-product-ux-repairs.md`) and its implementation below.
 - Prep shows "Progress not saved" with Retry when an answer fails to save, on web and mobile. Retry reuses the answer's request id, so it is never awarded twice. A failed bonus is reported, not retried, and a failed score load says so instead of showing zeros.
