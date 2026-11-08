@@ -19,7 +19,7 @@ type Props = {
 // The story this board is designed for, like the web rail's picker: its STAR on top,
 // then the stories linked to the scenario (or none). Taken stories show but can't be picked.
 export function StorySheet({ visible, candidates, current, taken, onPick, onClose }: Props) {
-  const { colors, tints } = useTheme();
+  const { colors, tints, dataColor } = useTheme();
   const options: { id: string | null; label: string; disabled: boolean }[] = [
     { id: null, label: t("board.noStory"), disabled: false },
     ...candidates.map((story) => {
@@ -61,7 +61,7 @@ export function StorySheet({ visible, candidates, current, taken, onPick, onClos
                 borderWidth: 1,
                 borderColor: colors.borderSoft
               }}>
-              <Badge label={t(`enum.competency.${current.competency}` as Parameters<typeof t>[0])} color={COMPETENCY_COLORS[current.competency] ?? colors.textFaint} />
+              <Badge label={t(`enum.competency.${current.competency}` as Parameters<typeof t>[0])} color={dataColor(COMPETENCY_COLORS[current.competency]) ?? colors.textFaint} />
               <Section label={t("stories.situation")} text={current.situation} />
               <Section label={t("stories.task")} text={current.task} />
               <Section label={t("stories.action")} text={current.action} />

@@ -26,7 +26,7 @@ type Props = {
 export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
   const cardStyle = useCardStyle();
   const inputStyle = useInputStyle();
-  const { colors, tints } = useTheme();
+  const { colors, tints, dataColor } = useTheme();
   const [stage, setStage] = useState<Stage>("quiz");
   const [{ scenario, prompt }] = useState(
     () => composeMockLoop({ scenarios: SCENARIOS, prompts: PROMPTS }) as { scenario: Scenario; prompt: Prompt }
@@ -101,7 +101,7 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
   }
 
   if (stage === "story") {
-    const competencyColor = COMPETENCY_COLORS[prompt.competency as keyof typeof COMPETENCY_COLORS] ?? colors.accent;
+    const competencyColor = dataColor(COMPETENCY_COLORS[prompt.competency as keyof typeof COMPETENCY_COLORS]) ?? colors.accent;
     return (
       <StageCard label={t("mock.stageStory")} onExit={onExit}>
         <Text style={{

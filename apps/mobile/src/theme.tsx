@@ -14,8 +14,10 @@ type Scheme = keyof typeof themes;
 
 function buildTheme(scheme: Scheme, pref: ThemePref, setPref: (pref: ThemePref) => void) {
   const theme = themes[scheme];
-  // data(): pastel data colors (node types, categories, competencies, difficulty), shaded in light.
-  return { ...theme, scheme, pref, setPref, data: (hex: string) => shade(hex, theme.dataShade) };
+  // dataColor(): pastel data colors from core (node types, categories, competencies, difficulty,
+  // contact statuses), shaded in light. Wrap them where they render, once.
+  const dataColor = <T extends string | undefined>(hex: T): T => (hex ? shade(hex, theme.dataShade) : hex) as T;
+  return { ...theme, scheme, pref, setPref, dataColor };
 }
 
 export type Theme = ReturnType<typeof buildTheme>;

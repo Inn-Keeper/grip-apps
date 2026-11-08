@@ -12,7 +12,7 @@ type Props = {
 // Persistent, sassy difficulty selector. The chosen tier drives both the quiz
 // cards and the drill, so the whole screen runs at one level.
 export function DifficultyPicker({ level, onLevel }: Props) {
-  const { colors, shadow } = useTheme();
+  const { colors, shadow, dataColor } = useTheme();
   const tier = difficultyByKey(level);
   return (
     <View
@@ -58,16 +58,16 @@ export function DifficultyPicker({ level, onLevel }: Props) {
                 alignItems: "center",
                 paddingVertical: 8,
                 borderRadius: 10,
-                backgroundColor: active ? alpha(d.color, 0.14) : colors.well,
+                backgroundColor: active ? alpha(dataColor(d.color), 0.14) : colors.well,
                 borderWidth: 1,
-                borderColor: active ? d.color : colors.border,
+                borderColor: active ? dataColor(d.color) : colors.border,
               }}
             >
               <DifficultyIcon tier={d} size={19} />
               <Text style={{
                   fontSize: font.size.tier,
                   fontWeight: "700",
-                  color: active ? d.color : colors.textDim,
+                  color: active ? dataColor(d.color) : colors.textDim,
                   marginTop: 2
                 }} numberOfLines={1}>
                 {d.label}
@@ -75,7 +75,7 @@ export function DifficultyPicker({ level, onLevel }: Props) {
               <Text style={{
                   fontSize: font.size.tierSub,
                   fontWeight: "700",
-                  color: active ? d.color : colors.textFaint,
+                  color: active ? dataColor(d.color) : colors.textFaint,
                   marginTop: 1
                 }}>+{d.xp}</Text>
             </TouchableOpacity>

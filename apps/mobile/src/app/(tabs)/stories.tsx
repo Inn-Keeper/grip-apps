@@ -103,9 +103,9 @@ export default function StoriesScreen() {
 type StoryCardProps = { story: Story; onEdit?: () => void; onDelete?: () => void };
 
 function StoryCard({ story, onEdit, onDelete }: StoryCardProps) {
-  const { colors, shadow } = useTheme();
+  const { colors, shadow, dataColor } = useTheme();
   const [expanded, setExpanded] = useState(false);
-  const color = COMPETENCY_COLORS[story.competency] ?? colors.textFaint;
+  const color = dataColor(COMPETENCY_COLORS[story.competency]) ?? colors.textFaint;
 
   return (
     <View style={{
@@ -164,7 +164,7 @@ type StoryFormProps = { initial: Story; saving: boolean; error: string | null; o
 
 function StoryForm({ initial, saving, error, onSave, onCancel }: StoryFormProps) {
   const inputStyle = useInputStyle();
-  const { colors } = useTheme();
+  const { colors, dataColor } = useTheme();
   const [form, setForm] = useState({ ...initial });
   const [scenarioOpen, setScenarioOpen] = useState(false);
   const { allScenarios, groups: scenarioGroups } = useScenarioCatalog();
@@ -197,7 +197,7 @@ function StoryForm({ initial, saving, error, onSave, onCancel }: StoryFormProps)
               key={competency}
               label={t(`enum.competency.${competency}` as Parameters<typeof t>[0])}
               active={form.competency === competency}
-              activeColor={COMPETENCY_COLORS[competency]}
+              activeColor={dataColor(COMPETENCY_COLORS[competency])}
               onPress={() => set("competency")(competency)}
             />
           ))}
@@ -262,7 +262,7 @@ function StoryForm({ initial, saving, error, onSave, onCancel }: StoryFormProps)
 }
 
 function PromptDrill({ stories }: { stories: Story[] }) {
-  const { colors, shadow } = useTheme();
+  const { colors, shadow, dataColor } = useTheme();
   const [promptIndex, setPromptIndex] = useState(() => Math.floor(Math.random() * PROMPTS.length));
   const [revealed, setRevealed] = useState(false);
 
@@ -292,7 +292,7 @@ function PromptDrill({ stories }: { stories: Story[] }) {
           gap: 10,
         }}
       >
-        <Badge label={t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0])} color={COMPETENCY_COLORS[prompt.competency]} />
+        <Badge label={t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0])} color={dataColor(COMPETENCY_COLORS[prompt.competency])} />
         <Text style={{
             color: colors.textBright,
             fontSize: font.size.lead,

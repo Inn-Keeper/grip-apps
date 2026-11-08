@@ -42,7 +42,7 @@ const RESULT_MS = 1700;
 // A study card, as on web: what the tech is, its interview notes and its quiz on one face.
 // Tapping the card starts the quiz in place; the run summary shows, then the card returns.
 export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizActiveChange, onPerfect }: Props) {
-  const { colors, shadow } = useTheme();
+  const { colors, shadow, dataColor } = useTheme();
   const press = useSharedValue(1);
   const [phase, setPhase] = useState<"card" | "quiz" | "result">("card");
   const [result, setResult] = useState<{ correct: number; total: number; xp: number } | null>(null);
@@ -116,7 +116,7 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
 
   if (phase === "result" && result) {
     const perfect = result.correct === result.total;
-    const tone = perfect ? colors.success : result.correct * 2 >= result.total ? item.color : colors.warning;
+    const tone = perfect ? colors.success : result.correct * 2 >= result.total ? dataColor(item.color) : colors.warning;
     return (
       <Animated.View
         entering={FadeIn.duration(160)}
@@ -178,15 +178,15 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
                 paddingHorizontal: 7,
                 paddingVertical: 2,
                 borderRadius: 999,
-                backgroundColor: alpha(tier.color, 0.1),
+                backgroundColor: alpha(dataColor(tier.color), 0.1),
                 borderWidth: 1,
-                borderColor: alpha(tier.color, 0.38)
+                borderColor: alpha(dataColor(tier.color), 0.38)
               }}>
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{
                   fontSize: font.size.tier,
                   fontWeight: "700",
-                  color: tier.color,
+                  color: dataColor(tier.color),
                   letterSpacing: 0.3
                 }}>{tier.label.toUpperCase()}</Text>
             </View>
@@ -207,7 +207,7 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
         </View>
         <QuizView
           tech={item.tech}
-          color={item.color}
+          color={dataColor(item.color)}
           question={quiz.questions[quiz.index]}
           questionNumber={quiz.index + 1}
           total={quiz.questions.length}
@@ -251,11 +251,11 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           <View style={{
               paddingHorizontal: 10,
               paddingVertical: 3,
-              backgroundColor: alpha(item.color, 0.13),
+              backgroundColor: alpha(dataColor(item.color), 0.13),
               borderRadius: 20
             }}>
             <Text style={{
-                color: item.color,
+                color: dataColor(item.color),
                 fontSize: font.size.label,
                 fontWeight: "700",
                 letterSpacing: 0.4
@@ -269,15 +269,15 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
                 paddingHorizontal: 8,
                 paddingVertical: 3,
                 borderRadius: 999,
-                backgroundColor: alpha(tier.color, 0.1),
+                backgroundColor: alpha(dataColor(tier.color), 0.1),
                 borderWidth: 1,
-                borderColor: alpha(tier.color, 0.33)
+                borderColor: alpha(dataColor(tier.color), 0.33)
               }}>
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{
                   fontSize: font.size.tier,
                   fontWeight: "700",
-                  color: tier.color
+                  color: dataColor(tier.color)
                 }}>{tier.label}</Text>
             </View>
           )}
@@ -334,16 +334,16 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           <View style={{
               paddingHorizontal: 14,
               paddingVertical: 7,
-              backgroundColor: alpha(item.color, 0.15),
+              backgroundColor: alpha(dataColor(item.color), 0.15),
               borderWidth: 1,
-              borderColor: alpha(item.color, 0.38),
+              borderColor: alpha(dataColor(item.color), 0.38),
               borderRadius: 8,
               opacity: quizLoading ? 0.6 : 1
             }}>
             <Text style={{
                 fontSize: font.size.small,
                 fontWeight: "700",
-                color: item.color
+                color: dataColor(item.color)
               }}>{quizLoading ? t("common.loading") : t("prep.takeQuiz")}</Text>
           </View>
         </View>

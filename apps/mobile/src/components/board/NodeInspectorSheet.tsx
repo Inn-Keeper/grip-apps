@@ -17,10 +17,10 @@ type Props = {
 };
 
 export function NodeInspectorSheet({ node, onChange, onClose, onRemove }: Props) {
-  const { colors, tints } = useTheme();
+  const { colors, tints, dataColor } = useTheme();
   if (!node) return null;
   const free = isFreeType(node.type);
-  const color = TYPE_COLORS[node.type] ?? colors.textDim;
+  const color = dataColor(TYPE_COLORS[node.type]) ?? colors.textDim;
   const inputStyle = {
     padding: 10,
     backgroundColor: colors.bgDeep,

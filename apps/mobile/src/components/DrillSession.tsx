@@ -37,7 +37,7 @@ type Props = {
 };
 
 export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoNext = false }: Props) {
-  const { colors, shadow } = useTheme();
+  const { colors, shadow, dataColor } = useTheme();
   const tier = difficultyByKey(drill.difficulty);
   const perAnswerXp = tier?.xp ?? CORRECT_XP;
   const shownCorrect = useCountUp(drill.done ? drill.correctCount : 0);
@@ -177,11 +177,11 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
             alignItems: "center",
             gap: 6
           }}>
-          <BrandIcon name="drill" color={cur.color} size={13} />
+          <BrandIcon name="drill" color={dataColor(cur.color)} size={13} />
           <Text style={{
               fontSize: font.size.caption,
               fontWeight: "700",
-              color: cur.color,
+              color: dataColor(cur.color),
               letterSpacing: 0.8
             }}>DRILL</Text>
           {tier && (
@@ -192,15 +192,15 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
                 paddingHorizontal: 7,
                 paddingVertical: 2,
                 borderRadius: 999,
-                backgroundColor: alpha(tier.color, 0.1),
+                backgroundColor: alpha(dataColor(tier.color), 0.1),
                 borderWidth: 1,
-                borderColor: alpha(tier.color, 0.38)
+                borderColor: alpha(dataColor(tier.color), 0.38)
               }}>
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{
                   fontSize: font.size.tier,
                   fontWeight: "700",
-                  color: tier.color,
+                  color: dataColor(tier.color),
                   letterSpacing: 0.3
                 }}>{tier.label.toUpperCase()}</Text>
             </View>
@@ -219,7 +219,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
       </View>
       <QuizView
         tech={cur.tech}
-        color={cur.color}
+        color={dataColor(cur.color)}
         question={cur.q}
         questionNumber={drill.index + 1}
         total={drill.questions.length}

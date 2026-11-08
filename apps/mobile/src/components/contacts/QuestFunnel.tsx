@@ -88,7 +88,7 @@ function ConversionRow({ label, value, detail, color }: { label: string; value: 
 }
 
 export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
-  const { colors, shadow } = useTheme();
+  const { colors, shadow, dataColor } = useTheme();
   return (
     <View
       style={{
@@ -126,7 +126,7 @@ export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
         }}>
         <Metric label={t("funnel.appsPerWeek")} value={String(summary.applicationsPerWeek)} color={colors.success} />
         <Metric label={t("funnel.interviews")} value={String(summary.reached.Interviewing)} color={colors.warning} />
-        <Metric label={t("funnel.offers")} value={String(summary.reached.Offer)} color={STATUS_STYLES.Offer.color} />
+        <Metric label={t("funnel.offers")} value={String(summary.reached.Offer)} color={dataColor(STATUS_STYLES.Offer.color)} />
       </View>
 
       <View style={{ gap: 8 }}>
@@ -146,7 +146,7 @@ export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
           label={t("funnel.interviewingToOffer")}
           value={summary.rates.interviewingToOffer}
           detail={`${summary.reached.Offer}/${summary.reached.Interviewing}`}
-          color={STATUS_STYLES.Offer.color}
+          color={dataColor(STATUS_STYLES.Offer.color)}
         />
       </View>
 
@@ -156,7 +156,7 @@ export function QuestFunnel({ summary }: { summary: FunnelSummary }) {
           gap: 6
         }}>
         {summary.statuses.map((status: string) => (
-          <Badge key={status} label={`${status}: ${summary.counts[status] ?? 0}`} color={STATUS_STYLES[status].color} />
+          <Badge key={status} label={`${status}: ${summary.counts[status] ?? 0}`} color={dataColor(STATUS_STYLES[status].color)} />
         ))}
       </View>
 

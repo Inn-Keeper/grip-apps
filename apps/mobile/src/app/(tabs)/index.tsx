@@ -53,7 +53,7 @@ type PrepCategory = { name: string; emoji?: string; color: string; items: PrepIt
 
 export default function PrepScreen() {
   const inputStyle = useInputStyle();
-  const { colors } = useTheme();
+  const { colors, dataColor } = useTheme();
   const locale = useLocale();
   const insets = useSafeAreaInsets();
   const storiesQuery = useStoriesQuery();
@@ -257,7 +257,7 @@ export default function PrepScreen() {
               key: cat.name,
               label: `${cat.name} ${mastery(cat.items)}%`,
               icon: categoryIconName(cat.name),
-              color: cat.color,
+              color: dataColor(cat.color),
             }))}
             activeKey={activeCategoryName}
             onChange={(key) => {
@@ -311,14 +311,14 @@ export default function PrepScreen() {
                   paddingVertical: 6,
                   borderRadius: 8,
                   borderWidth: 1,
-                  borderColor: alpha(category.color, 0.38),
+                  borderColor: alpha(dataColor(category.color), 0.38),
                   opacity: drillLoading ? 0.5 : 1,
                 }}
               >
                 <Text style={{
                     fontSize: font.size.small,
                     fontWeight: "700",
-                    color: category.color
+                    color: dataColor(category.color)
                   }}>
                   Drill {category.name}
                 </Text>

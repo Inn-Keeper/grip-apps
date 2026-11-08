@@ -7,7 +7,7 @@ import { MiniButton } from "@/components/ui";
 export type StoryItem = { id?: string; title: string; competency: string };
 
 export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
-  const { colors } = useTheme();
+  const { colors, dataColor } = useTheme();
   const [open, setOpen] = useState(false);
   const grouped = groupStoriesByCompetency(stories);
   const covered = grouped.filter((g) => g.stories.length > 0);
@@ -39,14 +39,14 @@ export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
                   alignSelf: "flex-start",
                   paddingHorizontal: 8,
                   paddingVertical: 2,
-                  backgroundColor: alpha(g.color, 0.13),
+                  backgroundColor: alpha(dataColor(g.color), 0.13),
                   borderRadius: 12,
                 }}
               >
                 <Text style={{
                     fontSize: font.size.caption,
                     fontWeight: "700",
-                    color: g.color,
+                    color: dataColor(g.color),
                     letterSpacing: 0.5
                   }}>
                   {g.competency.toUpperCase()}

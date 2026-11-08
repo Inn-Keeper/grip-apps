@@ -43,7 +43,7 @@ export function ContactCard({
   onAddRetro,
   onDeleteRetro,
 }: ContactCardProps) {
-  const { colors, shadow, tints } = useTheme();
+  const { colors, shadow, tints, dataColor } = useTheme();
   const [showRetros, setShowRetros] = useState(false);
   const status = STATUS_STYLES[contact.status] ?? STATUS_STYLES.Contacted;
   const nextStatus = STATUSES[STATUSES.indexOf(contact.status) + 1];
@@ -68,7 +68,7 @@ export function ContactCard({
           gap: 8,
           flexWrap: "wrap"
         }}>
-        <Badge label={t(`enum.status.${contact.status}` as Parameters<typeof t>[0])} color={status.color} />
+        <Badge label={t(`enum.status.${contact.status}` as Parameters<typeof t>[0])} color={dataColor(status.color)} />
         {!!contact.date && <Text style={{
             fontSize: font.size.label,
             color: colors.textFaint
@@ -79,7 +79,7 @@ export function ContactCard({
             marginLeft: "auto"
           }}>
           {nextStatus && (
-            <MiniButton label={`→ ${t(`enum.status.${nextStatus}` as Parameters<typeof t>[0])}`} color={STATUS_STYLES[nextStatus].color} onPress={onAdvance} />
+            <MiniButton label={`→ ${t(`enum.status.${nextStatus}` as Parameters<typeof t>[0])}`} color={dataColor(STATUS_STYLES[nextStatus].color)} onPress={onAdvance} />
           )}
           <MiniButton label={t("contacts.addRetro")} color={colors.accentBright} onPress={onToggleRetroForm} />
         </View>

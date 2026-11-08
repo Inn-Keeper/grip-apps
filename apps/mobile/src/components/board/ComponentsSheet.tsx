@@ -9,7 +9,7 @@ type Props = { visible: boolean; onAdd: (type: string) => void; onClose: () => v
 // The built-in components, one tap away from the tool row (web's Components dropdown).
 // Picking one adds it and closes the sheet.
 export function ComponentsSheet({ visible, onAdd, onClose }: Props) {
-  const { colors, tints } = useTheme();
+  const { colors, tints, dataColor } = useTheme();
   if (!visible) return null;
   return (
     <Modal transparent animationType="slide" visible onRequestClose={onClose}>
@@ -53,11 +53,11 @@ export function ComponentsSheet({ visible, onAdd, onClose }: Props) {
                 paddingHorizontal: 10,
                 backgroundColor: colors.bgDeep,
                 borderWidth: 1,
-                borderColor: alpha(TYPE_COLORS[spec.type] ?? colors.textDim, 0.25),
+                borderColor: alpha(dataColor(TYPE_COLORS[spec.type]) ?? colors.textDim, 0.25),
                 borderRadius: 8
               }}
             >
-              <BrandIcon name={nodeIconName(spec.type)} color={TYPE_COLORS[spec.type] ?? colors.textDim} size={16} />
+              <BrandIcon name={nodeIconName(spec.type)} color={dataColor(TYPE_COLORS[spec.type]) ?? colors.textDim} size={16} />
               <Text style={{
                   fontSize: font.size.small,
                   fontWeight: "600",

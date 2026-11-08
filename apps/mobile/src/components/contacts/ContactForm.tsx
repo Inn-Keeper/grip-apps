@@ -33,7 +33,7 @@ type ContactFormProps = { initial: Contact; saving: boolean; error: string | nul
 
 export function ContactForm({ initial, saving, error, onSave, onCancel }: ContactFormProps) {
   const inputStyle = useInputStyle();
-  const { colors } = useTheme();
+  const { colors, dataColor } = useTheme();
   const [start] = useState({ ...EMPTY_CONTACT_FORM, ...initial });
   const [form, setForm] = useState(start);
   // The pasted posting is parsed on-device and never stored — only detected techs persist.
@@ -76,7 +76,7 @@ export function ContactForm({ initial, saving, error, onSave, onCancel }: Contac
               key={status}
               label={t(`enum.status.${status}` as Parameters<typeof t>[0])}
               active={form.status === status}
-              activeColor={STATUS_STYLES[status].color}
+              activeColor={dataColor(STATUS_STYLES[status].color)}
               onPress={() => set("status")(status)}
             />
           ))}

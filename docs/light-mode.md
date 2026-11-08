@@ -64,6 +64,7 @@ Plan each phase before starting it.
 - Phase 1 done 2026-11-08.
 - Phase 2 done 2026-11-08. Sign-in and the share page match the pre-phase-2 build pixel for pixel, except a 2/255 drift from rounding alpha suffixes to two-decimal opacities.
 - Phase 3 done 2026-11-08. Light borders raised after review (`borderSoft #D5DBE4`, `border #C3CAD6`). Data colors use `dataShade` 0.5, the lowest value where every one clears 4.5:1 on light planes. Raw black shadows and white glints were left: shadows read fine on light planes and glints vanish harmlessly.
+- Phase 4 done 2026-11-08. The React Compiler is on, so mobile can't use web's in-place data color rewrite (memoized components would keep stale colors). Data colors go through `useTheme().dataColor()` at the render site instead. `STATUS_STYLES` (contact statuses) was a missed data map; now covered on both apps and in the core contrast test.
 - Carried over from phase 2 (now resolved unless noted):
   - Resolved: core data colors are fixed dark hex and did not follow the theme: `TYPE_COLORS` (arch.js), difficulty tiers (`colors.deco*` in difficulty.js) and other prep data colors.
   - Left as is: raw black shadows and white top glints remain in about 20 places (tour.css, Switch, Combobox, PoeAssistant glows, Metric and ArchBoard shine). Tune them during the light review.

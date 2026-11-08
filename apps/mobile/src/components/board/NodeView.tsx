@@ -97,13 +97,13 @@ export function NodeView({
   onConnectMove,
   onConnectEnd,
 }: Props) {
-  const { colors } = useTheme();
+  const { colors, dataColor } = useTheme();
   const isText = node.type === "text";
   const isShape = node.type === "box";
   const shape = node.shape ?? "rect";
   const note = isShape && shape === "note";
   const name = nodeLabel(node);
-  const color = TYPE_COLORS[node.type] ?? colors.textDim;
+  const color = dataColor(TYPE_COLORS[node.type]) ?? colors.textDim;
   // Sizes, shapes and styles come from web; mobile draws them but does not edit them yet.
   const size = nodeSize(node, { width: NODE_W, height: NODE_H });
   const style = styleOf(node);

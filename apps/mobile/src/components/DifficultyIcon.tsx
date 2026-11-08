@@ -1,5 +1,5 @@
 import { View } from "react-native";
-import { alpha } from "@/theme";
+import { alpha, useTheme } from "@/theme";
 
 type DifficultyTier = { key: string; color: string };
 
@@ -9,8 +9,9 @@ type Props = {
 };
 
 export function DifficultyIcon({ tier, size = 18 }: Props) {
+  const { dataColor } = useTheme();
   if (!tier) return null;
-  const color = tier.color;
+  const color = dataColor(tier.color);
   const scale = size / 18;
 
   if (tier.key === "easy") {
