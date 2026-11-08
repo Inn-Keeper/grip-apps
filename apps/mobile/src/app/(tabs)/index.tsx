@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Alert, FlatList, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Alert, FlatList, Linking, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { categories } from "@grip/core/prepData";
@@ -20,6 +20,9 @@ import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
 import { colors, font, layout } from "@/theme";
 import { PrepCard } from "@/components/PrepCard";
 import { StatsBar } from "@/components/StatsBar";
+import { needsSetup } from "@grip/core/firstRun";
+import { WEB_URL } from "@/lib/webUrl";
+import { useStoriesQuery } from "@/queries/stories";
 import { NextUpCard } from "@/components/NextUpCard";
 import { ReadinessCard } from "@/components/ReadinessCard";
 import { PrepSettings } from "@/components/PrepSettings";
@@ -52,6 +55,7 @@ type PrepCategory = { name: string; emoji?: string; color: string; items: PrepIt
 export default function PrepScreen() {
   const locale = useLocale();
   const insets = useSafeAreaInsets();
+  const storiesQuery = useStoriesQuery();
   // Track the selected category by name, not list index: the profile and favorites
   // categories are prepended once it loads, which would shift every index underneath it.
   const [activeCategoryName, setActiveCategoryName] = useState<string>(categories[0].name);
@@ -168,7 +172,9 @@ export default function PrepScreen() {
   const startPlanDrill = () => prepPlan && runDrill(level, prepPlan.techs);
 
   const startNextUp = (kind: NextUpKind) => {
-    if (kind === "review") startReviewDrill();
+    // The wizard is web-only for now; ?setup=1 opens it there.
+    if (kind === "setup") void Linking.openURL(`${WEB_URL}/?setup=1`);
+    else if (kind === "review") startReviewDrill();
     else if (kind === "plan") startPlanDrill();
     else startDrill(level);
   };
@@ -272,6 +278,7 @@ export default function PrepScreen() {
                 reviewDueCount={reviewDueTechs.length}
                 plan={prepPlan}
                 attempts={attempts}
+                needsSetup={needsSetup(storiesQuery.data)}
                 busy={drillLoading}
                 onStart={startNextUp}
                 onMock={startMockLoop}

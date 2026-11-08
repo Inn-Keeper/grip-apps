@@ -48,9 +48,8 @@ import {
   useShareBoardMutation,
   useScenarioCatalog,
 } from "@/queries/board";
+import { WEB_URL } from "@/lib/webUrl";
 
-// Board share links open on web; empty env means the production site.
-const WEB_URL = process.env.EXPO_PUBLIC_WEB_URL || "https://grip-platform-web.vercel.app";
 
 export default function BoardScreen() {
   const locale = useLocale();
