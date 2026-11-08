@@ -48,6 +48,7 @@
     "./duplicates": "./src/duplicates.js",
     "./postingReader": "./src/postingReader.js",
     "./firstRun": "./src/firstRun.js",
+    "./poeChat": "./src/poeChat.js",
     "./accuracy": "./src/accuracy.js",
     "./i18n": "./src/i18n.js",
     "./tokens": "./src/tokens.js",
