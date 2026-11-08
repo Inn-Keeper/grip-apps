@@ -35,6 +35,7 @@ import {
 } from "./githubUtils";
 import type { ProfileForm } from "./types";
 import { ErrorText } from "../components/ErrorText";
+import { ConfirmDialog } from "../components/ConfirmDialog";
 import { categories } from "@grip/core/prepData";
 
 const GITHUB_LINKED_KEY = "grip.githubLinked";
@@ -138,8 +139,9 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
   };
   const rank = rankForXp(profile?.xp ?? 0) ?? RANKS[0]!;
   const next = RANKS.find((item) => item.min > rank.min);
+  const [confirmResetGoals, setConfirmResetGoals] = useState(false);
   const resetGoals = () => {
-    if (!window.confirm(t("firstRun.profile.resetConfirm"))) return;
+    setConfirmResetGoals(false);
     // Reset turns the wizard back on; open it right away to start over.
     resetGoalsMutation.mutate(undefined, { onSuccess: () => onOpenSetup?.() });
   };
@@ -291,10 +293,19 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
                 fontSize: font.size.body
               }}>{t("firstRun.profile.setupHint")}</p>
             <button type="button" onClick={onOpenSetup} style={miniBtn(colors.accentBright ?? "")}>{t("firstRun.profile.setup")}</button>
-            <button type="button" onClick={resetGoals} disabled={resetGoalsMutation.isPending} style={miniBtn(colors.dangerBright ?? "")}>
+            <button type="button" onClick={() => setConfirmResetGoals(true)} disabled={resetGoalsMutation.isPending} style={miniBtn(colors.dangerBright ?? "")}>
               {resetGoalsMutation.isPending ? t("firstRun.profile.resetting") : t("firstRun.profile.reset")}
             </button>
             {resetGoalsMutation.error && <ErrorText>{(resetGoalsMutation.error as Error).message}</ErrorText>}
+            <ConfirmDialog
+              open={confirmResetGoals}
+              title={t("firstRun.profile.resetTitle")}
+              message={t("firstRun.profile.resetConfirm")}
+              confirmLabel={t("firstRun.profile.reset")}
+              danger
+              onConfirm={resetGoals}
+              onCancel={() => setConfirmResetGoals(false)}
+            />
           </WorkspacePanel>
         )}
         {section === "account" && (

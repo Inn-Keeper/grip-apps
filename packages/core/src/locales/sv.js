@@ -1044,5 +1044,6 @@ export const sv = {
   "nextUp.new": "Nytt",
   "firstRun.profile.reset": "Återställ mål",
   "firstRun.profile.resetting": "Återställer…",
-  "firstRun.profile.resetConfirm": "Återställa dina mål och börja om med inställningen? Det raderar dina mål, alla berättelser som inställningen skapade (även redigerade), dess scenarier och deras tavlor. Dina egna berättelser, tavlor, svar och XP finns kvar. Det går inte att ångra.",
+  "firstRun.profile.resetConfirm": "Det raderar dina mål, alla berättelser som inställningen skapade (även redigerade), dess scenarier och deras tavlor, och startar inställningen igen. Dina egna berättelser, tavlor, svar och XP finns kvar. Det går inte att ångra.",
+  "firstRun.profile.resetTitle": "Återställa dina mål?",
 };

@@ -1,0 +1,10 @@
+.dialog {
+  margin: auto;
+  width: min(92vw, 440px);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.dialog::backdrop {
+  background: #00000090;
+}

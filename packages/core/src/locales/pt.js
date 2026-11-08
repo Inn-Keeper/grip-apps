@@ -1044,5 +1044,6 @@ export const pt = {
   "nextUp.new": "Novo",
   "firstRun.profile.reset": "Redefinir objetivos",
   "firstRun.profile.resetting": "Redefinindo…",
-  "firstRun.profile.resetConfirm": "Redefinir seus objetivos e refazer a configuração? Isso apaga seus objetivos, todas as histórias geradas pela configuração (mesmo as editadas), seus cenários e os quadros deles. Suas próprias histórias, quadros, respostas e XP ficam. Não dá para desfazer.",
+  "firstRun.profile.resetConfirm": "Isso apaga seus objetivos, todas as histórias geradas pela configuração (mesmo as editadas), seus cenários e os quadros deles, e começa a configuração de novo. Suas próprias histórias, quadros, respostas e XP ficam. Não dá para desfazer.",
+  "firstRun.profile.resetTitle": "Redefinir seus objetivos?",
 };

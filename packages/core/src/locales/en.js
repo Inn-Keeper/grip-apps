@@ -1044,5 +1044,6 @@ export const en = {
   "nextUp.new": "New",
   "firstRun.profile.reset": "Reset goals",
   "firstRun.profile.resetting": "Resetting…",
-  "firstRun.profile.resetConfirm": "Reset your goals and start over with the setup? This deletes your goals, every story the setup generated (edited ones too), its scenarios and their boards. Your own stories, boards, answers and XP stay. This can't be undone.",
+  "firstRun.profile.resetConfirm": "This deletes your goals, every story the setup generated (edited ones too), its scenarios and their boards, then starts the setup again. Your own stories, boards, answers and XP stay. This can't be undone.",
+  "firstRun.profile.resetTitle": "Reset your goals?",
 };
