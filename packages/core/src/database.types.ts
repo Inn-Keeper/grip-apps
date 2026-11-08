@@ -195,6 +195,7 @@ export type Database = {
           display_name: string | null
           email: string | null
           favorite_techs: string[]
+          goal_techs: string[]
           github_url: string | null
           headline: string | null
           linkedin_url: string | null
@@ -215,6 +216,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           favorite_techs?: string[]
+          goal_techs?: string[]
           github_url?: string | null
           headline?: string | null
           linkedin_url?: string | null
@@ -235,6 +237,7 @@ export type Database = {
           display_name?: string | null
           email?: string | null
           favorite_techs?: string[]
+          goal_techs?: string[]
           github_url?: string | null
           headline?: string | null
           linkedin_url?: string | null

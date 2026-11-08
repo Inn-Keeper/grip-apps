@@ -172,6 +172,8 @@ export type User = {
   createdAt: string | null;
   updatedAt: string | null;
   favoriteTechs: string[];
+  /** First-run wizard techs: stack plus target role, shown in Prep as "From My Goals" */
+  goalTechs: string[];
 };
 
 /** Binds the data layer to a Supabase client (browser or React Native). */

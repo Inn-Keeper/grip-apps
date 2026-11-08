@@ -553,3 +553,14 @@ describe("stories first-run fields", () => {
     expect(calls.selects.at(-1).columns).toContain("is_sample,playbook");
   });
 });
+
+describe("profile goal techs", () => {
+  it("reads goal_techs and writes goalTechs", async () => {
+    const authUser = { id: "u1", email: "a@b.c", user_metadata: {} };
+    const { client, calls } = fakeSupabase({ profiles: [{ user_id: "u1", goal_techs: ["React"] }] }, authUser);
+    const api = createApi(client);
+    expect((await api.getUser()).goalTechs).toEqual(["React"]);
+    await api.updateProfile({ goalTechs: ["Go"] });
+    expect(calls.updates.at(-1).rows.goal_techs).toEqual(["Go"]);
+  });
+});
