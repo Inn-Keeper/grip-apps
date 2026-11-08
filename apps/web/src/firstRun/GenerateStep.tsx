@@ -133,9 +133,12 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
             {retryLeft > 0 ? t("firstRun.generate.retryIn", { seconds: retryLeft }) : t("firstRun.generate.retry")}
           </button>
         )}
-        <button type="button" onClick={instead} style={ghostBtn}>
-          {t("firstRun.generate.instead")}
-        </button>
+        {/* No way out while it works; only a failure offers practice instead. */}
+        {(phase === "error" || phase === "partial") && (
+          <button type="button" onClick={instead} style={ghostBtn}>
+            {t("firstRun.generate.instead")}
+          </button>
+        )}
       </div>
     </div>
   );
