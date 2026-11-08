@@ -93,6 +93,7 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
       {/* Native disclosure, one card: the summary keeps the current values visible while
           folded, and the settings open as sections inside it (rule 5). */}
       <details
+        open
         className={styles.settings}
         style={{
           "--settings-focus": colors.accentBright,

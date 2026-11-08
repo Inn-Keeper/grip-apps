@@ -31,6 +31,8 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- "Drill these in Prep" from a Quest contact now leads Prep's Next Up with the plan's techs, even when reviews are due (reviews stay one click away). Web and mobile.
+- Practice settings on Prep (web) start open.
 - CV previews omit redaction placeholders, empty contact separators and redaction-only lines before generation, preserving experience content and technology names.
 - Web playbook generation stays focused on completing the plan, with waiting feedback and a 200-second timeout. Retry is the primary action after a failure, with practice without the plan as a fallback. Late responses are discarded after unmounting, and no further saves start after the current write.
 - An empty story-drill result on web opens a new story with its competency selected. Saving or cancelling returns to the same revealed prompt, and the empty-state copy explains the next step.

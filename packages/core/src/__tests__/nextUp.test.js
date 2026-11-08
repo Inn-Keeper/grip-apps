@@ -9,10 +9,10 @@ describe("pickNextUp", () => {
     expect(pickNextUp({ reviewDueCount: 0, hasPlan: false, attempts: 4 }).primary).toBe("weakest");
   });
 
-  it("puts due reviews first and keeps the rest as alternatives", () => {
+  it("puts an active plan ahead of due reviews and keeps the rest as alternatives", () => {
     expect(pickNextUp({ reviewDueCount: 2, hasPlan: true, attempts: 4 })).toEqual({
-      primary: "review",
-      alternatives: ["plan", "weakest"],
+      primary: "plan",
+      alternatives: ["review", "weakest"],
     });
   });
 
