@@ -10,6 +10,7 @@ because they have to be applied by hand.
 
 - Standalone first-open journey mockup (`docs/first-open-mockup.html`) for UI validation; prototype only.
 - First-run wizard on web (design in `docs/superpowers/specs/2026-11-08-first-run-wizard-design.md`): stack, goal (with an optional design brief), target role with a job link or description, and optional experience (a CV redacted in the browser plus a few notes). Review names the AI provider before anything is sent. Gemini then writes a playbook of likely interview questions as sample STAR stories and one scored Arch Board scenario, which technical stories link to. Poe walks across the screen in pixel-art style while it waits (placeholder sprite). The user lands on Prep, Stories or the board, depending on the goal.
+- Prep (web and mobile) lists "From My Goals" first: the wizard's stack plus the target role's techs, saved on the profile. Favorites stay separate and are edited in Profile.
 - Next Up on Prep (web and mobile) suggests "Get your interview playbook" until the user has one: first for brand-new users who chose "Explore first", then as the last alternative. On mobile it opens the web wizard (`?setup=1`), which is web-only for now.
 - Generated stories carry a "Sample" tag until edited and a permanent playbook label. Stories offers "Generate my playbook" and Profile offers "Set up your practice" to run the wizard again; reruns add, never replace.
 - grip-ai-api: `POST /api/v1/ai/first-run/playbook` with output validated against Grip's competencies and components, an input cache, a per-user daily cap (`AI_PLAYBOOK_DAILY_CAP`, default 3) and a concurrency cap (`AI_MAX_CONCURRENT`, default 2). `/api/v1/ai/status` reports the provider.
@@ -21,6 +22,7 @@ because they have to be applied by hand.
 
 ### Database
 
+- `0028_profile_goal_techs.sql`: adds `profiles.goal_techs` for "From My Goals".
 - `0027_first_run.sql`: adds `stories.is_sample` and `stories.playbook`, and resets `profiles.onboarding_completed` so every user sees the wizard once. Applied to grip-platform on 2026-11-08.
 
 ## 2026-11-07

@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { canContinue, initialWizard, playbookRequest, prepPlanTechs, profileUpdate, wizardReducer } from "./wizardState.js";
 
-const profile = { favoriteTechs: ["React", "SQL"], targetRole: "Backend Engineer" };
+const profile = { goalTechs: ["React", "SQL"], targetRole: "Backend Engineer" };
 const run = (state, ...actions) => actions.reduce(wizardReducer, state);
 
 test("prefills stack and role from profile", () => {
@@ -54,8 +54,9 @@ test("setNote edits one note", () => {
 });
 
 test("profile update before generating never marks setup done", () => {
-  const update = profileUpdate(initialWizard(profile));
-  assert.deepEqual(update, { favoriteTechs: ["React", "SQL"], targetRole: "Backend Engineer" });
+  const update = profileUpdate({ ...initialWizard(profile), jobTechs: ["Python", "SQL"] });
+  // Goals are the wizard's own list; Favorites stay the user's to edit in Profile.
+  assert.deepEqual(update, { goalTechs: ["React", "SQL", "Python"], targetRole: "Backend Engineer" });
 });
 
 test("playbook request respects the API caps", () => {

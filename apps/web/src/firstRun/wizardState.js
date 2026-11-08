@@ -8,11 +8,12 @@ export const STEPS = ["stack", "goal", "role", "experience", "review", "generate
  *   jobInput: string, jobText: string, jobTechs: string[], cvText: string, notes: string[] }} WizardState
  */
 
-/** @param {{ favoriteTechs?: string[], targetRole?: string } | null} profile @returns {WizardState} */
+/** @param {{ favoriteTechs?: string[], goalTechs?: string[], targetRole?: string } | null} profile @returns {WizardState} */
 export function initialWizard(profile) {
   return {
     step: "stack",
-    stack: [...(profile?.favoriteTechs ?? [])],
+    // A rerun starts from the last goals; a first run from Profile favorites.
+    stack: [...(profile?.goalTechs?.length ? profile.goalTechs : profile?.favoriteTechs ?? [])],
     goal: "",
     brief: "",
     role: profile?.targetRole ?? "",
@@ -62,7 +63,7 @@ export function canContinue(state) {
 
 /** Saved when generation starts. The done flag waits for landing, so the wizard stays up meanwhile. */
 export function profileUpdate(state) {
-  return { favoriteTechs: state.stack, targetRole: state.role };
+  return { goalTechs: [...new Set([...state.stack, ...state.jobTechs])], targetRole: state.role };
 }
 
 // Must match the caps in grip-ai-api app/playbook_schemas.py (stack 30, role 120).
