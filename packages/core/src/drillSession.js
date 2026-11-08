@@ -154,6 +154,7 @@ export function profileCategories({ githubTechs, favoriteTechs = [], goalTechs =
     signals,
     profileCategory,
     favoritesCategory,
+    goalsCategory,
     displayCategories: [
       ...(goalsCategory ? [goalsCategory] : []),
       ...(favoritesCategory ? [favoritesCategory] : []),
@@ -161,6 +162,24 @@ export function profileCategories({ githubTechs, favoriteTechs = [], goalTechs =
       ...sortedCatalog,
     ],
   };
+}
+
+/**
+ * The category Prep shows: the user's pick this visit, else "From My Goals" when the
+ * wizard set it, else the catalog's first category (as before goals existed).
+ * @template {{ name: string }} C
+ * @param {C[]} displayCategories
+ * @param {string | null} pickedName
+ * @param {C | null} goalsCategory
+ * @returns {C}
+ */
+export function selectedCategory(displayCategories, pickedName, goalsCategory) {
+  return (
+    displayCategories.find((c) => c.name === pickedName) ??
+    goalsCategory ??
+    displayCategories.find((c) => c.name === categories[0]?.name) ??
+    displayCategories[0]
+  );
 }
 
 /**

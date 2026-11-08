@@ -1,19 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { categories } from "@grip/core/prepData";
 import { techLinks } from "@grip/core/techLinks";
 import { githubUsernameFromUrl } from "@grip/core/githubTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
-import {
-  advanceDrill,
-  allTechs,
-  answerDrill,
-  loadDrill,
-  profileCategories,
-  readinessFor,
-  startDrillState,
-} from "@grip/core/drillSession";
+import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState, selectedCategory } from "@grip/core/drillSession";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
@@ -51,7 +42,8 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
   const storiesQuery = useStoriesQuery();
   // Track the selected category by name, not list index: the profile and favorites
   // categories are prepended once it loads, which would shift every index underneath it.
-  const [activeCategoryName, setActiveCategoryName] = useState(categories[0]?.name ?? "");
+  // null until the user picks one: Prep then opens on "From My Goals" when it exists.
+  const [pickedCategoryName, setActiveCategoryName] = useState<string | null>(null);
   // Which cards show their notes side, by card key.
   const [search, setSearch] = useState("");
   const [drill, setDrill] = useState<DrillState | null>(null);
@@ -144,6 +136,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
     allItems,
     signals,
     profileCategory: githubCategory,
+    goalsCategory,
     displayCategories,
   } = profileCategories({ githubTechs, favoriteTechs, goalTechs: profile?.goalTechs ?? [], cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
 
@@ -157,7 +150,8 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
 
   const readiness = readinessFor({ plan: prepPlan, stackTechs: signals.map((s) => s.tech), answers: scores.answers });
 
-  const displayCategory = displayCategories.find((c) => c.name === activeCategoryName) ?? displayCategories[0]!;
+  const displayCategory = selectedCategory(displayCategories, pickedCategoryName, goalsCategory);
+  const activeCategoryName = displayCategory.name;
   const summary = summarizeScores(scores);
   const visibleItems: PrepItem[] =
     filtered ??

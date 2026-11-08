@@ -5,6 +5,7 @@ import {
   loadDrill,
   mergeTechSignals,
   profileCategories,
+  selectedCategory,
   startDrillState,
 } from "../drillSession.js";
 
@@ -132,5 +133,24 @@ describe("profileCategories goals", () => {
   it("has no goals category before the wizard ran", () => {
     const { displayCategories } = profileCategories({ githubTechs: [], cvTechs: [], favoriteTechs: [], color: "#2DD4BF" });
     expect(displayCategories.some((c) => c.name === "From My Goals")).toBe(false);
+  });
+});
+
+describe("selectedCategory", () => {
+  const goals = { name: "From My Goals", items: [] };
+  const favorites = { name: "From My Favorites", items: [] };
+  const languages = { name: "Languages", items: [] };
+  const backend = { name: "Backend", items: [] };
+
+  it("opens on From My Goals when it exists and nothing was picked", () => {
+    expect(selectedCategory([goals, favorites, languages], null, goals)).toBe(goals);
+  });
+
+  it("keeps the catalog default without goals, even with favorites on top", () => {
+    expect(selectedCategory([favorites, languages, backend], null, null)).toBe(languages);
+  });
+
+  it("respects the user's pick", () => {
+    expect(selectedCategory([goals, languages, backend], "Backend", goals)).toBe(backend);
   });
 });

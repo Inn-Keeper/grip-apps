@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { Alert, FlatList, Linking, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Animated, { FadeInDown } from "react-native-reanimated";
-import { categories } from "@grip/core/prepData";
 import { githubUsernameFromUrl } from "@grip/core/githubTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
 import { computeReadiness } from "@grip/core/readiness";
@@ -13,7 +12,7 @@ import type { NextUpKind } from "@grip/core/nextUp";
 import { useLocale } from "@/lib/useLocale";
 import { DEFAULT_QUIZ_SIZE } from "@grip/core/quizPrefs";
 import { selectCategoryDrillTechs, selectDrillTechs } from "@grip/core/quiz";
-import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState } from "@grip/core/drillSession";
+import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState, selectedCategory } from "@grip/core/drillSession";
 import { getAutoNext, getQuizSize, setAutoNext, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
@@ -58,7 +57,8 @@ export default function PrepScreen() {
   const storiesQuery = useStoriesQuery();
   // Track the selected category by name, not list index: the profile and favorites
   // categories are prepended once it loads, which would shift every index underneath it.
-  const [activeCategoryName, setActiveCategoryName] = useState<string>(categories[0].name);
+  // null until the user picks one: Prep then opens on "From My Goals" when it exists.
+  const [pickedCategoryName, setActiveCategoryName] = useState<string | null>(null);
   const [drill, setDrill] = useState<Drill | null>(null);
   // The running drill is round 1 of a mock loop.
   const [mockActive, setMockActive] = useState(false);
@@ -105,14 +105,15 @@ export default function PrepScreen() {
   };
 
   // Favorites get their own category; CV techs join GitHub signals into "from your profile".
-  const { allItems, signals, displayCategories } = profileCategories({
+  const { allItems, signals, displayCategories, goalsCategory } = profileCategories({
     githubTechs,
     cvTechs: profile?.cvTechs ?? [],
     favoriteTechs: profile?.favoriteTechs ?? [],
     goalTechs: profile?.goalTechs ?? [],
     color: colors.accentBright,
   });
-  const category = (displayCategories.find((c: { name: string }) => c.name === activeCategoryName) ?? displayCategories[0]) as PrepCategory;
+  const category = selectedCategory(displayCategories, pickedCategoryName, goalsCategory) as PrepCategory;
+  const activeCategoryName = category.name;
 
   // Search spans every category by name or one-liner, as on web.
   const query = search.trim().toLowerCase();
