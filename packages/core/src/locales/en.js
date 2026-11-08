@@ -1040,4 +1040,5 @@ export const en = {
   "nextUp.setupAction": "Set it up",
   "nextUp.setupWebHint": "Opens Grip on the web.",
   "nextUp.altSetup": "set up your playbook",
+  "nextUp.new": "New",
 };

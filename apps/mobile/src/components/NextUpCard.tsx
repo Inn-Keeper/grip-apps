@@ -3,6 +3,7 @@ import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
 import type { PrepPlan } from "@/lib/uiStore";
 import { colors, font, shadow } from "@/theme";
+import { tints } from "@grip/core/tokens";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = {
@@ -88,7 +89,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, o
           opacity: busy ? 0.6 : 1,
         }}
       >
-        <BrandIcon name="drill" color={colors.onAccent} size={14} />
+        <BrandIcon name={primary === "setup" ? "spark" : "drill"} color={colors.onAccent} size={14} />
         <Text style={{
             fontSize: font.size.bodyMd,
             fontWeight: "700",
@@ -104,7 +105,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, o
           gap: 12,
           marginTop: 4
         }}>
-        {alternatives.map((kind) => (
+        {alternatives.filter((kind) => kind !== "setup").map((kind) => (
           <TouchableOpacity key={kind} onPress={() => onStart(kind)} disabled={busy} accessibilityRole="button">
             <Text style={{
                 fontSize: font.size.small,
@@ -117,6 +118,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, o
             </Text>
           </TouchableOpacity>
         ))}
+        {alternatives.includes("setup") && <SetupPill onPress={() => onStart("setup")} disabled={busy} />}
         <TouchableOpacity onPress={onMock} disabled={busy} accessibilityRole="button">
           <Text style={{
               fontSize: font.size.small,
@@ -141,3 +143,43 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, o
     </View>
   );
 }
+
+// The playbook is Grip's standout feature, so its alternative is a pill, not a quiet "or" link.
+function SetupPill({ onPress, disabled }: { onPress: () => void; disabled: boolean }) {
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      disabled={disabled}
+      accessibilityRole="button"
+      style={{
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 6,
+        paddingVertical: 4,
+        paddingLeft: 6,
+        paddingRight: 12,
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: colors.accent,
+        backgroundColor: tints.accentSoft
+      }}
+    >
+      <Text style={{
+          paddingHorizontal: 7,
+          borderRadius: 999,
+          overflow: "hidden",
+          backgroundColor: colors.accent,
+          color: colors.onAccent,
+          fontSize: font.size.caption,
+          fontWeight: "700"
+        }}>{t("nextUp.new")}</Text>
+      <BrandIcon name="spark" color={colors.accentBright} size={13} />
+      <Text style={{
+          fontSize: font.size.small,
+          fontWeight: "700",
+          color: colors.accentBright
+        }}>{t("nextUp.setupTitle")}</Text>
+    </TouchableOpacity>
+  );
+}
+

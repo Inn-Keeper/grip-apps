@@ -1040,4 +1040,5 @@ export const sv = {
   "nextUp.setupAction": "Ställ in",
   "nextUp.setupWebHint": "Öppnar Grip på webben.",
   "nextUp.altSetup": "ställa in din playbook",
+  "nextUp.new": "Nytt",
 };

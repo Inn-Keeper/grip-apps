@@ -1,6 +1,7 @@
 import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors, font, tints } from "@grip/core/tokens";
+import { BrandIcon } from "../components/BrandIcon";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import type { StoredPrepPlan } from "../lib/prepPlanHandoff";
 
@@ -50,19 +51,56 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, d
       sub={copy.sub}
       tone={copy.tone ?? ""}
       actionLabel={copy.action}
+      actionIcon={primary === "setup" ? "spark" : undefined}
       onAction={() => onStart(primary)}
       busy={busy}
       disabled={disabled}
       error={error}
       links={
         <>
-          {alternatives.map((kind) => (
+          {alternatives.filter((kind) => kind !== "setup").map((kind) => (
             <NextUpLink key={kind} label={t(ALT_LABEL[kind])} onClick={() => onStart(kind)} disabled={disabled} />
           ))}
           <NextUpLink label={t("nextUp.altMock")} onClick={onMock} disabled={disabled} />
+          {alternatives.includes("setup") && <SetupPill onClick={() => onStart("setup")} disabled={disabled} />}
           {primary === "plan" && <NextUpLink label={t("prep.planDismiss")} onClick={onDismissPlan} muted withOr={false} />}
         </>
       }
     />
+  );
+}
+
+// The playbook is Grip's standout feature, so its alternative is a pill, not a quiet "or" link.
+function SetupPill({ onClick, disabled }: { onClick: () => void; disabled: boolean }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 6,
+        padding: "4px 12px 4px 6px",
+        borderRadius: 999,
+        border: `1px solid ${colors.accent}`,
+        background: tints.accentSoft,
+        color: colors.accentBright,
+        fontSize: font.size.small,
+        fontWeight: 700,
+        cursor: disabled ? "default" : "pointer",
+      }}
+    >
+      <span style={{
+          padding: "1px 7px",
+          borderRadius: 999,
+          background: colors.accent,
+          color: colors.onAccent,
+          fontSize: font.size.caption,
+          letterSpacing: "0.04em"
+        }}>{t("nextUp.new")}</span>
+      <BrandIcon name="spark" color={colors.accentBright ?? ""} size={13} />
+      {t("nextUp.setupTitle")}
+    </button>
   );
 }
