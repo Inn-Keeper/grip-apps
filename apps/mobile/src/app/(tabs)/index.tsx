@@ -109,6 +109,7 @@ export default function PrepScreen() {
     githubTechs,
     cvTechs: profile?.cvTechs ?? [],
     favoriteTechs: profile?.favoriteTechs ?? [],
+    goalTechs: profile?.goalTechs ?? [],
     color: colors.accentBright,
   });
   const category = (displayCategories.find((c: { name: string }) => c.name === activeCategoryName) ?? displayCategories[0]) as PrepCategory;

@@ -145,7 +145,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
     signals,
     profileCategory: githubCategory,
     displayCategories,
-  } = profileCategories({ githubTechs, favoriteTechs, cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
+  } = profileCategories({ githubTechs, favoriteTechs, goalTechs: profile?.goalTechs ?? [], cvTechs: profile?.cvTechs ?? [], color: colors.accentBright });
 
   const filtered = search.trim()
     ? allItems.filter(

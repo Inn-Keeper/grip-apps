@@ -114,3 +114,23 @@ describe("mergeTechSignals", () => {
     expect(mergeTechSignals(undefined, ["Go"])).toEqual([{ tech: "Go", score: 1 }]);
   });
 });
+
+describe("profileCategories goals", () => {
+  it("puts From My Goals first, keeping the wizard's order", () => {
+    const { displayCategories } = profileCategories({
+      githubTechs: [],
+      cvTechs: [],
+      favoriteTechs: ["Python"],
+      goalTechs: ["TypeScript", "React", "Not In Catalog"],
+      color: "#2DD4BF",
+    });
+    expect(displayCategories[0].name).toBe("From My Goals");
+    expect(displayCategories[0].items.map((item) => item.tech)).toEqual(["TypeScript", "React"]);
+    expect(displayCategories[1].name).toBe("From My Favorites");
+  });
+
+  it("has no goals category before the wizard ran", () => {
+    const { displayCategories } = profileCategories({ githubTechs: [], cvTechs: [], favoriteTechs: [], color: "#2DD4BF" });
+    expect(displayCategories.some((c) => c.name === "From My Goals")).toBe(false);
+  });
+});

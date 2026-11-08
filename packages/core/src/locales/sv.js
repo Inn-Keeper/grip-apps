@@ -56,6 +56,7 @@ export const sv = {
   "prep.cvTechsCategory": "Från ditt CV",
   "prep.githubTechsCategory": "Från GitHub-tekniker",
   "prep.favoritesCategory": "Från mina favoriter",
+  "prep.goalsCategory": "Från mina mål",
   "prep.profileTechsCategory": "Från din profil",
   "prep.ranking": "Ranking",
   "prep.strongest": "Starkaste",

@@ -56,6 +56,7 @@ export const pt = {
   "prep.cvTechsCategory": "Do seu CV",
   "prep.githubTechsCategory": "Das techs do GitHub",
   "prep.favoritesCategory": "Dos meus favoritos",
+  "prep.goalsCategory": "Dos meus objetivos",
   "prep.profileTechsCategory": "Do seu perfil",
   "prep.ranking": "Ranking",
   "prep.strongest": "Mais fortes",

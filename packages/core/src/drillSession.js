@@ -116,10 +116,11 @@ const byTech = (a, b) => a.tech.localeCompare(b.tech, undefined, { sensitivity: 
 const sortedCatalog = categories.map((c) => ({ ...c, items: [...c.items].sort(byTech) }));
 
 /**
- * The category list with "From My Favorites" on top, then "from your profile" (GitHub and CV techs).
- * @param {{ githubTechs: any[], cvTechs: string[], favoriteTechs?: string[], color: string | undefined }} input
+ * The category list with "From My Goals" (the first-run wizard) on top, then "From My Favorites",
+ * then "from your profile" (GitHub and CV techs).
+ * @param {{ githubTechs: any[], cvTechs: string[], favoriteTechs?: string[], goalTechs?: string[], color: string | undefined }} input
  */
-export function profileCategories({ githubTechs, favoriteTechs = [], cvTechs, color }) {
+export function profileCategories({ githubTechs, favoriteTechs = [], goalTechs = [], cvTechs, color }) {
   const allItems = categories.flatMap((c) =>
     c.items.map((item) => ({ ...item, category: c.name, color: c.color, emoji: c.emoji })),
   );
@@ -140,12 +141,21 @@ export function profileCategories({ githubTechs, favoriteTechs = [], cvTechs, co
   const favoritesCategory = favoriteItems.length
     ? { name: t("prep.favoritesCategory"), emoji: "★", color: categoryColor, items: favoriteItems }
     : null;
+  // The wizard's techs, in the order chosen there (stack first, then the role's).
+  const goalItems = goalTechs
+    .map((tech) => allItems.find((item) => item.tech === tech))
+    .filter(Boolean)
+    .map((item) => ({ ...item, color: categoryColor }));
+  const goalsCategory = goalItems.length
+    ? { name: t("prep.goalsCategory"), emoji: "🎯", color: categoryColor, items: goalItems }
+    : null;
   return {
     allItems,
     signals,
     profileCategory,
     favoritesCategory,
     displayCategories: [
+      ...(goalsCategory ? [goalsCategory] : []),
       ...(favoritesCategory ? [favoritesCategory] : []),
       ...(profileCategory ? [profileCategory] : []),
       ...sortedCatalog,
