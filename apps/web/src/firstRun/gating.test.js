@@ -5,8 +5,8 @@ import { shouldShowWizard } from "./gating.js";
 const session = { user: { is_anonymous: false } };
 const fresh = { onboardingCompleted: false };
 
-test("anonymous demo session never sees the wizard", () => {
-  assert.equal(shouldShowWizard({ session: { user: { is_anonymous: true } }, profile: fresh, openedManually: false }), false);
+test("anonymous demo session gets the wizard like everyone", () => {
+  assert.equal(shouldShowWizard({ session: { user: { is_anonymous: true } }, profile: fresh, openedManually: false }), true);
 });
 
 test("shows for a signed-in user with onboardingCompleted false", () => {
