@@ -4,7 +4,7 @@ import { SCENARIOS } from "@grip/core/arch";
 import { COMPETENCY_COLORS, PROMPTS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow, tints } from "@/theme";
+import { alpha, colors, font, shadow, tints } from "@/theme";
 import { Button, inputStyle } from "@/components/ui";
 import { DrillSession, type Drill } from "./DrillSession";
 
@@ -107,7 +107,7 @@ export function MockLoop({ drill, onAnswer, onNextQuestion, onExit }: Props) {
             paddingVertical: 3,
             borderRadius: 999,
             overflow: "hidden",
-            backgroundColor: `${competencyColor}20`,
+            backgroundColor: alpha(competencyColor, 0.13),
             color: competencyColor,
             fontSize: font.size.label,
             fontWeight: "700"

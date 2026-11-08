@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 import { SPEED_LIMIT_MS, SPEED_MULTIPLIER } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { alpha, colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 // The clock shows whole seconds; a 250ms tick keeps each change close to the real second.
@@ -38,8 +38,8 @@ export function SpeedClock({ shownAt }: { shownAt: number }) {
         paddingVertical: 3,
         borderRadius: 999,
         borderWidth: 1,
-        borderColor: timeUp ? colors.border : urgent ? `${colors.warning}80` : `${colors.accent}55`,
-        backgroundColor: timeUp ? "transparent" : urgent ? tints.warningSoft : `${colors.accent}1A`,
+        borderColor: timeUp ? colors.border : urgent ? alpha(colors.warning, 0.5) : alpha(colors.accent, 0.33),
+        backgroundColor: timeUp ? "transparent" : urgent ? tints.warningSoft : alpha(colors.accent, 0.1),
       }}
     >
       <BrandIcon name="spark" color={tone} size={12} />

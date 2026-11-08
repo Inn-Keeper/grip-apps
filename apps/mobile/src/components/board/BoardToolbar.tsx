@@ -1,7 +1,7 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, font, radius } from "@/theme";
+import { alpha, colors, font, radius } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 
 export type Chrome = "full" | "compact" | "zen";
@@ -84,7 +84,7 @@ function IconButton({ icon, label, onPress, enabled = true, tint, filled, badge 
         gap: 4,
         padding: 6,
         borderWidth: 1,
-        borderColor: filled ? colors.accent : `${color}50`,
+        borderColor: filled ? colors.accent : alpha(color, 0.31),
         backgroundColor: filled ? colors.accent : "transparent",
         borderRadius: radius.sm,
         opacity: enabled ? 1 : 0.4

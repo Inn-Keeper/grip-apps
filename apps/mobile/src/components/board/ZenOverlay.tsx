@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = { label: string; onExit: () => void };
@@ -17,7 +17,7 @@ export function ZenOverlay({ label, onExit }: Props) {
           left: 8,
           paddingHorizontal: 12,
           paddingVertical: 6,
-          backgroundColor: `${colors.bgDeep}b8`,
+          backgroundColor: alpha(colors.bgDeep, 0.72),
           borderRadius: 16,
         }}
       >
@@ -41,7 +41,7 @@ export function ZenOverlay({ label, onExit }: Props) {
           width: 30,
           height: 30,
           borderRadius: 15,
-          backgroundColor: `${colors.bgDeep}b8`,
+          backgroundColor: alpha(colors.bgDeep, 0.72),
           alignItems: "center",
           justifyContent: "center",
         }}

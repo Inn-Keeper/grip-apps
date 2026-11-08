@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { groupStoriesByCompetency } from "@grip/core/stories";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { MiniButton } from "@/components/ui";
 
 export type StoryItem = { id?: string; title: string; competency: string };
@@ -38,7 +38,7 @@ export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
                   alignSelf: "flex-start",
                   paddingHorizontal: 8,
                   paddingVertical: 2,
-                  backgroundColor: `${g.color}20`,
+                  backgroundColor: alpha(g.color, 0.13),
                   borderRadius: 12,
                 }}
               >
@@ -75,7 +75,7 @@ export function StoryMatchSection({ stories }: { stories: StoryItem[] }) {
                   style={{
                     paddingHorizontal: 8,
                     paddingVertical: 2,
-                    backgroundColor: `${colors.textFaint}15`,
+                    backgroundColor: alpha(colors.textFaint, 0.08),
                     borderRadius: 12,
                   }}
                 >

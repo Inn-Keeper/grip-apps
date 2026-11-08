@@ -2,7 +2,7 @@ import { Text, View } from "react-native";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@/theme";
+import { alpha, colors, font, shadow } from "@/theme";
 import { Badge } from "@/components/ui";
 
 type FunnelSummary = ReturnType<typeof buildFunnelSummary>;
@@ -20,7 +20,7 @@ function Metric({ label, value, color }: { label: string; value: string; color: 
         padding: 10,
         backgroundColor: colors.well,
         borderWidth: 1,
-        borderColor: `${color}40`,
+        borderColor: alpha(color, 0.25),
         borderRadius: 8,
         justifyContent: "center",
       }}

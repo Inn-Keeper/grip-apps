@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { ARROW_HEADS, FILL_COLORS, TEXT_ALIGNS, TEXT_COLORS, TEXT_SIZES, styleOf, type BoardNode, type FreeStyle } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type Props = { node: BoardNode; onChange: (patch: FreeStyle) => void; onDelete: () => void };
@@ -27,7 +27,7 @@ function Option({ label, pressed, onPress, children }: { label: string; pressed:
         borderRadius: 8,
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: pressed ? `${colors.accent}40` : "transparent"
+        backgroundColor: pressed ? alpha(colors.accent, 0.25) : "transparent"
       }}
     >
       {children}
@@ -76,7 +76,7 @@ export function StyleBar({ node, onChange, onDelete }: Props) {
         top: 8,
         left: 8,
         right: 8,
-        backgroundColor: `${colors.surface}f2`,
+        backgroundColor: alpha(colors.surface, 0.95),
         borderWidth: 1,
         borderColor: colors.border,
         borderRadius: 12
@@ -104,7 +104,7 @@ export function StyleBar({ node, onChange, onDelete }: Props) {
               const name = fill === "none" ? t("board.style.fill.none") : t(`board.style.color.${fill}` as Key);
               return (
                 <Option key={fill} label={t("board.style.fillOption", { color: name })} pressed={style.fill === fill} onPress={() => onChange({ fill: fill as FreeStyle["fill"] })}>
-                  <Swatch color={fill === "none" ? undefined : `${colors[fill as keyof typeof colors]}66`} />
+                  <Swatch color={fill === "none" ? undefined : alpha(colors[fill as keyof typeof colors], 0.4)} />
                 </Option>
               );
             })}

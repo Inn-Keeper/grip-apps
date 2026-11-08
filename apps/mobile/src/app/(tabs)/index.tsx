@@ -16,7 +16,7 @@ import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, read
 import { getAutoNext, getQuizSize, setAutoNext, setQuizSize } from "@/lib/quizPrefs";
 import { useScores } from "@/lib/useScores";
 import { setPrepPlan, usePrepPlan } from "@/lib/uiStore";
-import { colors, font, layout } from "@/theme";
+import { alpha, colors, font, layout } from "@/theme";
 import { PrepCard } from "@/components/PrepCard";
 import { StatsBar } from "@/components/StatsBar";
 import { needsSetup } from "@grip/core/firstRun";
@@ -310,7 +310,7 @@ export default function PrepScreen() {
                   paddingVertical: 6,
                   borderRadius: 8,
                   borderWidth: 1,
-                  borderColor: `${category.color}60`,
+                  borderColor: alpha(category.color, 0.38),
                   opacity: drillLoading ? 0.5 : 1,
                 }}
               >

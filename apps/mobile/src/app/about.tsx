@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { colors, font, radius, space, shadow } from "@/theme";
+import { alpha, colors, font, radius, space, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 type TKey = Parameters<typeof t>[0];
@@ -139,9 +139,9 @@ export default function AboutScreen() {
                   width: 36,
                   height: 36,
                   borderRadius: radius.sm,
-                  backgroundColor: `${f.color}18`,
+                  backgroundColor: alpha(f.color, 0.09),
                   borderWidth: 1,
-                  borderColor: `${f.color}30`,
+                  borderColor: alpha(f.color, 0.19),
                   alignItems: "center",
                   justifyContent: "center",
                 }}

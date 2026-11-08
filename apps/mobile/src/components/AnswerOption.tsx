@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Pressable, Text, View } from "react-native";
 import Animated, { useAnimatedStyle, useSharedValue, withSequence, withSpring, withTiming } from "react-native-reanimated";
-import { colors, font, tints } from "@/theme";
+import { alpha, colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 // idle: not answered yet · correct/wrong: the right answer and a wrong pick · dimmed: other options after answering.
@@ -14,8 +14,8 @@ const PRESS_SPRING = { damping: 18, stiffness: 320 };
 const LOOK = {
   idle: { bg: colors.surfaceHi, border: colors.border, text: colors.text },
   dimmed: { bg: colors.surfaceHi, border: colors.border, text: colors.textDim },
-  correct: { bg: tints.successSoft, border: `${colors.success}80`, text: colors.successBright },
-  wrong: { bg: tints.dangerSoft, border: `${colors.danger}80`, text: colors.dangerBright },
+  correct: { bg: tints.successSoft, border: alpha(colors.success, 0.5), text: colors.successBright },
+  wrong: { bg: tints.dangerSoft, border: alpha(colors.danger, 0.5), text: colors.dangerBright },
 };
 
 // One answer: shrinks while pressed, pops when it is the right answer, shakes when it was a wrong pick.
@@ -69,8 +69,8 @@ export function AnswerOption({ letter, text, state, color, onPress }: Props) {
             alignItems: "center",
             justifyContent: "center",
             borderWidth: 1,
-            borderColor: answered ? look.border : `${color}60`,
-            backgroundColor: answered ? "transparent" : `${color}14`,
+            borderColor: answered ? look.border : alpha(color, 0.38),
+            backgroundColor: answered ? "transparent" : alpha(color, 0.08),
           }}
         >
           {state === "correct" || state === "wrong" ? (

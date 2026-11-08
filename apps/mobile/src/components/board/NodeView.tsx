@@ -11,7 +11,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { FILL_ALPHA, MIN_CARD, MIN_SHAPE, TEXT_FONT_TOKEN, TYPE_COLORS, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import type { BoardNode } from "@grip/core/arch";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 
 export const NODE_W = 124;
@@ -224,7 +224,7 @@ export function NodeView({
             backgroundColor: isText || isShape ? "transparent" : fill,
             // Components keep the type colour on the border (node identity); shapes draw their own outline.
             borderWidth: isText || isShape ? 0 : 2,
-            borderColor: isConnectSource ? colors.textBright : selected ? colors.accent : `${color}60`,
+            borderColor: isConnectSource ? colors.textBright : selected ? colors.accent : alpha(color, 0.38),
             borderRadius: 10,
             justifyContent: note ? "flex-start" : "center",
             paddingHorizontal: padding,
@@ -244,7 +244,7 @@ export function NodeView({
             w={size.width}
             h={size.height}
             fill={fill}
-            stroke={isConnectSource ? colors.textBright : selected ? colors.accent : `${colors.textDim}99`}
+            stroke={isConnectSource ? colors.textBright : selected ? colors.accent : alpha(colors.textDim, 0.6)}
           />
         )}
         <View

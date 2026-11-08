@@ -6,7 +6,7 @@ import { TURNSTILE_SITE_KEY } from "@/lib/turnstile";
 import { Turnstile } from "@/components/Turnstile";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 
 // Email + password with in-app account creation. No email delivery anywhere:
 // requires "Confirm email" to be disabled in Supabase so signUp returns a
@@ -143,7 +143,7 @@ export function SignIn() {
           marginTop: 10,
           borderWidth: 1,
           borderStyle: "dashed",
-          borderColor: `${colors.accent}80`,
+          borderColor: alpha(colors.accent, 0.5),
           borderRadius: 12,
           padding: 12,
           opacity: busy || waitingForCaptcha ? 0.6 : 1,

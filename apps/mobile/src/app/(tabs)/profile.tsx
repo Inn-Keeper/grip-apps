@@ -7,7 +7,7 @@ import { LOCALE_LABELS, t } from "@grip/core/i18n";
 import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm } from "@grip/core/user";
 import { supabase } from "@/lib/supabase";
 import { changeLocale, useLocale } from "@/lib/useLocale";
-import { colors, font, layout, radius, space, tints, shadow } from "@/theme";
+import { alpha, colors, font, layout, radius, space, tints, shadow } from "@/theme";
 import { Button, Card, Field, HeaderAction, Screen, ScreenHeader, inputStyle } from "@/components/ui";
 import { Switch } from "@/components/Switch";
 import { ConnectionBadge } from "@/components/profile/ConnectionBadge";
@@ -501,7 +501,7 @@ export default function ProfileScreen() {
                     borderRadius: radius.sm,
                     borderWidth: 1,
                     borderColor: active ? colors.accent : colors.border,
-                    backgroundColor: active ? `${colors.accent}22` : "transparent",
+                    backgroundColor: active ? alpha(colors.accent, 0.13) : "transparent",
                     opacity: active ? 1 : 0.6,
                   }}
                 >
@@ -537,7 +537,7 @@ export default function ProfileScreen() {
               style={{
                 marginTop: space.sm,
                 borderWidth: 1,
-                borderColor: `${colors.danger}60`,
+                borderColor: alpha(colors.danger, 0.38),
                 borderRadius: radius.sm,
                 paddingVertical: space.sm,
                 alignItems: "center",

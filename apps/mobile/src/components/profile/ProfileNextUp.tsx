@@ -1,6 +1,6 @@
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "@/theme";
+import { alpha, colors, font, shadow } from "@/theme";
 
 type Props = {
   title: string;
@@ -20,7 +20,7 @@ export function ProfileNextUp({ title, sub, action, disabled }: Props) {
         gap: 6,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: `${colors.accent}60`,
+        borderColor: alpha(colors.accent, 0.38),
         boxShadow: shadow.card,
         backgroundColor: colors.surface
       }}

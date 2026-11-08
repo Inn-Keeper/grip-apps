@@ -4,7 +4,7 @@ import Animated, { FadeIn, useAnimatedStyle, useSharedValue, withSpring } from "
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { difficultyByKey, isTimedTier, speedBonusXp } from "@grip/core/difficulty";
 import { shuffle, shuffleOptions } from "@grip/core/quiz";
-import { colors, font, shadow } from "@/theme";
+import { alpha, colors, font, shadow } from "@/theme";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
@@ -177,9 +177,9 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
                 paddingHorizontal: 7,
                 paddingVertical: 2,
                 borderRadius: 999,
-                backgroundColor: `${tier.color}1A`,
+                backgroundColor: alpha(tier.color, 0.1),
                 borderWidth: 1,
-                borderColor: `${tier.color}60`
+                borderColor: alpha(tier.color, 0.38)
               }}>
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{
@@ -250,7 +250,7 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           <View style={{
               paddingHorizontal: 10,
               paddingVertical: 3,
-              backgroundColor: `${item.color}20`,
+              backgroundColor: alpha(item.color, 0.13),
               borderRadius: 20
             }}>
             <Text style={{
@@ -268,9 +268,9 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
                 paddingHorizontal: 8,
                 paddingVertical: 3,
                 borderRadius: 999,
-                backgroundColor: `${tier.color}1A`,
+                backgroundColor: alpha(tier.color, 0.1),
                 borderWidth: 1,
-                borderColor: `${tier.color}55`
+                borderColor: alpha(tier.color, 0.33)
               }}>
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{
@@ -295,7 +295,7 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
             <Text key={point} style={{
                 fontSize: font.size.small,
                 lineHeight: 17,
-                color: `${colors.textDim}CC`
+                color: alpha(colors.textDim, 0.8)
               }}>
               {"•"} {point}
             </Text>
@@ -333,9 +333,9 @@ export function PrepCard({ item, level, stat, record, addXp, loadQuiz, onQuizAct
           <View style={{
               paddingHorizontal: 14,
               paddingVertical: 7,
-              backgroundColor: `${item.color}25`,
+              backgroundColor: alpha(item.color, 0.15),
               borderWidth: 1,
-              borderColor: `${item.color}60`,
+              borderColor: alpha(item.color, 0.38),
               borderRadius: 8,
               opacity: quizLoading ? 0.6 : 1
             }}>

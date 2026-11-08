@@ -1,6 +1,6 @@
 import { Text, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { alpha, colors, font, tints } from "@/theme";
 import { MiniButton } from "@/components/ui";
 import type { SaveStatus } from "@/lib/useScores";
 
@@ -16,7 +16,7 @@ export function ProgressSaveStatus({ status }: { status: SaveStatus }) {
         gap: 6,
         backgroundColor: tints.dangerSoft,
         borderWidth: 1,
-        borderColor: `${colors.danger}60`,
+        borderColor: alpha(colors.danger, 0.38),
         borderRadius: 10
       }}>
       {loadFailed && <Text style={{

@@ -2,7 +2,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
 import type { PrepPlan } from "@/lib/uiStore";
-import { colors, font, shadow } from "@/theme";
+import { alpha, colors, font, shadow } from "@/theme";
 import { tints } from "@grip/core/tokens";
 import { BrandIcon } from "@/components/BrandIcon";
 
@@ -51,7 +51,7 @@ export function NextUpCard({ reviewDueCount, plan, attempts, needsSetup, busy, o
         gap: 6,
         borderRadius: 14,
         borderWidth: 1,
-        borderColor: `${copy.tone}60`,
+        borderColor: alpha(copy.tone, 0.38),
         boxShadow: shadow.card,
         backgroundColor: colors.surface
       }}

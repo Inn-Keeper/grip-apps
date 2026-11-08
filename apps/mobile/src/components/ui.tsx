@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { colors, font, radius, shadow, space, tints } from "@/theme";
+import { alpha, colors, font, radius, shadow, space, tints } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 import { DemoBanner } from "@/components/DemoBanner";
 import { useIsDemo } from "@/lib/useIsDemo";
@@ -76,7 +76,7 @@ type HeaderActionProps = { label: string; onPress: () => void; icon?: BrandIconN
 /** Compact action for a screen header right slot. */
 export function HeaderAction({ label, onPress, icon, tone = "accent", disabled = false }: HeaderActionProps) {
   const color = tone === "danger" ? colors.dangerBright : tone === "muted" ? colors.textDim : colors.accentBright;
-  const borderColor = tone === "danger" ? `${colors.danger}50` : tone === "muted" ? colors.border : `${colors.accent}50`;
+  const borderColor = tone === "danger" ? alpha(colors.danger, 0.31) : tone === "muted" ? colors.border : alpha(colors.accent, 0.31);
 
   return (
     <TouchableOpacity
@@ -182,7 +182,7 @@ export function Badge({ label, color }: BadgeProps) {
     <View style={{
         paddingHorizontal: space.sm,
         paddingVertical: space.xs,
-        backgroundColor: `${color}20`,
+        backgroundColor: alpha(color, 0.13),
         borderRadius: radius.pill
       }}>
       <Text style={{
@@ -206,7 +206,7 @@ export function MiniButton({ label, color, onPress }: MiniButtonProps) {
         paddingHorizontal: space.sm,
         paddingVertical: space.xs,
         borderWidth: 1,
-        borderColor: `${color}50`,
+        borderColor: alpha(color, 0.31),
         borderRadius: radius.sm
       }}
     >

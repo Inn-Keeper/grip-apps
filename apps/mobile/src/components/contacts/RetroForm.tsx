@@ -3,7 +3,7 @@ import { Text, TextInput, View } from "react-native";
 import { extractTechsFromText } from "@grip/core/techMatch";
 import { categories } from "@grip/core/prepData";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { FormActions } from "@/components/FormActions";
 import { Field, Pill, inputStyle, multilineStyle } from "@/components/ui";
 
@@ -45,7 +45,7 @@ export function RetroForm({ saving, error, onSave, onCancel }: RetroFormProps) {
         padding: 12,
         backgroundColor: colors.well,
         borderWidth: 1,
-        borderColor: `${colors.accent}60`,
+        borderColor: alpha(colors.accent, 0.38),
         borderRadius: 10,
         gap: 8,
       }}

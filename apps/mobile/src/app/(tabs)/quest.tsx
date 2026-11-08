@@ -5,7 +5,7 @@ import { STATUSES, isDue, todayDDMMYYYY } from "@grip/core/contacts";
 import { buildFunnelSummary } from "@grip/core/funnel";
 import { t } from "@grip/core/i18n";
 import { useLocale } from "@/lib/useLocale";
-import { colors, font, layout, tints } from "@/theme";
+import { alpha, colors, font, layout, tints } from "@/theme";
 import { Button, HeaderAction, Screen, ScreenHeader } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
 import { ContactCard } from "@/components/contacts/ContactCard";
@@ -112,7 +112,7 @@ export default function QuestScreen() {
                   padding: 12,
                   backgroundColor: tints.dangerSoft,
                   borderWidth: 1,
-                  borderColor: `${colors.danger}60`,
+                  borderColor: alpha(colors.danger, 0.38),
                   borderRadius: 10,
                 }}
               >

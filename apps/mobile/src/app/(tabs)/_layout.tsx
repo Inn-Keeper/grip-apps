@@ -3,10 +3,10 @@ import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { t } from "@grip/core/i18n";
 import { useTabBarHidden } from "@/lib/uiStore";
 import { useLocale } from "@/lib/useLocale";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 
 const { Icon, Label } = NativeTabs.Trigger;
-const tabChrome = `${colors.bgDeep}E6`;
+const tabChrome = alpha(colors.bgDeep, 0.9);
 // iOS 26 draws the bar in Liquid Glass; a custom background would paint over it,
 // so the dark blurred chrome is only for older iOS and Android.
 const liquidGlass = Platform.OS === "ios" && Number.parseInt(String(Platform.Version), 10) >= 26;
@@ -25,7 +25,7 @@ export default function TabLayout() {
       tintColor={colors.accent}
       backgroundColor={liquidGlass ? undefined : tabChrome}
       blurEffect={liquidGlass ? undefined : "systemUltraThinMaterialDark"}
-      shadowColor={liquidGlass ? undefined : `${colors.border}80`}
+      shadowColor={liquidGlass ? undefined : alpha(colors.border, 0.5)}
       // iOS 26: the bar shrinks to a pill while you scroll down, and returns when you scroll up.
       minimizeBehavior="onScrollDown"
       iconColor={{ default: colors.textFaint, selected: colors.accentBright }}
@@ -34,7 +34,7 @@ export default function TabLayout() {
         selected: { color: colors.accentBright, fontSize: font.size.captionLg, fontWeight: "700" },
       }}
       indicatorColor={colors.accent}
-      rippleColor={`${colors.accent}22`}
+      rippleColor={alpha(colors.accent, 0.13)}
       disableTransparentOnScrollEdge
     >
       <NativeTabs.Trigger name="index">

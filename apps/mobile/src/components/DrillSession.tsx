@@ -6,7 +6,7 @@ import { difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import { AUTO_NEXT_MS } from "@grip/core/quizPrefs";
 import { useCountUp } from "@/lib/useCountUp";
-import { colors, font, shadow } from "@/theme";
+import { alpha, colors, font, shadow } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { QuizView } from "./QuizView";
@@ -75,9 +75,9 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
             borderRadius: 24,
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: `${perfect ? colors.success : colors.accent}20`,
+            backgroundColor: alpha(perfect ? colors.success : colors.accent, 0.13),
             borderWidth: 1,
-            borderColor: `${perfect ? colors.success : colors.accent}60`,
+            borderColor: alpha(perfect ? colors.success : colors.accent, 0.38),
           }}
         >
           <BrandIcon name={perfect ? "rank" : drill.correctCount >= drill.questions.length / 2 ? "spark" : "story"} color={perfect ? colors.successBright : colors.accentBright} size={25} />
@@ -117,7 +117,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
               accessibilityRole="button"
               style={{
                 borderWidth: 1,
-                borderColor: `${colors.accent}60`,
+                borderColor: alpha(colors.accent, 0.38),
                 borderRadius: 8,
                 paddingHorizontal: 16,
                 paddingVertical: 9
@@ -191,9 +191,9 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
                 paddingHorizontal: 7,
                 paddingVertical: 2,
                 borderRadius: 999,
-                backgroundColor: `${tier.color}1A`,
+                backgroundColor: alpha(tier.color, 0.1),
                 borderWidth: 1,
-                borderColor: `${tier.color}60`
+                borderColor: alpha(tier.color, 0.38)
               }}>
               <DifficultyIcon tier={tier} size={11} />
               <Text style={{

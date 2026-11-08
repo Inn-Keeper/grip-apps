@@ -4,7 +4,7 @@ import Animated, { Easing, FadeInRight, useAnimatedStyle, useReducedMotion, useS
 import * as Haptics from "expo-haptics";
 import { techLinks } from "@grip/core/techLinks";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { AnswerOption, type OptionState } from "./AnswerOption";
 import { SpeedClock } from "./SpeedClock";
 
@@ -154,9 +154,9 @@ export function QuizView({ tech, color, question, questionNumber, total, answere
               style={{
                 paddingHorizontal: 14,
                 paddingVertical: 7,
-                backgroundColor: `${color}25`,
+                backgroundColor: alpha(color, 0.15),
                 borderWidth: 1,
-                borderColor: `${color}60`,
+                borderColor: alpha(color, 0.38),
                 borderRadius: 8,
                 overflow: "hidden",
               }}
@@ -193,7 +193,7 @@ function ProgressSegments({ color, current, total }: { color: string; current: n
             flex: 1,
             height: 4,
             borderRadius: 2,
-            backgroundColor: i + 1 === current ? color : i + 1 < current ? `${color}80` : colors.well,
+            backgroundColor: i + 1 === current ? color : i + 1 < current ? alpha(color, 0.5) : colors.well,
           }}
         />
       ))}
@@ -232,5 +232,5 @@ function AutoNextFill({ ms, color }: { ms: number; color: string }) {
   }, [ms, progress]);
   const style = useAnimatedStyle(() => ({ width: `${progress.value * 100}%` }));
   if (reduceMotion) return null;
-  return <Animated.View pointerEvents="none" style={[{ position: "absolute", top: 0, bottom: 0, left: 0, backgroundColor: `${color}40` }, style]} />;
+  return <Animated.View pointerEvents="none" style={[{ position: "absolute", top: 0, bottom: 0, left: 0, backgroundColor: alpha(color, 0.25) }, style]} />;
 }

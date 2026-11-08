@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Linking, Text, TouchableOpacity, View } from "react-native";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow, tints } from "@/theme";
+import { alpha, colors, font, shadow, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Badge, MiniButton, Section } from "@/components/ui";
 import type { Contact } from "@grip/core/api";
@@ -54,7 +54,7 @@ export function ContactCard({
       style={{
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: due ? `${colors.danger}80` : colors.borderSoft,
+        borderColor: due ? alpha(colors.danger, 0.5) : colors.borderSoft,
         boxShadow: shadow.card,
         borderRadius: 14,
         padding: 16,
@@ -119,7 +119,7 @@ export function ContactCard({
             padding: 10,
             backgroundColor: due ? tints.dangerSoft : tints.warningSoft,
             borderWidth: 1,
-            borderColor: due ? `${colors.danger}60` : `${colors.warning}40`,
+            borderColor: due ? alpha(colors.danger, 0.38) : alpha(colors.warning, 0.25),
             borderRadius: 8,
           }}
         >

@@ -1,7 +1,7 @@
 import { ActivityIndicator, KeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, Text, TextInput, View } from "react-native";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { alpha, colors, font, tints } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { Button, MiniButton } from "@/components/ui";
 import type { TalkGradeResult } from "@/queries/board";
@@ -137,7 +137,7 @@ export function TalkTrackSheet({
                       padding: 10,
                       backgroundColor: colors.bgDeep,
                       borderWidth: 1,
-                      borderColor: covered ? `${colors.success}55` : colors.border,
+                      borderColor: covered ? alpha(colors.success, 0.33) : colors.border,
                       borderRadius: 8,
                       color: colors.text,
                       fontSize: font.size.smallLg,

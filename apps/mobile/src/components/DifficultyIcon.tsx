@@ -1,4 +1,5 @@
 import { View } from "react-native";
+import { alpha } from "@/theme";
 
 type DifficultyTier = { key: string; color: string };
 
@@ -131,7 +132,7 @@ export function DifficultyIcon({ tier, size = 18 }: Props) {
           height: 12 * scale,
           borderWidth: Math.max(1, 1.5 * scale),
           borderColor: color,
-          backgroundColor: `${color}22`,
+          backgroundColor: alpha(color, 0.13),
           transform: [{ rotate: "45deg" }],
         }}
       />

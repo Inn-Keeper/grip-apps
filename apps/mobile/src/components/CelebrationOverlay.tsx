@@ -11,7 +11,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from "react-native-reanimated";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 
 type Props = {
   title: string;
@@ -91,7 +91,7 @@ export function CelebrationOverlay({ title, subtitle, accent = colors.accent, on
         </Canvas>
       )}
 
-      <Animated.View entering={ZoomIn.springify().damping(12)} style={[styles.badge, { borderColor: `${accent}90` }]}>
+      <Animated.View entering={ZoomIn.springify().damping(12)} style={[styles.badge, { borderColor: alpha(accent, 0.56) }]}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.subtitle}>{subtitle}</Text>
       </Animated.View>
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFill,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: `${colors.bg}a8`,
+    backgroundColor: alpha(colors.bg, 0.66),
     zIndex: 20,
   },
   badge: {
@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
     borderRadius: 14,
     borderWidth: 1,
-    backgroundColor: `${colors.surface}f2`,
+    backgroundColor: alpha(colors.surface, 0.95),
     alignItems: "center",
     gap: 6,
   },

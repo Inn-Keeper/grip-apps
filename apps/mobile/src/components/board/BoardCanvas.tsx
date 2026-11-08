@@ -22,7 +22,7 @@ const edgeGeometry = (a: BoardNode, b: BoardNode) => geometryFor(a, b, sizeOf(a)
 const trianglePath = (points: string) => `M ${points.split(" ").join(" L ").replace(/,/g, " ")} Z`;
 type EdgeGeometry = ReturnType<typeof edgeGeometry>;
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { BrandIcon } from "@/components/BrandIcon";
 import { NODE_H, NODE_W, NodeView } from "./NodeView";
 import type { Tool } from "./BoardTools";
@@ -425,7 +425,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
             {selectedArrow && (
               <Path
                 path={`M ${selectedArrow.x} ${selectedArrow.y} L ${selectedArrow.x2 ?? selectedArrow.x} ${selectedArrow.y2 ?? selectedArrow.y}`}
-                color={`${colors.accent}59`}
+                color={alpha(colors.accent, 0.35)}
                 style="stroke"
                 strokeWidth={8}
                 strokeCap="round"
@@ -517,7 +517,7 @@ export function BoardCanvas({ nodes, edges, onMoveNode, onRemoveNode, onAddEdge,
               alignSelf: "center",
               paddingHorizontal: 14,
               paddingVertical: 7,
-              backgroundColor: `${colors.accent}30`,
+              backgroundColor: alpha(colors.accent, 0.19),
               borderWidth: 1,
               borderColor: colors.accent,
               borderRadius: 20,

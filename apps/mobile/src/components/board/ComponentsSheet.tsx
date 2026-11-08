@@ -1,7 +1,7 @@
 import { Modal, Pressable, ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { NODE_TYPES, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { alpha, colors, font, tints } from "@/theme";
 import { BrandIcon, nodeIconName } from "@/components/BrandIcon";
 
 type Props = { visible: boolean; onAdd: (type: string) => void; onClose: () => void };
@@ -52,7 +52,7 @@ export function ComponentsSheet({ visible, onAdd, onClose }: Props) {
                 paddingHorizontal: 10,
                 backgroundColor: colors.bgDeep,
                 borderWidth: 1,
-                borderColor: `${TYPE_COLORS[spec.type] ?? colors.textDim}40`,
+                borderColor: alpha(TYPE_COLORS[spec.type] ?? colors.textDim, 0.25),
                 borderRadius: 8
               }}
             >

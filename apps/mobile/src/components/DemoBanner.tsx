@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
 import { linkGitHubIdentity } from "@/lib/oauth";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 
 // Shown to anonymous (demo) sessions. Linking GitHub upgrades the same user, so demo progress is kept.
 export function DemoBanner() {
@@ -33,9 +33,9 @@ export function DemoBanner() {
         columnGap: 8,
         paddingHorizontal: 16,
         paddingVertical: 4,
-        backgroundColor: `${colors.accent}14`,
+        backgroundColor: alpha(colors.accent, 0.08),
         borderBottomWidth: 1,
-        borderBottomColor: `${colors.accent}40`,
+        borderBottomColor: alpha(colors.accent, 0.25),
       }}
     >
       <Text style={{

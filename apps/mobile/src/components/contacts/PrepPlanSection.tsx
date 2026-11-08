@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { buildPrepPlan } from "@grip/core/prepPlan";
 import { readinessSignals } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@/theme";
+import { alpha, colors, font, tints } from "@/theme";
 import { setPrepPlan } from "@/lib/uiStore";
 import type { Contact } from "@grip/core/api";
 import type { StoryItem } from "./StoryMatchSection";
@@ -43,7 +43,7 @@ export function PrepPlanSection({
         padding: 10,
         backgroundColor: tints.accentSoft,
         borderWidth: 1,
-        borderColor: `${colors.accent}40`,
+        borderColor: alpha(colors.accent, 0.25),
         borderRadius: 8,
         gap: 8,
       }}

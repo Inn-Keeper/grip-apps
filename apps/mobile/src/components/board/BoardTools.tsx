@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "@/theme";
+import { alpha, colors, font } from "@/theme";
 import { BrandIcon, type BrandIconName } from "@/components/BrandIcon";
 
 export type Tool = "text" | "arrow" | "line";
@@ -44,7 +44,7 @@ function ToolButton({ label, hint, active, onPress, children }: { label: string;
         alignItems: "center",
         justifyContent: "center",
         gap: 6,
-        backgroundColor: active ? `${colors.accent}40` : "transparent"
+        backgroundColor: active ? alpha(colors.accent, 0.25) : "transparent"
       }}
     >
       {children}
@@ -62,7 +62,7 @@ export function BoardTools({ onOpenComponents, onAddShape, tool, onTool }: Props
         bottom: 8,
         left: 8,
         right: 8,
-        backgroundColor: `${colors.bgDeep}e6`,
+        backgroundColor: alpha(colors.bgDeep, 0.9),
         borderWidth: 1,
         borderColor: colors.border,
         borderRadius: 12
