@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- Chat with Poe: an in-app guide on every signed-in web screen that answers how to use Grip, in Poe's voice. On Prep the mascot opens it. Five messages a day per user while we validate it; nothing is stored. Needs grip-ai-api with `AI_MODEL_POE`.
 - The header logo on web links to the home page (Prep) when signed in.
 - Standalone first-open journey mockup (`docs/first-open-mockup.html`) for UI validation; prototype only.
 - First-run wizard on web (design in `docs/superpowers/specs/2026-11-08-first-run-wizard-design.md`): stack, goal (with an optional design brief), target role with a job link or description, and optional experience (a CV redacted in the browser plus a few notes). Review names the AI provider before anything is sent. Gemini then writes a playbook of likely interview questions as sample STAR stories and one scored Arch Board scenario, which technical stories link to. Poe walks across the screen in pixel-art style while it waits (placeholder sprite). The user lands on Prep, Stories or the board, depending on the goal.

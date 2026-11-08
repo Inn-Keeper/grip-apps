@@ -13,7 +13,8 @@ export function PoeChatProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpenState] = useState(false);
   const [messages, setMessages] = useState<Turn[]>([]);
   const [pending, setPending] = useState(false);
-  const [unavailable, setUnavailable] = useState(false);
+  // No AI URL means no chat at all; the mascot then keeps its thought line.
+  const [unavailable, setUnavailable] = useState(!poeChat);
   const [errorLine, setErrorLine] = useState("");
   const opener = useRef<HTMLElement | null>(null);
 

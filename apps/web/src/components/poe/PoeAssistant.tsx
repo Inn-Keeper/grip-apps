@@ -1,10 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { brand } from "@grip/core/tokens";
+import { t } from "@grip/core/i18n";
 import { colors } from "../../lib/tokens";
 import { poeLineFor } from "./poeAssistantUtils";
 import { useFooterLift, usePoeMascotVisible } from "./usePoeHooks";
 import styles from "./PoeAssistant.module.css";
 import { PoeIdle } from "./PoeIdle";
+import { usePoeChat } from "./poeChatContext";
 
 const REACTION_MS = 3600;
 const SHINE_MS = 1400;
@@ -22,6 +24,11 @@ const poseByMood = {
 type Cue = { type: string; id?: number } | null;
 export function PoeAssistant({ cue }: { cue: Cue }) {
   const visible = usePoeMascotVisible();
+  const chat = usePoeChat();
+  const chatOpen = chat?.open ?? false;
+  // A ref, so closing the chat does not replay the last cue.
+  const chatOpenRef = useRef(chatOpen);
+  chatOpenRef.current = chatOpen;
   const [mood, setMood] = useState("idle");
   const [message, setMessage] = useState("");
   const [messageKey, setMessageKey] = useState(0);
@@ -76,10 +83,18 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
     };
   }, [visible]);
 
+  // Reactions would float over the chat panel, so they wait while it is open.
   useEffect(() => {
-    if (!cue?.type) return;
+    if (!cue?.type || chatOpenRef.current) return;
     showReaction(cue.type, cue.id ?? Date.now());
   }, [cue, showReaction]);
+
+  useEffect(() => {
+    if (!chatOpen) return;
+    if (resetTimer.current) window.clearTimeout(resetTimer.current);
+    setMood("idle");
+    setMessage("");
+  }, [chatOpen]);
 
   const imageSrc = (poseByMood as Record<string, string>)[mood] ?? poseByMood.idle;
   const accent =
@@ -93,7 +108,7 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
       // "resting": idle with nothing to say. Where Poe would sit on top of content (narrow or
       // short screens), the stylesheet hides him while resting, so he only covers a spot
       // for the moment he reacts (rule 7).
-      className={`${styles.assistant} ${styles[mood]} ${shining ? styles.shine : ""} ${mood === "idle" && !message ? styles.resting : ""}`}
+      className={`${styles.assistant} ${styles[mood]} ${shining ? styles.shine : ""} ${mood === "idle" && !message && !chatOpen ? styles.resting : ""}`}
       aria-label={label}
       style={{ "--poe-lift": `${footerLift}px` } as React.CSSProperties}
     >
@@ -110,9 +125,11 @@ export function PoeAssistant({ cue }: { cue: Cue }) {
       <button
         type="button"
         className={styles.perch}
-        onClick={() => showReaction("thinking")}
-        aria-label={`Ask ${brand.mascotName} for a thought`}
-        title={`Ask ${brand.mascotName} for a thought`}
+        // Without a chat (no AI URL, or the API has no Gemini) Poe keeps his old thought line.
+        onClick={() => (chat && !chat.unavailable ? chat.setOpen(!chat.open) : showReaction("thinking"))}
+        aria-label={chat && !chat.unavailable ? t("poe.chat.label") : `Ask ${brand.mascotName} for a thought`}
+        aria-expanded={chat && !chat.unavailable ? chat.open : undefined}
+        title={chat && !chat.unavailable ? t("poe.chat.label") : `Ask ${brand.mascotName} for a thought`}
       >
         {mood === "idle" ? (
           <PoeIdle />
