@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { canContinue, initialWizard, playbookRequest, profileUpdate, wizardReducer } from "./wizardState.js";
+import { canContinue, initialWizard, playbookRequest, prepPlanTechs, profileUpdate, wizardReducer } from "./wizardState.js";
 
 const profile = { favoriteTechs: ["React", "SQL"], targetRole: "Backend Engineer" };
 const run = (state, ...actions) => actions.reduce(wizardReducer, state);
@@ -65,4 +65,9 @@ test("playbook request respects the API caps", () => {
   assert.equal(req.role.length, 120);
   assert.equal(req.locale, "pt");
   assert.deepEqual(req.notes, []);
+});
+
+test("prep plan techs put the stack first, then the role's techs, once each", () => {
+  const state = { ...initialWizard(profile), jobTechs: ["React", "Python", "SQL"] };
+  assert.deepEqual(prepPlanTechs(state), ["React", "SQL", "Python"]);
 });

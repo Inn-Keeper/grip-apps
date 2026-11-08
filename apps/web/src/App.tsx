@@ -118,10 +118,11 @@ export default function App() {
     setup !== "closed" &&
     shouldShowWizard({ session, profile: profileQuery.isSuccess ? profileQuery.data : undefined, openedManually: setup === "open" });
   const openSetup = () => setSetup("open");
-  const landFromSetup = ({ page: target, scenarioId }: Landing) => {
+  const landFromSetup = ({ page: target, scenarioId, boardId }: Landing) => {
     saveProfile.mutate({ onboardingCompleted: true });
     setSetup("closed");
-    if (target === "board" && scenarioId) openInBoard({ scenarioId });
+    // The starter board opens saved, so the user starts from its components.
+    if (target === "board" && scenarioId) openInBoard(boardId ? { scenarioId, boardId } : { scenarioId });
     else selectPage(target);
   };
   const exploreFirst = () => {

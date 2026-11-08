@@ -5,7 +5,7 @@ export const STEPS = ["stack", "goal", "role", "experience", "review", "generate
 /**
  * @typedef {"technical" | "stories" | "design" | "explore"} Goal
  * @typedef {{ step: string, stack: string[], goal: Goal | "", brief: string, role: string,
- *   jobInput: string, jobText: string, cvText: string, notes: string[] }} WizardState
+ *   jobInput: string, jobText: string, jobTechs: string[], cvText: string, notes: string[] }} WizardState
  */
 
 /** @param {{ favoriteTechs?: string[], targetRole?: string } | null} profile @returns {WizardState} */
@@ -18,6 +18,7 @@ export function initialWizard(profile) {
     role: profile?.targetRole ?? "",
     jobInput: "",
     jobText: "",
+    jobTechs: [],
     cvText: "",
     notes: ["", "", ""],
   };
@@ -80,4 +81,9 @@ export function playbookRequest(state, locale) {
     notes: state.notes.filter((n) => n.trim()),
     locale,
   };
+}
+
+/** Techs for Prep's plan banner: the stack first, then what the role asks for. */
+export function prepPlanTechs(state) {
+  return [...new Set([...state.stack, ...state.jobTechs])].slice(0, 8);
 }

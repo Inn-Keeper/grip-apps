@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { colors, font, radius, space } from "../lib/tokens";
+import { colors, font, radius, space, tints } from "../lib/tokens";
 
 // Shared wizard look: calm surfaces, teal only on the selected state and the primary action.
 export const primaryBtn = (enabled = true): CSSProperties => ({
@@ -35,7 +35,7 @@ export const choiceBtn = (selected: boolean): CSSProperties => ({
   padding: `${space.sm + 2}px ${space.lg}px`,
   borderRadius: radius.sm,
   border: `1px solid ${selected ? colors.accent : colors.border}`,
-  background: selected ? colors.accentSoft : colors.surface,
+  background: selected ? tints.accentSoft : colors.surface,
   color: colors.text,
   fontSize: font.size.body,
   textAlign: "left",

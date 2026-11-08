@@ -9,12 +9,13 @@ import { storyQueryKeys } from "../storyBank/queries";
 import { space } from "../lib/tokens";
 import { PoeWalk } from "./PoeWalk";
 import { ghostBtn, primaryBtn } from "./styles";
-import { playbookRequest, type WizardState } from "./wizardState.js";
+import { playbookRequest, prepPlanTechs, type WizardState } from "./wizardState.js";
+import { writePrepPlan } from "../lib/prepPlanHandoff";
 
 type Key = Parameters<typeof t>[0];
-type Progress = { scenarioId: string | null; saved: string[] };
+type Progress = { scenarioId: string | null; boardId?: string | null; saved: string[] };
 type Playbook = Parameters<typeof savePlaybook>[0];
-export type Landing = { page: string; scenarioId: string | null };
+export type Landing = { page: string; scenarioId: string | null; boardId?: string | null };
 
 const ERROR_KEYS: Record<string, string> = {
   playbook_daily_limit: "firstRun.error.playbook_daily_limit",
@@ -49,22 +50,31 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
   const started = useRef(false);
   const retryLeft = useCountdown(error?.retryAfter ?? null);
   const goal = state.goal || "explore";
+  const label = playbookLabel({ role: state.role, goal });
+
+  // Prep picks the plan up as its banner, so the goals show up there too.
+  const land = () => {
+    const techs = prepPlanTechs(state);
+    if (techs.length) writePrepPlan({ name: label, deadline: "", techs });
+    onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
+  };
 
   const save = async () => {
     setPhase("saving");
     const result = await savePlaybook(
       playbook.current!,
-      { label: playbookLabel({ role: state.role, goal }), upsertCustomScenario: api.upsertCustomScenario, upsertStory: api.upsertStory },
+      { label, upsertCustomScenario: api.upsertCustomScenario, upsertBoard: api.upsertBoard, upsertStory: api.upsertStory },
       progress.current,
     );
     progress.current = result;
     queryClient.invalidateQueries({ queryKey: storyQueryKeys.stories });
     queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.customScenarios });
+    queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.boards });
     if (result.failed.length) {
       setPartial({ saved: result.saved.length, total: playbook.current!.stories.length });
       return setPhase("partial");
     }
-    onLand({ page: landingFor(goal), scenarioId: result.scenarioId });
+    land();
   };
 
   const run = async () => {
@@ -93,7 +103,7 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
   useEffect(() => {
     if (started.current) return;
     started.current = true;
-    if (!api.playbookApi) return onLand({ page: landingFor(goal), scenarioId: null });
+    if (!api.playbookApi) return land();
     run();
     // Runs once per visit to this step; the Review button is the only way in.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -101,7 +111,7 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
 
   const instead = () => {
     abort.current?.abort();
-    onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId });
+    land();
   };
 
   return (
