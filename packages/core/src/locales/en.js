@@ -1035,4 +1035,9 @@ export const en = {
   "firstRun.role.readNone": "Read the listing, but none of its technologies are in Grip yet.",
   "firstRun.experience.cvReplace": "Upload another CV",
   "firstRun.experience.cvHint": "PDF or TXT. It's read here, in your browser.",
+  "nextUp.setupTitle": "Get your interview playbook",
+  "nextUp.setupSub": "2 minutes: your stack, your goal, your target role. Grip writes the likely questions and a board to practice.",
+  "nextUp.setupAction": "Set it up",
+  "nextUp.setupWebHint": "Opens Grip on the web.",
+  "nextUp.altSetup": "set up your playbook",
 };

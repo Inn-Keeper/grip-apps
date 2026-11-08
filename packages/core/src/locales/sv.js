@@ -1035,4 +1035,9 @@ export const sv = {
   "firstRun.role.readNone": "Annonsen är läst, men ingen av dess teknologier finns i Grip än.",
   "firstRun.experience.cvReplace": "Ladda upp ett annat CV",
   "firstRun.experience.cvHint": "PDF eller TXT. Det läses här, i din webbläsare.",
+  "nextUp.setupTitle": "Skaffa din intervju-playbook",
+  "nextUp.setupSub": "2 minuter: din stack, ditt mål, din roll. Grip skriver de troliga frågorna och en tavla att öva på.",
+  "nextUp.setupAction": "Ställ in",
+  "nextUp.setupWebHint": "Öppnar Grip på webben.",
+  "nextUp.altSetup": "ställa in din playbook",
 };

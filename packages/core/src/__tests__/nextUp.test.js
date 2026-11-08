@@ -22,4 +22,22 @@ describe("pickNextUp", () => {
       alternatives: ["warmup"],
     });
   });
+
+  it("leads with setup for a new user who has no playbook", () => {
+    expect(pickNextUp({ reviewDueCount: 0, hasPlan: false, attempts: 0, needsSetup: true })).toEqual({
+      primary: "setup",
+      alternatives: ["warmup"],
+    });
+  });
+
+  it("keeps setup as the last alternative once there is history", () => {
+    expect(pickNextUp({ reviewDueCount: 0, hasPlan: false, attempts: 4, needsSetup: true })).toEqual({
+      primary: "weakest",
+      alternatives: ["setup"],
+    });
+  });
+
+  it("drops setup once a playbook exists", () => {
+    expect(pickNextUp({ reviewDueCount: 0, hasPlan: false, attempts: 0, needsSetup: false }).alternatives).not.toContain("setup");
+  });
 });

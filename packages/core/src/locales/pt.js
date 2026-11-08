@@ -1035,4 +1035,9 @@ export const pt = {
   "firstRun.role.readNone": "Lemos a vaga, mas nenhuma tecnologia dela está no Grip ainda.",
   "firstRun.experience.cvReplace": "Enviar outro CV",
   "firstRun.experience.cvHint": "PDF ou TXT. A leitura acontece aqui, no seu navegador.",
+  "nextUp.setupTitle": "Monte seu playbook de entrevistas",
+  "nextUp.setupSub": "2 minutos: sua stack, seu objetivo, sua vaga. O Grip escreve as perguntas prováveis e um quadro para praticar.",
+  "nextUp.setupAction": "Configurar",
+  "nextUp.setupWebHint": "Abre o Grip na web.",
+  "nextUp.altSetup": "montar seu playbook",
 };

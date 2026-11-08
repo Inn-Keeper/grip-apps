@@ -1,4 +1,4 @@
-import { cleanJobText, createPlaybookApi, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv, savePlaybook } from "../firstRun.js";
+import { cleanJobText, createPlaybookApi, needsSetup, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv, savePlaybook } from "../firstRun.js";
 
 describe("redactCv", () => {
   test("redacts email, phone, url and address", () => {
@@ -168,5 +168,14 @@ describe("savePlaybook starter board", () => {
     const first = await savePlaybook(book, deps);
     await savePlaybook(book, deps, first);
     expect(upsertBoard).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("needsSetup", () => {
+  test("true until a story carries a playbook label; unknown while loading", () => {
+    expect(needsSetup(undefined)).toBe(false);
+    expect(needsSetup([])).toBe(true);
+    expect(needsSetup([{ playbook: null }])).toBe(true);
+    expect(needsSetup([{ playbook: "Backend Engineer" }])).toBe(false);
   });
 });

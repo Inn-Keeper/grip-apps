@@ -159,3 +159,12 @@ export async function savePlaybook(playbook, { label, upsertCustomScenario, upse
   }
   return { scenarioId, boardId, saved, failed };
 }
+
+/**
+ * Whether Next Up should offer the wizard: no generated playbook yet. False while
+ * stories are still loading, so the suggestion never flashes in and out.
+ * @param {{ playbook?: string | null }[] | undefined | null} stories
+ */
+export function needsSetup(stories) {
+  return Array.isArray(stories) && !stories.some((story) => story.playbook);
+}
