@@ -1,6 +1,6 @@
 import { isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors } from "../lib/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import type { Contact } from "./types";
 

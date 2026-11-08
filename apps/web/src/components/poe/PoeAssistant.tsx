@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { brand, colors } from "@grip/core/tokens";
+import { brand } from "@grip/core/tokens";
+import { colors } from "../../lib/tokens";
 import {
   POE_ASSISTANT_PREF_EVENT,
   POE_ASSISTANT_VISIBLE_KEY,

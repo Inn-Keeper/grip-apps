@@ -1,7 +1,7 @@
 import type React from "react";
 import { ARROW_HEADS, FILL_COLORS, TEXT_ALIGNS, TEXT_COLORS, TEXT_SIZES, styleOf, type FreeStyle } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { alpha, colors } from "@grip/core/tokens";
+import { alpha, colors } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
 import { STYLE_SHORTCUTS } from "./freeStyle.js";

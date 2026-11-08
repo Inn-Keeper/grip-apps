@@ -1,7 +1,7 @@
 import { useId, useRef, type CSSProperties } from "react";
 import { ABBREVIATIONS, splitAbbreviations } from "@grip/core/abbreviations";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors } from "../lib/tokens";
 import styles from "./AbbrText.module.css";
 
 /**

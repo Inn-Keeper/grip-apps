@@ -76,6 +76,32 @@ export default tseslint.config(
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     },
   },
+  // Light mode: web colors are CSS variables, so hex alpha concatenation and core hex palettes break.
+  {
+    files: ["apps/web/src/**/*.{ts,tsx}"],
+    ignores: ["apps/web/src/lib/tokens.ts", "apps/web/src/lib/tokenVars.ts"],
+    rules: {
+      "no-restricted-syntax": [
+        "error",
+        {
+          selector: "TemplateElement:not(:first-child)[value.raw=/^[0-9A-Fa-f]{2}([^\\w%.]|$)/]",
+          message: "Use alpha(color, opacity) instead of appending hex alpha to a color.",
+        },
+      ],
+      "no-restricted-imports": [
+        "error",
+        {
+          paths: [
+            {
+              name: "@grip/core/tokens",
+              importNames: ["colors", "tints", "shadow", "themes"],
+              message: "Import theme tokens from lib/tokens so they follow the active theme.",
+            },
+          ],
+        },
+      ],
+    },
+  },
   {
     files: ["*.config.{js,cjs,mjs,ts}", "scripts/**/*.{js,cjs,mjs,ts}", "packages/core/**/*.js"],
     languageOptions: {

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,7 +16,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: #14171F; } /* keep in sync with tokens.colors.bg */
+      body { background: var(--c-bg, #14171F); } /* fallback = dark bg, before tokenVars runs */
       /* Field focus ring (accentBright); fields set no outline of their own. */
       input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid #2DD4BF; outline-offset: 1px; }
       /* Scroll targets clear the sticky header; App.tsx measures it into --header-h. At

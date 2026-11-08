@@ -59,6 +59,16 @@ theme on web and mobile without changing the default.
 
 Plan each phase before starting it.
 
+## Phase notes
+
+- Phase 1 done 2026-11-08.
+- Phase 2 done 2026-11-08. Sign-in and the share page match the pre-phase-2 build pixel for pixel, except a 2/255 drift from rounding alpha suffixes to two-decimal opacities.
+- For phase 3:
+  - Core data colors are fixed dark hex and do not follow the theme: `TYPE_COLORS` (arch.js), difficulty tiers (`colors.deco*` in difficulty.js) and other prep data colors.
+  - Raw black shadows and white top glints remain in about 20 places (tour.css, Switch, Combobox, PoeAssistant glows, Metric and ArchBoard shine). Tune them during the light review.
+  - Only Chromium was available to test; WebKit and Firefox are unchecked.
+  - Signed-in screens were not screenshotted (doing so would create an anonymous user in Supabase).
+
 ## Proposed light palette
 
 A starting point, tuned during phase 3.

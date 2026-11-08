@@ -1,4 +1,4 @@
-import { alpha, colors } from "@grip/core/tokens";
+import { alpha, colors } from "../lib/tokens";
 import styles from "./Switch.module.css";
 
 // The app's one on/off control (Profile connections, Poe, Prep's Auto-next): a button with

@@ -1,4 +1,4 @@
-import { colors } from "@grip/core/tokens";
+import { colors } from "../lib/tokens";
 
 // Web port of apps/mobile/src/components/BrandIcon.tsx — keep the icon
 // geometry in sync with the mobile component ("search" and "cost" are web-only).

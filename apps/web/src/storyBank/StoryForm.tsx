@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { COMPETENCIES, COMPETENCY_COLORS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, shadow } from "@grip/core/tokens";
+import { colors, shadow } from "../lib/tokens";
 import { Combobox } from "../components/Combobox";
 import { ScenarioForm } from "../archBoard/ScenarioForm";
 import { useSaveScenarioMutation } from "../archBoard/queries";

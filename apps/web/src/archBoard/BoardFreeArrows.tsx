@@ -2,7 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors } from "../lib/tokens";
 import styles from "./ArchBoard.module.css";
 import { headPoints } from "@grip/core/edgeGeometry";
 import { nudgeFromKey } from "./boardControls";

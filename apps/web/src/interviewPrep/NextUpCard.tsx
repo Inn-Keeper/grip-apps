@@ -1,6 +1,7 @@
 import { pickNextUp, type NextUpKind } from "@grip/core/nextUp";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "@grip/core/tokens";
+import { font } from "@grip/core/tokens";
+import { colors, tints } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import type { StoredPrepPlan } from "../lib/prepPlanHandoff";

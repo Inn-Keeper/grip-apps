@@ -1,6 +1,6 @@
 import type React from "react";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
 import { cornerButton, type ConnectSide } from "./boardControls";

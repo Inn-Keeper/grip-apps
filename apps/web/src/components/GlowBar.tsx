@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { alpha, colors } from "@grip/core/tokens";
+import { alpha, colors } from "../lib/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import styles from "./Metric.module.css";
 

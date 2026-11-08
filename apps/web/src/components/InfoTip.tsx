@@ -1,6 +1,6 @@
 import { useId, type CSSProperties, type ReactNode } from "react";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { colors } from "../lib/tokens";
 import { BrandIcon } from "./BrandIcon";
 import styles from "./InfoTip.module.css";
 
