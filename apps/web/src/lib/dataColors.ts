@@ -1,8 +1,10 @@
 import { TYPE_COLORS } from "@grip/core/arch";
 import { DIFFICULTIES } from "@grip/core/difficulty";
+import { STATUS_STYLES } from "@grip/core/contacts";
 import { colorByTech } from "@grip/core/drillSession";
 import { categories } from "@grip/core/prepData";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
+import { alpha } from "./tokens";
 
 const themed = (hex: string) => (hex.startsWith("#") ? `color-mix(in srgb, ${hex}, black var(--data-shade))` : hex);
 
@@ -13,4 +15,8 @@ export function themeDataColors() {
     for (const key of Object.keys(map)) map[key] = themed(map[key]!);
   }
   for (const item of [...DIFFICULTIES, ...categories] as { color: string }[]) item.color = themed(item.color);
+  for (const status of Object.values(STATUS_STYLES) as { color: string; bg: string }[]) {
+    status.color = themed(status.color);
+    status.bg = alpha(status.color, 0.13);
+  }
 }

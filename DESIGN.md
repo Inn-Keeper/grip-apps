@@ -88,7 +88,7 @@ token is darker than its base (`accentBright #0F766E`, `successBright #15803D`,
 background.
 
 **Data colors in light.** Pastel data colors (node types, prep categories, competencies,
-difficulty) stay Tailwind-400 hex in core. The light theme mixes them with black by its
+difficulty, contact statuses) stay Tailwind-400 hex in core. The light theme mixes them with black by its
 `dataShade` (50%): web through `--data-shade` (`apps/web/src/lib/dataColors.ts`), mobile through
 `shade()`. A new core color map must be added to those and to the token contrast test.
 

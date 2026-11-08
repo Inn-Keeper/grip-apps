@@ -1,4 +1,5 @@
 import { TYPE_COLORS } from "../arch.js";
+import { STATUS_STYLES } from "../contacts.js";
 import { DIFFICULTIES } from "../difficulty.js";
 import { categories } from "../prepData.js";
 import { COMPETENCY_COLORS } from "../stories.js";
@@ -84,6 +85,7 @@ it("keeps shaded data colors readable in the light theme", () => {
     ...Object.values(COMPETENCY_COLORS),
     ...DIFFICULTIES.map((d) => d.color),
     ...categories.map((c) => c.color),
+    ...Object.values(STATUS_STYLES).map((s) => s.color),
   ];
   for (const color of data) {
     for (const background of [colors.bg, colors.surface, colors.surfaceHi]) {
