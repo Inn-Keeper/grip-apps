@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Added
 
+- The header logo on web links to the home page (Prep) when signed in.
 - Standalone first-open journey mockup (`docs/first-open-mockup.html`) for UI validation; prototype only.
 - First-run wizard on web (design in `docs/superpowers/specs/2026-11-08-first-run-wizard-design.md`): stack, goal (with an optional design brief), target role with a job link or description, and optional experience (a CV redacted in the browser plus a few notes). Review names the AI provider before anything is sent. Gemini then writes a playbook of likely interview questions as sample STAR stories and one scored Arch Board scenario, which technical stories link to. Poe walks across the screen in pixel-art style while it waits (placeholder sprite). The user lands on Prep, Stories or the board, depending on the goal.
 - Profile (web) has "Reset goals": after a confirmation it deletes the goals, every generated story (edited ones too), the generated scenarios and their boards, then reopens the wizard. The user's own stories, boards, answers and XP stay.

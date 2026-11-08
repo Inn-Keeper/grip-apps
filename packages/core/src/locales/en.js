@@ -336,6 +336,7 @@ export const en = {
   "stories.coverageLabel": "Competencies covered",
   "stories.coverageHint": "Aim for 8-10 stories across them.",
   "nav.primary": "Primary",
+  "nav.home": "Home",
   "auth.github": "Continue with GitHub",
   "auth.subtitle": "Prepare for technical interviews and track your applications.",
   "auth.aiProof": "AI reads your talk track section by section and names the question an interviewer would still ask.",

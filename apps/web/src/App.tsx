@@ -5,7 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { identityChanged } from "@grip/core/authCache";
 import { setLocale, t } from "@grip/core/i18n";
 import { isFreshSignIn } from "./lib/navigation.js";
-import { ACTIVE_PAGE_KEY, GITHUB_LINK_PENDING_KEY, PAGE_DEFS, usePageRoute } from "./lib/usePageRoute";
+import { ACTIVE_PAGE_KEY, DEFAULT_PAGE, GITHUB_LINK_PENDING_KEY, PAGE_DEFS, usePageRoute } from "./lib/usePageRoute";
 import { useHeaderHeightVar, useNavPill } from "./lib/useNavMeasures";
 import { supabase } from "./lib/supabase";
 import { useLocale } from "./lib/useLocale";
@@ -216,10 +216,22 @@ export default function App() {
             flexWrap: "wrap",
           }}
         >
-          <div style={{
+          {/* Signed in, the logo links home; cmd/ctrl-click still opens a new tab. */}
+          <a
+            href={session ? `/${DEFAULT_PAGE}` : undefined}
+            aria-label={session ? `${brand.productName}, ${t("nav.home")}` : undefined}
+            onClick={(e) => {
+              if (!session || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
+              e.preventDefault();
+              selectPage(DEFAULT_PAGE);
+            }}
+            className={styles.brandLink}
+            style={{
               display: "flex",
               alignItems: "center",
-              gap: 11
+              gap: 11,
+              textDecoration: "none",
+              color: "inherit",
             }}>
             <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${alpha(colors.accent, 0.09)}, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
             <span style={{
@@ -245,7 +257,7 @@ export default function App() {
                 {brand.tagline}
               </span>
             </span>
-          </div>
+          </a>
           {/* The wizard owns the screen until it lands or the user explores; tabs would do nothing. */}
           {session && !showWizard && (
             <>

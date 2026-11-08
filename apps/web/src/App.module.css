@@ -11,6 +11,8 @@
 }
 
 .tab { padding: 8px 14px; }
+.brandLink { border-radius: 10px; }
+.brandLink:focus-visible { outline: 2px solid var(--c-accent-bright); outline-offset: 4px; }
 
 /* Narrow: drop the tagline and tighten the tabs, so logo and nav stay on one row down to
    ~710px in English (768 tablets, 740 phone landscape; Swedish needs a little more). The full header needs ~830px in English and

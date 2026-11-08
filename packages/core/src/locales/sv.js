@@ -336,6 +336,7 @@ export const sv = {
   "stories.coverageLabel": "Täckta kompetenser",
   "stories.coverageHint": "Sikta på 8-10 berättelser över dem.",
   "nav.primary": "Huvudmeny",
+  "nav.home": "Hem",
   "auth.github": "Fortsätt med GitHub",
   "auth.subtitle": "Förbered dig för tekniska intervjuer och håll koll på dina ansökningar.",
   "auth.aiProof": "AI läser ditt resonemang avsnitt för avsnitt och nämner frågan en intervjuare fortfarande skulle ställa.",

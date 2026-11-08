@@ -336,6 +336,7 @@ export const pt = {
   "stories.coverageLabel": "Competências cobertas",
   "stories.coverageHint": "Mire em 8-10 histórias entre elas.",
   "nav.primary": "Principal",
+  "nav.home": "Início",
   "auth.github": "Continuar com GitHub",
   "auth.subtitle": "Prepare-se para entrevistas técnicas e acompanhe suas candidaturas.",
   "auth.aiProof": "A IA lê seu roteiro seção por seção e aponta a pergunta que um entrevistador ainda faria.",
