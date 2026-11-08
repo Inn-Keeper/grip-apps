@@ -43,7 +43,7 @@ export const pt = {
   "auth.switchToSignIn": "Já tem uma conta? Entre",
   "auth.signOut": "Sair",
   "auth.confirmEmailNotice":
-    "Conta criada, mas a confirmação de e-mail está ativada no Supabase. Desative \"Confirm email\" em Authentication → Sign In / Providers para ativar contas instantaneamente.",
+    "Sua conta está pronta. Confira seu e-mail e abra o link de confirmação, depois volte e entre.",
 
   "tabs.prep": "Prep",
   "tabs.stories": "Histórias",

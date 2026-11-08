@@ -43,7 +43,7 @@ export const en = {
   "auth.switchToSignIn": "Already have an account? Sign in",
   "auth.signOut": "Sign out",
   "auth.confirmEmailNotice":
-    "Account created, but email confirmation is enabled in Supabase. Disable “Confirm email” under Authentication → Sign In / Providers to activate accounts instantly.",
+    "Your account is ready. Check your inbox for a confirmation link, then come back and sign in.",
 
   "tabs.prep": "Prep",
   "tabs.stories": "Stories",

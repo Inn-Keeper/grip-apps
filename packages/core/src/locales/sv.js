@@ -43,7 +43,7 @@ export const sv = {
   "auth.switchToSignIn": "Har du redan ett konto? Logga in",
   "auth.signOut": "Logga ut",
   "auth.confirmEmailNotice":
-    "Kontot skapades, men e-postbekräftelse är aktiverad i Supabase. Inaktivera \"Confirm email\" under Authentication → Sign In / Providers för att aktivera konton direkt.",
+    "Ditt konto är klart. Öppna bekräftelselänken i din inkorg och kom sedan tillbaka och logga in.",
 
   "tabs.prep": "Förberedelse",
   "tabs.stories": "Berättelser",

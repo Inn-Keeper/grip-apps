@@ -44,7 +44,7 @@ export function SignIn() {
       if (err) {
         setError(err.message);
       } else if (!data.session) {
-        // "Confirm email" is still enabled in Supabase — without SMTP that mail never arrives.
+        // "Confirm email" is on in Supabase: the mail only arrives once a custom SMTP sender is set up.
         setNotice(t("auth.confirmEmailNotice"));
       }
       // With confirmation disabled, signUp returns a session and the auth listener signs us in.
