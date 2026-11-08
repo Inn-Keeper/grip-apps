@@ -4,7 +4,7 @@ import { t } from "@grip/core/i18n";
 import { colors, font } from "../lib/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
-import { workspaceFocusStyle } from "../components/fieldStyles";
+import { miniBtn, workspaceFocusStyle } from "../components/fieldStyles";
 import { PromptDrill } from "./PromptDrill";
 import { StoryCard, StoryDetail } from "./StoryCard";
 import { StoryForm } from "./StoryForm";
@@ -20,7 +20,7 @@ import { mayLeave } from "../lib/useUnsavedGuard";
 // The focused view (rule 8): writing, editing or reading one story in place of the list.
 type Focus = { mode: "detail" | "edit"; id: string } | { mode: "new"; competency?: string } | null;
 
-export default function StoryBank() {
+export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } = {}) {
   const [mode, setMode] = useState<StoryMode>("stories");
   const [focus, setFocusState] = useState<Focus>(null);
   // Confirmation after a change (rule 14); the story a failed save belongs to (rule 13).
@@ -55,7 +55,8 @@ export default function StoryBank() {
     const id = focus?.mode === "edit" ? focus.id : undefined;
     setTouched(id ?? "new");
     // The form stays open until the save lands, so a failure keeps the draft.
-    saveMutation.mutate({ ...form, id }, {
+    // Any saved edit makes a generated sample the user's own; the playbook label stays.
+    saveMutation.mutate({ ...form, id, isSample: false }, {
       onSuccess: () => {
         announce(t("stories.saved", { title: form.title }));
         setFocus(id ? { mode: "detail", id } : null);
@@ -168,6 +169,11 @@ export default function StoryBank() {
               }}>
               {stories ? t("stories.count", { count: stories.length }) : t("common.loading")}
             </span>
+            {onOpenSetup && stories && !stories.some((s) => s.playbook) && (
+              <button type="button" onClick={onOpenSetup} style={miniBtn(colors.accentBright ?? "")}>
+                {t("firstRun.stories.generate")}
+              </button>
+            )}
           </div>
           {/* The list explains itself (coverage and Next Up sit beside it); drill mode keeps its one-line how-to. */}
           {noticeLine ?? (mode === "drill" && (

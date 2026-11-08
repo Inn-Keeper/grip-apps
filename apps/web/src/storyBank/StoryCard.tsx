@@ -3,6 +3,7 @@ import { colors, font, shadow } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import hover from "../components/HoverCard.module.css";
 import { CompetencyBadge } from "./CompetencyBadge";
+import { FirstRunTags } from "./FirstRunTags";
 import { StoryLinks } from "./StoryLinks";
 import type { Story } from "./types";
 import { ErrorText } from "../components/ErrorText";
@@ -76,6 +77,7 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
           flexWrap: "wrap"
         }}>
         <CompetencyBadge competency={s.competency} />
+        <FirstRunTags story={s} />
         {onOpen ? (
           <button type="button" onClick={onOpen} style={{
               ...titleStyle,

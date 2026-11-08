@@ -7,6 +7,8 @@ export type Story = {
   action: string;
   result: string;
   scenarioId?: string | null;
+  isSample?: boolean;
+  playbook?: string | null;
 };
 
 export type StoryForm = Omit<Story, "id"> & { id?: string };

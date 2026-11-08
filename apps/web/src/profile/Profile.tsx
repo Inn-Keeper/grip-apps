@@ -7,6 +7,7 @@ import { useLocale } from "../lib/useLocale";
 import { poeVisibleByDefault, setPoeAssistantVisible } from "../components/poe/poeAssistantUtils";
 import { NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout, WorkspacePanel } from "../components/WorkspaceLayout";
+import { miniBtn } from "../components/fieldStyles";
 import { CvUpload } from "./CvUpload";
 import { ProfileLeftRail, ProfileRightRail } from "./ProfileRails";
 import { AccountSection, ConnectionsSection, FavoriteTechsSection, PreferencesSection } from "./ProfileSections";
@@ -42,9 +43,10 @@ type ProfileProps = {
   onGitHubLinkedSeen?: () => void;
   onSignOut?: () => void;
   onLocaleChange?: (code: string) => void;
+  onOpenSetup?: () => void;
 };
 
-export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSignOut, onLocaleChange }: ProfileProps) {
+export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSignOut, onLocaleChange, onOpenSetup }: ProfileProps) {
   const [form, setForm] = useState<ProfileForm>(EMPTY_PROFILE_FORM as ProfileForm);
   const locale = useLocale();
   const [linkedInThisSession, setLinkedInThisSession] = useState(
@@ -266,6 +268,24 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
           paddingBottom: 48,
         }}
       >
+        {section === "account" && onOpenSetup && (
+          <WorkspacePanel style={{
+              padding: 20,
+              marginBottom: 16,
+              display: "flex",
+              alignItems: "center",
+              gap: 16,
+              flexWrap: "wrap"
+            }}>
+            <p style={{
+                margin: 0,
+                flex: "1 1 240px",
+                color: colors.textDim,
+                fontSize: font.size.body
+              }}>{t("firstRun.profile.setupHint")}</p>
+            <button type="button" onClick={onOpenSetup} style={miniBtn(colors.accentBright ?? "")}>{t("firstRun.profile.setup")}</button>
+          </WorkspacePanel>
+        )}
         {section === "account" && (
           <AccountSection
             form={form}
