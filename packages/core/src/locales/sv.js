@@ -1042,4 +1042,7 @@ export const sv = {
   "nextUp.setupWebHint": "Öppnar Grip på webben.",
   "nextUp.altSetup": "ställa in din playbook",
   "nextUp.new": "Nytt",
+  "firstRun.profile.reset": "Återställ mål",
+  "firstRun.profile.resetting": "Återställer…",
+  "firstRun.profile.resetConfirm": "Återställa dina mål och börja om med inställningen? Det raderar dina mål, alla berättelser som inställningen skapade (även redigerade), dess scenarier och deras tavlor. Dina egna berättelser, tavlor, svar och XP finns kvar. Det går inte att ångra.",
 };

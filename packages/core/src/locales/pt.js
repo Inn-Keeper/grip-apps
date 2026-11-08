@@ -1042,4 +1042,7 @@ export const pt = {
   "nextUp.setupWebHint": "Abre o Grip na web.",
   "nextUp.altSetup": "montar seu playbook",
   "nextUp.new": "Novo",
+  "firstRun.profile.reset": "Redefinir objetivos",
+  "firstRun.profile.resetting": "Redefinindo…",
+  "firstRun.profile.resetConfirm": "Redefinir seus objetivos e refazer a configuração? Isso apaga seus objetivos, todas as histórias geradas pela configuração (mesmo as editadas), seus cenários e os quadros deles. Suas próprias histórias, quadros, respostas e XP ficam. Não dá para desfazer.",
 };

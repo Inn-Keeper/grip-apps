@@ -3,6 +3,7 @@ import type { UserIdentity } from "@supabase/supabase-js";
 import * as api from "../lib/api";
 import { supabase } from "../lib/supabase";
 import { friendlyAuthError } from "@grip/core/auth";
+import { clearPrepPlan } from "../lib/prepPlanHandoff";
 
 const GITHUB_LINK_PENDING_KEY = "grip.githubLinkPending";
 
@@ -170,3 +171,16 @@ export function useSaveFavoriteTechsMutation() {
     },
   });
 }
+
+// "Reset goals": the server deletes the wizard's output; local caches follow.
+export function useResetGoalsMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.resetGoals,
+    onSuccess: async () => {
+      clearPrepPlan();
+      await queryClient.invalidateQueries();
+    },
+  });
+}
+

@@ -21,6 +21,7 @@ import {
   useLinkGitHubMutation,
   useProfileQuery,
   useResetScoresMutation,
+  useResetGoalsMutation,
   useSaveCvTechsMutation,
   useSaveGithubUrlMutation,
   useSaveProfileMutation,
@@ -79,6 +80,7 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
   const githubPrepMutation = useGithubPrepMutation();
   const cvTechsMutation = useSaveCvTechsMutation();
   const resetMutation = useResetScoresMutation(profile);
+  const resetGoalsMutation = useResetGoalsMutation();
   const linkGitHubMutation = useLinkGitHubMutation();
 
   const saveFavoriteTechsMutation = useSaveFavoriteTechsMutation();
@@ -136,6 +138,11 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
   };
   const rank = rankForXp(profile?.xp ?? 0) ?? RANKS[0]!;
   const next = RANKS.find((item) => item.min > rank.min);
+  const resetGoals = () => {
+    if (!window.confirm(t("firstRun.profile.resetConfirm"))) return;
+    // Reset turns the wizard back on; open it right away to start over.
+    resetGoalsMutation.mutate(undefined, { onSuccess: () => onOpenSetup?.() });
+  };
   const resetScores = () => {
     if (!window.confirm(t("profile.resetConfirm"))) return;
     resetMutation.mutate();
@@ -284,6 +291,10 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
                 fontSize: font.size.body
               }}>{t("firstRun.profile.setupHint")}</p>
             <button type="button" onClick={onOpenSetup} style={miniBtn(colors.accentBright ?? "")}>{t("firstRun.profile.setup")}</button>
+            <button type="button" onClick={resetGoals} disabled={resetGoalsMutation.isPending} style={miniBtn(colors.dangerBright ?? "")}>
+              {resetGoalsMutation.isPending ? t("firstRun.profile.resetting") : t("firstRun.profile.reset")}
+            </button>
+            {resetGoalsMutation.error && <ErrorText>{(resetGoalsMutation.error as Error).message}</ErrorText>}
           </WorkspacePanel>
         )}
         {section === "account" && (

@@ -63,5 +63,6 @@ export const {
   addXp,
   resetScores,
   getUser,
-  updateProfile
+  updateProfile,
+  resetGoals
 } = api;
