@@ -1,6 +1,6 @@
 import { PROFILE_FIELDS } from "@grip/core/user";
 import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ErrorText } from "../components/ErrorText";
 import { fieldStyle as inputStyle, srOnly } from "../components/fieldStyles";
@@ -465,7 +465,7 @@ export function PreferencesSection({
                     display: "flex",
                     alignItems: "center",
                     padding: "6px 9px",
-                    background: active ? `${colors.accent}24` : "transparent",
+                    background: active ? alpha(colors.accent, 0.14) : "transparent",
                     border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
                     borderRadius: 8,
                     cursor: "pointer",
@@ -510,7 +510,7 @@ export function PreferencesSection({
           style={{
             padding: "9px 14px",
             background: "transparent",
-            border: `1px solid ${colors.danger}60`,
+            border: `1px solid ${alpha(colors.danger, 0.38)}`,
             borderRadius: 8,
             color: colors.dangerBright,
             fontSize: font.size.small,
@@ -602,8 +602,8 @@ export function FavoriteTechsSection({
               onClick={() => onToggleFavoriteTech(tech, profile)}
               style={{
                 padding: "6px 12px",
-                background: isFavorite ? `${colors.accent}14` : "transparent",
-                border: isFavorite ? `1px solid ${colors.borderDeep}10` : `1px dashed ${colors.accent}10`,
+                background: isFavorite ? alpha(colors.accent, 0.08) : "transparent",
+                border: isFavorite ? `1px solid ${alpha(colors.borderDeep, 0.06)}` : `1px dashed ${alpha(colors.accent, 0.06)}`,
                 borderRadius: 999,
                 color: isFavorite ? colors.textHighlight : colors.textHighlightDim,
                 font: "inherit",

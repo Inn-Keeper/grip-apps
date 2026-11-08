@@ -1,7 +1,7 @@
 import { useEffect, useState, type CSSProperties } from "react";
 import { SPEED_LIMIT_MS, SPEED_MULTIPLIER } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "../lib/tokens";
+import { alpha, colors, font, tints } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./InterviewPrep.module.css";
 
@@ -33,11 +33,11 @@ export function SpeedClock({ shownAt }: { shownAt: number }) {
       className={urgent ? styles.clockUrgent : undefined}
       title={t("prep.speedHint", { seconds: SPEED_LIMIT_MS / 1000, multiplier: SPEED_MULTIPLIER })}
       style={{
-        "--clock-glow": `${colors.warning}80`,
+        "--clock-glow": alpha(colors.warning, 0.5),
         display: "inline-flex", alignItems: "center", gap: 6,
         padding: "4px 11px", borderRadius: 999,
-        background: timeUp ? "transparent" : urgent ? tints.warningSoft : `${colors.accent}1A`,
-        border: `1px solid ${timeUp ? colors.borderSoft : urgent ? `${colors.warning}80` : `${colors.accent}55`}`,
+        background: timeUp ? "transparent" : urgent ? tints.warningSoft : alpha(colors.accent, 0.1),
+        border: `1px solid ${timeUp ? colors.borderSoft : urgent ? alpha(colors.warning, 0.5) : alpha(colors.accent, 0.33)}`,
         color: tone, fontSize: font.size.bodyLg, fontWeight: 800, fontVariantNumeric: "tabular-nums", lineHeight: 1,
         transition: "background 200ms ease, border-color 200ms ease, color 200ms ease",
       } as CSSProperties}

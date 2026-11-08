@@ -1,4 +1,5 @@
 import React from "react";
+import { alpha } from "../lib/tokens";
 import type { Difficulty } from "./types";
 
 const DIFFICULTY_PATHS: Record<string, (color: string) => React.ReactElement> = {
@@ -25,7 +26,7 @@ const DIFFICULTY_PATHS: Record<string, (color: string) => React.ReactElement> = 
   // Diamond with inner cross — precision / hard-edged
   ultra: (color: string) => (
     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M9 2L16 9L9 16L2 9L9 2Z" stroke={color} strokeWidth="1.5" fill={`${color}22`} />
+      <path d="M9 2L16 9L9 16L2 9L9 2Z" stroke={color} strokeWidth="1.5" fill={alpha(color, 0.13)} />
       <line x1="6" y1="6" x2="12" y2="12" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
       <line x1="12" y1="6" x2="6" y2="12" stroke={color} strokeWidth="1.5" strokeLinecap="round" />
     </svg>

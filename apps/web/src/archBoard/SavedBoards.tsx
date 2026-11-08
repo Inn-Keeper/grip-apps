@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "../lib/tokens";
+import { alpha, colors, shadow, font } from "../lib/tokens";
 import { useAuthUserQuery } from "../profile/queries";
 import { useStoriesQuery } from "../storyBank/queries";
 import { useShareBoardMutation } from "./queries";
@@ -124,7 +124,7 @@ export function SavedBoards({
                       style={{
                         padding: "3px 10px",
                         background: "transparent",
-                        border: `1px solid ${colors.success}60`,
+                        border: `1px solid ${alpha(colors.success, 0.38)}`,
                         borderRadius: 6,
                         color: colors.successBright,
                         fontSize: font.size.label,
@@ -179,7 +179,7 @@ export function SavedBoards({
                   style={{
                     padding: "3px 10px",
                     background: "transparent",
-                    border: `1px solid ${colors.accent}60`,
+                    border: `1px solid ${alpha(colors.accent, 0.38)}`,
                     borderRadius: 6,
                     color: colors.accentBright,
                     fontSize: font.size.label,
@@ -194,7 +194,7 @@ export function SavedBoards({
                   style={{
                     padding: "3px 10px",
                     background: "transparent",
-                    border: `1px solid ${colors.danger}50`,
+                    border: `1px solid ${alpha(colors.danger, 0.31)}`,
                     borderRadius: 6,
                     color: colors.dangerBright,
                     fontSize: font.size.label,

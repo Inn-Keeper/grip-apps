@@ -1,6 +1,6 @@
 import { meta, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import type { BoardNode } from "./types";
@@ -18,7 +18,7 @@ export function NodeInspector({
   onClose: () => void;
 }) {
   const spec = meta(node.type);
-  const color = TYPE_COLORS[node.type];
+  const color = TYPE_COLORS[node.type] ?? colors.textDim;
 
   return (
     <section
@@ -26,7 +26,7 @@ export function NodeInspector({
         marginTop: 12,
         padding: "14px 16px",
         background: colors.well,
-        border: `1px solid ${color}55`,
+        border: `1px solid ${alpha(color, 0.33)}`,
         borderRadius: 10,
         display: "flex",
         flexWrap: "wrap",

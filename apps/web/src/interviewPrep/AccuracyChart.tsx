@@ -1,6 +1,6 @@
 import { t } from "@grip/core/i18n";
 import type { CSSProperties } from "react";
-import { colors, font, shadow } from "../lib/tokens";
+import { alpha, colors, font, shadow } from "../lib/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import styles from "../components/Metric.module.css";
 
@@ -63,7 +63,7 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
             fontWeight: 800,
             fontVariantNumeric: "tabular-nums",
             color: latest && latest.accuracy >= 0.7 ? colors.success : colors.warning,
-            "--land-glow": `${latest && latest.accuracy >= 0.7 ? colors.success : colors.warning}99`,
+            "--land-glow": alpha(latest && latest.accuracy >= 0.7 ? colors.success : colors.warning, 0.6),
           } as CSSProperties}
         >
           {latest ? `${shownPct}%` : "--"}
@@ -106,7 +106,7 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
                 fill={last ? colors.success : colors.accent}
                 // Each dot appears as the line reaches it; the last one blinks when the line lands.
                 className={last ? `${styles.chartDot} ${styles.chartDotLast}` : styles.chartDot}
-                style={{ animationDelay: last ? `${DRAW_MS - 150}ms, ${DRAW_MS}ms` : `${(index / maxIndex) * DRAW_MS - 150}ms`, "--land-glow": `${colors.success}99` } as CSSProperties}
+                style={{ animationDelay: last ? `${DRAW_MS - 150}ms, ${DRAW_MS}ms` : `${(index / maxIndex) * DRAW_MS - 150}ms`, "--land-glow": alpha(colors.success, 0.6) } as CSSProperties}
               />
             );
           })}

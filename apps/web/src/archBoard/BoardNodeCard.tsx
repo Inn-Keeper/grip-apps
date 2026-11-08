@@ -2,7 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { FILL_ALPHA, MIN_CARD, STATEFUL_TYPES, TEXT_FONT_TOKEN, TYPE_COLORS, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { NODE_H, NODE_W } from "./constants";
 import styles from "./ArchBoard.module.css";
@@ -71,7 +71,7 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, c
         height: rect.h,
         boxSizing: "border-box",
         background: style.fill === "none" ? colors.surface : `${colors[style.fill]}${FILL_ALPHA}`,
-        border: `2px solid ${isSource ? colors.textBright : `${color}60`}`,
+        border: `2px solid ${isSource ? colors.textBright : alpha(color, 0.38)}`,
         borderRadius: 10,
         cursor: "grab",
         touchAction: "none",
@@ -80,7 +80,7 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, c
         alignItems: "center",
         gap: 8,
         padding: "0 10px",
-        boxShadow: isSource ? `0 0 0 3px ${color}30` : "none",
+        boxShadow: isSource ? `0 0 0 3px ${alpha(color, 0.19)}` : "none",
       }}
     >
       <span style={{

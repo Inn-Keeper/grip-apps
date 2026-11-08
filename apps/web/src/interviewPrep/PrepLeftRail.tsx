@@ -1,7 +1,7 @@
 import { Fragment, type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
 import { computeReadiness } from "@grip/core/readiness";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { categoryIconName } from "../components/brandIconNames";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
@@ -125,7 +125,7 @@ export function PrepLeftRail({
                       padding: "9px 10px",
                       border: "none",
                       borderRadius: 7,
-                      background: active ? `${cat.color}24` : "transparent",
+                      background: active ? alpha(cat.color, 0.14) : "transparent",
                       color: active ? colors.textBright : colors.textDim,
                       cursor: "pointer",
                       textAlign: "left",
@@ -188,7 +188,7 @@ export function PrepLeftRail({
                       {
                         flexShrink: 0,
                         padding: "5px 8px",
-                        border: `1px solid ${cat.color}40`,
+                        border: `1px solid ${alpha(cat.color, 0.25)}`,
                         borderRadius: 6,
                         background: "transparent",
                         color: cat.color,
@@ -196,8 +196,8 @@ export function PrepLeftRail({
                         fontWeight: 700,
                         cursor: "pointer",
                         letterSpacing: "0.03em",
-                        "--cat-color": `${cat.color}99`,
-                        "--cat-shine": `${cat.color}B3`,
+                        "--cat-color": alpha(cat.color, 0.6),
+                        "--cat-shine": alpha(cat.color, 0.7),
                       } as CSSProperties
                     }
                   >

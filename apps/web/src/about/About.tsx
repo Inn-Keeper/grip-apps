@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { colors, shadow, font } from "../lib/tokens";
+import { alpha, colors, shadow, font } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 import { BrandIcon } from "../components/BrandIcon";
 import { startTour } from "./tour";
@@ -58,8 +58,8 @@ function FeatureCard({ index, wide, icon, color, titleKey, taglineKey, bulletKey
             width: 38,
             height: 38,
             borderRadius: 8,
-            background: `${color}18`,
-            border: `1px solid ${color}30`,
+            background: alpha(color, 0.09),
+            border: `1px solid ${alpha(color, 0.19)}`,
             display: "grid",
             placeItems: "center",
             flexShrink: 0,
@@ -143,7 +143,7 @@ function FeatureCard({ index, wide, icon, color, titleKey, taglineKey, bulletKey
                   marginTop: 7,
                   borderRadius: 999,
                   background: color,
-                  boxShadow: `0 0 12px ${color}40`,
+                  boxShadow: `0 0 12px ${alpha(color, 0.25)}`,
                 }}
               />
               <span
@@ -166,8 +166,8 @@ function FeatureCard({ index, wide, icon, color, titleKey, taglineKey, bulletKey
           marginTop: "auto",
           alignSelf: "flex-start",
           padding: "7px 14px",
-          background: `${color}18`,
-          border: `1px solid ${color}40`,
+          background: alpha(color, 0.09),
+          border: `1px solid ${alpha(color, 0.25)}`,
           borderRadius: 8,
           color,
           fontSize: font.size.small,
@@ -423,9 +423,9 @@ export default function About({ onNavigate }: { onNavigate: (page: string) => vo
                     borderRadius: 6,
                     display: "grid",
                     placeItems: "center",
-                    background: `${colors.accent}18`,
+                    background: alpha(colors.accent, 0.09),
                     color: colors.accentBright,
-                    border: `1px solid ${colors.accent}35`,
+                    border: `1px solid ${alpha(colors.accent, 0.21)}`,
                     fontSize: font.size.small,
                     fontWeight: 800,
                   }}

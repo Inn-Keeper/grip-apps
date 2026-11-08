@@ -1,6 +1,6 @@
 import { PROFILE_FIELDS } from "@grip/core/user";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";
@@ -97,7 +97,7 @@ export function ProfileLeftRail({
                   padding: "9px 10px",
                   border: "none",
                   borderRadius: 7,
-                  background: active ? `${colors.accent}24` : "transparent",
+                  background: active ? alpha(colors.accent, 0.14) : "transparent",
                   color: active ? colors.textBright : colors.textDim,
                   fontSize: font.size.body,
                   fontWeight: 700,

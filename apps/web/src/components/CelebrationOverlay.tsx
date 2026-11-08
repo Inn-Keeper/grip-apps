@@ -1,5 +1,5 @@
 import { useEffect, type CSSProperties } from "react";
-import { colors, font, space } from "../lib/tokens";
+import { alpha, colors, font, space } from "../lib/tokens";
 
 const DISMISS_MS = 2100;
 
@@ -37,7 +37,7 @@ const backdropStyle: CSSProperties = {
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  background: `${colors.bg}a8`,
+  background: alpha(colors.bg, 0.66),
   pointerEvents: "none",
 };
 
@@ -65,8 +65,8 @@ function cardStyle(accent: string): CSSProperties {
     padding: `${space.xl}px ${space.xxl}px`,
     // Deliberately tighter than radius.sm; reads better on this small card.
     borderRadius: 6,
-    border: `1px solid ${accent}90`,
-    background: `${colors.surface}f2`,
+    border: `1px solid ${alpha(accent, 0.56)}`,
+    background: alpha(colors.surface, 0.95),
     textAlign: "center",
     animation: "celebration-pop 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
   };

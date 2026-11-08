@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { colors, space, font, radius } from "../lib/tokens";
+import { alpha, colors, space, font, radius } from "../lib/tokens";
 
 // The field standard (SCREEN-GUIDELINES.md, Forms): 40px tall, 8px corners like panels,
 // dark inset background. Focus rings come from the global :focus-visible rule in index.html.
@@ -29,7 +29,7 @@ export function miniBtn(color: string): CSSProperties {
   return {
     padding: `${space.xs}px ${space.sm + 2}px`,
     background: "transparent",
-    border: `1px solid ${color}50`,
+    border: `1px solid ${alpha(color, 0.31)}`,
     borderRadius: space.md,
     color,
     fontSize: font.size.label,
@@ -55,4 +55,4 @@ export const srOnly: CSSProperties = {
 
 // Quiet body text inside cards (descriptions, notes, how-tos): textDim at 80%, ~4.6:1 on
 // surface, so it recedes behind titles and data yet stays readable. textFaint would fail AA.
-export const quietText = `${colors.textDim}CC`;
+export const quietText = alpha(colors.textDim, 0.8);

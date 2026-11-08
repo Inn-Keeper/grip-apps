@@ -1,7 +1,7 @@
 import { buildPrepPlan } from "@grip/core/prepPlan";
 import { computeReadiness, readinessSignals } from "@grip/core/readiness";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font } from "../lib/tokens";
+import { alpha, colors, tints, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { writePrepPlan } from "../lib/prepPlanHandoff";
 import type { Contact, ScoredBoard } from "./types";
@@ -67,7 +67,7 @@ export function PrepPlanSection({
         marginTop: 10,
         padding: "10px 12px",
         background: tints.accentSoft,
-        border: `1px solid ${colors.accent}40`,
+        border: `1px solid ${alpha(colors.accent, 0.25)}`,
         borderRadius: 8,
       }}
     >

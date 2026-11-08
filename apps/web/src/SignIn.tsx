@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
 import { supabase } from "./lib/supabase";
-import { brand, colors, font } from "./lib/tokens";
+import { alpha, brand, colors, font } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { Turnstile } from "./components/Turnstile";
@@ -154,7 +154,7 @@ export function SignIn() {
             style={{
               padding: "11px 14px",
               background: "transparent",
-              border: `1px dashed ${colors.accent}80`,
+              border: `1px dashed ${alpha(colors.accent, 0.5)}`,
               borderRadius: 10,
               color: colors.accentBright,
               fontSize: font.size.body,

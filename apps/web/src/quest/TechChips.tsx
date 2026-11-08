@@ -1,4 +1,4 @@
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 
 // Small removable/toggleable tech chip row shared by the posting detector and
 // the retro struggle tagger.
@@ -45,8 +45,8 @@ export function TechChips({
                 gap: 5,
                 padding: "3px 10px",
                 borderRadius: 999,
-                border: `1px solid ${off ? colors.borderSoft : `${colors.accent}60`}`,
-                background: off ? "transparent" : `${colors.accent}1A`,
+                border: `1px solid ${off ? colors.borderSoft : alpha(colors.accent, 0.38)}`,
+                background: off ? "transparent" : alpha(colors.accent, 0.1),
                 color: off ? colors.textFaint : colors.accentBright,
                 fontSize: font.size.label,
                 fontWeight: 600,

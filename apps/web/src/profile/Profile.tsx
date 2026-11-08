@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { RANKS, rankForXp } from "@grip/core/gamification";
-import { colors, font, tints } from "../lib/tokens";
+import { alpha, colors, font, tints } from "../lib/tokens";
 import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm, toggleFavoriteTech } from "@grip/core/user";
 import { setLocale, t } from "@grip/core/i18n";
 import { useLocale } from "../lib/useLocale";
@@ -395,7 +395,7 @@ function Banner({ tone, children }: { tone: "danger" | "success"; children: Reac
         fontSize: font.size.body,
         fontWeight: danger ? 400 : 700,
         background: danger ? tints.dangerSoft : tints.successSoft,
-        border: `1px solid ${danger ? colors.danger : colors.success}60`,
+        border: `1px solid ${alpha(danger ? colors.danger : colors.success, 0.38)}`,
         color: danger ? colors.dangerBright : colors.successBright,
       }}
     >

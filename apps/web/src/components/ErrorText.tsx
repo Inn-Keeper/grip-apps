@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import { colors, font, tints } from "../lib/tokens";
+import { alpha, colors, font, tints } from "../lib/tokens";
 
 // An inline error under the control it belongs to; announced by screen readers.
 export function ErrorText({ children, margin = 0, size = "small" }: { children: ReactNode; margin?: CSSProperties["margin"]; size?: "small" | "label" }) {
@@ -21,7 +21,7 @@ export function ErrorBanner({ children }: { children: ReactNode }) {
         marginBottom: 16,
         padding: "10px 14px",
         background: tints.dangerSoft,
-        border: `1px solid ${colors.danger}60`,
+        border: `1px solid ${alpha(colors.danger, 0.38)}`,
         borderRadius: 8,
         color: colors.dangerBright,
         fontSize: font.size.body

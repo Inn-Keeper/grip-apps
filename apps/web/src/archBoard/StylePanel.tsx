@@ -1,7 +1,7 @@
 import type React from "react";
 import { ARROW_HEADS, FILL_COLORS, TEXT_ALIGNS, TEXT_COLORS, TEXT_SIZES, styleOf, type FreeStyle } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors } from "@grip/core/tokens";
+import { alpha, colors } from "@grip/core/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
 import { STYLE_SHORTCUTS } from "./freeStyle.js";
@@ -75,7 +75,7 @@ export function StylePanel({ node, onChange, onDelete }: Props) {
             const name = fill === "none" ? t("board.style.fill.none") : t(`board.style.color.${fill}` as Key);
             return (
               <Option key={fill} pressed={style.fill === fill} label={t("board.style.fillOption", { color: name })} onClick={() => onChange({ fill: fill as FreeStyle["fill"] })}>
-                <Swatch color={fill === "none" ? null : `${colors[fill as keyof typeof colors]}66`} />
+                <Swatch color={fill === "none" ? null : alpha(colors[fill as keyof typeof colors], 0.4)} />
               </Option>
             );
           })}

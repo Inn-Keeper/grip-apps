@@ -1,6 +1,6 @@
 import { STATUSES, STATUS_STYLES } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { QuestAgenda } from "./QuestAgenda";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
@@ -58,7 +58,7 @@ export function QuestLeftRail({ contacts, filter, onFilter, agendaContacts, agen
                   padding: "9px 10px",
                   border: "none",
                   borderRadius: 7,
-                  background: active ? `${row.color}24` : "transparent",
+                  background: active ? alpha(row.color, 0.14) : "transparent",
                   cursor: "pointer",
                   textAlign: "left",
                 }}

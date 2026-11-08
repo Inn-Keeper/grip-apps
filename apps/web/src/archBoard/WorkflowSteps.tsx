@@ -1,6 +1,6 @@
 import { useEffect, useRef, type CSSProperties } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { formatClock } from "@grip/core/designTimer";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./ArchBoard.module.css";
@@ -98,7 +98,7 @@ export function WorkflowSteps({
               borderRadius: 999,
               // Only the current step gets a light edge (rule 22).
               border: `1px solid ${current ? colors.accent : "transparent"}`,
-              background: current ? `${colors.accent}1A` : "transparent",
+              background: current ? alpha(colors.accent, 0.1) : "transparent",
             }}
           >
             <span
@@ -142,7 +142,7 @@ export function WorkflowSteps({
             flex: "0 0 auto",
             padding: "3px 10px",
             borderRadius: 999,
-            border: `1px solid ${round.overrun ? `${colors.danger}55` : colors.borderSoft}`,
+            border: `1px solid ${round.overrun ? alpha(colors.danger, 0.33) : colors.borderSoft}`,
             background: colors.surface,
             fontSize: font.size.label,
           }}

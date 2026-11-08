@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { groupStoriesByCompetency } from "@grip/core/stories";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { t } from "@grip/core/i18n";
 
@@ -56,7 +56,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
                 style={{
                   display: "inline-block",
                   padding: "2px 8px",
-                  background: `${g.color}20`,
+                  background: alpha(g.color, 0.13),
                   borderRadius: 12,
                   color: g.color,
                   fontSize: font.size.caption,
@@ -96,7 +96,7 @@ export function StoryMatchSection({ stories }: { stories: Story[] }) {
                   key={g.competency}
                   style={{
                     padding: "2px 8px",
-                    background: `${colors.textFaint}15`,
+                    background: alpha(colors.textFaint, 0.08),
                     borderRadius: 12,
                     color: colors.textFaint,
                     fontSize: font.size.caption,

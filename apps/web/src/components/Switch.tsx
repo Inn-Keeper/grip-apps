@@ -1,4 +1,4 @@
-import { colors } from "@grip/core/tokens";
+import { alpha, colors } from "@grip/core/tokens";
 import styles from "./Switch.module.css";
 
 // The app's one on/off control (Profile connections, Poe, Prep's Auto-next): a button with
@@ -32,7 +32,7 @@ export function Switch({
         border: `1px solid ${checked ? colors.accent : colors.borderSoft}`,
         background: checked ? `linear-gradient(135deg, ${colors.accent}, ${colors.accentBright})` : colors.bgDeep,
         boxShadow: checked
-          ? `0 0 0 3px ${colors.accent}1F, 0 8px 18px ${colors.accent}22`
+          ? `0 0 0 3px ${alpha(colors.accent, 0.12)}, 0 8px 18px ${alpha(colors.accent, 0.13)}`
           : "inset 0 1px 0 rgba(255,255,255,0.04)",
         cursor: disabled ? "default" : "pointer",
         opacity: disabled ? 0.5 : 1,

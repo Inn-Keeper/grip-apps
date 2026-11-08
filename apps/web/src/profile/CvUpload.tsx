@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import { categories } from "@grip/core/prepData";
 import { extractTechsFromText } from "@grip/core/techMatch";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { t } from "@grip/core/i18n";
 import { readCvText, CvParseError } from "./cvParser";
 
@@ -82,7 +82,7 @@ export function CvUpload({
           alignItems: "center",
           gap: 10,
           padding: "44px 32px",
-          background: dragging ? `${colors.accent}10` : colors.surface,
+          background: dragging ? alpha(colors.accent, 0.06) : colors.surface,
           border: `2px dashed ${dragging ? colors.accent : colors.borderSoft}`,
           borderRadius: 14,
           color: colors.textDim,
@@ -201,8 +201,8 @@ export function CvUpload({
                 key={tech}
                 style={{
                   padding: "7px 14px",
-                  background: `${colors.accent}14`,
-                  border: `1px solid ${colors.accent}40`,
+                  background: alpha(colors.accent, 0.08),
+                  border: `1px solid ${alpha(colors.accent, 0.25)}`,
                   borderRadius: 999,
                   color: colors.accentBright,
                   fontSize: font.size.body,

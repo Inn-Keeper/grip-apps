@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { InfoTip } from "./InfoTip";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import { GlowBar } from "./GlowBar";
 import styles from "./Metric.module.css";
@@ -53,7 +53,7 @@ export function HeadlineMetric({ label, value, unit = "", decimals = 0, pct, hin
             lineHeight: 1,
             fontVariantNumeric: "tabular-nums",
             whiteSpace: "nowrap",
-            "--land-glow": `${colors.accentBright}99`,
+            "--land-glow": alpha(colors.accentBright, 0.6),
           } as CSSProperties}
         >
           {shown}

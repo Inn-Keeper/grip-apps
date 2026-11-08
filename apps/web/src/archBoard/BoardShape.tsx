@@ -2,7 +2,7 @@ import type React from "react";
 import { useEffect, useRef, useState } from "react";
 import { FILL_ALPHA, MIN_SHAPE, TEXT_FONT_TOKEN, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { NODE_H, NODE_W } from "./constants";
 import styles from "./ArchBoard.module.css";
 import { ResizeHandles } from "./ResizeHandles";
@@ -61,7 +61,7 @@ export function BoardShape({ node: n, selected, isSource, drag, connect, toBoard
   }, [editing]);
   const [draft, setDraft] = useState<Rect | null>(null);
   const rect = draft ?? { x: n.x, y: n.y, w: size.width, h: size.height };
-  const stroke = isSource ? colors.textBright : selected ? colors.accent : `${colors.textDim}99`;
+  const stroke = isSource ? colors.textBright : selected ? colors.accent : alpha(colors.textDim, 0.6);
   const fill = style.fill === "none" ? colors.surface : `${colors[style.fill]}${FILL_ALPHA}`;
   const labelStyle: React.CSSProperties = {
     fontSize: font.size[TEXT_FONT_TOKEN.card[style.size] as keyof typeof font.size],

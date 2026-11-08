@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import type { CustomScenario } from "@grip/core/api";
 import { NODE_TYPES, TYPE_COLORS, buildCustomChecks } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "../lib/tokens";
+import { alpha, colors, shadow, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import { Combobox } from "../components/Combobox";
@@ -118,7 +118,7 @@ export function ScenarioForm({ onSave, onCancel, saving, error, initial }: Scena
                   borderRadius: 16,
                   cursor: "pointer",
                   border: `1px solid ${active ? TYPE_COLORS[spec.type] : colors.borderSoft}`,
-                  background: active ? `${TYPE_COLORS[spec.type]}25` : "transparent",
+                  background: active ? alpha(TYPE_COLORS[spec.type] ?? colors.textDim, 0.15) : "transparent",
                   color: active ? colors.text : colors.textDim,
                   fontSize: font.size.label,
                   fontWeight: 600,

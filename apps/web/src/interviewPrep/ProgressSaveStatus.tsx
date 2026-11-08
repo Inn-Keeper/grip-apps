@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints } from "../lib/tokens";
+import { alpha, colors, font, tints } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import type { SaveStatus } from "./useScores";
 
@@ -27,7 +27,7 @@ export function ProgressSaveStatus({ status }: { status: SaveStatus }) {
         marginBottom: 16,
         padding: "10px 14px",
         background: tints.dangerSoft,
-        border: `1px solid ${colors.danger}60`,
+        border: `1px solid ${alpha(colors.danger, 0.38)}`,
         borderRadius: 8,
         color: colors.dangerBright,
         fontSize: font.size.body

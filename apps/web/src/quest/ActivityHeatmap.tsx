@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { activityByDay, activityLevel } from "@grip/core/activity";
 import { getLocale, t } from "@grip/core/i18n";
-import { colors, font, layout } from "../lib/tokens";
+import { alpha, colors, font, layout } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 
 const WEEKS = 26;
 // Level 0 is the empty well; 1 to 4 ramp the accent up to its bright tone.
-const LEVEL_COLORS = [colors.well, `${colors.accent}40`, `${colors.accent}70`, `${colors.accent}A0`, colors.accentBright];
+const LEVEL_COLORS = [colors.well, alpha(colors.accent, 0.25), alpha(colors.accent, 0.44), alpha(colors.accent, 0.63), colors.accentBright];
 const LABELED_WEEKDAYS = new Set([0, 2, 4]); // Mon, Wed, Fri
 const toDate = (key: string) => {
   const [y, m, d] = key.split("-").map(Number);

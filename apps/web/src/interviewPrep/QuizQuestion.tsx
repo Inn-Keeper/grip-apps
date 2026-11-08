@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font } from "../lib/tokens";
+import { alpha, colors, tints, font } from "../lib/tokens";
 import type { QuizQuestion as Question } from "./types";
 import styles from "./QuizQuestion.module.css";
 import { srOnly } from "../components/fieldStyles";
@@ -21,8 +21,8 @@ function optionState(i: number, answered: number | null, correct: number): Optio
 const LOOK: Record<OptionState, { bg?: string; border?: string; text?: string }> = {
   idle: { bg: colors.surfaceHi, border: colors.borderSoft, text: colors.text },
   dimmed: { bg: colors.surfaceHi, border: colors.borderSoft, text: colors.textDim },
-  correct: { bg: tints.successSoft, border: `${colors.success}80`, text: colors.successBright },
-  wrong: { bg: tints.dangerSoft, border: `${colors.danger}80`, text: colors.dangerBright },
+  correct: { bg: tints.successSoft, border: alpha(colors.success, 0.5), text: colors.successBright },
+  wrong: { bg: tints.dangerSoft, border: alpha(colors.danger, 0.5), text: colors.dangerBright },
 };
 
 // Progress, question, answers and the feedback/next footer — shared by card quizzes and drills.
@@ -75,7 +75,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
 
   const vars = {
     "--quiz-color": color,
-    "--quiz-color-soft": `${color}80`,
+    "--quiz-color-soft": alpha(color, 0.5),
     "--quiz-track": colors.surfaceHi,
   } as React.CSSProperties;
 
@@ -136,8 +136,8 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
                   className={styles.badge}
                   aria-hidden="true"
                   style={{
-                    border: `1px solid ${state === "idle" ? `${color}60` : look.border}`,
-                    background: state === "idle" ? `${color}14` : "transparent",
+                    border: `1px solid ${state === "idle" ? alpha(color, 0.38) : look.border}`,
+                    background: state === "idle" ? alpha(color, 0.08) : "transparent",
                     color: state === "idle" ? color : look.text,
                   }}
                 >
@@ -151,7 +151,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
                 {isCorrect && state === "correct" && (
                   <span className={styles.xp} aria-hidden="true" style={{
                       background: tints.successSoft,
-                      border: `1px solid ${colors.success}80`,
+                      border: `1px solid ${alpha(colors.success, 0.5)}`,
                       color: colors.successBright
                     }}>
                     +{xp} XP{xpNote ? ` · ${xpNote}` : ""}
@@ -205,8 +205,8 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
               style={{
                 width: "auto",
                 padding: "7px 14px",
-                background: `${color}25`,
-                border: `1px solid ${color}60`,
+                background: alpha(color, 0.15),
+                border: `1px solid ${alpha(color, 0.38)}`,
                 borderRadius: 8,
                 color,
                 fontSize: font.size.small,
@@ -218,7 +218,7 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
               {/* The button mounts on answering, so the fill starts with the countdown and ends with it. */}
               {autoNextMs !== undefined && (
                 <span aria-hidden className={styles.autoNextFill} style={{
-                    background: `${color}40`,
+                    background: alpha(color, 0.25),
                     animationDuration: `${autoNextMs}ms`
                   }} />
               )}

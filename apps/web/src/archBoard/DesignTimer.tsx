@@ -1,7 +1,7 @@
 import { DESIGN_PHASES, ROUND_MINUTES, formatClock } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
-import { colors, font, shadow } from "../lib/tokens";
+import { alpha, colors, font, shadow } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import styles from "./DesignTimer.module.css";
 import type { DesignRound } from "./useDesignRound";
@@ -24,7 +24,7 @@ export function DesignTimer({ round }: { round: DesignRound }) {
         padding: 14,
         borderRadius: 8,
         // Overtime is informative, so it earns a light edge (rule 22).
-        border: `1px solid ${overrun ? `${colors.danger}55` : colors.borderSoft}`,
+        border: `1px solid ${overrun ? alpha(colors.danger, 0.33) : colors.borderSoft}`,
         background: colors.surface,
         boxShadow: shadow.card,
       }}

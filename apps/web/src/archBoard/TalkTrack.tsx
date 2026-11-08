@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "../lib/tokens";
+import { alpha, colors, shadow, font } from "../lib/tokens";
 import { AbbrText } from "../components/AbbrText";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
@@ -187,7 +187,7 @@ export function TalkTrack({
                   minHeight: 96,
                   padding: "10px 12px",
                   background: colors.bgDeep,
-                  border: `1px solid ${covered ? `${colors.success}55` : colors.borderSoft}`,
+                  border: `1px solid ${covered ? alpha(colors.success, 0.33) : colors.borderSoft}`,
                   borderRadius: 8,
                   color: colors.text,
                   fontSize: font.size.body,

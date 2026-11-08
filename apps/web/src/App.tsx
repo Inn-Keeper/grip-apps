@@ -22,7 +22,7 @@ import type { Landing } from "./firstRun/GenerateStep";
 import { shouldShowWizard } from "./firstRun/gating.js";
 import { openInBoard } from "./lib/boardHandoff";
 import About from "./about/About";
-import { brand, colors, layout, shadow, font } from "./lib/tokens";
+import { alpha, brand, colors, layout, shadow, font } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { DemoBanner } from "./components/DemoBanner";
@@ -178,7 +178,7 @@ export default function App() {
         style={{
           minHeight: layout.webHeaderHeight,
           borderBottom: `1px solid ${colors.borderSoft}`,
-          background: `linear-gradient(180deg, ${colors.bgDeep}, ${colors.bg}F2)`,
+          background: `linear-gradient(180deg, ${colors.bgDeep}, ${alpha(colors.bg, 0.95)})`,
           zIndex: 10,
           backdropFilter: "blur(14px)",
           boxShadow: shadow.header,
@@ -193,9 +193,9 @@ export default function App() {
             pointerEvents: "none",
             // Teal hairline along the bottom edge, a glow behind the logo, a faint wash top-right.
             backgroundImage: [
-              `linear-gradient(90deg, transparent 5%, ${colors.accentBright}66 30%, transparent 70%)`,
-              `radial-gradient(420px 120px at 60px 50%, ${colors.accent}24, transparent 70%)`,
-              `radial-gradient(600px 160px at 85% -40%, ${colors.accentBright}10, transparent 70%)`,
+              `linear-gradient(90deg, transparent 5%, ${alpha(colors.accentBright, 0.4)} 30%, transparent 70%)`,
+              `radial-gradient(420px 120px at 60px 50%, ${alpha(colors.accent, 0.14)}, transparent 70%)`,
+              `radial-gradient(600px 160px at 85% -40%, ${alpha(colors.accentBright, 0.06)}, transparent 70%)`,
             ].join(", "),
             backgroundSize: "100% 1px, auto, auto",
             backgroundPosition: "bottom, 0 0, 0 0",
@@ -221,7 +221,7 @@ export default function App() {
               alignItems: "center",
               gap: 11
             }}>
-            <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${colors.accent}18, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
+            <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${alpha(colors.accent, 0.09)}, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
             <span style={{
                 display: "flex",
                 flexDirection: "column",
@@ -260,7 +260,7 @@ export default function App() {
                   padding: 5,
                   borderRadius: 16,
                   position: "relative",
-                  background: `${colors.well}C7`,
+                  background: alpha(colors.well, 0.78),
                   border: `1px solid ${colors.borderSoft}`,
                   boxShadow: shadow.card,
                   minWidth: 0,
@@ -282,9 +282,9 @@ export default function App() {
                       width: navPill.width,
                       borderRadius: 8,
                       // Translucent teal with a soft edge, so the active tab reads without shouting.
-                      background: `${colors.accent}33`,
-                      border: `1px solid ${colors.accent}66`,
-                      boxShadow: `0 6px 18px ${colors.accent}1F`,
+                      background: alpha(colors.accent, 0.2),
+                      border: `1px solid ${alpha(colors.accent, 0.4)}`,
+                      boxShadow: `0 6px 18px ${alpha(colors.accent, 0.12)}`,
                       transition: reduceMotion ? "none" : "left 320ms cubic-bezier(0.2, 0.72, 0.26, 1), width 320ms cubic-bezier(0.2, 0.72, 0.26, 1)",
                     }}
                   />

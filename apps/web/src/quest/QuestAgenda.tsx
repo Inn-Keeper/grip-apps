@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import { buildAgenda } from "@grip/core/agenda";
 import { parseDDMMYYYY } from "@grip/core/contacts";
 import { getLocale, t } from "@grip/core/i18n";
-import { colors, font, radius, space } from "../lib/tokens";
+import { alpha, colors, font, radius, space } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import type { Contact } from "./types";
@@ -76,7 +76,7 @@ function Line({ contact, tone, onOpen, detail, extra }: { contact: Contact; tone
         "--agenda-tone": tone,
         display: "flex",
         alignItems: "stretch",
-        borderLeft: `2px solid ${tone}60`,
+        borderLeft: `2px solid ${alpha(tone, 0.38)}`,
         borderRadius: radius.sm,
         background: colors.well,
       } as CSSProperties}

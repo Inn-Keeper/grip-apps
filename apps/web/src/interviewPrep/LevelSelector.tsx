@@ -1,6 +1,6 @@
 import { DIFFICULTIES } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { DifficultyIcon } from "./DifficultyIcon";
 import { SettingSection } from "./SettingSection";
 import styles from "./InterviewPrep.module.css";
@@ -28,7 +28,7 @@ export function LevelSelector({ level, onLevel }: { level: string; onLevel: (key
                 gap: 10,
                 textAlign: "left",
                 padding: "9px 11px",
-                background: active ? `${d.color}24` : "transparent",
+                background: active ? alpha(d.color, 0.14) : "transparent",
                 border: `1px solid ${active ? d.color : colors.borderSoft}`,
                 borderRadius: 9,
                 cursor: "pointer",

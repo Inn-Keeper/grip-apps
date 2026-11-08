@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { STATUSES, STATUS_STYLES, isDue } from "@grip/core/contacts";
 import { t } from "@grip/core/i18n";
-import { colors, font, tints, shadow } from "../lib/tokens";
+import { alpha, colors, font, tints, shadow } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import hover from "../components/HoverCard.module.css";
 import { ActionButton } from "./shared";
@@ -141,7 +141,7 @@ export function ContactSummary({ contact: c, error, onOpen, onAdvance, onRetro, 
             gap: 8,
             padding: "7px 10px",
             background: due ? tints.dangerSoft : tints.warningSoft,
-            border: `1px solid ${due ? `${colors.danger}60` : `${colors.warning}40`}`,
+            border: `1px solid ${due ? alpha(colors.danger, 0.38) : alpha(colors.warning, 0.25)}`,
             borderRadius: 8,
             fontSize: font.size.body,
             color: due ? colors.dangerBright : colors.warningBright,
@@ -160,7 +160,7 @@ export function ContactSummary({ contact: c, error, onOpen, onAdvance, onRetro, 
             style={{
               padding: "3px 10px",
               background: "transparent",
-              border: `1px solid ${due ? `${colors.danger}60` : `${colors.warning}50`}`,
+              border: `1px solid ${due ? alpha(colors.danger, 0.38) : alpha(colors.warning, 0.31)}`,
               borderRadius: 6,
               color: "inherit",
               fontSize: font.size.label,
@@ -186,7 +186,7 @@ export function ContactPanel({ due, className, children }: { due: boolean; class
       className={className}
       style={{
         background: colors.surface,
-        border: `1px solid ${due ? `${colors.danger}80` : colors.borderSoft}`,
+        border: `1px solid ${due ? alpha(colors.danger, 0.5) : colors.borderSoft}`,
         boxShadow: shadow.card,
         borderRadius: 14,
         padding: "18px 20px",

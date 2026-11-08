@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "../lib/tokens";
+import { alpha, colors, font, shadow } from "../lib/tokens";
 import { BrandIcon } from "./BrandIcon";
 import hover from "./HoverCard.module.css";
 import { quietText } from "./fieldStyles";
@@ -36,8 +36,8 @@ export function NextUpShell({ title, sub, tone, actionLabel, actionIcon = "drill
         flexWrap: "wrap",
         marginBottom: 16,
         padding: "14px 16px",
-        background: `linear-gradient(135deg, ${tone}1A, ${colors.surface})`,
-        border: `1px solid ${tone}60`,
+        background: `linear-gradient(135deg, ${alpha(tone, 0.1)}, ${colors.surface})`,
+        border: `1px solid ${alpha(tone, 0.38)}`,
         borderRadius: 12,
         boxShadow: shadow.card,
       }}

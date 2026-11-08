@@ -2,7 +2,7 @@ import { useEffect, useEffectEvent } from "react";
 import { CORRECT_XP, PERFECT_QUIZ_BONUS } from "@grip/core/gamification";
 import { SPEED_MULTIPLIER, difficultyByKey, isTimedTier } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow, tints } from "../lib/tokens";
+import { alpha, colors, font, shadow, tints } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import type { DrillState } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
@@ -52,8 +52,8 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            background: `${perfect ? colors.success : colors.accent}20`,
-            border: `1px solid ${perfect ? colors.success : colors.accent}60`,
+            background: alpha(perfect ? colors.success : colors.accent, 0.13),
+            border: `1px solid ${alpha(perfect ? colors.success : colors.accent, 0.38)}`,
           }}
         >
           <BrandIcon
@@ -99,7 +99,7 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
             style={{
               padding: "9px 18px",
               background: "transparent",
-              border: `1px solid ${colors.accent}60`,
+              border: `1px solid ${alpha(colors.accent, 0.38)}`,
               borderRadius: 8,
               color: colors.accentBright,
               fontSize: font.size.body,
@@ -184,8 +184,8 @@ export function DrillSession({ drill, onAnswer, onNext, onExit, onRestart, autoN
                 gap: 4,
                 padding: "2px 8px",
                 borderRadius: 999,
-                background: `${tier.color}1A`,
-                border: `1px solid ${tier.color}60`,
+                background: alpha(tier.color, 0.1),
+                border: `1px solid ${alpha(tier.color, 0.38)}`,
                 color: tier.color,
                 letterSpacing: "0.04em"
               }}>

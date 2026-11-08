@@ -4,7 +4,6 @@
 // `alpha()`. Pre-baked translucent tints live in `tints` (8-digit).
 // Two themes share the same keys (`themes.dark`, `themes.light`); dark is the default.
 
-/** @type {Record<string, string>} */
 const darkColors = {
   // Elevation ladder — each step a visible luminance lift.
   bgVoid: "#07090D", // darkest edge of the sign-in backdrop
@@ -53,7 +52,7 @@ const darkColors = {
 
 // Light: the ladder inverts (white cards on a pale page), and `*Bright` means
 // "readable on the plane", so those go darker here.
-/** @type {Record<string, string>} */
+/** @type {Record<keyof typeof darkColors, string>} */
 const lightColors = {
   bgVoid: "#E4E8EF",
   bgDeep: "#EEF1F5",
@@ -95,7 +94,7 @@ const lightColors = {
   deco7: "#4F46E5",
 };
 
-/** Pre-baked translucent tints (8-digit hex). @type {Record<string, string>} */
+/** Pre-baked translucent tints (8-digit hex). */
 const darkTints = {
   accentSoft: "#14B8A622",
   successSoft: "#22C55E26",
@@ -104,7 +103,7 @@ const darkTints = {
   modalScrim: "#00000090",
 };
 
-/** @type {Record<string, string>} */
+/** @type {Record<keyof typeof darkTints, string>} */
 const lightTints = {
   accentSoft: "#14B8A61F",
   successSoft: "#16A34A1F",
@@ -186,6 +185,7 @@ const darkShadow = {
 };
 
 // Light: no top-edge highlight (it vanishes on white), softer slate drops.
+/** @type {Record<keyof typeof darkShadow, string>} */
 const lightShadow = {
   card: "0 1px 2px #0F172A0F, 0 8px 20px -12px #0F172A33",
   cardHover: "0 1px 2px #0F172A14, 0 10px 24px -12px #0F172A47",

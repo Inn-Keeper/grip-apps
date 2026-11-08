@@ -1,6 +1,6 @@
 import { EDGE_MODES, EDGE_PROTOCOLS, nodeLabel } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, shadow, font } from "../lib/tokens";
+import { alpha, colors, shadow, font } from "../lib/tokens";
 import type { BoardEdge, BoardNode } from "./types";
 
 export function EdgeInspector({
@@ -130,7 +130,7 @@ export function EdgeInspector({
           style={{
             padding: "7px 14px",
             background: "transparent",
-            border: `1px solid ${colors.danger}50`,
+            border: `1px solid ${alpha(colors.danger, 0.31)}`,
             borderRadius: 8,
             color: colors.dangerBright,
             fontSize: font.size.small,

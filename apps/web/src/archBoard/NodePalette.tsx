@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { NODE_TYPES, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { nodeIconName } from "../components/brandIconNames";
 import styles from "./NodePalette.module.css";
@@ -35,7 +35,7 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
               padding: "7px 9px",
               width: "100%",
               background: colors.surface,
-              border: `1px solid ${TYPE_COLORS[item.type] ?? colors.textDim}40`,
+              border: `1px solid ${alpha(TYPE_COLORS[item.type] ?? colors.textDim, 0.25)}`,
               borderRadius: 8,
               color: colors.text,
               fontSize: font.size.small,

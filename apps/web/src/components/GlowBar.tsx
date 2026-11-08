@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { colors } from "@grip/core/tokens";
+import { alpha, colors } from "@grip/core/tokens";
 import { useCountUp } from "../lib/useCountUp";
 import styles from "./Metric.module.css";
 
@@ -17,12 +17,12 @@ export function GlowBar({ pct, flash = false, marginTop = 0 }: { pct: number; fl
       <div
         className={styles.glowFill}
         style={{
-          "--land-glow": `${colors.accentBright}99`,
+          "--land-glow": alpha(colors.accentBright, 0.6),
           width: `${Math.max(0, Math.min(100, pct))}%`,
           height: "100%",
           borderRadius: 999,
           background: `linear-gradient(90deg, ${colors.accentDeep}, ${colors.accent})`,
-          boxShadow: `inset 0 1px 0 #FFFFFF26, 0 4px 12px -2px ${colors.accent}66`,
+          boxShadow: `inset 0 1px 0 #FFFFFF26, 0 4px 12px -2px ${alpha(colors.accent, 0.4)}`,
         } as CSSProperties}
       />
     </div>

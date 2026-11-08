@@ -4,7 +4,7 @@ import { PROMPTS } from "@grip/core/stories";
 import { COMPETENCY_COLORS } from "@grip/core/stories";
 import { composeMockLoop, scoreMockLoop, STORY_RATING_MAX } from "@grip/core/mockLoop";
 import { t } from "@grip/core/i18n";
-import { colors, tints, font, shadow } from "../lib/tokens";
+import { alpha, colors, tints, font, shadow } from "../lib/tokens";
 import { DrillSession } from "./DrillSession";
 import type { DrillState } from "./types";
 
@@ -220,7 +220,7 @@ export function MockLoop({
             alignSelf: "flex-start",
             padding: "3px 10px",
             borderRadius: 999,
-            background: `${competencyColor}20`,
+            background: alpha(competencyColor, 0.13),
             color: competencyColor,
             fontSize: font.size.label,
             fontWeight: 700,

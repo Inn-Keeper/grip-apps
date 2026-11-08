@@ -1,5 +1,5 @@
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { alpha, colors, font } from "../lib/tokens";
 import { useLinkGitHubMutation } from "../profile/queries";
 import { NextUpLink } from "./NextUpShell";
 
@@ -18,8 +18,8 @@ export function DemoBanner({ anonymous }: { anonymous: boolean }) {
         gap: "2px 10px",
         flexWrap: "wrap",
         padding: "3px 16px",
-        background: `${colors.accent}14`,
-        borderBottom: `1px solid ${colors.accent}40`,
+        background: alpha(colors.accent, 0.08),
+        borderBottom: `1px solid ${alpha(colors.accent, 0.25)}`,
         fontSize: font.size.small,
         color: colors.textDim,
         position: "relative",

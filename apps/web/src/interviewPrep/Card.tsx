@@ -1,7 +1,7 @@
 import React from "react";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
-import { colors, font, shadow } from "../lib/tokens";
+import { alpha, colors, font, shadow } from "../lib/tokens";
 import { ACCURACY_GOOD_PCT, type PrepItem, type ScoreEntry } from "./types";
 import { DifficultyIcon } from "./DifficultyIcon";
 import styles from "./InterviewPrep.module.css";
@@ -46,7 +46,7 @@ export function Card({ index = 0, item, level, stat, loading, onQuiz }: {
         <div style={{
             display: "inline-block",
             padding: "3px 10px",
-            background: `${item.color}20`,
+            background: alpha(item.color ?? colors.textDim, 0.13),
             borderRadius: 999,
             color: item.color,
             fontSize: font.size.label,
@@ -62,8 +62,8 @@ export function Card({ index = 0, item, level, stat, loading, onQuiz }: {
               gap: 4,
               padding: "2px 8px",
               borderRadius: 999,
-              background: `${tier.color}1A`,
-              border: `1px solid ${tier.color}55`,
+              background: alpha(tier.color, 0.1),
+              border: `1px solid ${alpha(tier.color, 0.33)}`,
               color: tier.color,
               fontSize: font.size.caption,
               fontWeight: 800,
@@ -142,8 +142,8 @@ export function Card({ index = 0, item, level, stat, loading, onQuiz }: {
             aria-busy={loading}
             style={{
               padding: "7px 14px",
-              background: `${item.color}25`,
-              border: `1px solid ${item.color}60`,
+              background: alpha(item.color ?? colors.textDim, 0.15),
+              border: `1px solid ${alpha(item.color ?? colors.textDim, 0.38)}`,
               borderRadius: 7,
               color: item.color,
               fontSize: font.size.small,
