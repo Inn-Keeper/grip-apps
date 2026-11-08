@@ -33,7 +33,7 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
     >
       <defs>
         <marker id="share-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
-          <path d="M0,0 L8,4 L0,8 z" fill={colors.textFaint} />
+          <path d="M0,0 L8,4 L0,8 z" style={{ fill: colors.textFaint }} />
         </marker>
       </defs>
       {edges.map((edge) => {
@@ -47,9 +47,8 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
             y1={from.y + NODE_H / 2}
             x2={to.x + NODE_W / 2}
             y2={to.y + NODE_H / 2}
-            stroke={colors.textFaint}
             strokeWidth={1.5}
-            markerEnd="url(#share-arrow)"
+            markerEnd="url(#share-arrow)" style={{ stroke: colors.textFaint }}
           />
         );
       })}
@@ -63,9 +62,9 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
           const stroke = colors[style.color];
           return (
             <g key={node.id}>
-              <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} stroke={stroke} strokeWidth={1.5} strokeDasharray={style.dashed ? "6 4" : undefined} />
-              {style.heads !== "none" && <polygon points={headPoints(from, to, 8, 4)} fill={stroke} />}
-              {style.heads === "both" && <polygon points={headPoints(to, from, 8, 4)} fill={stroke} />}
+              <line x1={from.x} y1={from.y} x2={to.x} y2={to.y} strokeWidth={1.5} strokeDasharray={style.dashed ? "6 4" : undefined} style={{ stroke: stroke }} />
+              {style.heads !== "none" && <polygon points={headPoints(from, to, 8, 4)} style={{ fill: stroke }} />}
+              {style.heads === "both" && <polygon points={headPoints(to, from, 8, 4)} style={{ fill: stroke }} />}
             </g>
           );
         }
@@ -74,9 +73,12 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
           return (
             <g key={node.id}>
               {node.type === "box" && (
-                <rect x={node.x} y={node.y} width={NODE_W} height={NODE_H} rx={10} fill={colors.surface} stroke={colors.textFaint} strokeWidth={1.5} />
+                <rect x={node.x} y={node.y} width={NODE_W} height={NODE_H} rx={10} strokeWidth={1.5} style={{
+                    fill: colors.surface,
+                    stroke: colors.textFaint
+                  }} />
               )}
-              <text x={node.x + NODE_W / 2} y={node.y + NODE_H / 2 + 4} textAnchor="middle" fontSize={11} fontWeight={600} fill={colors.text}>
+              <text x={node.x + NODE_W / 2} y={node.y + NODE_H / 2 + 4} textAnchor="middle" fontSize={11} fontWeight={600} style={{ fill: colors.text }}>
                 {nodeLabel(node)}
               </text>
             </g>
@@ -90,9 +92,10 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
               width={NODE_W}
               height={NODE_H}
               rx={10}
-              fill={colors.surface}
-              stroke={color}
-              strokeWidth={1.5}
+              strokeWidth={1.5} style={{
+                fill: colors.surface,
+                stroke: color
+              }}
             />
             <text x={node.x + NODE_W / 2} y={node.y + 19} textAnchor="middle" fontSize={13}>
               {spec.emoji}
@@ -102,8 +105,7 @@ function BoardSnapshot({ nodes, edges }: { nodes: BoardNode[]; edges: BoardEdge[
               y={node.y + 34}
               textAnchor="middle"
               fontSize={9}
-              fontWeight={700}
-              fill={colors.text}
+              fontWeight={700} style={{ fill: colors.text }}
             >
               {spec.label}
             </text>

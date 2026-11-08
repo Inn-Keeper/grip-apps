@@ -30,9 +30,9 @@ function Line({ p, color, dashed, heads }: { p: Points; color: string | undefine
   const end = { x: p.x2, y: p.y2 };
   return (
     <>
-      <line x1={p.x} y1={p.y} x2={p.x2} y2={p.y2} stroke={color} strokeWidth={2} strokeLinecap="round" strokeDasharray={dashed ? "7 5" : undefined} />
-      {heads !== "none" && <polygon points={headPoints(start, end)} fill={color} />}
-      {heads === "both" && <polygon points={headPoints(end, start)} fill={color} />}
+      <line x1={p.x} y1={p.y} x2={p.x2} y2={p.y2} strokeWidth={2} strokeLinecap="round" strokeDasharray={dashed ? "7 5" : undefined} style={{ stroke: color }} />
+      {heads !== "none" && <polygon points={headPoints(start, end)} style={{ fill: color }} />}
+      {heads === "both" && <polygon points={headPoints(end, start)} style={{ fill: color }} />}
     </>
   );
 }
@@ -98,7 +98,7 @@ export function BoardFreeArrows({ arrows, selectedId, draft, size, toBoard, onSe
               if (event.key === "Delete" || event.key === "Backspace") { event.preventDefault(); onRemove(n.id); }
             }}
           >
-            {selected && <line x1={p.x} y1={p.y} x2={p.x2} y2={p.y2} stroke={colors.accent} strokeOpacity={0.35} strokeWidth={8} strokeLinecap="round" />}
+            {selected && <line x1={p.x} y1={p.y} x2={p.x2} y2={p.y2} strokeOpacity={0.35} strokeWidth={8} strokeLinecap="round" style={{ stroke: colors.accent }} />}
             <Line p={p} color={colors[style.color]} dashed={style.dashed} heads={style.heads} />
             {/* Wide invisible stroke: a 2px line is too thin to grab. */}
             <line x1={p.x} y1={p.y} x2={p.x2} y2={p.y2} stroke="transparent" strokeWidth={14} style={{
@@ -111,10 +111,10 @@ export function BoardFreeArrows({ arrows, selectedId, draft, size, toBoard, onSe
                 cx={part === "start" ? p.x : p.x2}
                 cy={part === "start" ? p.y : p.y2}
                 r={6}
-                fill={colors.surface}
-                stroke={colors.accent}
                 strokeWidth={2}
                 style={{
+                  fill: colors.surface,
+                  stroke: colors.accent,
                   pointerEvents: "all",
                   cursor: "crosshair"
                 }}

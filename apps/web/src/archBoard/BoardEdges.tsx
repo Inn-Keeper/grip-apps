@@ -30,7 +30,7 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
       }}>
       <defs>
         <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-          <path d="M 0 0 L 10 5 L 0 10 z" fill={colors.textDim} />
+          <path d="M 0 0 L 10 5 L 0 10 z" style={{ fill: colors.textDim }} />
         </marker>
       </defs>
       {edges.map((e) => {
@@ -48,11 +48,10 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
             <path
               d={d}
               fill="none"
-              stroke={selected ? colors.accentBright : colors.textDim}
               strokeWidth={selected ? 3 : 2}
               // Async hops are dashed: the whiteboard convention for "this one doesn't block".
               strokeDasharray={e.mode === "async" ? "6 4" : undefined}
-              markerEnd="url(#arrow)"
+              markerEnd="url(#arrow)" style={{ stroke: selected ? colors.accentBright : colors.textDim }}
             />
             {label && (
               <text x={mx} y={(sy + ty) / 2 - 6} textAnchor="middle" style={{
@@ -78,7 +77,7 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
         const start = nodeAxisPoint(source, connectDrag, nodeSize(source, NODE_SIZE));
         const mx = (start.x + connectDrag.x) / 2;
         const d = `M ${start.x} ${start.y} C ${mx} ${start.y}, ${mx} ${connectDrag.y}, ${connectDrag.x} ${connectDrag.y}`;
-        return <path d={d} fill="none" stroke={colors.accentBright} strokeWidth="2" strokeDasharray="5 5" markerEnd="url(#arrow)" />;
+        return <path d={d} fill="none" strokeWidth="2" strokeDasharray="5 5" markerEnd="url(#arrow)" style={{ stroke: colors.accentBright }} />;
       })()}
     </svg>
   );

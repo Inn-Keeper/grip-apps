@@ -6,5 +6,5 @@
 }
 
 .dialog::backdrop {
-  background: #00000090;
+  background: var(--tint-modal-scrim);
 }

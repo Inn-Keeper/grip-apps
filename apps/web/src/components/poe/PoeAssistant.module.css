@@ -41,7 +41,7 @@
   padding: 10px 12px;
   border: 1px solid color-mix(in srgb, var(--poe-accent) 48%, var(--c-border-soft));
   border-radius: 8px;
-  background: rgba(16, 19, 26, 0.96);
+  background: color-mix(in srgb, var(--c-bg-deep) 96%, transparent);
   color: var(--c-text);
   font-size: var(--fs-small);
   font-weight: 700;
@@ -59,7 +59,7 @@
   height: 12px;
   border-left: 1px solid color-mix(in srgb, var(--poe-accent) 48%, var(--c-border-soft));
   border-bottom: 1px solid color-mix(in srgb, var(--poe-accent) 48%, var(--c-border-soft));
-  background: rgba(16, 19, 26, 0.96);
+  background: color-mix(in srgb, var(--c-bg-deep) 96%, transparent);
   transform: rotate(45deg);
 }
 

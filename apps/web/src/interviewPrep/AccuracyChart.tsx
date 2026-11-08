@@ -90,11 +90,10 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
           <path
             d={`M ${PAD_X} ${PAD_Y} L ${PAD_X} ${HEIGHT - PAD_Y} L ${WIDTH - PAD_X} ${HEIGHT - PAD_Y}`}
             fill="none"
-            stroke={colors.borderSoft}
-            strokeWidth="1"
+            strokeWidth="1" style={{ stroke: colors.borderSoft }}
           />
           {/* pathLength=1 lets the CSS draw-in work for any line length. */}
-          <path d={path} pathLength={1} className={styles.chartLine} fill="none" stroke={colors.accent} strokeWidth="2.5" strokeLinejoin="round" />
+          <path d={path} pathLength={1} className={styles.chartLine} fill="none" strokeWidth="2.5" strokeLinejoin="round" style={{ stroke: colors.accent }} />
           {dots.map((dot, index) => {
             const last = index === dots.length - 1;
             return (
@@ -103,10 +102,9 @@ export function AccuracyChart({ points, compact = false }: { points: AccuracyPoi
                 cx={dot.x}
                 cy={dot.y}
                 r={last ? 4 : 2.5}
-                fill={last ? colors.success : colors.accent}
                 // Each dot appears as the line reaches it; the last one blinks when the line lands.
                 className={last ? `${styles.chartDot} ${styles.chartDotLast}` : styles.chartDot}
-                style={{ animationDelay: last ? `${DRAW_MS - 150}ms, ${DRAW_MS}ms` : `${(index / maxIndex) * DRAW_MS - 150}ms`, "--land-glow": alpha(colors.success, 0.6) } as CSSProperties}
+                style={{ fill: last ? colors.success : colors.accent, animationDelay: last ? `${DRAW_MS - 150}ms, ${DRAW_MS}ms` : `${(index / maxIndex) * DRAW_MS - 150}ms`, "--land-glow": alpha(colors.success, 0.6) } as CSSProperties}
               />
             );
           })}
