@@ -141,7 +141,7 @@ export async function savePlaybook(playbook, { label, upsertCustomScenario, upse
   let boardId = progress.boardId ?? null;
   const { name, brief, checks, starter = [] } = playbook.scenario;
   if (!scenarioId) {
-    scenarioId = (await upsertCustomScenario({ name, brief, checks: checks.map(toCheck) })).id ?? null;
+    scenarioId = (await upsertCustomScenario({ name, brief, checks: checks.map(toCheck), playbook: label })).id ?? null;
   }
   if (!boardId && scenarioId && upsertBoard && starter.length) {
     boardId = (await upsertBoard({ title: name, scenarioId, storyId: null, nodes: starterNodes(starter), edges: [] })).id ?? null;

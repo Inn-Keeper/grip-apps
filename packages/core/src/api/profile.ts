@@ -90,5 +90,11 @@ export function profileApi(supabase: Db) {
     return profileToUi(data, user);
   }
 
-  return { getUser, updateProfile };
+  // Deletes everything the first-run wizard made and turns it back on (migration 0029).
+  async function resetGoals(): Promise<void> {
+    const { error } = await supabase.rpc("reset_goals");
+    if (error) fail(error);
+  }
+
+  return { getUser, updateProfile, resetGoals };
 }

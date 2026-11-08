@@ -162,6 +162,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          playbook: string | null
           updated_at: string
           user_id: string
         }
@@ -172,6 +173,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          playbook?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -182,6 +184,7 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          playbook?: string | null
           updated_at?: string
           user_id?: string
         }
@@ -419,6 +422,7 @@ export type Database = {
     }
     Functions: {
       add_xp: { Args: { points: number }; Returns: number }
+      reset_goals: { Args: Record<PropertyKey, never>; Returns: undefined }
       answer_daily_totals: {
         Args: { p_tz: string }
         Returns: {

@@ -136,6 +136,8 @@ export type CustomScenario = {
   name: string;
   brief: string;
   checks: Check[];
+  /** Set on wizard-generated scenarios, so "Reset goals" can remove them */
+  playbook?: string | null;
 };
 
 export type SavedScenario = CustomScenario & { id: string };

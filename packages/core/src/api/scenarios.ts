@@ -18,6 +18,7 @@ export function scenariosApi(supabase: Db) {
     name: s.name,
     brief: s.brief ?? "",
     checks: (s.checks ?? []) as Json,
+    ...(s.playbook !== undefined && { playbook: s.playbook }),
   }) satisfies TablesInsert<"custom_scenarios">;
 
   async function listCustomScenarios(): Promise<SavedScenario[]> {

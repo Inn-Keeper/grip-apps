@@ -68,6 +68,8 @@ describe("savePlaybook", () => {
       upsertStory: async (s) => void saved.push(s),
     });
     expect(scenarios[0].checks[0]).toMatchObject({ kind: "edge", from: ["client"], to: ["service"] });
+    // Marked so "Reset goals" can find and delete it.
+    expect(scenarios[0].playbook).toBe("Backend Engineer");
     expect(saved[0]).toMatchObject({ title: "Q1", scenarioId: "sc1", isSample: true, playbook: "Backend Engineer" });
     expect(saved[1].scenarioId).toBeNull();
     expect(result).toEqual({ scenarioId: "sc1", boardId: null, saved: ["Q1", "Q2"], failed: [] });

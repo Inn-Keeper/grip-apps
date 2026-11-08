@@ -564,3 +564,20 @@ describe("profile goal techs", () => {
     expect(calls.updates.at(-1).rows.goal_techs).toEqual(["Go"]);
   });
 });
+
+describe("reset goals", () => {
+  it("calls the reset_goals function", async () => {
+    const { client, calls } = fakeSupabase();
+    await createApi(client).resetGoals();
+    expect(calls.rpcs.at(-1).fn).toBe("reset_goals");
+  });
+
+  it("writes a scenario's playbook label only when given", async () => {
+    const { client, calls } = fakeSupabase();
+    const api = createApi(client);
+    await api.upsertCustomScenario({ name: "Manual", brief: "", checks: [] });
+    expect("playbook" in calls.inserts.at(-1).rows).toBe(false);
+    await api.upsertCustomScenario({ name: "Generated", brief: "", checks: [], playbook: "Backend Engineer" });
+    expect(calls.inserts.at(-1).rows.playbook).toBe("Backend Engineer");
+  });
+});
