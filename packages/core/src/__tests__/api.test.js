@@ -526,3 +526,30 @@ describe("createApi", () => {
     await expect(api.getSharedBoard("nope")).resolves.toBeNull();
   });
 });
+
+describe("stories first-run fields", () => {
+  const base = { title: "Q", competency: "Impact", situation: "", task: "", action: "", result: "" };
+
+  it("omits is_sample and playbook when undefined", async () => {
+    const { client, calls } = fakeSupabase();
+    await createApi(client).upsertStory(base);
+    const row = calls.inserts.at(-1).rows;
+    expect("is_sample" in row).toBe(false);
+    expect("playbook" in row).toBe(false);
+  });
+
+  it("writes isSample false and keeps playbook", async () => {
+    const { client, calls } = fakeSupabase();
+    await createApi(client).upsertStory({ ...base, id: "s1", isSample: false, playbook: "Backend Engineer" });
+    expect(calls.updates.at(-1).rows).toMatchObject({ is_sample: false, playbook: "Backend Engineer" });
+  });
+
+  it("maps is_sample and playbook when listing", async () => {
+    const { client, calls } = fakeSupabase({
+      stories: [{ id: "s1", ...base, scenario_id: null, is_sample: true, playbook: "Backend Engineer" }],
+    });
+    const [story] = await createApi(client).listStories();
+    expect(story).toMatchObject({ isSample: true, playbook: "Backend Engineer" });
+    expect(calls.selects.at(-1).columns).toContain("is_sample,playbook");
+  });
+});

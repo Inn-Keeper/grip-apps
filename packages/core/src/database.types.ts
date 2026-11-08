@@ -371,6 +371,8 @@ export type Database = {
           competency: string
           created_at: string
           id: string
+          is_sample: boolean
+          playbook: string | null
           result: string | null
           scenario_id: string | null
           situation: string | null
@@ -383,6 +385,8 @@ export type Database = {
           competency: string
           created_at?: string
           id?: string
+          is_sample?: boolean
+          playbook?: string | null
           result?: string | null
           scenario_id?: string | null
           situation?: string | null
@@ -395,6 +399,8 @@ export type Database = {
           competency?: string
           created_at?: string
           id?: string
+          is_sample?: boolean
+          playbook?: string | null
           result?: string | null
           scenario_id?: string | null
           situation?: string | null

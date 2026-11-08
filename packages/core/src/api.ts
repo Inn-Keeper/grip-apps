@@ -48,6 +48,10 @@ export type Story = {
   result: string;
   /** Arch Board scenario (built-in key or custom uuid) */
   scenarioId?: string | null;
+  /** AI-written sample, true until the user saves an edit */
+  isSample?: boolean;
+  /** Name of the generated playbook this story came from; null for manual stories */
+  playbook?: string | null;
 };
 
 export type Scores = {

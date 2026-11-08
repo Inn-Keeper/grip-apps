@@ -14,6 +14,8 @@ export function storiesApi(supabase: Db) {
     action: r.action ?? "",
     result: r.result ?? "",
     scenarioId: r.scenario_id ?? null,
+    isSample: r.is_sample ?? false,
+    playbook: r.playbook ?? null,
   });
 
   const storyToDb = (s: Story) => ({
@@ -25,10 +27,13 @@ export function storiesApi(supabase: Db) {
     result: s.result || null,
     // Only when the caller knows about the link, so clients without it (mobile) don't clear it.
     ...(s.scenarioId !== undefined && { scenario_id: s.scenarioId || null }),
+    // Same rule for the first-run fields, so a mobile save keeps the tags.
+    ...(s.isSample !== undefined && { is_sample: s.isSample }),
+    ...(s.playbook !== undefined && { playbook: s.playbook || null }),
   }) satisfies TablesInsert<"stories">;
 
   async function listStories(): Promise<Story[]> {
-    const { data, error } = await supabase.from("stories").select("id,title,competency,situation,task,action,result,scenario_id").order("created_at");
+    const { data, error } = await supabase.from("stories").select("id,title,competency,situation,task,action,result,scenario_id,is_sample,playbook").order("created_at");
     if (error) fail(error);
     return data.map(storyToUi);
   }
