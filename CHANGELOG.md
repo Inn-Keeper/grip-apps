@@ -25,8 +25,15 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Prep's web signal lists use the existing 70% accuracy boundary so a topic never appears in both, and show the number of answers behind each percentage. Metric explanations distinguish equal-weight technology averages from cumulative answer accuracy in English, Portuguese and Swedish.
 - Saving the profile no longer marks onboarding as complete; finishing the wizard or "Explore first" does.
 - SCREEN-GUIDELINES rule 34 allows Poe's walk on the playbook generation screen.
+
+### Fixed
+
+- CV previews omit redaction placeholders, empty contact separators and redaction-only lines before generation, preserving experience content and technology names.
+- Web playbook generation stays focused on completing the plan, with waiting feedback and a 200-second timeout. Retry is the primary action after a failure, with practice without the plan as a fallback. Late responses are discarded after unmounting, and no further saves start after the current write.
+- An empty story-drill result on web opens a new story with its competency selected. Saving or cancelling returns to the same revealed prompt, and the empty-state copy explains the next step.
 
 ### Database
 

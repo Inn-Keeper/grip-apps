@@ -6,11 +6,12 @@ import { ErrorText } from "../components/ErrorText";
 import * as api from "../lib/api";
 import { archBoardQueryKeys } from "../archBoard/queries";
 import { storyQueryKeys } from "../storyBank/queries";
-import { space } from "../lib/tokens";
+import { colors, font, space } from "../lib/tokens";
 import { PoeWalk } from "./PoeWalk";
 import { ghostBtn, primaryBtn } from "./styles";
 import { playbookRequest, prepPlanTechs, type WizardState } from "./wizardState.js";
 import { writePrepPlan } from "../lib/prepPlanHandoff";
+import { generateWithTimeout } from "./generationRequest.js";
 
 type Key = Parameters<typeof t>[0];
 type Progress = { scenarioId: string | null; boardId?: string | null; saved: string[] };
@@ -23,6 +24,7 @@ const ERROR_KEYS: Record<string, string> = {
   provider_limited: "firstRun.error.limited",
   provider_quota_exhausted: "firstRun.error.limited",
   invalid_model_response: "firstRun.error.invalid",
+  timeout: "firstRun.error.timeout",
 };
 
 /** Seconds left on a Retry-After countdown, ticking once a second. */
@@ -37,8 +39,8 @@ function useCountdown(seconds: number | null) {
   return left;
 }
 
-// Owns the one generation request and the saves; started by the Review button,
-// so a double click or a remount cannot send it twice.
+// Keep the plan as the outcome; offer practice without it only after a failure.
+// Unmounting discards late responses and stops further writes.
 export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (landing: Landing) => void }) {
   const queryClient = useQueryClient();
   const [phase, setPhase] = useState<"writing" | "saving" | "error" | "partial">("writing");
@@ -47,25 +49,36 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
   const playbook = useRef<Playbook | null>(null);
   const progress = useRef<Progress>({ scenarioId: null, saved: [] });
   const abort = useRef<AbortController | null>(null);
-  const started = useRef(false);
+  const operation = useRef<"writing" | "saving" | null>(null);
+  const departed = useRef(false);
   const retryLeft = useCountdown(error?.retryAfter ?? null);
   const goal = state.goal || "explore";
   const label = playbookLabel({ role: state.role, goal });
 
   // Prep picks the plan up as its banner, so the goals show up there too.
   const land = () => {
+    if (departed.current) return;
+    departed.current = true;
     const techs = prepPlanTechs(state);
     if (techs.length) writePrepPlan({ name: label, deadline: "", techs });
     onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
   };
 
-  const save = async () => {
+  const save = async (signal: AbortSignal) => {
+    signal.throwIfAborted();
+    operation.current = "saving";
     setPhase("saving");
     const result = await savePlaybook(
       playbook.current!,
-      { label, upsertCustomScenario: api.upsertCustomScenario, upsertBoard: api.upsertBoard, upsertStory: api.upsertStory },
+      {
+        label,
+        upsertCustomScenario: (scenario) => { signal.throwIfAborted(); return api.upsertCustomScenario(scenario); },
+        upsertBoard: (board) => { signal.throwIfAborted(); return api.upsertBoard(board); },
+        upsertStory: (story) => { signal.throwIfAborted(); return api.upsertStory(story); },
+      },
       progress.current,
     );
+    if (signal.aborted || departed.current) return;
     progress.current = result;
     queryClient.invalidateQueries({ queryKey: storyQueryKeys.stories });
     queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.customScenarios });
@@ -78,20 +91,27 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
   };
 
   const run = async () => {
+    if (operation.current || departed.current) return;
+    const controller = new AbortController();
+    abort.current = controller;
+    operation.current = "writing";
     setError(null);
-    if (playbook.current) return save().catch(() => fail("generic", null));
-    setPhase("writing");
-    abort.current = new AbortController();
     try {
-      playbook.current = await api.playbookApi!.generatePlaybook(
-        playbookRequest(state, getLocale()),
-        { signal: abort.current.signal },
-      );
-      await save();
+      if (!playbook.current) {
+        setPhase("writing");
+        playbook.current = await generateWithTimeout(
+          (signal) => api.playbookApi!.generatePlaybook(playbookRequest(state, getLocale()), { signal }),
+          controller.signal,
+        );
+      }
+      if (controller.signal.aborted || departed.current) return;
+      await save(controller.signal);
     } catch (e) {
-      if ((e as Error).name === "AbortError") return;
+      if (controller.signal.aborted || departed.current) return;
       const err = e as { code?: string; retryAfter?: number | null };
       fail(ERROR_KEYS[err.code ?? ""] ? err.code! : "generic", err.retryAfter ?? null);
+    } finally {
+      operation.current = null;
     }
   };
 
@@ -101,15 +121,24 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
   };
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    if (!api.playbookApi) return land();
-    run();
+    let mounted = true;
+    // StrictMode's probe unmounts before this microtask, so only the live mount sends.
+    queueMicrotask(() => {
+      if (!mounted) return;
+      if (!api.playbookApi) land();
+      else run();
+    });
+    return () => {
+      mounted = false;
+      abort.current?.abort();
+    };
     // Runs once per visit to this step; the Review button is the only way in.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const instead = () => {
+    // A retry can start before React has removed the failure actions.
+    if (operation.current) return;
     abort.current?.abort();
     land();
   };
@@ -123,23 +152,23 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
       {(phase === "writing" || phase === "saving") && <PoeWalk saving={phase === "saving"} />}
       {error && <ErrorText>{t(error.key as Key)}</ErrorText>}
       {phase === "partial" && partial && <ErrorText>{t("firstRun.generate.partial", partial)}</ErrorText>}
-      <div style={{
+      {(phase === "error" || phase === "partial") && <div style={{
           display: "flex",
           gap: space.md,
           flexWrap: "wrap"
         }}>
-        {(phase === "error" || phase === "partial") && (
-          <button type="button" onClick={run} disabled={retryLeft > 0} style={primaryBtn(retryLeft === 0)}>
-            {retryLeft > 0 ? t("firstRun.generate.retryIn", { seconds: retryLeft }) : t("firstRun.generate.retry")}
-          </button>
-        )}
-        {/* No way out while it works; only a failure offers practice instead. */}
-        {(phase === "error" || phase === "partial") && (
-          <button type="button" onClick={instead} style={ghostBtn}>
-            {t("firstRun.generate.instead")}
-          </button>
-        )}
-      </div>
+        <button type="button" onClick={run} disabled={retryLeft > 0} style={primaryBtn(retryLeft === 0)}>
+          {retryLeft > 0 ? t("firstRun.generate.retryIn", { seconds: retryLeft }) : t("firstRun.generate.retry")}
+        </button>
+        <button type="button" onClick={instead} style={ghostBtn}>
+          {t("firstRun.generate.instead")}
+        </button>
+      </div>}
+      {(phase === "writing" || phase === "saving") && <p role="status" style={{
+        margin: 0,
+        color: colors.textDim,
+        fontSize: font.size.body
+      }}>{t(phase === "saving" ? "firstRun.generate.finishing" : "firstRun.generate.waitHint")}</p>}
     </div>
   );
 }

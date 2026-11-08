@@ -7,6 +7,8 @@ import { BrandIcon } from "../components/BrandIcon";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { AccuracyChart } from "./AccuracyChart";
 import type { AccuracyPoint, Readiness, Scores, Summary } from "./types";
+import { ACCURACY_GOOD_PCT } from "./types";
+import { signalGroups } from "./signalGroups.js";
 import { LevelSelector } from "./LevelSelector";
 import { QuizSizeSelector } from "./QuizSizeSelector";
 import { AutoNextToggle } from "./AutoNextToggle";
@@ -45,8 +47,7 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
   const rank = rankForXp(scores.xp) ?? RANKS[0]!;
   const next = RANKS[RANKS.indexOf(rank) + 1];
   const progress = next ? Math.round(((scores.xp - rank.min) / (next.min - rank.min)) * 100) : 100;
-  const strongest = summary.ranked.slice(0, 4);
-  const weakest = [...summary.ranked].reverse().slice(0, 4);
+  const { strongest, weakest } = signalGroups(summary.ranked, ACCURACY_GOOD_PCT);
 
   return (
     <>
@@ -81,8 +82,12 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
           icon={<BrandIcon name="accuracy" color={colors.successBright} size={17} />}
           title={t("prep.signal")}
         />
-        <RailList title={t("prep.strongest2")} icon="arrowUp" items={strongest} color={colors.successBright ?? ""} />
-        <RailList title={t("prep.needsReps")} icon="arrowDown" items={weakest} color={colors.warningBright ?? ""} />
+        <p style={{
+          color: colors.textFaint,
+          fontSize: font.size.small
+        }}>{t("prep.signalHint", { pct: ACCURACY_GOOD_PCT })}</p>
+        <RailList title={t("prep.strongest2")} icon="arrowUp" items={strongest} empty={t(summary.attempts ? "prep.strengthEmpty" : "prep.signalEmpty")} color={colors.successBright ?? ""} />
+        <RailList title={t("prep.needsReps")} icon="arrowDown" items={weakest} empty={t(summary.attempts ? "prep.gapsEmpty" : "prep.signalEmpty")} color={colors.warningBright ?? ""} />
       </WorkspacePanel>
 
       {/* Native disclosure, one card: the summary keeps the current values visible while
@@ -131,7 +136,7 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
   );
 }
 
-function RailList({ color, icon, items, title }: { color: string; icon: string; items: { tech: string; acc: number; n: number }[]; title: string }) {
+function RailList({ color, empty, icon, items, title }: { color: string; empty: string; icon: string; items: { tech: string; acc: number; n: number }[]; title: string }) {
   return (
     <div style={{ marginTop: 14 }}>
       <div style={{
@@ -152,7 +157,7 @@ function RailList({ color, icon, items, title }: { color: string; icon: string; 
             color: colors.textFaint,
             fontSize: font.size.label,
             lineHeight: 1.5
-          }}>{t("prep.signalEmpty")}</p>
+          }}>{empty}</p>
       ) : (
         <div style={{
             display: "flex",
@@ -171,7 +176,14 @@ function RailList({ color, icon, items, title }: { color: string; icon: string; 
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap"
-                }}>{item.tech}</span>
+                }}>
+                {item.tech}
+                <span style={{
+                  display: "block",
+                  color: colors.textFaint,
+                  fontSize: font.size.label
+                }}>{t("prep.answered", { count: item.n })}</span>
+              </span>
               <span style={{
                   color,
                   fontWeight: 800,

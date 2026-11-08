@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
 import { colors, font, shadow } from "../lib/tokens";
@@ -6,12 +6,18 @@ import { BrandIcon } from "../components/BrandIcon";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { StoryCard } from "./StoryCard";
 import type { Story } from "./types";
+import { miniBtn } from "../components/fieldStyles";
 
 type Prompt = { text: string; competency: string };
+type PromptState = { promptIdx: number; revealed: boolean };
 
-export function PromptDrill({ stories }: { stories: Story[] }) {
-  const [promptIdx, setPromptIdx] = useState(() => Math.floor(Math.random() * PROMPTS.length));
-  const [revealed, setRevealed] = useState(false);
+export function PromptDrill({ stories, state, onChange, onAddStory }: {
+  stories: Story[];
+  state: PromptState;
+  onChange: (state: PromptState) => void;
+  onAddStory: (competency: string) => void;
+}) {
+  const { promptIdx, revealed } = state;
 
   const prompt = PROMPTS[promptIdx] as Prompt | undefined;
   const matching = stories.filter((s) => s.competency === prompt?.competency);
@@ -19,8 +25,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
   const nextPrompt = () => {
     let next = Math.floor(Math.random() * PROMPTS.length);
     if (next === promptIdx) next = (next + 1) % PROMPTS.length;
-    setPromptIdx(next);
-    setRevealed(false);
+    onChange({ promptIdx: next, revealed: false });
   };
 
   return (
@@ -60,7 +65,7 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
             justifyContent: "center"
           }}>
           <button
-            onClick={() => setRevealed(true)}
+            onClick={() => onChange({ promptIdx, revealed: true })}
             disabled={revealed}
             style={{
               padding: "9px 18px",
@@ -102,22 +107,27 @@ export function PromptDrill({ stories }: { stories: Story[] }) {
             gap: 12
           }}>
           {matching.length === 0 ? (
-            <p
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 7,
-                color: colors.warningBright,
-                fontSize: font.size.body,
-                textAlign: "center",
-              }}
-            >
-              <BrandIcon name="warning" color={colors.warningBright} size={14} />
-              <span>
-                {t("stories.noStoryFor", { competency: prompt?.competency ? t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0]) : "" })}
-              </span>
-            </p>
+            <div role="status">
+              <p
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 7,
+                  color: colors.warningBright,
+                  fontSize: font.size.body,
+                  textAlign: "center",
+                }}
+              >
+                <BrandIcon name="warning" color={colors.warningBright} size={14} />
+                <span>
+                  {t("stories.noStoryFor", { competency: prompt?.competency ? t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0]) : "" })}
+                </span>
+              </p>
+              {prompt && <button type="button" onClick={() => onAddStory(prompt.competency)} style={miniBtn(colors.accentBright ?? "")}>
+                {t("stories.writeFor", { competency: t(`enum.competency.${prompt.competency}` as Parameters<typeof t>[0]) })}
+              </button>}
+            </div>
           ) : (
             matching.map((s) => <StoryCard key={s.id} story={s} readOnly />)
           )}

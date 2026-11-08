@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { COMPETENCIES } from "@grip/core/stories";
+import { COMPETENCIES, PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
 import { colors, font } from "../lib/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
@@ -23,6 +23,8 @@ type Focus = { mode: "detail" | "edit"; id: string } | { mode: "new"; competency
 export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } = {}) {
   const [mode, setMode] = useState<StoryMode>("stories");
   const [focus, setFocusState] = useState<Focus>(null);
+  // Keep rehearsal position while its matching story is written or edited.
+  const [drill, setDrill] = useState(() => ({ promptIdx: Math.floor(Math.random() * PROMPTS.length), revealed: false }));
   // Confirmation after a change (rule 14); the story a failed save belongs to (rule 13).
   const [notice, setNotice] = useState<{ id: number; text: string } | null>(null);
   const [touched, setTouched] = useState<string | null>(null);
@@ -128,7 +130,7 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
               fontWeight: 700,
               cursor: "pointer"
             }}>
-            {t("stories.back")}
+            {t(mode === "drill" ? "stories.backToPrompt" : "stories.back")}
           </button>
           {noticeLine}
           {focus.mode === "new" && (
@@ -189,7 +191,7 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
           ))}
 
           {mode === "drill" ? (
-            <PromptDrill stories={storyList} />
+            <PromptDrill stories={storyList} state={drill} onChange={setDrill} onAddStory={(competency) => setFocus({ mode: "new", competency })} />
           ) : (
             <div style={{
                 display: "flex",

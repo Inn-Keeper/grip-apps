@@ -16,7 +16,7 @@ const PHONE = /\+?\(?\d[\d\s().-]{7,}\d/g;
 const STREET = /\p{L}*(?:gatan|gata|vägen|väg)\b|\b(?:street|st\.|road|rd\.|avenue|ave\.?|rua|avenida)(?=\s|,|$)/iu;
 
 /**
- * Removes contact details and the user's own name from CV text. The editable
+ * Removes contact details and the user's own name without leaving redaction markers. The editable
  * preview after this is the real safeguard; regexes miss things.
  * @param {string} text
  * @param {string} displayName
@@ -35,7 +35,16 @@ export function redactCv(text, displayName) {
     const escaped = part.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     out = out.replace(new RegExp(`(?<!\\p{L})${escaped}(?!\\p{L})`, "giu"), "[name]");
   }
-  return out;
+  return out
+    .replace(/\[(?:email|phone|link|address|name)\]/gi, "")
+    .split(/\r?\n/)
+    .map((line) => line
+      .split("|")
+      .map((part) => part.replace(/[ \t]+/g, " ").replace(/\s+([,;:.!?])/g, "$1").trim())
+      .filter((part) => /[\p{L}\p{N}]/u.test(part))
+      .join(" | "))
+    .filter(Boolean)
+    .join("\n");
 }
 
 /**

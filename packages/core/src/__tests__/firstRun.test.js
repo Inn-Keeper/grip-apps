@@ -1,6 +1,20 @@
 import { cleanJobText, createPlaybookApi, needsSetup, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv, savePlaybook } from "../firstRun.js";
 
 describe("redactCv", () => {
+  test("removes redacted fields and empty separators from a contact header", () => {
+    const text = "Stockholm, Sweden | +46 (70) 123-45 67 | ada@example.com https://ada.dev | linkedin.com/in/ada github.com/ada";
+    expect(redactCv(text, "Ada Lovelace")).toBe("Stockholm, Sweden");
+  });
+
+  test("drops redaction-only lines and keeps experience, dates, bullets and useful separators", () => {
+    const text = "Ada Lovelace\nada@example.com | +46 (70) 123-45 67\nStorgatan 12, Stockholm\nReact | TypeScript\n- Built Node.js services, 2019-2023\nLed a team of 12.";
+    expect(redactCv(text, "Ada Lovelace")).toBe("React | TypeScript\n- Built Node.js services, 2019-2023\nLed a team of 12.");
+  });
+
+  test("cleans existing redaction placeholders without changing unrelated bracketed content", () => {
+    expect(redactCv("Stockholm, Sweden | [phone] | [email] [link] | [link] [link]\n[name]\n[address]\nBuilt [internal] tools.", "")).toBe("Stockholm, Sweden\nBuilt [internal] tools.");
+  });
+
   test("redacts email, phone, url and address", () => {
     const cv = [
       "ada@example.com | +46 (70) 123-45 67",
@@ -10,17 +24,14 @@ describe("redactCv", () => {
     ].join("\n");
     const out = redactCv(cv, "");
     expect(out).not.toMatch(/example\.com|123-45|ada\.dev|linkedin|Storgatan|Baker/);
-    expect(out).toContain("[email]");
-    expect(out).toContain("[phone]");
-    expect(out).toContain("[link]");
-    expect(out).toContain("[address]");
+    expect(out).not.toMatch(/\[(?:email|phone|link|address)\]/);
   });
 
   test("redacts display name parts case-insensitively", () => {
     const out = redactCv("DALTON led the team. castro shipped it. Costa reviewed.", "Dalton Castro");
     expect(out).not.toMatch(/dalton|castro/i);
     expect(out).toContain("Costa");
-    expect(out).toContain("[name]");
+    expect(out).toBe("led the team. shipped it. Costa reviewed.");
   });
 
   test("keeps company names and tech words", () => {
@@ -143,7 +154,7 @@ describe("formatCvText", () => {
 describe("redactCv links", () => {
   test("redacts bare domains but keeps Node.js and Next.js", () => {
     const out = redactCv("Portfolio innkeeper-forge.vercel.app, Node.js and Next.js", "");
-    expect(out).toBe("Portfolio [link], Node.js and Next.js");
+    expect(out).toBe("Portfolio, Node.js and Next.js");
   });
 });
 
