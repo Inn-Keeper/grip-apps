@@ -17,6 +17,8 @@ export function PoeChatProvider({ children }: { children: React.ReactNode }) {
   const [unavailable, setUnavailable] = useState(!poeChat);
   const [errorLine, setErrorLine] = useState("");
   const opener = useRef<HTMLElement | null>(null);
+  // State updates are async, so two Sends in one tick both see pending=false; the ref does not.
+  const inFlight = useRef(false);
 
   const setOpen = useCallback((next: boolean) => {
     if (next) opener.current = document.activeElement as HTMLElement | null;
@@ -26,7 +28,8 @@ export function PoeChatProvider({ children }: { children: React.ReactNode }) {
 
   const send = useCallback(
     async (text: string) => {
-      if (!poeChat || !canSend(text, pending)) return false;
+      if (!poeChat || !canSend(text, inFlight.current)) return false;
+      inFlight.current = true;
       const history: Turn[] = [...messages, { role: "user", text: text.trim() }];
       setMessages(history);
       setErrorLine("");
@@ -45,10 +48,11 @@ export function PoeChatProvider({ children }: { children: React.ReactNode }) {
         setErrorLine((error as Error)?.message || t("poe.chat.error"));
         return false;
       } finally {
+        inFlight.current = false;
         setPending(false);
       }
     },
-    [messages, pending],
+    [messages],
   );
 
   const value = useMemo(
