@@ -8,11 +8,14 @@ const STATUS = ["firstRun.generate.reading", "firstRun.generate.writing", "first
 // Poe walks across while the playbook is written (SCREEN-GUIDELINES rule 34 exception).
 // Reduced motion: the CSS shows one still frame and only the status line changes.
 export function PoeWalk({ saving }: { saving: boolean }) {
-  const [index, setIndex] = useState(0);
+  // Stages are paced, not real progress; the elapsed clock shows the build hasn't stalled.
+  const [seconds, setSeconds] = useState(0);
   useEffect(() => {
-    const id = window.setInterval(() => setIndex((i) => Math.min(i + 1, STATUS.length - 1)), 4000);
+    const id = window.setInterval(() => setSeconds((s) => s + 1), 1000);
     return () => window.clearInterval(id);
   }, []);
+  const index = Math.min(Math.floor(seconds / 4), STATUS.length - 1);
+  const clock = `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
   return (
     <div style={{
@@ -29,6 +32,10 @@ export function PoeWalk({ saving }: { saving: boolean }) {
           fontSize: font.size.body
         }}>
         {t(saving ? "firstRun.generate.saving" : (STATUS[index] ?? STATUS[0]))}
+        <span aria-hidden="true" style={{
+            marginLeft: space.sm,
+            fontVariantNumeric: "tabular-nums"
+          }}>{clock}</span>
       </p>
     </div>
   );
