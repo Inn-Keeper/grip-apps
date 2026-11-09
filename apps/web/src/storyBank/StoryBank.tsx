@@ -152,6 +152,7 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
           <div style={{
               display: "flex",
               alignItems: "baseline",
+              flexWrap: "wrap",
               gap: 12,
               marginBottom: 6
             }}>

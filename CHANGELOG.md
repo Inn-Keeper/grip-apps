@@ -10,6 +10,7 @@ because they have to be applied by hand.
 
 - Chat stays reachable on Prep when the mascot is hidden on narrow, short or touch screens; the resting mascot stays hidden behind open mobile chat.
 - The chat panel stays on screen near the footer and follows the visual viewport when the mobile keyboard opens or pans the page.
+- Stories heading actions wrap with enlarged text.
 
 ## 2026-11-08
 
