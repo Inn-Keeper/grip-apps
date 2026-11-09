@@ -11,6 +11,8 @@ import { Field } from "./components/shared";
 import styles from "./SignIn.module.css";
 
 const CAPTCHA_WAIT_MS = 10_000;
+// The three AI features, one line each: setup plan, talk track grading, Poe.
+const AI_PROOF = ["auth.aiPlan", "auth.aiProof", "auth.aiPoe"] as const;
 
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -179,12 +181,16 @@ export function SignIn() {
         </button>
 
         {/* Under the form so the main action stays at the top (rule 1). */}
-        <p className={styles.proof}>
-          <span className={styles.proofIcon}>
-            <BrandIcon name="spark" color={colors.accentBright} size={14} />
-          </span>
-          {t("auth.aiProof")}
-        </p>
+        <ul className={styles.proofList}>
+          {AI_PROOF.map((key) => (
+            <li key={key} className={styles.proof}>
+              <span className={styles.proofIcon}>
+                <BrandIcon name="spark" color={colors.accentBright} size={14} />
+              </span>
+              {t(key)}
+            </li>
+          ))}
+        </ul>
       </div>
     </main>
   );
