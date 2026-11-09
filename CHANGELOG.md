@@ -8,6 +8,11 @@ because they have to be applied by hand.
 
 ### Added
 
+- After the first-run wizard, Prep opens as a single focus card (the next-up plan and one Start button) with a "Show full dashboard" link; the full three-column view appears after the first drill.
+- The Prep focus card links to what setup also built: "Your sample stories" and "Your practice board", which opens the plan's own board instead of the default scenario.
+- When setup lands on the Arch Board (system design goal), a dismissable note says the board was drawn for the plan and where the drill and sample stories are. The Sample tag's hint no longer claims every sample was written by AI.
+- Story Bank shows a line above the list when samples exist, so the Sample tag's meaning is visible without hovering.
+- Production-readiness review and high-priority web launch plan in `docs/`, covering account recovery, data lifecycle, AI limits, operations, database recovery and release acceptance. Planning only; no product behavior changed.
 - Profile "Your preparation" at `/profile/preparation`: playbook status with one primary action, a role/focus/stack summary, inline preferred technologies and experience sources.
 - Preparation editor at `/profile/preparation/edit` with a detached draft: Save writes role, focus, brief, stack, favourites and CV detections in one transaction; Cancel and leaving with unsaved changes ask first.
 - Playbook freshness: current, changed, legacy (created before tracking), updating, failed and interrupted states. Updates keep the previous playbook until the new one is published; Retry reuses the generated result.
@@ -16,6 +21,8 @@ because they have to be applied by hand.
 
 ### Database
 
+- `0031_demo_no_target_role.sql`: `seed_demo_data` no longer sets a target role, so the first-run wizard's role field starts empty for demo visitors. Applied to the linked project on 2026-11-09.
+- `0032_demo_stories_sample.sql`: the two seeded demo stories get `is_sample = true`, so they show the Sample tag. Applied to the linked project on 2026-11-09.
 - `0030_profile_preparation.sql`: `user_preparation` table (own-row RLS) and the `save_preparation`, `save_github_signals` and `publish_preparation_playbook` RPCs; `reset_goals` also clears preparation. Applied to the linked project on 2026-11-09.
 
 ### Changed
@@ -29,6 +36,17 @@ because they have to be applied by hand.
 - Profile menu is Account, Your preparation and Preferences, each with its own URL; `/profile`, `/profile/cv` and `/profile/connections` redirect to preparation. The completion percentage and setup prompts are gone; target role is edited only in preparation; Set up and Reset goals moved to Preferences.
 - Prep uses only GitHub technologies you accepted in Profile instead of scanning GitHub on every load.
 - The first-run wizard saves preparation before generating and publishes the playbook in one transaction, so a failure never leaves a half-saved playbook.
+
+### Fixed
+
+- Counts of one read in the singular ("1 experience", "1 tech"): `t()` picks a `<key>_one` entry when `count` is 1.
+- "Try the demo" no longer looks disabled while the invisible captcha loads; an early click waits for the token and then continues.
+- Target role placeholder reads "e.g. Senior Frontend Engineer" so it isn't mistaken for a filled value.
+- Demo users see a "Sample progress" note above the Prep stats, so seeded XP and accuracy aren't read as their own.
+- The plan-build loader shows an elapsed clock next to its status line, so a long build doesn't look frozen.
+- After 20 seconds of writing the plan, setup offers "Start practicing instead", so an overloaded model (429 or 503 after a server retry) no longer traps the user. It is hidden while saving, so nothing is half-saved.
+- Footer page links are inactive while setup is open; they used to change the URL behind the wizard.
+- Setup answers survive a reload for the visit (sessionStorage); a reload while the plan builds returns to Review instead of requesting it again.
 - GitHub linking returns to `/profile/preparation`; add that URL to the Supabase Auth redirect allowlist.
 
 ### Fixed
