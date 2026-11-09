@@ -112,6 +112,8 @@ export default function App() {
     window.localStorage.removeItem(GITHUB_LINKED_KEY);
     window.localStorage.removeItem(ACTIVE_PAGE_KEY);
     endPrepFocus();
+    // "closed" only hides setup for this account's visit; the next account decides afresh.
+    setSetup("auto");
     if (session) window.localStorage.removeItem(poeHistoryKey(session.user.id));
     supabase.auth.signOut();
   };
