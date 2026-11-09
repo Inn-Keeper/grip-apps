@@ -4,7 +4,7 @@ import { POE_LIMITS } from "@grip/core/poeChat";
 import { poeChat } from "../../lib/api";
 import { canSend, isUnavailable } from "./poeChatState.js";
 import { PoeChatContext, usePoeChat, type Turn } from "./poeChatContext";
-import { useFooterLift } from "./usePoeHooks";
+import { useChatViewport, useFooterLift } from "./usePoeHooks";
 import styles from "./PoeChat.module.css";
 import mascotStyles from "./PoeAssistant.module.css";
 
@@ -66,8 +66,13 @@ export function PoeChatProvider({ children }: { children: React.ReactNode }) {
 export function PoeChat({ showBubble }: { showBubble: boolean }) {
   const chat = usePoeChat();
   const lift = useFooterLift();
+  const viewport = useChatViewport(!!chat?.open);
   if (!chat || !poeChat || chat.unavailable) return null;
-  const position = { "--poe-lift": `${lift}px` } as React.CSSProperties;
+  const position = {
+    "--poe-lift": `${lift}px`,
+    "--chat-viewport-height": `${viewport.height}px`,
+    "--chat-keyboard-inset": `${viewport.bottom}px`,
+  } as React.CSSProperties;
 
   return (
     <>
