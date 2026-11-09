@@ -161,7 +161,7 @@ export default function App() {
     saveProfile.mutate({ onboardingCompleted: true });
     setSetup("closed");
     // The starter board opens saved, so the user starts from its components.
-    if (target === "board" && scenarioId) openInBoard(boardId ? { scenarioId, boardId } : { scenarioId });
+    if (target === "board" && scenarioId) openInBoard(boardId ? { scenarioId, boardId, fromSetup: true } : { scenarioId, fromSetup: true });
     else selectPage(target);
   };
   const exploreFirst = () => {

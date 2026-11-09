@@ -223,3 +223,29 @@
   .railActionShine { animation: none; }
   .railActionShine::after { content: none; }
 }
+
+/* One-time note when first-run setup lands on the board. */
+.setupNote {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 14px;
+  padding: 10px 14px;
+  border: 1px solid color-mix(in srgb, var(--c-accent) 38%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--c-accent) 10%, transparent);
+  font-size: var(--fs-body);
+  color: var(--c-text-bright);
+}
+
+.setupNoteClose {
+  flex: none;
+  min-width: 32px;
+  min-height: 32px;
+  background: none;
+  border: none;
+  color: var(--c-text-dim);
+  font-size: var(--fs-body);
+  cursor: pointer;
+}

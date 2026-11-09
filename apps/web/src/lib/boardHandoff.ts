@@ -4,7 +4,7 @@
 const KEY = "grip.boardHandoff";
 
 /** A new board for a story's scenario, or a saved board (boardId) to load. */
-export type BoardHandoff = { scenarioId: string; storyId?: string | null; boardId?: string };
+export type BoardHandoff = { scenarioId: string; storyId?: string | null; boardId?: string; fromSetup?: boolean };
 
 export function openInBoard(handoff: BoardHandoff) {
   window.localStorage.setItem(KEY, JSON.stringify(handoff));

@@ -67,6 +67,8 @@ export default function ArchBoard() {
   // A story hands over its scenario (new board) or one of its saved boards; cleared once the board mounts.
   const [handoff] = useState(readBoardHandoff);
   useEffect(clearBoardHandoff, []);
+  // Setup can land here first (system design goal); say what this board is and where the rest went.
+  const [setupNote, setSetupNote] = useState(!!handoff?.fromSetup);
   const [creatorOpen, setCreatorOpen] = useState(false);
   const [inspectingId, setInspectingId] = useState<string | null>(null);
   // The armed tool: Text waits for a click, Arrow and Line for a drag.
@@ -526,6 +528,14 @@ export default function ArchBoard() {
       }
     >
       <div style={cssVars}>
+        {setupNote && !creatorOpen && (
+          <p role="status" className={styles.setupNote}>
+            {t("board.setupNote")}
+            <button type="button" className={styles.setupNoteClose} onClick={() => setSetupNote(false)} aria-label={t("board.setupNoteDismiss")}>
+              ×
+            </button>
+          </p>
+        )}
         {creatorOpen ? (
           // Creating a scenario is a task: it takes the main column and locks the rails (rules 8, 10).
           <div style={workspaceFocusStyle}>
