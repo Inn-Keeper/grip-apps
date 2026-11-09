@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
 import { supabase } from "./lib/supabase";
@@ -23,6 +23,8 @@ export function SignIn() {
   const onToken = useCallback((token: string | null) => setCaptchaToken(token), []);
   const waitingForCaptcha = !!TURNSTILE_SITE_KEY && !captchaToken;
   const captchaOptions = { captchaToken: captchaToken ?? undefined };
+  // A demo click before the invisible captcha resolves waits for the token instead of a disabled button.
+  const [demoQueued, setDemoQueued] = useState(false);
 
   const resetCaptcha = () => {
     setCaptchaToken(null);
@@ -62,6 +64,12 @@ export function SignIn() {
     setBusy(false);
   };
 
+  useEffect(() => {
+    if (!demoQueued || waitingForCaptcha) return;
+    setDemoQueued(false);
+    void tryDemo();
+  }, [demoQueued, waitingForCaptcha]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const signInWithGitHub = async () => {
     setBusy(true);
     setError(null);
@@ -97,11 +105,12 @@ export function SignIn() {
           </button>
           <button
             type="button"
-            onClick={tryDemo}
-            disabled={busy || waitingForCaptcha}
+            onClick={() => (waitingForCaptcha ? setDemoQueued(true) : tryDemo())}
+            disabled={busy || demoQueued}
+            aria-busy={demoQueued || undefined}
             className={`${styles.action} ${styles.demo}`}
           >
-            {t("demo.try")}
+            {demoQueued ? "…" : t("demo.try")}
             <span className={styles.demoHint}>{t("demo.trySub")}</span>
           </button>
           <div className={styles.divider}>
