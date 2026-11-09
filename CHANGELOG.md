@@ -33,6 +33,7 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- On Prep, the chat opened from the mascot appears beside the mascot on the left instead of across the screen on the right.
 - Chat stays reachable on Prep when the mascot is hidden on narrow, short or touch screens; the resting mascot stays hidden behind open mobile chat.
 - The chat panel stays on screen near the footer and follows the visual viewport when the mobile keyboard opens or pans the page.
 - Stories heading actions wrap with enlarged text.

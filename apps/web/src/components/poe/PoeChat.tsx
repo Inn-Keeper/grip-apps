@@ -91,7 +91,7 @@ export function PoeChat({ showBubble }: { showBubble: boolean }) {
 
   return (
     <>
-      {chat.open && <PoeChatPanel style={position} />}
+      {chat.open && <PoeChatPanel style={position} besideMascot={!showBubble} />}
       <button
         type="button"
         className={`${styles.bubble}${showBubble ? "" : ` ${mascotStyles.chatAlternative}`}`}
@@ -111,7 +111,7 @@ export function PoeChat({ showBubble }: { showBubble: boolean }) {
   );
 }
 
-function PoeChatPanel({ style }: { style: React.CSSProperties }) {
+function PoeChatPanel({ style, besideMascot }: { style: React.CSSProperties; besideMascot: boolean }) {
   const chat = usePoeChat()!;
   const [draft, setDraft] = useState("");
   const input = useRef<HTMLInputElement>(null);
@@ -134,7 +134,7 @@ function PoeChatPanel({ style }: { style: React.CSSProperties }) {
     <div
       role="dialog"
       aria-label={t("poe.chat.label")}
-      className={styles.panel}
+      className={`${styles.panel}${besideMascot ? ` ${styles.panelBesideMascot}` : ""}`}
       style={style}
       onKeyDown={(event) => {
         if (event.key === "Escape") chat.setOpen(false);

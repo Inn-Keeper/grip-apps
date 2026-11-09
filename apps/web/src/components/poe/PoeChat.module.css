@@ -196,3 +196,13 @@
     transition: none;
   }
 }
+
+/* Opened from the Prep mascot: sit beside it on the left, where the click happened.
+   Same conditions as the resting mascot (PoeAssistant.module.css); elsewhere the bubble's right side wins. */
+@media (min-width: 1181px) and (min-height: 501px) and (hover: hover) and (pointer: fine) {
+  .panelBesideMascot {
+    right: auto;
+    left: calc(max(clamp(14px, 2.2vw, 30px), calc((100% - var(--page-max, 100%)) / 2 + 24px)) + clamp(150px, 12vw, 180px) + 12px);
+    bottom: calc(max(22px, env(safe-area-inset-bottom)) + var(--poe-lift, 0px));
+  }
+}
