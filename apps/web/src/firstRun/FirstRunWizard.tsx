@@ -19,12 +19,40 @@ const NUMBERED = ["stack", "goal", "role", "experience"];
 const SKIPPABLE = ["role", "experience"];
 
 // The first-run wizard: one question per screen, then the playbook is generated.
+const DRAFT_KEY = "grip.firstRunDraft";
+
+// A reload during "generate" resumes at Review, so a plan is never requested without a click.
+function resumeWizard(profile: User | null) {
+  try {
+    const draft = JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "null");
+    if (draft && typeof draft.step === "string") return draft.step === "generate" ? { ...draft, step: "review" } : draft;
+  } catch {
+    // Unreadable draft: start fresh.
+  }
+  return initialWizard(profile);
+}
+
 export function FirstRunWizard({ profile, onLand, onExplore }: {
   profile: User | null;
   onLand: (landing: Landing) => void;
   onExplore: () => void;
 }) {
-  const [state, dispatch] = useReducer(wizardReducer, profile, initialWizard);
+  const [state, dispatch] = useReducer(wizardReducer, profile, resumeWizard);
+  // A reload resumes the answers; closing the wizard (land or explore) forgets them.
+  useEffect(() => {
+    try {
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify(state));
+    } catch {
+      // Storage blocked: a reload starts over, as before.
+    }
+  }, [state]);
+  useEffect(() => () => {
+    try {
+      sessionStorage.removeItem(DRAFT_KEY);
+    } catch {
+      // Nothing stored.
+    }
+  }, []);
   const savePreparation = useSavePreparationMutation();
   const heading = useRef<HTMLHeadingElement>(null);
   const { step } = state;
