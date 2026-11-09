@@ -13,7 +13,7 @@ import { ghostBtn, primaryBtn } from "./styles";
 import { playbookRequest, preparationSave, prepPlanTechs, type WizardState } from "./wizardState.js";
 import { snapshotFor } from "../profile/preparationState.js";
 import { profileQueryKeys } from "../profile/queries";
-import { writePrepPlan } from "../lib/prepPlanHandoff";
+import { startPrepFocus, writePrepPlan } from "../lib/prepPlanHandoff";
 import { generateWithTimeout } from "./generationRequest.js";
 import { ERROR_KEYS, useCountdown } from "./generationErrors";
 
@@ -45,6 +45,7 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
     departed.current = true;
     const techs = prepPlanTechs(state);
     if (techs.length) writePrepPlan({ name: label, deadline: "", techs });
+    startPrepFocus();
     onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
   };
 

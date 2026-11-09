@@ -482,6 +482,8 @@ export const pt = {
   "prep.quizPoolCount": "O último card aberto tem {count} perguntas.",
   "prep.all": "Todos",
   "prep.signal": "Sinal",
+  "prep.focus.hint": "Responda algumas perguntas rápidas. Suas estatísticas aparecem conforme você avança.",
+  "prep.focus.showAll": "Ver painel completo",
   "prep.strongest2": "Mais fortes",
   "prep.needsReps": "Precisa de repetições",
   "prep.signalEmpty": "Responda algumas perguntas para construir um sinal.",

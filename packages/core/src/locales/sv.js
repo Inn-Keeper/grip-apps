@@ -482,6 +482,8 @@ export const sv = {
   "prep.quizPoolCount": "Det senast öppnade kortet har {count} frågor.",
   "prep.all": "Alla",
   "prep.signal": "Signal",
+  "prep.focus.hint": "Svara på några snabba frågor. Din statistik fylls i medan du övar.",
+  "prep.focus.showAll": "Visa hela översikten",
   "prep.strongest2": "Starkaste",
   "prep.needsReps": "Behöver repetitioner",
   "prep.signalEmpty": "Svara på några frågor för att bygga en signal.",

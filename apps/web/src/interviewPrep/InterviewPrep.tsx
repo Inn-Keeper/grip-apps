@@ -33,7 +33,8 @@ import {
   usePrepQuestionFetchers,
   useReviewQueueQuery,
 } from "./queries";
-import { clearPrepPlan, readPrepPlan, type StoredPrepPlan } from "../lib/prepPlanHandoff";
+import { clearPrepPlan, endPrepFocus, readPrepFocus, readPrepPlan, type StoredPrepPlan } from "../lib/prepPlanHandoff";
+import { PrepFocus } from "./PrepFocus";
 import { summarizeScores } from "./summarizeScores";
 import { scrollBehavior } from "../lib/motion";
 
@@ -46,6 +47,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
   // Which cards show their notes side, by card key.
   const [search, setSearch] = useState("");
   const [drill, setDrill] = useState<DrillState | null>(null);
+  const [focus, setFocus] = useState(readPrepFocus);
   // Global difficulty, chosen in the right rail — drives both the quiz cards and drills.
   const [level, setLevel] = useState(getLevel);
   // Where the loading session was started ("nextup", "cat:<name>", "card:<tech>"), so the
@@ -289,6 +291,33 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
     setDrill(next);
   };
 
+
+  const showAll = () => {
+    endPrepFocus();
+    setFocus(false);
+  };
+  // The first drill also ends the newcomer view, so its rails and stats appear afterwards.
+  useEffect(() => {
+    if (drill && focus) showAll();
+  }, [drill]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const nextUp = (
+    <NextUpCard
+      reviewDueCount={reviewDueTechs.length}
+      plan={prepPlan}
+      attempts={summary.attempts}
+      needsSetup={!!onOpenSetup && needsSetup(storiesQuery.data)}
+      busy={pending === "nextup"}
+      disabled={drillLoading}
+      error={drillError?.source === "nextup" ? drillError.message : null}
+      onStart={startNextUp}
+      onMock={startMockLoop}
+      onDismissPlan={dismissPlan}
+    />
+  );
+
+  if (focus && !drill) return <PrepFocus onShowAll={showAll}>{nextUp}</PrepFocus>;
+
   return (
     <WorkspaceLayout
       mainLabel={t("prep.mainLabel")}
@@ -339,20 +368,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
       }
     >
       <ProgressSaveStatus status={saveStatus} />
-      {!drill && (
-        <NextUpCard
-          reviewDueCount={reviewDueTechs.length}
-          plan={prepPlan}
-          attempts={summary.attempts}
-          needsSetup={!!onOpenSetup && needsSetup(storiesQuery.data)}
-          busy={pending === "nextup"}
-          disabled={drillLoading}
-          error={drillError?.source === "nextup" ? drillError.message : null}
-          onStart={startNextUp}
-          onMock={startMockLoop}
-          onDismissPlan={dismissPlan}
-        />
-      )}
+      {!drill && nextUp}
 
       {/* The header describes the card grid; a session labels itself, so it hides during one. */}
       {!drill && (

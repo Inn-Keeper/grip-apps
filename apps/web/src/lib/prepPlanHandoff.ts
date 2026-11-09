@@ -23,3 +23,18 @@ export function readPrepPlan(): StoredPrepPlan | null {
 export function clearPrepPlan() {
   window.localStorage.removeItem(KEY);
 }
+
+// Set by the first-run wizard: Prep opens as a single focus card until the first drill or "Show full dashboard".
+const FOCUS_KEY = "grip.prepFocus";
+
+export function startPrepFocus() {
+  window.localStorage.setItem(FOCUS_KEY, "1");
+}
+
+export function readPrepFocus(): boolean {
+  return window.localStorage.getItem(FOCUS_KEY) === "1";
+}
+
+export function endPrepFocus() {
+  window.localStorage.removeItem(FOCUS_KEY);
+}

@@ -482,6 +482,8 @@ export const en = {
   "prep.quizPoolCount": "Last opened card has {count} questions.",
   "prep.all": "All",
   "prep.signal": "Signal",
+  "prep.focus.hint": "Answer a few quick questions. Your stats fill in as you go.",
+  "prep.focus.showAll": "Show full dashboard",
   "prep.strongest2": "Strongest",
   "prep.needsReps": "Needs reps",
   "prep.signalEmpty": "Answer a few questions to build a signal.",

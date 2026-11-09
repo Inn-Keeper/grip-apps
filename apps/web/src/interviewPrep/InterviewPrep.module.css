@@ -207,3 +207,32 @@
   font-size: var(--fs-small);
   color: var(--c-text-dim);
 }
+
+/* Newcomer focus view: one centred column. */
+.focus {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 48px 16px;
+}
+
+.focusHint {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--c-text-dim);
+  text-align: center;
+}
+
+.focusShowAll {
+  align-self: center;
+  background: none;
+  border: none;
+  padding: 8px;
+  font-size: var(--fs-small);
+  color: var(--c-accent-bright);
+  text-decoration: underline;
+  cursor: pointer;
+}
