@@ -28,8 +28,9 @@ export type Landing = { page: string; scenarioId: string | null; boardId?: strin
 // Unmounting discards late responses and stops further writes.
 export function GenerateStep({ state, profile, onLand }: { state: WizardState; profile: User | null; onLand: (landing: Landing) => void }) {
   const queryClient = useQueryClient();
+  const heading = useRef<HTMLHeadingElement>(null);
   const [phase, setPhase] = useState<"writing" | "saving" | "error">("writing");
-  const [error, setError] = useState<{ key: string; retryAfter: number | null } | null>(null);
+  const [error, setError] = useState<{ key: string; retryAfter: number | null; retryAt: number | null } | null>(null);
   const playbook = useRef<Playbook | null>(null);
   const progress = useRef<Progress>({ scenarioId: null });
   // One id per visit: a retried publish of the same playbook is idempotent on the server.
@@ -38,6 +39,7 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
   const operation = useRef<"writing" | "saving" | null>(null);
   const departed = useRef(false);
   const retryLeft = useCountdown(error?.retryAfter ?? null);
+  const retryTime = retryLeft > 60 && error?.retryAt ? new Date(error.retryAt).toLocaleString(getLocale(), { dateStyle: "medium", timeStyle: "short" }) : null;
   const goal = state.goal || "explore";
   const label = playbookLabel({ role: state.role, goal });
 
@@ -105,9 +107,11 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
   };
 
   const fail = (code: string, retryAfter: number | null) => {
-    setError({ key: ERROR_KEYS[code] ?? "firstRun.error.generic", retryAfter });
+    setError({ key: playbook.current ? "firstRun.error.save" : ERROR_KEYS[code] ?? "firstRun.error.generic", retryAfter, retryAt: retryAfter ? Date.now() + retryAfter * 1000 : null });
     setPhase("error");
   };
+
+  useEffect(() => { heading.current?.focus(); }, [phase]);
 
   useEffect(() => {
     let mounted = true;
@@ -151,6 +155,15 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
         flexDirection: "column",
         gap: space.xl
       }}>
+      <h1 ref={heading} tabIndex={-1} style={{
+          margin: 0,
+          fontSize: font.size.display,
+          fontWeight: 800,
+          color: colors.textBright,
+          outline: "none"
+        }}>
+        {t(phase === "error" ? (playbook.current ? "firstRun.generate.saveErrorTitle" : "firstRun.generate.errorTitle") : "firstRun.generate.title")}
+      </h1>
       {(phase === "writing" || phase === "saving") && <PoeWalk saving={phase === "saving"} />}
       {error && <ErrorText>{t(error.key as Key)}</ErrorText>}
       {phase === "error" && <div style={{
@@ -159,7 +172,7 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
           flexWrap: "wrap"
         }}>
         <button type="button" onClick={run} disabled={retryLeft > 0} style={primaryBtn(retryLeft === 0)}>
-          {retryLeft > 0 ? t("firstRun.generate.retryIn", { seconds: retryLeft }) : t("firstRun.generate.retry")}
+          {retryTime ? t("firstRun.generate.retryAt", { time: retryTime }) : retryLeft > 0 ? t("firstRun.generate.retryIn", { seconds: retryLeft }) : t("firstRun.generate.retry")}
         </button>
         <button type="button" onClick={instead} style={ghostBtn}>
           {t("firstRun.generate.instead")}

@@ -41,6 +41,8 @@ because they have to be applied by hand.
 
 ### Fixed
 
+- Web setup replaces its loading heading on generation/save failure, distinguishes temporary AI limits from exhausted daily quota or an unavailable service, and shows long retry waits as a local date and time. Quota recovery points to Profile → Your preparation; retry keeps the existing answers and generated result.
+
 - Counts of one read in the singular ("1 experience", "1 tech"): `t()` picks a `<key>_one` entry when `count` is 1.
 - "Try the demo" no longer looks disabled while the invisible captcha loads; an early click waits for the token and then continues.
 - Target role placeholder reads "e.g. Senior Frontend Engineer" so it isn't mistaken for a filled value.

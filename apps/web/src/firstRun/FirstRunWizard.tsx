@@ -67,7 +67,7 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
   };
 
   const number = NUMBERED.indexOf(step);
-  const titleKey = (step === "generate" ? "firstRun.generate.title" : `firstRun.${step}.title`) as Key;
+  const titleKey = `firstRun.${step}.title` as Key;
   const introKey = (`firstRun.${step}.intro`) as Key;
   const goal = state.goal || "explore";
   const startLabel = playbookApi ? t(`firstRun.review.start.${goal}` as Key) : t("firstRun.review.noAi");
@@ -100,7 +100,7 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
           <button type="button" onClick={onExplore} style={ghostBtn}>{t("firstRun.explore")}</button>
         )}
       </div>
-      <h1 ref={heading} tabIndex={-1} style={{
+      {step !== "generate" && <h1 ref={heading} tabIndex={-1} style={{
           margin: 0,
           fontSize: font.size.display,
           fontWeight: 800,
@@ -108,13 +108,12 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
           outline: "none"
         }}>
         {t(titleKey)}
-      </h1>
+      </h1>}
       {step !== "generate" && <p style={{
           ...dimText,
           fontSize: font.size.body,
           margin: `${space.sm}px 0 ${space.xl}px`
         }}>{t(introKey)}</p>}
-      {step === "generate" && <div style={{ height: space.xl }} />}
 
       {step === "stack" && <StepStack state={state} dispatch={dispatch} />}
       {step === "goal" && <StepGoal state={state} dispatch={dispatch} />}
