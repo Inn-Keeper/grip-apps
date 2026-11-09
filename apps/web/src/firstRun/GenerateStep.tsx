@@ -17,6 +17,8 @@ import { startPrepFocus, writePrepPlan } from "../lib/prepPlanHandoff";
 import { generateWithTimeout } from "./generationRequest.js";
 import { ERROR_KEYS, useCountdown } from "./generationErrors";
 
+const SLOW_AFTER_MS = 20_000;
+
 type Key = Parameters<typeof t>[0];
 type Progress = { scenarioId: string | null; boardId?: string | null };
 type Playbook = Parameters<typeof publishablePlaybook>[0];
@@ -119,6 +121,19 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // A slow or overloaded model can hold "writing" for minutes; offer a way out once it drags.
+  const [slow, setSlow] = useState(false);
+  useEffect(() => {
+    const id = window.setTimeout(() => setSlow(true), SLOW_AFTER_MS);
+    return () => window.clearTimeout(id);
+  }, []);
+  // Nothing is stored until the playbook arrives, so leaving while writing is safe.
+  const skipWait = () => {
+    if (operation.current !== "writing") return;
+    abort.current?.abort();
+    land();
+  };
+
   const instead = () => {
     // A retry can start before React has removed the failure actions.
     if (operation.current) return;
@@ -151,6 +166,14 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
         color: colors.textDim,
         fontSize: font.size.body
       }}>{t(phase === "saving" ? "firstRun.generate.finishing" : "firstRun.generate.waitHint")}</p>}
+      {phase === "writing" && slow && (
+        <button type="button" onClick={skipWait} style={{
+            ...ghostBtn,
+            alignSelf: "flex-start"
+          }}>
+          {t("firstRun.generate.instead")}
+        </button>
+      )}
     </div>
   );
 }
