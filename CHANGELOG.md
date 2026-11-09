@@ -23,7 +23,7 @@ because they have to be applied by hand.
 
 - `0031_demo_no_target_role.sql`: `seed_demo_data` no longer sets a target role, so the first-run wizard's role field starts empty for demo visitors. Applied to the linked project on 2026-11-09.
 - `0032_demo_stories_sample.sql`: the two seeded demo stories get `is_sample = true`, so they show the Sample tag. Applied to the linked project on 2026-11-09.
-- `0033_demo_backfill.sql`: existing demo visitors get the 0031/0032 fixes (seeded stories tagged Sample, seeded role cleared if setup isn't done). Not applied yet.
+- `0033_demo_backfill.sql`: existing demo visitors get the 0031/0032 fixes (seeded stories tagged Sample, seeded role cleared if setup isn't done). Applied to the linked project on 2026-11-09.
 - `0030_profile_preparation.sql`: `user_preparation` table (own-row RLS) and the `save_preparation`, `save_github_signals` and `publish_preparation_playbook` RPCs; `reset_goals` also clears preparation. Applied to the linked project on 2026-11-09.
 
 ### Changed
