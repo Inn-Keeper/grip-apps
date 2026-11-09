@@ -88,3 +88,13 @@ export function playbookRequest(state, locale) {
 export function prepPlanTechs(state) {
   return [...new Set([...state.stack, ...state.jobTechs])].slice(0, 8);
 }
+
+/** The transactional preparation save before generating; favourites and CV detections stay as saved. */
+export function preparationSave(state, profile) {
+  const { goalTechs, targetRole } = profileUpdate(state);
+  return {
+    profilePatch: { targetRole: targetRole.trim(), goalTechs, favoriteTechs: [...(profile?.favoriteTechs ?? [])], cvTechs: [...(profile?.cvTechs ?? [])] },
+    goal: state.goal || "explore",
+    brief: state.brief.trim(),
+  };
+}

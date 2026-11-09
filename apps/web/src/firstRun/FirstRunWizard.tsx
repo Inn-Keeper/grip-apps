@@ -3,7 +3,8 @@ import type { User } from "@grip/core/api";
 import { t } from "@grip/core/i18n";
 import { colors, font, space } from "../lib/tokens";
 import { playbookApi } from "../lib/api";
-import { useSaveProfileMutation } from "../profile/queries";
+import { useSavePreparationMutation } from "../profile/queries";
+import { ErrorText } from "../components/ErrorText";
 import { GenerateStep, type Landing } from "./GenerateStep";
 import { StepExperience } from "./StepExperience";
 import { StepGoal } from "./StepGoal";
@@ -11,7 +12,7 @@ import { StepReview } from "./StepReview";
 import { StepRole } from "./StepRole";
 import { StepStack } from "./StepStack";
 import { dimText, ghostBtn, primaryBtn } from "./styles";
-import { canContinue, initialWizard, profileUpdate, STEPS, wizardReducer } from "./wizardState.js";
+import { canContinue, initialWizard, preparationSave, STEPS, wizardReducer } from "./wizardState.js";
 
 type Key = Parameters<typeof t>[0];
 const NUMBERED = ["stack", "goal", "role", "experience"];
@@ -24,7 +25,7 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
   onExplore: () => void;
 }) {
   const [state, dispatch] = useReducer(wizardReducer, profile, initialWizard);
-  const saveProfile = useSaveProfileMutation();
+  const savePreparation = useSavePreparationMutation();
   const heading = useRef<HTMLHeadingElement>(null);
   const { step } = state;
 
@@ -33,8 +34,8 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
 
   const start = () => {
     // Saved before generating, so a failed generation never loses the setup; App sets the done flag on landing.
-    saveProfile.mutate(profileUpdate(state));
-    dispatch({ type: "goTo", step: "generate" });
+    if (savePreparation.isPending) return;
+    savePreparation.mutate(preparationSave(state, profile), { onSuccess: () => dispatch({ type: "goTo", step: "generate" }) });
   };
 
   const number = NUMBERED.indexOf(step);
@@ -92,8 +93,9 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
       {step === "role" && <StepRole state={state} dispatch={dispatch} />}
       {step === "experience" && <StepExperience state={state} dispatch={dispatch} displayName={profile?.displayName ?? ""} />}
       {step === "review" && <StepReview state={state} dispatch={dispatch} />}
-      {step === "generate" && <GenerateStep state={state} onLand={onLand} />}
+      {step === "generate" && <GenerateStep state={state} profile={profile} onLand={onLand} />}
 
+      {savePreparation.error && step !== "generate" && <ErrorText>{(savePreparation.error as Error).message}</ErrorText>}
       {step !== "generate" && (
         <footer style={{
             display: "flex",
@@ -115,7 +117,7 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
               <button type="button" onClick={() => dispatch({ type: "skip" })} style={ghostBtn}>{t("firstRun.skip")}</button>
             )}
             {step === "review" ? (
-              <button type="button" onClick={start} style={primaryBtn()}>{startLabel}</button>
+              <button type="button" onClick={start} disabled={savePreparation.isPending} aria-busy={savePreparation.isPending} style={primaryBtn(!savePreparation.isPending)}>{startLabel}</button>
             ) : (
               <button type="button" onClick={() => dispatch({ type: "next" })} disabled={!canContinue(state)} style={primaryBtn(canContinue(state))}>
                 {t("firstRun.continue")}

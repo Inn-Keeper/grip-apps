@@ -1,4 +1,4 @@
-import { cleanJobText, createPlaybookApi, needsSetup, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv, savePlaybook } from "../firstRun.js";
+import { cleanJobText, createPlaybookApi, needsSetup, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv } from "../firstRun.js";
 
 describe("redactCv", () => {
   test("removes redacted fields and empty separators from a contact header", () => {
@@ -57,54 +57,6 @@ describe("playbookLabel", () => {
   });
 });
 
-const playbook = {
-  stories: [
-    { title: "Q1", competency: "Impact", situation: "s", task: "t", action: "a", result: "r", technical: true },
-    { title: "Q2", competency: "Conflict", situation: "s", task: "t", action: "a", result: "r", technical: false },
-  ],
-  scenario: {
-    name: "Payments",
-    brief: "b",
-    checks: [{ kind: "edge", type: [], from: ["client"], to: ["service"], label: "L", points: 10 }],
-  },
-};
-
-describe("savePlaybook", () => {
-  test("links technical stories to the new scenario", async () => {
-    const saved = [];
-    const scenarios = [];
-    const result = await savePlaybook(playbook, {
-      label: "Backend Engineer",
-      upsertCustomScenario: async (s) => (scenarios.push(s), { ...s, id: "sc1" }),
-      upsertStory: async (s) => void saved.push(s),
-    });
-    expect(scenarios[0].checks[0]).toMatchObject({ kind: "edge", from: ["client"], to: ["service"] });
-    // Marked so "Reset goals" can find and delete it.
-    expect(scenarios[0].playbook).toBe("Backend Engineer");
-    expect(saved[0]).toMatchObject({ title: "Q1", scenarioId: "sc1", isSample: true, playbook: "Backend Engineer" });
-    expect(saved[1].scenarioId).toBeNull();
-    expect(result).toEqual({ scenarioId: "sc1", boardId: null, saved: ["Q1", "Q2"], failed: [] });
-  });
-
-  test("retry reuses scenarioId and skips saved stories", async () => {
-    let fail = true;
-    const deps = {
-      label: "X",
-      upsertCustomScenario: jest.fn(async (s) => ({ ...s, id: "sc1" })),
-      upsertStory: jest.fn(async (s) => {
-        if (s.title === "Q2" && fail) throw new Error("network");
-      }),
-    };
-    const first = await savePlaybook(playbook, deps);
-    expect(first.failed).toEqual(["Q2"]);
-    fail = false;
-    const second = await savePlaybook(playbook, deps, first);
-    expect(deps.upsertCustomScenario).toHaveBeenCalledTimes(1);
-    expect(deps.upsertStory).toHaveBeenCalledTimes(3);
-    expect(second).toEqual({ scenarioId: "sc1", boardId: null, saved: ["Q1", "Q2"], failed: [] });
-  });
-});
-
 describe("createPlaybookApi", () => {
   afterEach(() => {
     delete global.fetch;
@@ -158,37 +110,29 @@ describe("redactCv links", () => {
   });
 });
 
-describe("savePlaybook starter board", () => {
-  test("creates a board with the starter components and returns its id", async () => {
-    const boards = [];
-    const book = { ...playbook, scenario: { ...playbook.scenario, starter: ["client", "gateway", "service"] } };
-    const result = await savePlaybook(book, {
-      label: "X",
-      upsertCustomScenario: async (s) => ({ ...s, id: "sc1" }),
-      upsertBoard: async (b) => (boards.push(b), { ...b, id: "b1" }),
-      upsertStory: async () => {},
-    });
-    expect(boards[0]).toMatchObject({ title: "Payments", scenarioId: "sc1", storyId: null, edges: [] });
-    expect(boards[0].nodes.map((n) => n.type)).toEqual(["client", "gateway", "service"]);
-    expect(new Set(boards[0].nodes.map((n) => n.id)).size).toBe(3);
-    expect(result.boardId).toBe("b1");
-  });
-
-  test("retry does not create a second board", async () => {
-    const upsertBoard = jest.fn(async (b) => ({ ...b, id: "b1" }));
-    const deps = { label: "X", upsertCustomScenario: async (s) => ({ ...s, id: "sc1" }), upsertBoard, upsertStory: async () => {} };
-    const book = { ...playbook, scenario: { ...playbook.scenario, starter: ["client"] } };
-    const first = await savePlaybook(book, deps);
-    await savePlaybook(book, deps, first);
-    expect(upsertBoard).toHaveBeenCalledTimes(1);
-  });
-});
-
 describe("needsSetup", () => {
   test("true until a story carries a playbook label; unknown while loading", () => {
     expect(needsSetup(undefined)).toBe(false);
     expect(needsSetup([])).toBe(true);
     expect(needsSetup([{ playbook: null }])).toBe(true);
     expect(needsSetup([{ playbook: "Backend Engineer" }])).toBe(false);
+  });
+});
+
+describe("publishablePlaybook", () => {
+  it("trims checks and lays out the starter board", () => {
+    const { publishablePlaybook } = require("../firstRun.js");
+    const out = publishablePlaybook({
+      scenario: { name: "Pay", brief: "b", checks: [{ kind: "node", type: "db", label: "DB", points: 2, extra: 1 }], starter: ["api", "db"] },
+      stories: [{ title: "T", competency: "c", technical: true }],
+    });
+    expect(out.scenario.checks).toEqual([{ kind: "node", type: "db", label: "DB", points: 2 }]);
+    expect(out.board.nodes.map((n) => n.type)).toEqual(["api", "db"]);
+    expect(out.stories).toHaveLength(1);
+  });
+
+  it("has no board without starter components", () => {
+    const { publishablePlaybook } = require("../firstRun.js");
+    expect(publishablePlaybook({ scenario: { name: "x", brief: "", checks: [] }, stories: [] }).board).toBeNull();
   });
 });

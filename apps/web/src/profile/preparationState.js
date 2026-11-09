@@ -50,12 +50,15 @@ export function addTech(list, raw) {
 
 export const toggleTech = (list, tech) => (list.includes(tech) ? list.filter((t) => t !== tech) : [...list, tech]);
 
-/** What a playbook is built from. Sets are sorted, so reordering alone never marks it stale. */
+/**
+ * What a playbook is built from. Sets are sorted, so reordering alone never marks it stale.
+ * @returns {import("@grip/core/api").PreparationSnapshot}
+ */
 export function snapshotFor(profile, preparation, locale) {
   return {
-    version: 1,
+    version: /** @type {1} */ (1),
     role: (profile?.targetRole ?? "").trim(),
-    goal: preparation?.goal ?? "explore",
+    goal: preparation?.goal ?? /** @type {const} */ ("explore"),
     brief: (preparation?.brief ?? "").trim(),
     techs: sorted(profile?.goalTechs),
     favoriteTechs: sorted(profile?.favoriteTechs),

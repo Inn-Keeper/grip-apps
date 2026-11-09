@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { RANKS, rankForXp } from "@grip/core/gamification";
 import { alpha, colors, font, tints } from "../lib/tokens";
 import { EMPTY_PROFILE_FORM, profileFormToUpdate, profileToForm } from "@grip/core/user";
@@ -11,6 +11,10 @@ import { CvUpload } from "./CvUpload";
 import { PreparationSection } from "./PreparationSection";
 import { PreparationEditor } from "./PreparationEditor";
 import { PreparationSources } from "./PreparationSources";
+import { PlaybookPanel, PlaybookSummary, type PlaybookStatus } from "./PlaybookPanel";
+import { usePreparationGeneration } from "./usePreparationGeneration";
+import { playbookStatus, snapshotFor } from "./preparationState.js";
+import { useStoriesQuery } from "../storyBank/queries";
 import type { User } from "@grip/core/api";
 import { ProfileLeftRail, ProfileRightRail } from "./ProfileRails";
 import { AccountSection, PreferencesSection } from "./ProfileSections";
@@ -89,6 +93,18 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
   const { data: profile = null, error: loadError, isLoading } = useProfileQuery();
   const { data: preparation = null, error: preparationError, isLoading: preparationLoading } = usePreparationQuery();
   const [savedNotice, setSavedNotice] = useState(false);
+  const prepTechs = useMemo(() => categories.flatMap((c) => c.items).map((item) => item.tech), []);
+  const { data: stories = [] } = useStoriesQuery();
+  const generation = usePreparationGeneration(profile?.id ?? null, prepTechs);
+  const snapshot = snapshotFor(profile, preparation, locale);
+  const active = preparation?.activePlaybook ?? null;
+  const status = playbookStatus({
+    active,
+    snapshot,
+    phase: generation.phase,
+    // Wizard output from before tracking: shown as legacy, never as current.
+    hasLegacy: stories.some((story) => story.playbook),
+  }) as PlaybookStatus;
   const leaveEditor = useCallback(
     (saved: boolean) => {
       setSavedNotice(saved);
@@ -202,7 +218,6 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
     notFound: { title: t("profile.notFoundTitle"), sub: "" },
   }[section ?? "notFound"];
 
-  const prepTechs = categories.flatMap((c) => c.items).map((item) => item.tech);
 
   return (
     <WorkspaceLayout
@@ -283,6 +298,19 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
             preparation={preparation}
             catalogue={prepTechs}
             onEdit={() => onNavigatePath(profilePath("edit"))}
+            playbook={
+              <PlaybookPanel
+                status={status}
+                active={active}
+                hasSetup={!!(profile?.targetRole || profile?.goalTechs?.length || preparation)}
+                available={generation.available}
+                error={generation.error}
+                onSetUp={() => onNavigatePath(profilePath("edit"))}
+                onStart={() => generation.start(snapshot, active?.generationId ?? null)}
+                onRetry={() => generation.retry(snapshot, active?.generationId ?? null)}
+                onOpen={() => onNavigatePath(profilePath("playbook"))}
+              />
+            }
             sources={
               <PreparationSources
                 profile={profile}
@@ -296,6 +324,13 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
                 onEdit={() => onNavigatePath(profilePath("edit"))}
               />
             }
+          />
+        )}
+        {route === "playbook" && (
+          <PlaybookSummary
+            active={active}
+            onBack={() => onNavigatePath(profilePath("preparation"))}
+            onPage={(page) => onNavigatePath(`/${page}`)}
           />
         )}
         {route === "edit" && profile && !preparationLoading && (

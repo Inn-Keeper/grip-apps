@@ -138,35 +138,16 @@ const toCheck = ({ kind, type, from, to, label, points }) =>
   kind === "node" ? { kind, type, label, points } : { kind, from, to, label, points };
 
 /**
+ * The generated playbook in the shape publish_preparation_playbook stores (migration 0030).
  * @param {{ stories: Array<{ title: string, technical: boolean } & Record<string, unknown>>, scenario: { name: string, brief: string, checks: any[], starter?: string[] } }} playbook
- * @param {{ label: string, upsertCustomScenario: (s: any) => Promise<{ id?: string }>, upsertStory: (s: any) => Promise<unknown>, upsertBoard?: (b: any) => Promise<{ id?: string }> }} deps
- * @param {{ scenarioId: string | null, boardId?: string | null, saved: string[] }} [progress]
- * @returns {Promise<{ scenarioId: string | null, boardId: string | null, saved: string[], failed: string[] }>}
- * Saves the scenario, its starter board, then each story. Pass the returned progress
- * back in to retry: scenario and board are never created twice, saved stories are skipped.
  */
-export async function savePlaybook(playbook, { label, upsertCustomScenario, upsertStory, upsertBoard }, progress = { scenarioId: null, saved: [] }) {
-  let { scenarioId } = progress;
-  let boardId = progress.boardId ?? null;
+export function publishablePlaybook(playbook) {
   const { name, brief, checks, starter = [] } = playbook.scenario;
-  if (!scenarioId) {
-    scenarioId = (await upsertCustomScenario({ name, brief, checks: checks.map(toCheck), playbook: label })).id ?? null;
-  }
-  if (!boardId && scenarioId && upsertBoard && starter.length) {
-    boardId = (await upsertBoard({ title: name, scenarioId, storyId: null, nodes: starterNodes(starter), edges: [] })).id ?? null;
-  }
-  const saved = [...progress.saved];
-  const failed = [];
-  for (const { technical, ...story } of playbook.stories) {
-    if (saved.includes(story.title)) continue;
-    try {
-      await upsertStory({ ...story, scenarioId: technical ? scenarioId : null, isSample: true, playbook: label });
-      saved.push(story.title);
-    } catch {
-      failed.push(story.title);
-    }
-  }
-  return { scenarioId, boardId, saved, failed };
+  return {
+    scenario: { name, brief, checks: checks.map(toCheck) },
+    board: starter.length ? { title: name, nodes: starterNodes(starter) } : null,
+    stories: playbook.stories,
+  };
 }
 
 /**

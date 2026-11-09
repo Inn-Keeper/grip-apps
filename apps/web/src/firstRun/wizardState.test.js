@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { canContinue, initialWizard, playbookRequest, prepPlanTechs, profileUpdate, wizardReducer } from "./wizardState.js";
+import { canContinue, initialWizard, playbookRequest, prepPlanTechs, preparationSave, profileUpdate, wizardReducer } from "./wizardState.js";
 
 const profile = { goalTechs: ["React", "SQL"], targetRole: "Backend Engineer" };
 const run = (state, ...actions) => actions.reduce(wizardReducer, state);
@@ -71,4 +71,17 @@ test("playbook request respects the API caps", () => {
 test("prep plan techs put the stack first, then the role's techs, once each", () => {
   const state = { ...initialWizard(profile), jobTechs: ["React", "Python", "SQL"] };
   assert.deepEqual(prepPlanTechs(state), ["React", "SQL", "Python"]);
+});
+
+test("the wizard saves preparation without touching favourites or CV detections", () => {
+  const state = { ...initialWizard({ favoriteTechs: ["rust"], cvTechs: ["go"], targetRole: "SRE" }), stack: ["go"], jobTechs: ["kafka"], goal: "design", brief: " pay " };
+  assert.deepEqual(preparationSave(state, { favoriteTechs: ["rust"], cvTechs: ["go"] }), {
+    profilePatch: { targetRole: "SRE", goalTechs: ["go", "kafka"], favoriteTechs: ["rust"], cvTechs: ["go"] },
+    goal: "design",
+    brief: "pay",
+  });
+});
+
+test("an unchosen goal saves as explore", () => {
+  assert.equal(preparationSave(initialWizard(null), null).goal, "explore");
 });

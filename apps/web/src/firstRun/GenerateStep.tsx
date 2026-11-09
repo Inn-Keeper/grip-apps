@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { getLocale, t } from "@grip/core/i18n";
-import { landingFor, playbookLabel, savePlaybook } from "@grip/core/firstRun";
+import { landingFor, playbookLabel, publishablePlaybook } from "@grip/core/firstRun";
+import type { User } from "@grip/core/api";
 import { ErrorText } from "../components/ErrorText";
 import * as api from "../lib/api";
 import { archBoardQueryKeys } from "../archBoard/queries";
@@ -9,45 +10,28 @@ import { storyQueryKeys } from "../storyBank/queries";
 import { colors, font, space } from "../lib/tokens";
 import { PoeWalk } from "./PoeWalk";
 import { ghostBtn, primaryBtn } from "./styles";
-import { playbookRequest, prepPlanTechs, type WizardState } from "./wizardState.js";
+import { playbookRequest, preparationSave, prepPlanTechs, type WizardState } from "./wizardState.js";
+import { snapshotFor } from "../profile/preparationState.js";
+import { profileQueryKeys } from "../profile/queries";
 import { writePrepPlan } from "../lib/prepPlanHandoff";
 import { generateWithTimeout } from "./generationRequest.js";
+import { ERROR_KEYS, useCountdown } from "./generationErrors";
 
 type Key = Parameters<typeof t>[0];
-type Progress = { scenarioId: string | null; boardId?: string | null; saved: string[] };
-type Playbook = Parameters<typeof savePlaybook>[0];
+type Progress = { scenarioId: string | null; boardId?: string | null };
+type Playbook = Parameters<typeof publishablePlaybook>[0];
 export type Landing = { page: string; scenarioId: string | null; boardId?: string | null };
-
-const ERROR_KEYS: Record<string, string> = {
-  playbook_daily_limit: "firstRun.error.playbook_daily_limit",
-  busy: "firstRun.error.busy",
-  provider_limited: "firstRun.error.limited",
-  provider_quota_exhausted: "firstRun.error.limited",
-  invalid_model_response: "firstRun.error.invalid",
-  timeout: "firstRun.error.timeout",
-};
-
-/** Seconds left on a Retry-After countdown, ticking once a second. */
-function useCountdown(seconds: number | null) {
-  const [left, setLeft] = useState(0);
-  useEffect(() => {
-    if (!seconds) return setLeft(0);
-    setLeft(seconds);
-    const id = window.setInterval(() => setLeft((s) => Math.max(0, s - 1)), 1000);
-    return () => window.clearInterval(id);
-  }, [seconds]);
-  return left;
-}
 
 // Keep the plan as the outcome; offer practice without it only after a failure.
 // Unmounting discards late responses and stops further writes.
-export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (landing: Landing) => void }) {
+export function GenerateStep({ state, profile, onLand }: { state: WizardState; profile: User | null; onLand: (landing: Landing) => void }) {
   const queryClient = useQueryClient();
-  const [phase, setPhase] = useState<"writing" | "saving" | "error" | "partial">("writing");
+  const [phase, setPhase] = useState<"writing" | "saving" | "error">("writing");
   const [error, setError] = useState<{ key: string; retryAfter: number | null } | null>(null);
-  const [partial, setPartial] = useState<{ saved: number; total: number } | null>(null);
   const playbook = useRef<Playbook | null>(null);
-  const progress = useRef<Progress>({ scenarioId: null, saved: [] });
+  const progress = useRef<Progress>({ scenarioId: null });
+  // One id per visit: a retried publish of the same playbook is idempotent on the server.
+  const generationId = useRef(crypto.randomUUID());
   const abort = useRef<AbortController | null>(null);
   const operation = useRef<"writing" | "saving" | null>(null);
   const departed = useRef(false);
@@ -64,29 +48,27 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
     onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
   };
 
+  // Same publish path as Profile: artifacts and the active manifest land together, or not at all.
   const save = async (signal: AbortSignal) => {
     signal.throwIfAborted();
     operation.current = "saving";
     setPhase("saving");
-    const result = await savePlaybook(
-      playbook.current!,
-      {
-        label,
-        upsertCustomScenario: (scenario) => { signal.throwIfAborted(); return api.upsertCustomScenario(scenario); },
-        upsertBoard: (board) => { signal.throwIfAborted(); return api.upsertBoard(board); },
-        upsertStory: (story) => { signal.throwIfAborted(); return api.upsertStory(story); },
-      },
-      progress.current,
-    );
+    const saved = preparationSave(state, profile);
+    const current = await api.getPreparation();
+    signal.throwIfAborted();
+    const manifest = await api.publishPreparationPlaybook({
+      generationId: generationId.current,
+      expectedGenerationId: current?.activePlaybook?.generationId ?? null,
+      snapshot: snapshotFor({ targetRole: saved.profilePatch.targetRole, goalTechs: saved.profilePatch.goalTechs, favoriteTechs: saved.profilePatch.favoriteTechs }, { goal: saved.goal, brief: saved.brief }, getLocale()),
+      label,
+      playbook: publishablePlaybook(playbook.current!) as never,
+    });
     if (signal.aborted || departed.current) return;
-    progress.current = result;
+    progress.current = { scenarioId: manifest.scenarioId, boardId: manifest.boardId };
     queryClient.invalidateQueries({ queryKey: storyQueryKeys.stories });
     queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.customScenarios });
     queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.boards });
-    if (result.failed.length) {
-      setPartial({ saved: result.saved.length, total: playbook.current!.stories.length });
-      return setPhase("partial");
-    }
+    queryClient.invalidateQueries({ queryKey: profileQueryKeys.preparation });
     land();
   };
 
@@ -151,8 +133,7 @@ export function GenerateStep({ state, onLand }: { state: WizardState; onLand: (l
       }}>
       {(phase === "writing" || phase === "saving") && <PoeWalk saving={phase === "saving"} />}
       {error && <ErrorText>{t(error.key as Key)}</ErrorText>}
-      {phase === "partial" && partial && <ErrorText>{t("firstRun.generate.partial", partial)}</ErrorText>}
-      {(phase === "error" || phase === "partial") && <div style={{
+      {phase === "error" && <div style={{
           display: "flex",
           gap: space.md,
           flexWrap: "wrap"
