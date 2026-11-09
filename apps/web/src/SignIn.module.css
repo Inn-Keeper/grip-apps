@@ -1,0 +1,157 @@
+/* Fill the shell's page area so the form is centered and the footer stays in flow. */
+.page {
+  flex: 1;
+  background: radial-gradient(ellipse at 50% 20%, var(--c-bg-deep), var(--c-bg-void) 70%);
+  display: grid;
+  place-items: center;
+  padding: 32px 24px;
+  box-sizing: border-box;
+}
+
+.card {
+  width: 100%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.mark {
+  margin: 0 auto 18px;
+  box-shadow: 0 6px 10px -4px #000000d9;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: var(--fs-heading);
+  font-weight: 700;
+  color: var(--c-text-bright);
+}
+
+.subtitle {
+  margin: 0 0 24px;
+  font-size: var(--fs-body);
+  color: var(--c-text-dim);
+  line-height: 1.6;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  gap: 10px;
+}
+
+.action {
+  padding: 11px 14px;
+  border-radius: 10px;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.action:disabled {
+  opacity: 0.6;
+}
+
+.form[data-busy="true"] .action {
+  cursor: wait;
+}
+
+.github {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-border-soft);
+  color: var(--c-text-bright);
+}
+
+.demo {
+  background: transparent;
+  border: 1px dashed color-mix(in srgb, var(--c-accent) 50%, transparent);
+  color: var(--c-accent-bright);
+}
+
+.demoHint {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--fs-label);
+  font-weight: 500;
+  color: var(--c-text-faint);
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--c-text-faint);
+  font-size: var(--fs-label);
+  font-weight: 700;
+}
+
+.dividerLine {
+  flex: 1;
+  height: 1px;
+  background: var(--c-border-soft);
+}
+
+/* The shared field standard, a touch taller on the sign-in card. */
+.field {
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border-soft);
+  border-radius: 8px;
+  color: var(--c-text);
+  font-size: var(--fs-body);
+  line-height: 1.4;
+  font-family: inherit;
+}
+
+.submit {
+  background: var(--c-accent);
+  border: none;
+  color: var(--c-on-accent);
+  font-weight: 600;
+}
+
+.error,
+.notice {
+  margin: 0;
+  font-size: var(--fs-small);
+}
+
+.error {
+  color: var(--c-danger-bright);
+}
+
+.notice {
+  color: var(--c-warning-bright);
+  line-height: 1.5;
+}
+
+.modeSwitch {
+  margin-top: 18px;
+  background: transparent;
+  border: none;
+  color: var(--c-text-dim);
+  font-size: var(--fs-body);
+  cursor: pointer;
+}
+
+.proof {
+  display: flex;
+  gap: 8px;
+  margin: 18px 0 0;
+  text-align: left;
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--c-text-faint);
+}
+
+.proofIcon {
+  flex: 0 0 auto;
+  margin-top: 2px;
+}

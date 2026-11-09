@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Web sign-in layout, fields and busy/disabled feedback use a colocated CSS Module with the existing theme tokens.
 - Web global styles live in `src/global.css`, imported by the entry point; the first-paint theme script stays in `index.html`.
 
 ### Fixed

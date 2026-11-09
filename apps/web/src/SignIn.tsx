@@ -2,13 +2,13 @@ import React, { useCallback, useState } from "react";
 import { friendlyAuthError } from "@grip/core/auth";
 import { t } from "@grip/core/i18n";
 import { supabase } from "./lib/supabase";
-import { alpha, brand, colors, font } from "./lib/tokens";
+import { brand, colors } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { Turnstile } from "./components/Turnstile";
 import { TURNSTILE_SITE_KEY } from "./lib/turnstile";
-import { fieldStyle } from "./components/fieldStyles";
 import { Field } from "./components/shared";
+import styles from "./SignIn.module.css";
 
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -28,9 +28,6 @@ export function SignIn() {
     setCaptchaToken(null);
     setCaptchaKey((k) => k + 1);
   };
-
-  // The field standard, a touch taller on the sign-in card.
-  const inputStyle: React.CSSProperties = { ...fieldStyle, minHeight: 44 };
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,71 +77,20 @@ export function SignIn() {
   };
 
   return (
-    <main
-      style={{
-        // Fills the page area (App), so the form stays centered and the footer stays in view.
-        flex: 1,
-        // Darker than the app shell so the mark and form stand out.
-        background: `radial-gradient(ellipse at 50% 20%, ${colors.bgDeep}, ${colors.bgVoid} 70%)`,
-        display: "grid",
-        placeItems: "center",
-        padding: "32px 24px",
-        boxSizing: "border-box",
-      }}
-    >
-      <div style={{
-          width: "100%",
-          maxWidth: 380,
-          textAlign: "center"
-        }}>
+    <main className={styles.page}>
+      <div className={styles.card}>
         {/* Poe's raven, the same mark as the favicon and header. */}
-        <BrandMark size={88} style={{
-            margin: "0 auto 18px",
-            boxShadow: "0 6px 10px -4px #000000D9"
-          }} />
-        <h1 style={{
-            margin: "0 0 8px",
-            fontSize: font.size.heading,
-            fontWeight: 700,
-            color: colors.textBright
-          }}>
-          {brand.productName}
-        </h1>
-        {/* The promise, not brand flavour, so it reads at the same weight as the form labels. */}
-        <p style={{
-            margin: "0 0 24px",
-            fontSize: font.size.body,
-            color: colors.textDim,
-            lineHeight: 1.6
-          }}>
-          {t("auth.subtitle")}
-        </p>
+        <BrandMark size={88} className={styles.mark} />
+        <h1 className={styles.title}>{brand.productName}</h1>
+        {/* The promise reads at the same weight as the form labels. */}
+        <p className={styles.subtitle}>{t("auth.subtitle")}</p>
 
-        <form onSubmit={submit} style={{
-            display: "flex",
-            flexDirection: "column",
-            textAlign: "left",
-            gap: 10
-          }}>
+        <form onSubmit={submit} className={styles.form} data-busy={busy || undefined}>
           <button
             type="button"
             onClick={signInWithGitHub}
             disabled={busy}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 8,
-              padding: "11px 14px",
-              background: colors.surface,
-              border: `1px solid ${colors.borderSoft}`,
-              borderRadius: 10,
-              color: colors.textBright,
-              fontSize: font.size.body,
-              fontWeight: 700,
-              cursor: busy ? "wait" : "pointer",
-              opacity: busy ? 0.6 : 1,
-            }}
+            className={`${styles.action} ${styles.github}`}
           >
             <BrandIcon name="code" color={colors.accentBright} size={15} />
             {t("auth.github")}
@@ -153,48 +99,15 @@ export function SignIn() {
             type="button"
             onClick={tryDemo}
             disabled={busy || waitingForCaptcha}
-            style={{
-              padding: "11px 14px",
-              background: "transparent",
-              border: `1px dashed ${alpha(colors.accent, 0.5)}`,
-              borderRadius: 10,
-              color: colors.accentBright,
-              fontSize: font.size.body,
-              fontWeight: 700,
-              cursor: busy ? "wait" : "pointer",
-              opacity: busy || waitingForCaptcha ? 0.6 : 1,
-            }}
+            className={`${styles.action} ${styles.demo}`}
           >
             {t("demo.try")}
-            <span style={{
-                display: "block",
-                marginTop: 2,
-                fontSize: font.size.label,
-                fontWeight: 500,
-                color: colors.textFaint
-              }}>
-              {t("demo.trySub")}
-            </span>
+            <span className={styles.demoHint}>{t("demo.trySub")}</span>
           </button>
-          <div style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              color: colors.textFaint,
-              fontSize: font.size.label,
-              fontWeight: 700
-            }}>
-            <span style={{
-                flex: 1,
-                height: 1,
-                background: colors.borderSoft
-              }} />
+          <div className={styles.divider}>
+            <span className={styles.dividerLine} />
             {t("auth.or")}
-            <span style={{
-                flex: 1,
-                height: 1,
-                background: colors.borderSoft
-              }} />
+            <span className={styles.dividerLine} />
           </div>
           <Field label={t("auth.emailLabel")}>
             <input
@@ -205,7 +118,7 @@ export function SignIn() {
               placeholder={t("auth.emailPlaceholder")}
               aria-label={t("auth.emailLabel")}
               autoComplete="email"
-              style={inputStyle}
+              className={styles.field}
             />
           </Field>
           <Field label={t("auth.passwordLabel")}>
@@ -218,38 +131,19 @@ export function SignIn() {
               placeholder={mode === "signup" ? t("auth.newPasswordPlaceholder") : t("auth.passwordPlaceholder")}
               aria-label={t("auth.passwordLabel")}
               autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              style={inputStyle}
+              className={styles.field}
             />
           </Field>
           <Turnstile key={captchaKey} onToken={onToken} />
           <button
             type="submit"
             disabled={busy || waitingForCaptcha}
-            style={{
-              padding: "11px 14px",
-              background: colors.accent,
-              border: "none",
-              borderRadius: 10,
-              color: colors.onAccent,
-              fontSize: font.size.body,
-              fontWeight: 600,
-              cursor: busy ? "wait" : "pointer",
-              opacity: busy || waitingForCaptcha ? 0.6 : 1,
-            }}
+            className={`${styles.action} ${styles.submit}`}
           >
             {busy ? "…" : mode === "signin" ? t("auth.signIn") : t("auth.createAccount")}
           </button>
-          {error && <p style={{
-              margin: 0,
-              fontSize: font.size.small,
-              color: colors.dangerBright
-            }}>{error}</p>}
-          {notice && <p style={{
-              margin: 0,
-              fontSize: font.size.small,
-              color: colors.warningBright,
-              lineHeight: 1.5
-            }}>{notice}</p>}
+          {error && <p className={styles.error}>{error}</p>}
+          {notice && <p className={styles.notice}>{notice}</p>}
         </form>
 
         <button
@@ -258,35 +152,14 @@ export function SignIn() {
             setError(null);
             setNotice(null);
           }}
-          style={{
-            marginTop: 18,
-            background: "transparent",
-            border: "none",
-            color: colors.textDim,
-            fontSize: font.size.body,
-            cursor: "pointer",
-          }}
+          className={styles.modeSwitch}
         >
           {mode === "signin" ? t("auth.switchToSignUp") : t("auth.switchToSignIn")}
         </button>
 
-        {/* Under the form on purpose: the main action stays at the top (rule 1).
-            The spark is the same icon the Arch Board uses for grading. */}
-        <p
-          style={{
-            display: "flex",
-            gap: 8,
-            margin: "18px 0 0",
-            textAlign: "left",
-            fontSize: font.size.small,
-            lineHeight: 1.55,
-            color: colors.textFaint,
-          }}
-        >
-          <span style={{
-              flex: "0 0 auto",
-              marginTop: 2
-            }}>
+        {/* Under the form so the main action stays at the top (rule 1). */}
+        <p className={styles.proof}>
+          <span className={styles.proofIcon}>
             <BrandIcon name="spark" color={colors.accentBright} size={14} />
           </span>
           {t("auth.aiProof")}
