@@ -8,6 +8,8 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Web app shell (frame, header, nav, loading state) uses `App.module.css` with the existing theme tokens instead of inline styles.
+- Web Poe chat history is saved in localStorage per user, so it survives refreshes; sign-out clears it.
 - Web Poe chat typing indicator animates its three dots while Poe replies (static when reduced motion is on).
 - Web StoryBank page layout, feedback and actions use a colocated CSS Module with the existing theme tokens.
 - Web sign-in layout, fields and busy/disabled feedback use a colocated CSS Module with the existing theme tokens.

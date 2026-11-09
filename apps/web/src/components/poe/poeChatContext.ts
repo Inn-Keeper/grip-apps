@@ -11,6 +11,9 @@ export type PoeChatValue = {
   send: (text: string) => Promise<boolean>;
 };
 
+// Saved per user so it survives refreshes; sign-out clears it (see App signOut).
+export const poeHistoryKey = (userId: string) => `grip.poeChat.${userId}`;
+
 export const PoeChatContext = createContext<PoeChatValue | null>(null);
 
 /** Null outside the signed-in shell, where there is no chat. */

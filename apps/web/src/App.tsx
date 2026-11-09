@@ -23,8 +23,9 @@ import { shouldShowWizard } from "./firstRun/gating.js";
 import { openInBoard } from "./lib/boardHandoff";
 import About from "./about/About";
 import { PoeChat, PoeChatProvider } from "./components/poe/PoeChat";
+import { poeHistoryKey } from "./components/poe/poeChatContext";
 import { usePoeMascotVisible } from "./components/poe/usePoeHooks";
-import { alpha, brand, colors, layout, shadow, font } from "./lib/tokens";
+import { brand, colors, layout } from "./lib/tokens";
 import { BrandIcon } from "./components/BrandIcon";
 import { BrandMark } from "./components/BrandMark";
 import { DemoBanner } from "./components/DemoBanner";
@@ -39,7 +40,6 @@ const LOCALE_STORAGE_KEY = "grip.locale";
 const savedLocale = typeof window !== "undefined" ? window.localStorage.getItem(LOCALE_STORAGE_KEY) : null;
 if (savedLocale) setLocale(savedLocale);
 
-const reduceMotion = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
 export default function App() {
   const queryClient = useQueryClient();
@@ -110,6 +110,7 @@ export default function App() {
     window.localStorage.removeItem(GITHUB_LINK_PENDING_KEY);
     window.localStorage.removeItem(GITHUB_LINKED_KEY);
     window.localStorage.removeItem(ACTIVE_PAGE_KEY);
+    if (session) window.localStorage.removeItem(poeHistoryKey(session.user.id));
     supabase.auth.signOut();
   };
 
@@ -151,75 +152,11 @@ export default function App() {
   if (shareToken) return <SharedBoardPage token={shareToken} />;
 
   return (
-    <div
-      style={{
-        fontFamily: "'Inter', system-ui, sans-serif",
-        minHeight: "100svh",
-        background: colors.bg,
-        color: colors.text,
-        display: "flex",
-        flexDirection: "column",
-        position: "relative",
-      } as React.CSSProperties}
-    >
-      {/* Noise texture overlay — low-opacity, pointer-events-none so it never blocks interaction */}
-      <div
-        aria-hidden="true"
-        style={{
-          position: "fixed",
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: "none",
-          opacity: 0.032,
-          backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "200px 200px",
-        }}
-      />
-      <header
-        ref={headerRef}
-        className={styles.header}
-        style={{
-          minHeight: layout.webHeaderHeight,
-          borderBottom: `1px solid ${colors.borderSoft}`,
-          background: `linear-gradient(180deg, ${colors.bgDeep}, ${alpha(colors.bg, 0.95)})`,
-          zIndex: 10,
-          backdropFilter: "blur(14px)",
-          boxShadow: shadow.header,
-          overflow: "hidden",
-        }}
-      >
-        <div
-          aria-hidden="true"
-          style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            // Teal hairline along the bottom edge, a glow behind the logo, a faint wash top-right.
-            backgroundImage: [
-              `linear-gradient(90deg, transparent 5%, ${alpha(colors.accentBright, 0.4)} 30%, transparent 70%)`,
-              `radial-gradient(420px 120px at 60px 50%, ${alpha(colors.accent, 0.14)}, transparent 70%)`,
-              `radial-gradient(600px 160px at 85% -40%, ${alpha(colors.accentBright, 0.06)}, transparent 70%)`,
-            ].join(", "),
-            backgroundSize: "100% 1px, auto, auto",
-            backgroundPosition: "bottom, 0 0, 0 0",
-            backgroundRepeat: "no-repeat",
-          }}
-        />
-        <div
-          style={{
-            minHeight: layout.webHeaderHeight,
-            // Same capped, centered width as the workspace, so the logo lines up with the rails.
-            maxWidth: "var(--page-max)",
-            marginInline: "auto",
-            padding: "10px 24px",
-            boxSizing: "border-box",
-            display: "flex",
-            alignItems: "center",
-            gap: 18,
-            flexWrap: "wrap",
-          }}
-        >
+    <div className={styles.app}>
+      <div aria-hidden="true" className={styles.noise} />
+      <header ref={headerRef} className={styles.header} style={{ minHeight: layout.webHeaderHeight }}>
+        <div aria-hidden="true" className={styles.headerGlow} />
+        <div className={styles.headerInner} style={{ minHeight: layout.webHeaderHeight }}>
           {/* Signed in, the logo links home; cmd/ctrl-click still opens a new tab. */}
           <a
             href={session ? `/${DEFAULT_PAGE}` : undefined}
@@ -229,37 +166,11 @@ export default function App() {
               e.preventDefault();
               selectPage(DEFAULT_PAGE);
             }}
-            className={styles.brandLink}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 11,
-              textDecoration: "none",
-              color: "inherit",
-            }}>
-            <BrandMark size={36} style={{ boxShadow: `0 0 0 1px ${alpha(colors.accent, 0.09)}, 0 10px 24px rgba(0, 0, 0, 0.22)` }} />
-            <span style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 1
-              }}>
-              <span style={{
-                  fontSize: font.size.title,
-                  fontWeight: 800,
-                  letterSpacing: "0px",
-                  color: colors.textBright,
-                  lineHeight: 1
-                }}>
-                {brand.productName}
-              </span>
-              <span className={styles.tagline} style={{
-                  fontSize: font.size.label,
-                  fontWeight: 700,
-                  color: colors.textFaint,
-                  lineHeight: 1.2
-                }}>
-                {brand.tagline}
-              </span>
+            className={styles.brandLink}>
+            <BrandMark size={36} className={styles.brandMark} />
+            <span className={styles.brandText}>
+              <span className={styles.productName}>{brand.productName}</span>
+              <span className={styles.tagline}>{brand.tagline}</span>
             </span>
           </a>
           {/* The wizard owns the screen until it lands or the user explores; tabs would do nothing. */}
@@ -268,40 +179,15 @@ export default function App() {
               <nav
                 ref={navRef}
                 aria-label={t("nav.primary")}
-                style={{
-                  marginLeft: "auto",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 4,
-                  padding: 5,
-                  borderRadius: 16,
-                  position: "relative",
-                  background: alpha(colors.well, 0.78),
-                  border: `1px solid ${colors.borderSoft}`,
-                  boxShadow: shadow.card,
-                  minWidth: 0,
-                  overflowX: "auto",
-                  overflowY: "hidden",
-                  // No justifyContent: flex-end here: in a scroll container it pushes the
-                  // first tabs off the left edge where they can't be scrolled to.
-                  scrollbarWidth: "none",
-                }}
+                className={styles.nav}
               >
                 {navPill && (
                   <span
                     aria-hidden="true"
+                    className={styles.navPill}
                     style={{
-                      position: "absolute",
-                      top: 5,
-                      bottom: 5,
                       left: navPill.left,
                       width: navPill.width,
-                      borderRadius: 8,
-                      // Translucent teal with a soft edge, so the active tab reads without shouting.
-                      background: alpha(colors.accent, 0.2),
-                      border: `1px solid ${alpha(colors.accent, 0.4)}`,
-                      boxShadow: `0 6px 18px ${alpha(colors.accent, 0.12)}`,
-                      transition: reduceMotion ? "none" : "left 320ms cubic-bezier(0.2, 0.72, 0.26, 1), width 320ms cubic-bezier(0.2, 0.72, 0.26, 1)",
                     }}
                   />
                 )}
@@ -312,25 +198,6 @@ export default function App() {
                     aria-current={page === p.id ? "page" : undefined}
                     data-tour={`nav-${p.id}`}
                     className={styles.tab}
-                    style={{
-                      flex: "0 0 auto",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      gap: 8,
-                      minHeight: 36,
-                      borderRadius: 8,
-                      border: "none",
-                      cursor: "pointer",
-                      fontSize: font.size.body,
-                      fontWeight: 800,
-                      letterSpacing: "0px",
-                      whiteSpace: "nowrap",
-                      position: "relative",
-                      background: "transparent",
-                      color: page === p.id ? colors.textBright : colors.textDim,
-                      transition: "color 0.2s ease",
-                    }}
                   >
                     <BrandIcon name={p.icon} color={page === p.id ? colors.accentBright : colors.textDim} size={16} />
                     {p.label}
@@ -345,27 +212,11 @@ export default function App() {
 
       {/* Fills the space between header and footer, so the footer sits at the bottom of the
           screen on short pages. Pages must not add their own full-screen min-height. */}
-      <div style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column"
-        }}>
-        {session === undefined && (
-          <main
-            style={{
-              flex: 1,
-              display: "grid",
-              placeItems: "center",
-              color: colors.textFaint,
-              fontSize: font.size.body,
-            }}
-          >
-            Loading…
-          </main>
-        )}
+      <div className={styles.content}>
+        {session === undefined && <main className={styles.loading}>Loading…</main>}
         {session === null && <SignIn />}
         {session && (
-          <PoeChatProvider key={session.user.id}>
+          <PoeChatProvider key={session.user.id} userId={session.user.id}>
           <React.Fragment key={locale}>
             {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}
             {!showWizard && page === "prep" && <InterviewPrep onOpenSetup={openSetup} />}

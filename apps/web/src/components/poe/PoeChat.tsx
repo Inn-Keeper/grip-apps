@@ -3,16 +3,31 @@ import { getLocale, t } from "@grip/core/i18n";
 import { POE_LIMITS } from "@grip/core/poeChat";
 import { poeChat } from "../../lib/api";
 import { canSend, isUnavailable } from "./poeChatState.js";
-import { PoeChatContext, usePoeChat, type Turn } from "./poeChatContext";
+import { PoeChatContext, poeHistoryKey, usePoeChat, type Turn } from "./poeChatContext";
 import { useChatViewport, useFooterLift } from "./usePoeHooks";
 import styles from "./PoeChat.module.css";
 import mascotStyles from "./PoeAssistant.module.css";
 
-// Lives in browser memory only: the shell keys this provider by user, so a
-// sign-out or user switch remounts it and the conversation is gone.
-export function PoeChatProvider({ children }: { children: React.ReactNode }) {
+function loadHistory(key: string): Turn[] {
+  try {
+    const saved = JSON.parse(window.localStorage.getItem(key) ?? "[]");
+    return Array.isArray(saved) ? saved : [];
+  } catch {
+    return [];
+  }
+}
+
+export function PoeChatProvider({ userId, children }: { userId: string; children: React.ReactNode }) {
+  const storageKey = poeHistoryKey(userId);
   const [open, setOpenState] = useState(false);
-  const [messages, setMessages] = useState<Turn[]>([]);
+  const [messages, setMessages] = useState<Turn[]>(() => loadHistory(storageKey));
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(storageKey, JSON.stringify(messages));
+    } catch {
+      // Storage full or blocked: the chat still works for this page load.
+    }
+  }, [storageKey, messages]);
   const [pending, setPending] = useState(false);
   // No AI URL means no chat at all; the mascot then keeps its thought line.
   const [unavailable, setUnavailable] = useState(!poeChat);
