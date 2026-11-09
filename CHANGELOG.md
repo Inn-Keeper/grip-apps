@@ -28,6 +28,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Touch screens get 44px tap areas on story card actions (Delete set apart), Generate, next-up links, the demo banner link, footer links and nav tabs; desktop is unchanged. The top nav fades its right edge while tabs are hidden off-screen. SCREEN-GUIDELINES rule 45 now asks for this.
 - Web app shell (frame, header, nav, loading state) uses `App.module.css` with the existing theme tokens instead of inline styles.
 - Web Poe chat history is saved in localStorage per user, so it survives refreshes; sign-out clears it.
 - Web Poe chat typing indicator animates its three dots while Poe replies (static when reduced motion is on).
