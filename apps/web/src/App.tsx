@@ -140,6 +140,19 @@ export default function App() {
   // Until the profile says whether onboarding is done, show neither pages nor tabs (no Prep flash).
   const undecided = setup === "auto" && !profileQuery.isError && wizardUndecided(gateArgs);
   const showPages = !showWizard && !undecided;
+  // Flags hidden tabs to the right, which the CSS fades as a scroll hint.
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+    const update = () => nav.toggleAttribute("data-more", nav.scrollLeft + nav.clientWidth < nav.scrollWidth - 1);
+    update();
+    nav.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      nav.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [locale, session, showPages]);
   const openSetup = () => setSetup("open");
   // Elements are cheap to create; only the active page mounts.
   const pageElements: Record<string, React.ReactNode> = {

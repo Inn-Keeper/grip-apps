@@ -157,12 +157,13 @@ function FooterLinkGroup({ title, links }: { title: string; links: FooterLink[] 
               href={link.href}
               target="_blank"
               rel="noreferrer"
+              className="tap"
               style={linkStyle}
             >
               {link.label}
             </a>
           ) : (
-            <button key={link.label} type="button" onClick={link.action} style={linkStyle}>
+            <button key={link.label} type="button" className="tap" onClick={link.action} style={linkStyle}>
               {link.label}
             </button>
           )

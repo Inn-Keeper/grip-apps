@@ -121,6 +121,7 @@ export function NextUpLink({ label, onClick, disabled = false, muted = false, wi
   const button = (
     <button
       type="button"
+      className="tap"
       disabled={disabled}
       onClick={onClick}
       style={{

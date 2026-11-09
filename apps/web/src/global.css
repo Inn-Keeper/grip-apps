@@ -50,6 +50,18 @@ summary {
   select {
     font-size: max(1rem, 16px) !important;
   }
+  /* Small controls grow their tap area to 44px on touch screens; their look is unchanged. */
+  .tap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+  }
+  /* Keeps a destructive action out of thumb reach of its neighbour. */
+  .tap-apart {
+    margin-inline-start: 16px;
+  }
 }
 
 /* Scrollbars — matched to the dark theme on both axes. Hex values mirror

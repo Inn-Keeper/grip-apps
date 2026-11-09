@@ -143,7 +143,7 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
               {stories ? t("stories.count", { count: stories.length }) : t("common.loading")}
             </span>
             {onOpenSetup && stories && !stories.some((s) => s.playbook) && (
-              <button type="button" onClick={onOpenSetup} className={styles.generate}>
+              <button type="button" onClick={onOpenSetup} className={`${styles.generate} tap`}>
                 {t("firstRun.stories.generate")}
               </button>
             )}

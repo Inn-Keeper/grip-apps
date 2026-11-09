@@ -99,9 +99,9 @@ export function StoryCard({ story: s, onOpen, onEdit, onDelete, error, readOnly 
               flexWrap: "wrap",
               gap: 6
             }}>
-            {onOpen && <button type="button" onClick={onOpen} style={miniBtn(colors.accentBright ?? "")}>{t("stories.open")}</button>}
-            {!readOnly && onEdit && <button type="button" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>}
-            {!readOnly && onDelete && <button type="button" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>}
+            {onOpen && <button type="button" className="tap" onClick={onOpen} style={miniBtn(colors.accentBright ?? "")}>{t("stories.open")}</button>}
+            {!readOnly && onEdit && <button type="button" className="tap" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>}
+            {!readOnly && onDelete && <button type="button" className="tap tap-apart" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>}
           </div>
         )}
       </div>
@@ -134,8 +134,8 @@ export function StoryDetail({ story, onEdit, onDelete, error }: { story: Story; 
             display: "flex",
             gap: 6
           }}>
-          <button type="button" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>
-          <button type="button" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>
+          <button type="button" className="tap" onClick={onEdit} style={miniBtn(colors.textDim ?? "")}>{t("common.edit")}</button>
+          <button type="button" className="tap tap-apart" onClick={onDelete} style={miniBtn(colors.danger ?? "")}>{t("common.delete")}</button>
         </div>
       </div>
       <h2 style={{

@@ -75,11 +75,11 @@ These are the rules every Grip web screen must follow. Each one is a constraint 
 42. Locked areas cannot be reached by keyboard or screen reader.
 43. Screen readers announce confirmations, errors and loading states.
 44. Text keeps readable contrast on the background, in both dark and light themes.
-45. Every button and control is at least **24px** tall, so it can be hit with a finger. Text links inside a sentence are the only exception.
+45. Every button and control is at least **24px** tall, and on touch screens its tap area is at least **44px** (the global `tap` class grows it without changing the look). A delete sits apart from its neighbours (`tap-apart`). Text links inside a sentence are the only exception.
 
 ## Before calling a screen done
 
 - [ ] It meets every rule above, or the rule it breaks was changed here first.
 - [ ] It has been checked in the browser at a normal (1280px) and a wide (1680px) window.
-- [ ] It has been checked on a phone (375px, and 740×375 in landscape) and a tablet (1024px), with touch: nothing overflows sideways, nothing is covered, and the footer can be reached.
+- [ ] It has been checked on a phone (375px, and 740×375 in landscape) and a tablet (1024px), with touch: nothing overflows sideways, nothing is covered, the footer can be reached, and controls are easy to tap (rule 45).
 - [ ] It has been checked with the system's reduced-motion setting turned on.

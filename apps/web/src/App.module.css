@@ -175,3 +175,14 @@
 @media (prefers-reduced-motion: reduce) {
   .navPill { transition: none; }
 }
+
+/* More tabs off to the right: fade the edge so the nav reads as scrollable. */
+.nav[data-more] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
+@media (hover: none), (pointer: coarse) {
+  .tab {
+    min-height: 44px;
+  }
+}
