@@ -23,6 +23,7 @@ because they have to be applied by hand.
 
 - `0031_demo_no_target_role.sql`: `seed_demo_data` no longer sets a target role, so the first-run wizard's role field starts empty for demo visitors. Applied to the linked project on 2026-11-09.
 - `0032_demo_stories_sample.sql`: the two seeded demo stories get `is_sample = true`, so they show the Sample tag. Applied to the linked project on 2026-11-09.
+- `0033_demo_backfill.sql`: existing demo visitors get the 0031/0032 fixes (seeded stories tagged Sample, seeded role cleared if setup isn't done). Not applied yet.
 - `0030_profile_preparation.sql`: `user_preparation` table (own-row RLS) and the `save_preparation`, `save_github_signals` and `publish_preparation_playbook` RPCs; `reset_goals` also clears preparation. Applied to the linked project on 2026-11-09.
 
 ### Changed
@@ -49,6 +50,10 @@ because they have to be applied by hand.
 - Setup answers survive a reload for the visit (sessionStorage); a reload while the plan builds returns to Review instead of requesting it again.
 - A queued "Try the demo" click gives up after 10 seconds with a message if the captcha never loads.
 - A saved setup draft resumes only for the user who wrote it.
+- Prep's focus card appears only when setup published a plan; skipping or failing setup lands on the normal dashboard instead of linking to stories that don't exist.
+- Sign-out clears the Prep focus flag, so the next account on the browser doesn't inherit it.
+- Setup marks onboarding done right after publishing, so a reload before landing can't build a second plan.
+- Sign-in lists the three AI features (battle plan, talk track grading, Poe) instead of grading alone.
 - GitHub linking returns to `/profile/preparation`; add that URL to the Supabase Auth redirect allowlist.
 
 ### Fixed
