@@ -8,6 +8,7 @@ import { BrandMark } from "./components/BrandMark";
 import { Turnstile } from "./components/Turnstile";
 import { TURNSTILE_SITE_KEY } from "./lib/turnstile";
 import { fieldStyle } from "./components/fieldStyles";
+import { Field } from "./components/shared";
 
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
@@ -122,6 +123,7 @@ export function SignIn() {
         <form onSubmit={submit} style={{
             display: "flex",
             flexDirection: "column",
+            textAlign: "left",
             gap: 10
           }}>
           <button
@@ -194,27 +196,31 @@ export function SignIn() {
                 background: colors.borderSoft
               }} />
           </div>
-          <input
-            type="email"
-            required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder={t("auth.emailPlaceholder")}
-            aria-label={t("auth.emailLabel")}
-            autoComplete="email"
-            style={inputStyle}
-          />
-          <input
-            type="password"
-            required
-            minLength={8}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder={mode === "signup" ? t("auth.newPasswordPlaceholder") : t("auth.passwordPlaceholder")}
-            aria-label={t("auth.passwordLabel")}
-            autoComplete={mode === "signup" ? "new-password" : "current-password"}
-            style={inputStyle}
-          />
+          <Field label={t("auth.emailLabel")}>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder={t("auth.emailPlaceholder")}
+              aria-label={t("auth.emailLabel")}
+              autoComplete="email"
+              style={inputStyle}
+            />
+          </Field>
+          <Field label={t("auth.passwordLabel")}>
+            <input
+              type="password"
+              required
+              minLength={8}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder={mode === "signup" ? t("auth.newPasswordPlaceholder") : t("auth.passwordPlaceholder")}
+              aria-label={t("auth.passwordLabel")}
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
+              style={inputStyle}
+            />
+          </Field>
           <Turnstile key={captchaKey} onToken={onToken} />
           <button
             type="submit"

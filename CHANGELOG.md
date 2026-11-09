@@ -17,6 +17,7 @@ because they have to be applied by hand.
 - Stories heading actions wrap with enlarged text.
 - The guided tour's Next button keeps its primary styling.
 - Field placeholders and focus rings follow the light theme; mobile web text fields use at least 16px text to avoid input-focus zoom while preserving user zoom and larger text preferences.
+- Sign-in fields have visible labels.
 
 ## 2026-11-08
 
