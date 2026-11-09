@@ -6,6 +6,10 @@ because they have to be applied by hand.
 
 ## 2026-11-09
 
+### Changed
+
+- Web global styles live in `src/global.css`, imported by the entry point; the first-paint theme script stays in `index.html`.
+
 ### Fixed
 
 - Chat stays reachable on Prep when the mascot is hidden on narrow, short or touch screens; the resting mascot stays hidden behind open mobile chat.

@@ -21,39 +21,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
-    <style>
-      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      /* Fallbacks = tokens bg per theme, until tokenVars runs. */
-      body { background: var(--c-bg, #14171F); }
-      :root[data-theme="light"] body { background: var(--c-bg, #F5F7FA); }
-      /* Field focus ring (accentBright); fields set no outline of their own. */
-      input:focus-visible, textarea:focus-visible, select:focus-visible { outline: 2px solid var(--c-accent-bright, #2DD4BF); outline-offset: 1px; }
-      /* Scroll targets clear the sticky header; App.tsx measures it into --header-h. At
-         500px tall and below the header scrolls away (App.module.css), so only the gap stays. */
-      /* --rail-h: the Arch Board's sticky step rail, which sits under the header. */
-      html { --rail-h: 0px; scroll-padding-top: calc(var(--header-h, 0px) + var(--rail-h) + 16px); }
-      @media (max-height: 500px) { html { scroll-padding-top: 16px; } }
-      /* Tap targets: every button, select and disclosure is at least 24px tall (WCAG 2.5.8),
-         so the small outline buttons (Edit, Delete, Drill, All…) stay easy to hit on touch. */
-      button, select, summary { min-height: 24px; }
-      /* Placeholders use textDim: readable (AA) but clearly dimmer than typed text. */
-      ::placeholder { color: var(--c-text-dim, #9AA5BC); opacity: 1; }
-      @media (hover: none), (pointer: coarse) {
-        /* Must beat per-field inline sizes: iOS zooms focused text fields below 16px. */
-        input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]), textarea, select {
-          font-size: max(1rem, 16px) !important;
-        }
-      }
-
-      /* Scrollbars — matched to the dark theme on both axes. Hex values mirror
-         tokens.colors (border / textFaint / bg); keep them in sync. */
-      html { scrollbar-width: thin; scrollbar-color: #353C4D transparent; } /* Firefox: thumb, track */
-      ::-webkit-scrollbar { width: 10px; height: 10px; }
-      ::-webkit-scrollbar-track { background: transparent; }
-      ::-webkit-scrollbar-thumb { background: #353C4D; border-radius: 999px; border: 2px solid #14171F; }
-      ::-webkit-scrollbar-thumb:hover { background: #8B96AC; }
-      ::-webkit-scrollbar-corner { background: transparent; }
-    </style>
   </head>
   <body>
     <div id="root"></div>
