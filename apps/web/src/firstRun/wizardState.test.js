@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { canContinue, initialWizard, playbookRequest, prepPlanTechs, preparationSave, profileUpdate, wizardReducer } from "./wizardState.js";
+import { canContinue, initialWizard, playbookRequest, prepPlanTechs, preparationSave, profileUpdate, resumeDraft, wizardReducer } from "./wizardState.js";
 
 const profile = { goalTechs: ["React", "SQL"], targetRole: "Backend Engineer" };
 const run = (state, ...actions) => actions.reduce(wizardReducer, state);
@@ -84,4 +84,15 @@ test("the wizard saves preparation without touching favourites or CV detections"
 
 test("an unchosen goal saves as explore", () => {
   assert.equal(preparationSave(initialWizard(null), null).goal, "explore");
+});
+
+test("resumeDraft resumes only the owner's draft and never mid-generate", () => {
+  const me = { ...profile, id: "u1" };
+  const saved = (userId, step) => JSON.stringify({ userId, state: { ...initialWizard(me), step } });
+  assert.equal(resumeDraft(saved("u1", "role"), me).step, "role");
+  assert.equal(resumeDraft(saved("u1", "generate"), me).step, "review");
+  assert.equal(resumeDraft(saved("u2", "role"), me).step, "stack");
+  assert.equal(resumeDraft("not json", me).step, "stack");
+  assert.equal(resumeDraft(null, me).step, "stack");
+  assert.equal(resumeDraft(saved("u1", "role"), null).step, "stack");
 });

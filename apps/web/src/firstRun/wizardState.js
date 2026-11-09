@@ -98,3 +98,23 @@ export function preparationSave(state, profile) {
     brief: state.brief.trim(),
   };
 }
+
+/**
+ * The saved setup draft to resume after a reload, or a fresh start. A draft only
+ * resumes for the user who wrote it, and a reload mid-generate returns to Review
+ * so a plan is never requested without a click.
+ * @param {string | null} raw stored JSON of { userId, state }
+ * @param {{ id: string } | null} profile
+ */
+export function resumeDraft(raw, profile) {
+  try {
+    const draft = JSON.parse(raw ?? "null");
+    const state = draft?.state;
+    if (profile && draft?.userId === profile.id && typeof state?.step === "string") {
+      return state.step === "generate" ? { ...state, step: "review" } : state;
+    }
+  } catch {
+    // Unreadable draft: start fresh.
+  }
+  return initialWizard(profile);
+}
