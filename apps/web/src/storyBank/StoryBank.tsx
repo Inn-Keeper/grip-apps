@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { COMPETENCIES, PROMPTS } from "@grip/core/stories";
 import { t } from "@grip/core/i18n";
-import { colors, font } from "../lib/tokens";
+import { colors } from "../lib/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout } from "../components/WorkspaceLayout";
-import { miniBtn, workspaceFocusStyle } from "../components/fieldStyles";
 import { PromptDrill } from "./PromptDrill";
 import { StoryCard, StoryDetail } from "./StoryCard";
 import { StoryForm } from "./StoryForm";
@@ -16,6 +15,7 @@ import type { Story, StoryForm as StoryFormType } from "./types";
 import { scrollBehavior } from "../lib/motion";
 import { ErrorBanner } from "../components/ErrorText";
 import { mayLeave } from "../lib/useUnsavedGuard";
+import styles from "./StoryBank.module.css";
 
 // The focused view (rule 8): writing, editing or reading one story in place of the list.
 type Focus = { mode: "detail" | "edit"; id: string } | { mode: "new"; competency?: string } | null;
@@ -97,12 +97,7 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
         : { title: t("stories.nextDrillTitle"), sub: t("stories.nextDrillSub"), action: t("stories.nextDrillAction"), icon: "prompt", onAction: () => switchMode("drill"), links: <NextUpLink label={t("stories.orAdd")} onClick={() => setFocus({ mode: "new" })} /> };
 
   const noticeLine = notice && (
-    <p key={notice.id} role="status" style={{
-        margin: "0 0 16px",
-        color: colors.accentBright,
-        fontSize: font.size.body,
-        fontWeight: 700
-      }}>{notice.text}</p>
+    <p key={notice.id} role="status" className={styles.notice}>{notice.text}</p>
   );
 
   return (
@@ -119,17 +114,8 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
       )}
 
       {focus ? (
-        <div style={workspaceFocusStyle}>
-          <button type="button" onClick={() => mayLeave() && setFocus(null)} style={{
-              marginBottom: 14,
-              padding: 0,
-              background: "transparent",
-              border: "none",
-              color: colors.accentBright,
-              fontSize: font.size.body,
-              fontWeight: 700,
-              cursor: "pointer"
-            }}>
+        <div className={styles.focused}>
+          <button type="button" onClick={() => mayLeave() && setFocus(null)} className={styles.back}>
             {t(mode === "drill" ? "stories.backToPrompt" : "stories.back")}
           </button>
           {noticeLine}
@@ -149,44 +135,22 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
             <NextUpShell title={nextUp.title} sub={nextUp.sub} tone={colors.accent ?? ""} actionLabel={nextUp.action} actionIcon={nextUp.icon} onAction={nextUp.onAction} links={nextUp.links} />
           )}
 
-          <div style={{
-              display: "flex",
-              alignItems: "baseline",
-              flexWrap: "wrap",
-              gap: 12,
-              marginBottom: 6
-            }}>
-            <h1 style={{
-                margin: 0,
-                fontSize: font.size.heading,
-                fontWeight: 800,
-                color: colors.textBright
-              }}>
+          <div className={styles.header}>
+            <h1 className={styles.title}>
               {mode === "drill" ? t("stories.drillPrompts") : t("stories.title")}
             </h1>
-            <span style={{
-                marginLeft: "auto",
-                fontSize: font.size.small,
-                color: colors.textFaint,
-                fontWeight: 600
-              }}>
+            <span className={styles.count}>
               {stories ? t("stories.count", { count: stories.length }) : t("common.loading")}
             </span>
             {onOpenSetup && stories && !stories.some((s) => s.playbook) && (
-              <button type="button" onClick={onOpenSetup} style={miniBtn(colors.accentBright ?? "")}>
+              <button type="button" onClick={onOpenSetup} className={styles.generate}>
                 {t("firstRun.stories.generate")}
               </button>
             )}
           </div>
           {/* The list explains itself (coverage and Next Up sit beside it); drill mode keeps its one-line how-to. */}
           {noticeLine ?? (mode === "drill" && (
-            <p style={{
-                margin: "0 0 16px",
-                color: colors.textFaint,
-                fontSize: font.size.body,
-                maxWidth: 760,
-                lineHeight: 1.6
-              }}>
+            <p className={styles.subtitle}>
               {t("stories.drillSubtitle")}
             </p>
           ))}
@@ -194,18 +158,9 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
           {mode === "drill" ? (
             <PromptDrill stories={storyList} state={drill} onChange={setDrill} onAddStory={(competency) => setFocus({ mode: "new", competency })} />
           ) : (
-            <div style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: 12
-              }}>
+            <div className={styles.list}>
               {stories?.length === 0 && (
-                <p style={{
-                    color: colors.textFaint,
-                    fontSize: font.size.body,
-                    textAlign: "center",
-                    marginTop: 24
-                  }}>{t("stories.empty")}</p>
+                <p className={styles.empty}>{t("stories.empty")}</p>
               )}
               {stories?.map((s) => (
                 <StoryCard
