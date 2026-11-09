@@ -6,6 +6,18 @@ because they have to be applied by hand.
 
 ## 2026-11-09
 
+### Added
+
+- Profile "Your preparation" at `/profile/preparation`: playbook status with one primary action, a role/focus/stack summary, inline preferred technologies and experience sources.
+- Preparation editor at `/profile/preparation/edit` with a detached draft: Save writes role, focus, brief, stack, favourites and CV detections in one transaction; Cancel and leaving with unsaved changes ask first.
+- Playbook freshness: current, changed, legacy (created before tracking), updating, failed and interrupted states. Updates keep the previous playbook until the new one is published; Retry reuses the generated result.
+- `/profile/preparation/playbook` shows the active playbook and links to its Prep, Stories and Arch Board outputs.
+- GitHub "Sync now" fetches public repository languages as suggestions to review; only accepted ones join the stack, and favourites never change.
+
+### Database
+
+- `0030_profile_preparation.sql`: `user_preparation` table (own-row RLS) and the `save_preparation`, `save_github_signals` and `publish_preparation_playbook` RPCs; `reset_goals` also clears preparation. Applied to the linked project on 2026-11-09.
+
 ### Changed
 
 - Web app shell (frame, header, nav, loading state) uses `App.module.css` with the existing theme tokens instead of inline styles.
@@ -14,6 +26,10 @@ because they have to be applied by hand.
 - Web StoryBank page layout, feedback and actions use a colocated CSS Module with the existing theme tokens.
 - Web sign-in layout, fields and busy/disabled feedback use a colocated CSS Module with the existing theme tokens.
 - Web global styles live in `src/global.css`, imported by the entry point; the first-paint theme script stays in `index.html`.
+- Profile menu is Account, Your preparation and Preferences, each with its own URL; `/profile`, `/profile/cv` and `/profile/connections` redirect to preparation. The completion percentage and setup prompts are gone; target role is edited only in preparation; Set up and Reset goals moved to Preferences.
+- Prep uses only GitHub technologies you accepted in Profile instead of scanning GitHub on every load.
+- The first-run wizard saves preparation before generating and publishes the playbook in one transaction, so a failure never leaves a half-saved playbook.
+- GitHub linking returns to `/profile/preparation`; add that URL to the Supabase Auth redirect allowlist.
 
 ### Fixed
 

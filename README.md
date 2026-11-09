@@ -19,7 +19,7 @@ Six tabs, shared between web and mobile:
 | **Stories** | STAR stories across eight competencies, with randomized behavioral prompts. |
 | **Quest** | Pipeline tracker (Contacted → Applied → Interviewing → Offer → Rejected) with stage velocity and due follow-ups from the Java pipeline service. |
 | **Fly Me** | What the product is and why each piece exists. |
-| **Profile** | Private settings, CV import (parsed on-device, only detected techs are saved), score reset. |
+| **Profile** | Account, preferences and "Your preparation": role, focus, stack and preferred techs that shape the playbook, with freshness tracking, reviewed GitHub suggestions and CV import (parsed on-device, only detected techs are saved). |
 
 Two details worth calling out. **Arch Board scores two halves separately** — topology (the boxes) and reasoning (the talk track) — and readiness stays unassessed until the reasoning is graded, so a pretty diagram alone never reads as a pass. And **estimates are graded by order of magnitude**: within 3× is spot on, within 10× passes.
 
@@ -64,7 +64,7 @@ docs/screenshots/  Product screens used above
 
 `packages/core` holds everything both apps need: the quiz and difficulty rules, the Arch Board evaluator and its scenarios, STAR and pipeline logic, the Supabase data layer, and the design tokens. Start with [`api.js`](packages/core/src/api.js) and [`tokens.js`](packages/core/src/tokens.js).
 
-Tables, all with row-level security on `user_id = auth.uid()`: `profiles`, `contacts`, `status_events`, `retros`, `stories`, `answer_events`, `questions`, `saved_boards`, `custom_scenarios`.
+Tables, all with row-level security on `user_id = auth.uid()`: `profiles`, `contacts`, `status_events`, `retros`, `stories`, `answer_events`, `questions`, `saved_boards`, `custom_scenarios`, `user_preparation`.
 
 ## Getting started
 

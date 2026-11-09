@@ -67,7 +67,8 @@ export function PreparationSources({ profile, preparation, catalogue, githubConn
     setSync({ phase: "syncing" });
     try {
       const result = await fetchGithubTechSignals(username, catalogue, { signal: current.signal });
-      // Records the successful fetch time only; nothing is accepted yet.
+      // Records the successful fetch time only; nothing is accepted yet. Never for an abandoned scan.
+      if (current.signal.aborted) return;
       await api.saveGithubSignals({ acceptedTechs: [], syncedAt: new Date().toISOString() });
       if (current.signal.aborted) return;
       const stack = new Set(profile?.goalTechs ?? []);
