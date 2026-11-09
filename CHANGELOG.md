@@ -47,6 +47,8 @@ because they have to be applied by hand.
 - After 20 seconds of writing the plan, setup offers "Start practicing instead", so an overloaded model (429 or 503 after a server retry) no longer traps the user. It is hidden while saving, so nothing is half-saved.
 - Footer page links are inactive while setup is open; they used to change the URL behind the wizard.
 - Setup answers survive a reload for the visit (sessionStorage); a reload while the plan builds returns to Review instead of requesting it again.
+- A queued "Try the demo" click gives up after 10 seconds with a message if the captcha never loads.
+- A saved setup draft resumes only for the user who wrote it.
 - GitHub linking returns to `/profile/preparation`; add that URL to the Supabase Auth redirect allowlist.
 
 ### Fixed
