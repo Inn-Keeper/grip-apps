@@ -3,7 +3,6 @@ import { LOCALE_FLAGS, LOCALE_LABELS, t } from "@grip/core/i18n";
 import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { ThemePicker } from "./ThemePicker";
-import { ErrorText } from "../components/ErrorText";
 import { fieldStyle as inputStyle, srOnly } from "../components/fieldStyles";
 import { InfoTip } from "../components/InfoTip";
 import { WorkspacePanel } from "../components/WorkspaceLayout";
@@ -88,7 +87,8 @@ export function AccountSection({
             }}
           />
         </FieldRow>
-        {PROFILE_FIELDS.map((field) => {
+        {/* Target role is edited once, in Your preparation. */}
+        {PROFILE_FIELDS.filter((field) => field.key !== "targetRole").map((field) => {
           const id = `profile-${field.key}`;
           const fieldError = error?.key === field.key ? error.message : null;
           const isUrl = field.keyboardType === "url";
@@ -561,84 +561,3 @@ export function PreferencesSection({
 }
 
 // Every prep tech as a chip; favorites are highlighted and clicking toggles one.
-export function FavoriteTechsSection({
-  profile,
-  techs,
-  saving,
-  error,
-  onToggleFavoriteTech,
-}: {
-  profile: ProfileRecord | null;
-  techs: string[];
-  saving: boolean;
-  error: Error | null;
-  onToggleFavoriteTech: (tech: string, profile: ProfileRecord | null) => void;
-}) {
-  const favoriteTechs = profile?.favoriteTechs ?? [];
-  const sortedTechs = [...techs].sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
-
-  return (
-    <WorkspacePanel
-      style={{
-        marginTop: 20,
-        padding: 20,
-      }}
-    >
-      <div
-        style={{
-          color: colors.textBright,
-          fontSize: font.size.body,
-          fontWeight: 800,
-        }}
-      >
-        {t("profile.favoriteTechs")}
-      </div>
-      <p
-        style={{
-          margin: "8px 0 0",
-          color: colors.textDim,
-          fontSize: font.size.body,
-          lineHeight: 1.5,
-        }}
-      >
-        {t("profile.favoriteTechsBlurb")}
-      </p>
-      <div
-        style={{
-          marginTop: 16,
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 8,
-        }}
-      >
-        {sortedTechs.map((tech) => {
-          const isFavorite = favoriteTechs.includes(tech);
-          return (
-            <button
-              key={tech}
-              type="button"
-              aria-pressed={isFavorite}
-              // ponytail: blocks clicks mid-save so a toggle never starts from a stale list
-              disabled={saving}
-              onClick={() => onToggleFavoriteTech(tech, profile)}
-              style={{
-                padding: "6px 12px",
-                background: isFavorite ? alpha(colors.accent, 0.08) : "transparent",
-                border: isFavorite ? `1px solid ${alpha(colors.borderDeep, 0.06)}` : `1px dashed ${alpha(colors.accent, 0.06)}`,
-                borderRadius: 999,
-                color: isFavorite ? colors.textHighlight : colors.textHighlightDim,
-                font: "inherit",
-                fontSize: font.size.small,
-                fontWeight: isFavorite ? 700 : 400,
-                cursor: saving ? "wait" : "pointer",
-              }}
-            >
-              {tech}
-            </button>
-          );
-        })}
-      </div>
-      {error && <ErrorText margin="12px 0 0">{error.message}</ErrorText>}
-    </WorkspacePanel>
-  );
-}

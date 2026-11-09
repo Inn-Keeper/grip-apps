@@ -1,16 +1,18 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RANKS, rankForXp } from "@grip/core/gamification";
 import { alpha, colors, font, tints } from "../lib/tokens";
-import { EMPTY_PROFILE_FORM, PROFILE_FIELDS, profileFormToUpdate, profileToForm, toggleFavoriteTech } from "@grip/core/user";
+import { EMPTY_PROFILE_FORM, profileFormToUpdate, profileToForm } from "@grip/core/user";
 import { setLocale, t } from "@grip/core/i18n";
 import { useLocale } from "../lib/useLocale";
 import { poeVisibleByDefault, setPoeAssistantVisible } from "../components/poe/poeAssistantUtils";
-import { NextUpShell } from "../components/NextUpShell";
 import { WorkspaceLayout, WorkspacePanel } from "../components/WorkspaceLayout";
 import { miniBtn } from "../components/fieldStyles";
 import { CvUpload } from "./CvUpload";
+import { PreparationSection } from "./PreparationSection";
+import { PreparationEditor } from "./PreparationEditor";
+import type { User } from "@grip/core/api";
 import { ProfileLeftRail, ProfileRightRail } from "./ProfileRails";
-import { AccountSection, ConnectionsSection, FavoriteTechsSection, PreferencesSection } from "./ProfileSections";
+import { AccountSection, ConnectionsSection, PreferencesSection } from "./ProfileSections";
 import type { ProfileSection } from "./sections";
 import { parseProfilePath, profilePath, profileRedirect } from "./routes.js";
 import {
@@ -20,13 +22,13 @@ import {
   useGithubPublicUrlQuery,
   useGithubViewerUrlQuery,
   useLinkGitHubMutation,
+  usePreparationQuery,
   useProfileQuery,
   useResetScoresMutation,
   useResetGoalsMutation,
   useSaveCvTechsMutation,
   useSaveGithubUrlMutation,
   useSaveProfileMutation,
-  useSaveFavoriteTechsMutation,
 } from "./queries";
 import {
   githubAccountIdFromIdentity,
@@ -85,6 +87,15 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
   const editingKey = useRef<string | null>(null);
 
   const { data: profile = null, error: loadError, isLoading } = useProfileQuery();
+  const { data: preparation = null, error: preparationError, isLoading: preparationLoading } = usePreparationQuery();
+  const [savedNotice, setSavedNotice] = useState(false);
+  const leaveEditor = useCallback(
+    (saved: boolean) => {
+      setSavedNotice(saved);
+      onNavigatePath(profilePath("preparation"));
+    },
+    [onNavigatePath],
+  );
   const { data: identities = [], error: identitiesError } = useAuthIdentitiesQuery();
   const { data: authUser = null, error: authUserError } = useAuthUserQuery();
 
@@ -106,7 +117,6 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
   const resetGoalsMutation = useResetGoalsMutation();
   const linkGitHubMutation = useLinkGitHubMutation();
 
-  const saveFavoriteTechsMutation = useSaveFavoriteTechsMutation();
 
   const githubUrl =
     profile?.githubUrl ||
@@ -176,57 +186,20 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
     setPoeAssistantVisible(checked);
   };
   const loadErrors = (loadError ||
+    preparationError ||
     identitiesError ||
     authUserError ||
     githubViewerError ||
     githubPublicError ||
     saveGithubUrlMutation.error) as Error | null;
   const connectionsError = (linkGitHubMutation.error || githubPrepMutation.error) as Error | null;
-  const completionItems = PROFILE_FIELDS.filter((field) => (form[field.key] ?? "").trim()).length;
-  const completionPct = Math.round((completionItems / PROFILE_FIELDS.length) * 100);
-
-  // The one main action (rule 1): the next thing that makes the profile more useful.
-  const firstEmpty = PROFILE_FIELDS.find((field) => !(form[field.key] ?? "").trim());
-  const focusField = (key: string) => {
-    setSection("account");
-    window.setTimeout(() => document.getElementById(`profile-${key}`)?.focus(), 0);
-  };
-  const nextUp = firstEmpty
-    ? {
-        title: t("profile.nextFieldTitle", { field: t(firstEmpty.labelKey as Parameters<typeof t>[0]).toLowerCase() }),
-        sub: t("profile.nextFieldSub"),
-        action: t("profile.nextFieldAction"),
-        icon: "profile",
-        onAction: () => focusField(firstEmpty.key),
-      }
-    : !(profile?.cvTechs ?? []).length
-      ? {
-          title: t("profile.nextCvTitle"),
-          sub: t("profile.nextCvSub"),
-          action: t("profile.nextCvAction"),
-          icon: "story",
-          onAction: () => setSection("preparation"),
-        }
-      : !githubConnected
-        ? {
-            title: t("profile.nextGithubTitle"),
-            sub: t("profile.nextGithubSub"),
-            action: t("profile.nextGithubAction"),
-            icon: "globe",
-            onAction: () => setSection("preparation"),
-          }
-        : {
-            title: t("profile.nextDoneTitle"),
-            sub: t("profile.nextDoneSub"),
-            action: t("profile.nextDoneAction"),
-            icon: "story",
-            onAction: () => setSection("preparation"),
-          };
-
   const header = {
     // No subtitle: Next Up above already says what a complete profile does.
     account: { title: t("profile.account"), sub: "" },
-    preparation: { title: t("profile.preparation.menu"), sub: t("profile.preparation.subtitle") },
+    preparation: {
+      title: route === "edit" ? t("profile.preparation.editTitle") : t("profile.preparation.menu"),
+      sub: route === "edit" ? "" : t("profile.preparation.subtitle"),
+    },
     preferences: { title: t("profile.preferences"), sub: t("profile.preferencesSub") },
     notFound: { title: t("profile.notFoundTitle"), sub: "" },
   }[section ?? "notFound"];
@@ -246,24 +219,12 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
       }
       right={
         <ProfileRightRail
-          completionItems={completionItems}
-          completionPct={completionPct}
           profile={profile}
           rank={rank}
           next={next}
         />
       }
     >
-      <NextUpShell
-        title={nextUp.title}
-        sub={nextUp.sub}
-        tone={colors.accent ?? ""}
-        actionLabel={nextUp.action}
-        actionIcon={nextUp.icon}
-        onAction={nextUp.onAction}
-        disabled={!profile}
-      />
-
       <div style={{ marginBottom: 16 }}>
         <h1
           ref={headingRef}
@@ -294,6 +255,7 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
       </div>
 
       {loadErrors && <Banner tone="danger">{loadErrors.message}</Banner>}
+      {savedNotice && route === "preparation" && <Banner tone="success">{t("profile.preparation.saved")}</Banner>}
       {githubLinked && <Banner tone="success">{t("profile.githubConnectedBanner")}</Banner>}
 
       <div
@@ -302,7 +264,67 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
           paddingBottom: 48,
         }}
       >
-        {section === "account" && onOpenSetup && (
+        {section === "account" && (
+          <AccountSection
+            form={form}
+            profile={profile}
+            savedKey={savedKey}
+            error={fieldError}
+            onChange={changeField}
+            onCommit={commitField}
+          />
+        )}
+        {route === "notFound" && (
+          <button type="button" onClick={() => setSection("preparation")} style={miniBtn(colors.accentBright ?? "")}>
+            {t("profile.notFoundAction")}
+          </button>
+        )}
+        {route === "preparation" && (
+          <PreparationSection
+            profile={profile}
+            preparation={preparation}
+            catalogue={prepTechs}
+            onEdit={() => onNavigatePath(profilePath("edit"))}
+            sources={
+              <>
+                <WorkspacePanel style={{
+                    padding: 20,
+                    marginBottom: 16
+                  }}>
+                  <CvUpload
+                    cvTechs={profile?.cvTechs ?? []}
+                    disabled={!profile}
+                    pending={cvTechsMutation.isPending}
+                    onTechsExtracted={(techs) => cvTechsMutation.mutate(techs)}
+                    onClear={() => cvTechsMutation.mutate([])}
+                  />
+                  {cvTechsMutation.error && (
+                    <ErrorText margin="12px 0 0">{(cvTechsMutation.error as Error).message}</ErrorText>
+                  )}
+                </WorkspacePanel>
+                <ConnectionsSection
+                  form={form}
+                  profile={profile}
+                  githubConnected={githubConnected}
+                  linkPending={linkGitHubMutation.isPending}
+                  githubPrepPending={githubPrepMutation.isPending}
+                  onLinkGitHub={() => linkGitHubMutation.mutate()}
+                  onGithubPrepChange={(checked) => githubPrepMutation.mutate(checked)}
+                />
+                {connectionsError && <ErrorText margin="12px 0 0">{connectionsError.message}</ErrorText>}
+              </>
+            }
+          />
+        )}
+        {route === "edit" && profile && !preparationLoading && (
+          <PreparationEditor
+            profile={profile as User}
+            preparation={preparation}
+            catalogue={prepTechs}
+            onDone={leaveEditor}
+          />
+        )}
+        {section === "preferences" && onOpenSetup && (
           <WorkspacePanel style={{
               padding: 20,
               marginBottom: 16,
@@ -332,58 +354,6 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
               onCancel={() => setConfirmResetGoals(false)}
             />
           </WorkspacePanel>
-        )}
-        {section === "account" && (
-          <AccountSection
-            form={form}
-            profile={profile}
-            savedKey={savedKey}
-            error={fieldError}
-            onChange={changeField}
-            onCommit={commitField}
-          />
-        )}
-        {route === "notFound" && (
-          <button type="button" onClick={() => setSection("preparation")} style={miniBtn(colors.accentBright ?? "")}>
-            {t("profile.notFoundAction")}
-          </button>
-        )}
-        {section === "preparation" && (
-          <>
-            <WorkspacePanel style={{ padding: 20 }}>
-              <CvUpload
-                cvTechs={profile?.cvTechs ?? []}
-                disabled={!profile}
-                pending={cvTechsMutation.isPending}
-                onTechsExtracted={(techs) => cvTechsMutation.mutate(techs)}
-                onClear={() => cvTechsMutation.mutate([])}
-              />
-              {cvTechsMutation.error && (
-                <ErrorText margin="12px 0 0">{(cvTechsMutation.error as Error).message}</ErrorText>
-              )}
-            </WorkspacePanel>
-
-            <FavoriteTechsSection
-              profile={profile}
-              techs={prepTechs}
-              saving={saveFavoriteTechsMutation.isPending}
-              error={saveFavoriteTechsMutation.error}
-              onToggleFavoriteTech={(tech, currentProfile) => {
-                if (!currentProfile) return;
-                saveFavoriteTechsMutation.mutate(toggleFavoriteTech(currentProfile.favoriteTechs, tech));
-              }}
-            />
-            <ConnectionsSection
-              form={form}
-              profile={profile}
-              githubConnected={githubConnected}
-              linkPending={linkGitHubMutation.isPending}
-              githubPrepPending={githubPrepMutation.isPending}
-              onLinkGitHub={() => linkGitHubMutation.mutate()}
-              onGithubPrepChange={(checked) => githubPrepMutation.mutate(checked)}
-            />
-            {connectionsError && <ErrorText margin="12px 0 0">{connectionsError.message}</ErrorText>}
-          </>
         )}
         {section === "preferences" && (
           <>

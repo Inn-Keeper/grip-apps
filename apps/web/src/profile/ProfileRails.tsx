@@ -1,9 +1,7 @@
-import { PROFILE_FIELDS } from "@grip/core/user";
 import { t } from "@grip/core/i18n";
 import { alpha, colors, font } from "../lib/tokens";
 import { BrandIcon } from "../components/BrandIcon";
 import { GlowBar } from "../components/GlowBar";
-import { HeadlineMetric } from "../components/HeadlineMetric";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { SECTIONS, type ProfileSection } from "./sections";
 import { profilePath } from "./routes.js";
@@ -163,16 +161,12 @@ export function ProfileLeftRail({
   );
 }
 
-// Right rail = status (rule 5): the completion headline, then rank.
+// Right rail = status (rule 5): rank and XP. No completion score: filled fields are not readiness.
 export function ProfileRightRail({
-  completionItems,
-  completionPct,
   profile,
   rank,
   next,
 }: {
-  completionItems: number;
-  completionPct: number;
   profile: ProfileRecord | null;
   rank: Rank;
   next?: Rank;
@@ -181,13 +175,6 @@ export function ProfileRightRail({
   const rankPct = next ? ((xp - rank.min) / (next.min - rank.min)) * 100 : 100;
   return (
     <WorkspacePanel>
-      <HeadlineMetric
-        label={t("profile.completionLabel")}
-        value={completionPct}
-        unit="%"
-        pct={completionPct}
-        hint={t("profile.fields", { filled: completionItems, total: PROFILE_FIELDS.length })}
-      />
       <WorkspaceTitle
         icon={
           <BrandIcon

@@ -14,6 +14,8 @@ export const profileQueryKeys = {
   githubViewerUrl: (githubLinked: boolean) => ["github-viewer-url", githubLinked] as const,
   githubPublicUrl: (githubAccountId: string) => ["github-public-url", githubAccountId] as const,
   githubTechs: ["github-techs"] as const,
+  // Unscoped like "profile": App clears the whole cache when the signed-in user changes.
+  preparation: ["preparation"] as const,
   scores: ["scores"] as const,
   accuracyTimeline: ["accuracy-timeline"] as const,
 };
@@ -184,3 +186,21 @@ export function useResetGoalsMutation() {
   });
 }
 
+
+export function usePreparationQuery(enabled = true) {
+  return useQuery({ queryKey: profileQueryKeys.preparation, queryFn: api.getPreparation, enabled });
+}
+
+// One transaction for profile fields and preparation; both caches refetch afterwards.
+export function useSavePreparationMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.savePreparation,
+    onSuccess: () =>
+      Promise.all([
+        queryClient.invalidateQueries({ queryKey: profileQueryKeys.profile }),
+        queryClient.invalidateQueries({ queryKey: profileQueryKeys.preparation }),
+        queryClient.invalidateQueries({ queryKey: profileQueryKeys.githubTechs }),
+      ]),
+  });
+}

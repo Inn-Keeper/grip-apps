@@ -1,0 +1,134 @@
+.panel {
+  margin-bottom: 16px;
+  padding: 20px;
+}
+
+.heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+
+.heading h2 {
+  margin: 0;
+  color: var(--c-text-bright);
+  font-size: var(--fs-body);
+  font-weight: 800;
+}
+
+.label {
+  display: block;
+  margin: 18px 0 8px;
+  color: var(--c-text-faint);
+  font-size: var(--fs-label);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.value {
+  color: var(--c-text-bright);
+  font-size: var(--fs-body);
+  overflow-wrap: anywhere;
+}
+
+.muted {
+  margin: 4px 0 0;
+  color: var(--c-text-dim);
+  font-size: var(--fs-small);
+  line-height: 1.5;
+}
+
+.summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0 24px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  max-width: 100%;
+  padding: 6px 12px;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--c-text-bright);
+  font: inherit;
+  font-size: var(--fs-small);
+  overflow-wrap: anywhere;
+}
+
+button.chip {
+  cursor: pointer;
+}
+
+.chip[aria-pressed="true"] {
+  border-color: var(--c-accent);
+  color: var(--c-accent-bright);
+  font-weight: 700;
+}
+
+.link {
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--c-accent-bright);
+  font: inherit;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 14px 0;
+  border-top: 1px solid var(--c-border-soft);
+}
+
+.row:first-of-type {
+  border-top: none;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+.field label,
+.fieldLabel {
+  color: var(--c-text-bright);
+  font-size: var(--fs-small);
+  font-weight: 700;
+}
+
+.inline {
+  display: flex;
+  gap: 8px;
+}
+
+.inline input {
+  flex: 1;
+  min-width: 0;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
