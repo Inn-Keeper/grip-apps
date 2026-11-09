@@ -443,14 +443,14 @@
 }
 
 /* Next button gets accent treatment */
-.grip-tour .driver-popover-next-btn {
+.grip-tour .driver-popover-footer .driver-popover-next-btn {
   background: var(--c-accent);
   border-color: var(--c-accent);
   color: var(--c-on-accent);
 }
 
-.grip-tour .driver-popover-next-btn:hover,
-.grip-tour .driver-popover-next-btn:focus {
+.grip-tour .driver-popover-footer .driver-popover-next-btn:hover,
+.grip-tour .driver-popover-footer .driver-popover-next-btn:focus {
   background: var(--c-accent-bright);
   border-color: var(--c-accent-bright);
   color: var(--c-on-accent);
