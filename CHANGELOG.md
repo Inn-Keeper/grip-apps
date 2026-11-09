@@ -12,6 +12,7 @@ because they have to be applied by hand.
 - The chat panel stays on screen near the footer and follows the visual viewport when the mobile keyboard opens or pans the page.
 - Stories heading actions wrap with enlarged text.
 - The guided tour's Next button keeps its primary styling.
+- Field placeholders and focus rings follow the light theme; mobile web text fields use at least 16px text to avoid input-focus zoom while preserving user zoom and larger text preferences.
 
 ## 2026-11-08
 
