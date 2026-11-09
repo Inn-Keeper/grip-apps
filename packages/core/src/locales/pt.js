@@ -68,6 +68,7 @@ export const pt = {
   "prep.correct": "Correto! +{xp} XP",
   "prep.notQuite": "Quase. A resposta certa é {letter}",
   "demo.try": "Experimente a demo",
+  "auth.captchaTimeout": "A verificação de segurança não carregou. Confira sua conexão e tente de novo.",
   "demo.trySub": "Sem conta · com dados de exemplo",
   "demo.banner": "Você está explorando uma demo. O progresso fica salvo por 7 dias.",
   "demo.bar": "O Grip é uma demo gratuita.",

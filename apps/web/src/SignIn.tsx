@@ -10,6 +10,8 @@ import { TURNSTILE_SITE_KEY } from "./lib/turnstile";
 import { Field } from "./components/shared";
 import styles from "./SignIn.module.css";
 
+const CAPTCHA_WAIT_MS = 10_000;
+
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [email, setEmail] = useState("");
@@ -69,6 +71,16 @@ export function SignIn() {
     setDemoQueued(false);
     void tryDemo();
   }, [demoQueued, waitingForCaptcha]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // If the captcha never answers (blocked script, offline), stop waiting and say so.
+  useEffect(() => {
+    if (!demoQueued) return;
+    const id = window.setTimeout(() => {
+      setDemoQueued(false);
+      setError(t("auth.captchaTimeout"));
+    }, CAPTCHA_WAIT_MS);
+    return () => window.clearTimeout(id);
+  }, [demoQueued]);
 
   const signInWithGitHub = async () => {
     setBusy(true);

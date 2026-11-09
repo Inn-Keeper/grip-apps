@@ -68,6 +68,7 @@ export const sv = {
   "prep.correct": "Rätt! +{xp} XP",
   "prep.notQuite": "Inte riktigt. Rätt svar är {letter}",
   "demo.try": "Prova demon",
+  "auth.captchaTimeout": "Säkerhetskontrollen laddades inte. Kontrollera anslutningen och försök igen.",
   "demo.trySub": "Inget konto behövs · med exempeldata",
   "demo.banner": "Du utforskar en demo. Framstegen sparas i 7 dagar.",
   "demo.bar": "Grip är en gratis demo.",

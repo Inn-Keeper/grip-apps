@@ -68,6 +68,7 @@ export const en = {
   "prep.correct": "Correct! +{xp} XP",
   "prep.notQuite": "Not quite. The answer is {letter}",
   "demo.try": "Try the demo",
+  "auth.captchaTimeout": "The security check didn't load. Check your connection and try again.",
   "demo.trySub": "No account needed · sample data included",
   "demo.banner": "You're exploring a demo. Progress is kept for 7 days.",
   "demo.bar": "Grip is a free demo.",
