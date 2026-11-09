@@ -251,7 +251,8 @@ export default function App() {
         )}
       </div>
 
-      <Footer pages={pages} onNavigate={session ? selectPage : null} />
+      {/* Setup covers every page, so its links would only change the URL behind it. */}
+      <Footer pages={pages} onNavigate={session && !showWizard ? selectPage : null} />
       <Analytics />
     </div>
   );
