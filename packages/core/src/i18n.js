@@ -1,5 +1,6 @@
 // Dependency-free i18n: a flat key->template dictionary with {var}
-// interpolation. Upgrade path if plurals/ICU are ever needed: i18next.
+// interpolation. Plurals: a `<key>_one` entry is used when count is 1.
+// Upgrade path if full ICU is ever needed: i18next.
 
 export { en } from "./locales/en.js";
 export { pt } from "./locales/pt.js";
@@ -20,7 +21,7 @@ const listeners = new Set();
  * @param {Record<string, string | number>} [vars]
  */
 export function t(key, vars) {
-  const template = active[key];
+  const template = (vars?.count === 1 && active[`${key}_one`]) || active[key];
   if (typeof template !== "string") return key;
   if (!vars) return template;
   return template.replace(/\{(\w+)\}/g, (match, name) =>

@@ -110,3 +110,11 @@ describe("node descriptions", () => {
     for (const { type } of NODE_TYPES) expect(en[`node.desc.${type}`]).toBeTruthy();
   });
 });
+
+describe("plurals", () => {
+  it("uses the _one variant only when count is 1", () => {
+    setLocale("en");
+    expect(t("firstRun.review.notesAdded", { count: 1 })).toBe("1 experience");
+    expect(t("firstRun.review.notesAdded", { count: 2 })).toBe("2 experiences");
+  });
+});
