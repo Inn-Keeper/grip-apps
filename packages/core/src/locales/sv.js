@@ -415,6 +415,7 @@ export const sv = {
   "auth.subtitle": "Förbered dig för tekniska intervjuer och håll koll på dina ansökningar.",
   "auth.aiPlan": "AI skriver din stridsplan: en övning, exempelberättelser och en övningstavla för din roll.",
   "auth.aiProof": "AI läser ditt resonemang avsnitt för avsnitt och nämner frågan en intervjuare fortfarande skulle ställa.",
+  "auth.aiImport": "AI gör om dina röriga ansökningsanteckningar till en prydlig pipeline och visar raderna innan något sparas.",
   "auth.aiPoe": "Poe, korpen som guidar dig, svarar på frågor om hur du hittar i Grip.",
   "auth.or": "eller",
   "auth.emailLabel": "E-post",

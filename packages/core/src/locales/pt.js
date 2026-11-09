@@ -415,6 +415,7 @@ export const pt = {
   "auth.subtitle": "Prepare-se para entrevistas técnicas e acompanhe suas candidaturas.",
   "auth.aiPlan": "A IA escreve seu plano de batalha: um treino, histórias de exemplo e um quadro de prática para sua vaga.",
   "auth.aiProof": "A IA lê seu roteiro seção por seção e aponta a pergunta que um entrevistador ainda faria.",
+  "auth.aiImport": "A IA transforma suas anotações bagunçadas de candidaturas em um pipeline organizado e mostra as linhas antes de salvar.",
   "auth.aiPoe": "Poe, o corvo guia, responde dúvidas sobre como se achar no Grip.",
   "auth.or": "ou",
   "auth.emailLabel": "E-mail",

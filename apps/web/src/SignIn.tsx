@@ -11,8 +11,8 @@ import { Field } from "./components/shared";
 import styles from "./SignIn.module.css";
 
 const CAPTCHA_WAIT_MS = 10_000;
-// The three AI features, one line each: setup plan, talk track grading, Poe.
-const AI_PROOF = ["auth.aiPlan", "auth.aiProof", "auth.aiPoe"] as const;
+// The AI features, one line each: setup plan, talk track grading, application import, Poe.
+const AI_PROOF = ["auth.aiPlan", "auth.aiProof", "auth.aiImport", "auth.aiPoe"] as const;
 
 export function SignIn() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");

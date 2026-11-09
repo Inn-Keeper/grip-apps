@@ -415,6 +415,7 @@ export const en = {
   "auth.subtitle": "Prepare for technical interviews and track your applications.",
   "auth.aiPlan": "AI writes your battle plan: a drill, sample stories and a practice board for your role.",
   "auth.aiProof": "AI reads your talk track section by section and names the question an interviewer would still ask.",
+  "auth.aiImport": "AI turns your messy application notes into a tidy pipeline, and shows you the rows before anything is saved.",
   "auth.aiPoe": "Poe, the raven guide, answers questions about finding your way around Grip.",
   "auth.or": "or",
   "auth.emailLabel": "Email",
