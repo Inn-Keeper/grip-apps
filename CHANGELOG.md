@@ -53,7 +53,7 @@ because they have to be applied by hand.
 - Prep's focus card appears only when setup published a plan; skipping or failing setup lands on the normal dashboard instead of linking to stories that don't exist.
 - Sign-out clears the Prep focus flag, so the next account on the browser doesn't inherit it.
 - Setup marks onboarding done right after publishing, so a reload before landing can't build a second plan.
-- Sign-in lists the three AI features (battle plan, talk track grading, Poe) instead of grading alone.
+- Sign-in lists the four AI features (battle plan, talk track grading, application import, Poe) instead of grading alone.
 - GitHub linking returns to `/profile/preparation`; add that URL to the Supabase Auth redirect allowlist.
 
 ### Fixed
