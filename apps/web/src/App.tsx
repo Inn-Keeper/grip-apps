@@ -137,6 +137,26 @@ export default function App() {
   const undecided = setup === "auto" && !profileQuery.isError && wizardUndecided(gateArgs);
   const showPages = !showWizard && !undecided;
   const openSetup = () => setSetup("open");
+  // Elements are cheap to create; only the active page mounts.
+  const pageElements: Record<string, React.ReactNode> = {
+    prep: <InterviewPrep onOpenSetup={openSetup} />,
+    stories: <StoryBank onOpenSetup={openSetup} />,
+    board: <ArchBoard />,
+    quest: <Quest />,
+    about: <About onNavigate={selectPage} />,
+    profile: (
+      <Profile
+        pathname={pathname}
+        onNavigatePath={navigatePath}
+        onOpenSetup={openSetup}
+        githubLinked={githubLinked}
+        onGitHubLinkedSeen={() => setGithubLinked(false)}
+        onSignOut={signOut}
+        onLocaleChange={handleLocaleChange}
+      />
+    ),
+  };
+  const pageContent = pageElements[page];
   const landFromSetup = ({ page: target, scenarioId, boardId }: Landing) => {
     saveProfile.mutate({ onboardingCompleted: true });
     setSetup("closed");
@@ -223,12 +243,7 @@ export default function App() {
           <PoeChatProvider key={session.user.id} userId={session.user.id}>
           <React.Fragment key={locale}>
             {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}
-            {showPages && page === "prep" && <InterviewPrep onOpenSetup={openSetup} />}
-            {showPages && page === "stories" && <StoryBank onOpenSetup={openSetup} />}
-            {showPages && page === "board" && <ArchBoard />}
-            {showPages && page === "quest" && <Quest />}
-            {showPages && page === "about" && <About onNavigate={selectPage} />}
-            {showPages && page === "profile" && <Profile pathname={pathname} onNavigatePath={navigatePath} onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
+            {showPages && pageContent}
           </React.Fragment>
           {/* On Prep the mascot opens the chat, so the bubble steps aside. */}
           {showPages && <PoeChat showBubble={!onPrepWithMascot} />}
