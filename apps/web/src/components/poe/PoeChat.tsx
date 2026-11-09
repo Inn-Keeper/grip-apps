@@ -6,6 +6,7 @@ import { canSend, isUnavailable } from "./poeChatState.js";
 import { PoeChatContext, usePoeChat, type Turn } from "./poeChatContext";
 import { useFooterLift } from "./usePoeHooks";
 import styles from "./PoeChat.module.css";
+import mascotStyles from "./PoeAssistant.module.css";
 
 // Lives in browser memory only: the shell keys this provider by user, so a
 // sign-out or user switch remounts it and the conversation is gone.
@@ -75,23 +76,21 @@ export function PoeChat({ showBubble }: { showBubble: boolean }) {
           style={position}
         />
       )}
-      {showBubble && (
-        <button
-          type="button"
-          className={styles.bubble}
-          style={position}
-          onClick={() => chat.setOpen(!chat.open)}
-          aria-label={t("poe.chat.label")}
-          aria-expanded={chat.open}
-          title={t("poe.chat.label")}
-        >
-          <img
-            src="/mascot/poe-idle.png"
-            alt=""
-            draggable="false"
-          />
-        </button>
-      )}
+      <button
+        type="button"
+        className={`${styles.bubble}${showBubble ? "" : ` ${mascotStyles.chatAlternative}`}`}
+        style={position}
+        onClick={() => chat.setOpen(!chat.open)}
+        aria-label={t("poe.chat.label")}
+        aria-expanded={chat.open}
+        title={t("poe.chat.label")}
+      >
+        <img
+          src="/mascot/poe-idle.png"
+          alt=""
+          draggable="false"
+        />
+      </button>
     </>
   );
 }

@@ -117,7 +117,16 @@
    screens (where the rails scroll under him) have no free corner, so resting Poe steps out
    of view and comes back to react. Visibility waits for the fade, so he also leaves the
    tab order and screen-reader tree. */
+.chatAlternative {
+  display: none;
+}
+
 @media (max-width: 1180px), (max-height: 500px), (hover: none), (pointer: coarse) {
+  /* The chat must stay reachable wherever the resting mascot steps out of view. */
+  .chatAlternative {
+    display: block;
+  }
+
   .assistant {
     transition:
       bottom 0.38s cubic-bezier(0.2, 0.8, 0.2, 1),

@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-09
+
+### Fixed
+
+- Chat stays reachable on Prep when the mascot is hidden on narrow, short or touch screens; the resting mascot stays hidden behind open mobile chat.
+
 ## 2026-11-08
 
 ### Added
