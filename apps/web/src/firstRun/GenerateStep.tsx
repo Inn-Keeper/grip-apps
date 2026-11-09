@@ -47,7 +47,8 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
     departed.current = true;
     const techs = prepPlanTechs(state);
     if (techs.length) writePrepPlan({ name: label, deadline: "", techs });
-    startPrepFocus({ scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
+    // Only a published plan has stories and a board to point at; skipping setup lands on the normal dashboard.
+    if (progress.current.scenarioId) startPrepFocus({ scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
     onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
   };
 
@@ -66,6 +67,9 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
       label,
       playbook: publishablePlaybook(playbook.current!) as never,
     });
+    if (signal.aborted || departed.current) return;
+    // Saved now, not only on landing, so a reload after publish can't show setup and build a second plan.
+    await api.updateProfile({ onboardingCompleted: true }).catch(() => undefined);
     if (signal.aborted || departed.current) return;
     progress.current = { scenarioId: manifest.scenarioId, boardId: manifest.boardId };
     queryClient.invalidateQueries({ queryKey: storyQueryKeys.stories });

@@ -36,13 +36,16 @@ export function FirstRunWizard({ profile, onLand, onExplore }: {
 }) {
   const [state, dispatch] = useReducer(wizardReducer, profile, resumeWizard);
   // A reload resumes the answers; closing the wizard (land or explore) forgets them.
+  const ownerId = profile?.id;
   useEffect(() => {
+    // No owner to resume for; keep any existing draft intact.
+    if (!ownerId) return;
     try {
-      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ userId: profile?.id ?? null, state }));
+      sessionStorage.setItem(DRAFT_KEY, JSON.stringify({ userId: ownerId, state }));
     } catch {
       // Storage blocked: a reload starts over, as before.
     }
-  }, [state, profile?.id]);
+  }, [state, ownerId]);
   useEffect(() => () => {
     try {
       sessionStorage.removeItem(DRAFT_KEY);

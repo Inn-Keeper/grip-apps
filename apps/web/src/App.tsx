@@ -21,6 +21,7 @@ import { FirstRunWizard } from "./firstRun/FirstRunWizard";
 import type { Landing } from "./firstRun/GenerateStep";
 import { shouldShowWizard, wizardUndecided } from "./firstRun/gating.js";
 import { openInBoard } from "./lib/boardHandoff";
+import { endPrepFocus } from "./lib/prepPlanHandoff";
 import About from "./about/About";
 import { PoeChat, PoeChatProvider } from "./components/poe/PoeChat";
 import { poeHistoryKey } from "./components/poe/poeChatContext";
@@ -110,6 +111,7 @@ export default function App() {
     window.localStorage.removeItem(GITHUB_LINK_PENDING_KEY);
     window.localStorage.removeItem(GITHUB_LINKED_KEY);
     window.localStorage.removeItem(ACTIVE_PAGE_KEY);
+    endPrepFocus();
     if (session) window.localStorage.removeItem(poeHistoryKey(session.user.id));
     supabase.auth.signOut();
   };
