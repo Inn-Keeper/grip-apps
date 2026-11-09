@@ -406,6 +406,7 @@ export const sv = {
   "stories.saved": "”{title}” sparad",
   "stories.deleted": "”{title}” raderad",
   "stories.coverageLabel": "Täckta kompetenser",
+  "stories.sampleNote": "Berättelser märkta Exempel är bara exempel. Skriv om dem med dina egna fakta.",
   "stories.coverageHint": "Sikta på 8-10 berättelser över dem.",
   "nav.primary": "Huvudmeny",
   "nav.home": "Hem",

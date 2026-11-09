@@ -406,6 +406,7 @@ export const en = {
   "stories.saved": "Saved “{title}”",
   "stories.deleted": "Deleted “{title}”",
   "stories.coverageLabel": "Competencies covered",
+  "stories.sampleNote": "Stories tagged Sample are examples. Rewrite them with your own facts.",
   "stories.coverageHint": "Aim for 8-10 stories across them.",
   "nav.primary": "Primary",
   "nav.home": "Home",

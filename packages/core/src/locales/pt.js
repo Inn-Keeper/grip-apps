@@ -406,6 +406,7 @@ export const pt = {
   "stories.saved": "“{title}” salva",
   "stories.deleted": "“{title}” excluída",
   "stories.coverageLabel": "Competências cobertas",
+  "stories.sampleNote": "Histórias marcadas como Exemplo são só exemplos. Reescreva com os seus fatos.",
   "stories.coverageHint": "Mire em 8-10 histórias entre elas.",
   "nav.primary": "Principal",
   "nav.home": "Início",

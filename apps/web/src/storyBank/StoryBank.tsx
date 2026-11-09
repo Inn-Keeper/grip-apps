@@ -159,6 +159,8 @@ export default function StoryBank({ onOpenSetup }: { onOpenSetup?: () => void } 
             <PromptDrill stories={storyList} state={drill} onChange={setDrill} onAddStory={(competency) => setFocus({ mode: "new", competency })} />
           ) : (
             <div className={styles.list}>
+              {/* The Sample tag's hint is a hover tooltip; this keeps its meaning visible on touch too. */}
+              {stories?.some((s) => s.isSample) && <p className={styles.subtitle}>{t("stories.sampleNote")}</p>}
               {stories?.length === 0 && (
                 <p className={styles.empty}>{t("stories.empty")}</p>
               )}
