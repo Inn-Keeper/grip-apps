@@ -45,7 +45,7 @@ export function GenerateStep({ state, profile, onLand }: { state: WizardState; p
     departed.current = true;
     const techs = prepPlanTechs(state);
     if (techs.length) writePrepPlan({ name: label, deadline: "", techs });
-    startPrepFocus();
+    startPrepFocus({ scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
     onLand({ page: landingFor(goal), scenarioId: progress.current.scenarioId, boardId: progress.current.boardId ?? null });
   };
 

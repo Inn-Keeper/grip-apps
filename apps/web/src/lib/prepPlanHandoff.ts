@@ -25,14 +25,24 @@ export function clearPrepPlan() {
 }
 
 // Set by the first-run wizard: Prep opens as a single focus card until the first drill or "Show full dashboard".
+// It keeps the plan's board so the card can link straight to it.
 const FOCUS_KEY = "grip.prepFocus";
 
-export function startPrepFocus() {
-  window.localStorage.setItem(FOCUS_KEY, "1");
+export type PrepFocus = { scenarioId: string | null; boardId: string | null };
+
+export function startPrepFocus(focus: PrepFocus) {
+  window.localStorage.setItem(FOCUS_KEY, JSON.stringify(focus));
 }
 
-export function readPrepFocus(): boolean {
-  return window.localStorage.getItem(FOCUS_KEY) === "1";
+export function readPrepFocus(): PrepFocus | null {
+  const raw = window.localStorage.getItem(FOCUS_KEY);
+  if (!raw) return null;
+  try {
+    const focus = JSON.parse(raw) as Partial<PrepFocus>;
+    return { scenarioId: focus.scenarioId ?? null, boardId: focus.boardId ?? null };
+  } catch {
+    return null;
+  }
 }
 
 export function endPrepFocus() {

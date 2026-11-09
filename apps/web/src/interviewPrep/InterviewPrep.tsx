@@ -294,7 +294,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
 
   const showAll = () => {
     endPrepFocus();
-    setFocus(false);
+    setFocus(null);
   };
   // The first drill also ends the newcomer view, so its rails and stats appear afterwards.
   useEffect(() => {
@@ -316,7 +316,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
     />
   );
 
-  if (focus && !drill) return <PrepFocus onShowAll={showAll}>{nextUp}</PrepFocus>;
+  if (focus && !drill) return <PrepFocus focus={focus} onShowAll={showAll}>{nextUp}</PrepFocus>;
 
   return (
     <WorkspaceLayout

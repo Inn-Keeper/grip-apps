@@ -226,7 +226,17 @@
   text-align: center;
 }
 
-.focusShowAll {
+.focusReady {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 4px 12px;
+  font-size: var(--fs-small);
+  color: var(--c-text-dim);
+}
+
+.focusLink {
   align-self: center;
   background: none;
   border: none;
