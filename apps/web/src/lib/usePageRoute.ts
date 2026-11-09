@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { guardHistoryNavigation, isAuthReturn } from "./navigation.js";
+import { guardHistoryNavigation, isAuthReturn, pageFromName, pageFromPath } from "./navigation.js";
 
 export const PAGE_DEFS = [
   { id: "prep", icon: "layers", labelKey: "tabs.prep" },
@@ -19,60 +19,67 @@ const PAGE_IDS: readonly string[] = PAGE_DEFS.map((p) => p.id);
 // exchanged it, which can happen before React's first render.
 const returningFromSignIn = typeof window !== "undefined" && isAuthReturn(window.location.search, window.location.hash);
 
-// "contacts" is Quest's old name; old links and saved preferences still land there.
-const pageFromName = (name: string | null) => (name === "contacts" ? "quest" : name && PAGE_IDS.includes(name) ? name : null);
-
-// Which page to show on load: the URL path, then the stored preference.
-// A GitHub OAuth return (?linked=github) overrides both; signing in always opens Prep.
-const initialPage = () => {
-  if (typeof window === "undefined") return DEFAULT_PAGE;
-  const params = new URLSearchParams(window.location.search);
-  if (params.get("linked") === "github" || window.localStorage.getItem(GITHUB_LINK_PENDING_KEY) === "1") return "profile";
-  if (returningFromSignIn) return DEFAULT_PAGE;
-  return pageFromName(window.location.pathname.replace(/^\//, "")) ?? pageFromName(window.localStorage.getItem(ACTIVE_PAGE_KEY)) ?? DEFAULT_PAGE;
+type Route = { page: string; pathname: string };
+const routeFor = (pathname: string): Route => {
+  const page = pageFromPath(pathname);
+  return page ? { page, pathname } : { page: DEFAULT_PAGE, pathname: `/${DEFAULT_PAGE}` };
 };
 
-// The active page, kept in step with the URL, localStorage and back/forward.
+// Which route to show on load: the URL path, then the stored page.
+// A GitHub OAuth return (?linked=github) opens preparation; signing in always opens Prep.
+const initialRoute = (): Route => {
+  if (typeof window === "undefined") return routeFor(`/${DEFAULT_PAGE}`);
+  const { pathname, search } = window.location;
+  const linking = new URLSearchParams(search).get("linked") === "github" || window.localStorage.getItem(GITHUB_LINK_PENDING_KEY) === "1";
+  if (linking) return routeFor(pageFromPath(pathname) === "profile" ? pathname : "/profile/preparation");
+  if (returningFromSignIn) return routeFor(`/${DEFAULT_PAGE}`);
+  if (pageFromPath(pathname)) return routeFor(pathname);
+  return routeFor(`/${pageFromName(window.localStorage.getItem(ACTIVE_PAGE_KEY)) ?? DEFAULT_PAGE}`);
+};
+
+const canNavigate = () => window.dispatchEvent(new CustomEvent("grip:navigate", { cancelable: true }));
+
+// The active page and full path, kept in step with the URL, localStorage and back/forward.
 // Every change goes through the "grip:navigate" guard, so unsaved work can veto it.
 export function usePageRoute() {
-  const [page, setPage] = useState(initialPage);
+  const [route, setRoute] = useState(initialRoute);
 
-  const selectPage = (id: string) => {
-    if (!window.dispatchEvent(new CustomEvent("grip:navigate", { cancelable: true }))) return;
-    setPage(id);
-    window.localStorage.setItem(ACTIVE_PAGE_KEY, id);
-    window.history.pushState({ page: id }, "", `/${id}`);
-    // A new page starts at its top, not at the scroll offset of the one we left.
-    window.scrollTo(0, 0);
-  };
+  // replace: rewrite the current entry (redirects) without asking the guard.
+  const navigatePath = useCallback((path: string, options?: { replace?: boolean }) => {
+    if (!options?.replace && !canNavigate()) return;
+    const next = routeFor(path);
+    setRoute((current) => {
+      if (current.page !== next.page && !options?.replace) window.scrollTo(0, 0);
+      return next;
+    });
+    window.localStorage.setItem(ACTIVE_PAGE_KEY, next.page);
+    window.history[options?.replace ? "replaceState" : "pushState"]({ path: next.pathname }, "", next.pathname);
+  }, []);
 
-  // Back/forward, behind the same unsaved-changes guard as the tabs. No scrollTo:
-  // the browser restores where you were on that page.
+  const selectPage = (id: string) => navigatePath(`/${id}`);
+
+  // Back/forward, behind the same guard as the tabs. No scrollTo: the browser restores position.
   useEffect(() => {
     const onPop = () => {
-      if (!guardHistoryNavigation(window, page)) return;
-      setPage(pageFromName(window.location.pathname.replace(/^\//, "")) ?? DEFAULT_PAGE);
+      if (!guardHistoryNavigation(window, route.pathname)) return;
+      setRoute(routeFor(window.location.pathname));
     };
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
-  }, [page]);
+  }, [route.pathname]);
 
   // Cross-tab hops from feature components (e.g. Quest's "Drill these in Prep").
   useEffect(() => {
     const onNavigate = (event: Event) => {
       const id = (event as CustomEvent<string>).detail;
-      if (PAGE_IDS.includes(id)) selectPage(id);
+      if (PAGE_IDS.includes(id)) navigatePath(`/${id}`);
     };
     window.addEventListener("grip:navigate", onNavigate);
     return () => window.removeEventListener("grip:navigate", onNavigate);
-  }, []);
+  }, [navigatePath]);
 
   // A fresh sign-in lands on Prep, replacing history rather than adding to it.
-  const resetToDefault = useCallback(() => {
-    setPage(DEFAULT_PAGE);
-    window.localStorage.setItem(ACTIVE_PAGE_KEY, DEFAULT_PAGE);
-    window.history.replaceState({ page: DEFAULT_PAGE }, "", `/${DEFAULT_PAGE}`);
-  }, []);
+  const resetToDefault = useCallback(() => navigatePath(`/${DEFAULT_PAGE}`, { replace: true }), [navigatePath]);
 
-  return { page, selectPage, resetToDefault };
+  return { page: route.page, pathname: route.pathname, selectPage, navigatePath, resetToDefault };
 }

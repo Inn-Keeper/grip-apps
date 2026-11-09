@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { guardHistoryNavigation, isAuthReturn, isFreshSignIn } from "./navigation.js";
+import { guardHistoryNavigation, isAuthReturn, isFreshSignIn, pageFromPath } from "./navigation.js";
 
 function fakeWindow() {
   const win = new EventTarget();
@@ -11,15 +11,29 @@ function fakeWindow() {
 
 test("history navigation proceeds when no page objects", () => {
   const win = fakeWindow();
-  assert.equal(guardHistoryNavigation(win, "board"), true);
+  assert.equal(guardHistoryNavigation(win, "/board"), true);
   assert.deepEqual(win.pushed, []);
 });
 
 test("a refused history navigation puts the current page back in the URL", () => {
   const win = fakeWindow();
   win.addEventListener("grip:navigate", (event) => event.preventDefault());
-  assert.equal(guardHistoryNavigation(win, "board"), false);
-  assert.deepEqual(win.pushed, [{ state: { page: "board" }, url: "/board" }]);
+  assert.equal(guardHistoryNavigation(win, "/board"), false);
+  assert.deepEqual(win.pushed, [{ state: { path: "/board" }, url: "/board" }]);
+});
+
+test("a refused history navigation keeps the full nested path", () => {
+  const win = fakeWindow();
+  win.addEventListener("grip:navigate", (event) => event.preventDefault());
+  assert.equal(guardHistoryNavigation(win, "/profile/preparation/edit"), false);
+  assert.deepEqual(win.pushed, [{ state: { path: "/profile/preparation/edit" }, url: "/profile/preparation/edit" }]);
+});
+
+test("pageFromPath reads the first segment", () => {
+  assert.equal(pageFromPath("/profile/preparation/edit"), "profile");
+  assert.equal(pageFromPath("/contacts"), "quest");
+  assert.equal(pageFromPath("/nope"), null);
+  assert.equal(pageFromPath("/"), null);
 });
 
 test("only a signed-out → signed-in change counts as a fresh sign-in", () => {

@@ -12,6 +12,7 @@ import { CvUpload } from "./CvUpload";
 import { ProfileLeftRail, ProfileRightRail } from "./ProfileRails";
 import { AccountSection, ConnectionsSection, FavoriteTechsSection, PreferencesSection } from "./ProfileSections";
 import type { ProfileSection } from "./sections";
+import { parseProfilePath, profilePath, profileRedirect } from "./routes.js";
 import {
   useAuthIdentitiesQuery,
   useAuthUserQuery,
@@ -41,6 +42,8 @@ import { categories } from "@grip/core/prepData";
 const GITHUB_LINKED_KEY = "grip.githubLinked";
 
 type ProfileProps = {
+  pathname: string;
+  onNavigatePath: (path: string, options?: { replace?: boolean }) => void;
   githubLinked?: boolean;
   onGitHubLinkedSeen?: () => void;
   onSignOut?: () => void;
@@ -48,14 +51,33 @@ type ProfileProps = {
   onOpenSetup?: () => void;
 };
 
-export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSignOut, onLocaleChange, onOpenSetup }: ProfileProps) {
+export default function Profile({ pathname, onNavigatePath, githubLinked = false, onGitHubLinkedSeen, onSignOut, onLocaleChange, onOpenSetup }: ProfileProps) {
   const [form, setForm] = useState<ProfileForm>(EMPTY_PROFILE_FORM as ProfileForm);
   const locale = useLocale();
   const [linkedInThisSession, setLinkedInThisSession] = useState(
     () => githubLinked || window.localStorage.getItem(GITHUB_LINKED_KEY) === "1",
   );
   const [poeVisible, setPoeVisible] = useState(poeVisibleByDefault);
-  const [section, setSection] = useState<ProfileSection>("account");
+  const route = parseProfilePath(pathname);
+  // Nested preparation routes keep "Your preparation" active in the menu.
+  const section: ProfileSection | null =
+    route === "edit" || route === "playbook" ? "preparation" : route === "notFound" ? null : route;
+  const setSection = (next: ProfileSection) => onNavigatePath(profilePath(next));
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const firstPath = useRef(pathname);
+
+  // Bare /profile and legacy aliases rewrite the URL instead of adding an entry.
+  useEffect(() => {
+    const target = profileRedirect(pathname);
+    if (target) onNavigatePath(target, { replace: true });
+  }, [pathname, onNavigatePath]);
+
+  // Move focus to the new heading after in-app navigation, not on first load.
+  useEffect(() => {
+    if (firstPath.current === pathname) return;
+    firstPath.current = "";
+    headingRef.current?.focus();
+  }, [pathname]);
   // Autosave feedback: the field that just saved, and a failed save for the field that caused it.
   const [savedKey, setSavedKey] = useState<string | null>(null);
   const [fieldError, setFieldError] = useState<{ key: string; message: string } | null>(null);
@@ -183,7 +205,7 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
           sub: t("profile.nextCvSub"),
           action: t("profile.nextCvAction"),
           icon: "story",
-          onAction: () => setSection("cv"),
+          onAction: () => setSection("preparation"),
         }
       : !githubConnected
         ? {
@@ -191,23 +213,23 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
             sub: t("profile.nextGithubSub"),
             action: t("profile.nextGithubAction"),
             icon: "globe",
-            onAction: () => setSection("connections"),
+            onAction: () => setSection("preparation"),
           }
         : {
             title: t("profile.nextDoneTitle"),
             sub: t("profile.nextDoneSub"),
             action: t("profile.nextDoneAction"),
             icon: "story",
-            onAction: () => setSection("cv"),
+            onAction: () => setSection("preparation"),
           };
 
   const header = {
     // No subtitle: Next Up above already says what a complete profile does.
     account: { title: t("profile.account"), sub: "" },
-    cv: { title: t("profile.sectionCv"), sub: t("profile.cvSubtitle") },
-    connections: { title: t("profile.connections"), sub: t("profile.connectionsSub") },
+    preparation: { title: t("profile.preparation.menu"), sub: t("profile.preparation.subtitle") },
     preferences: { title: t("profile.preferences"), sub: t("profile.preferencesSub") },
-  }[section];
+    notFound: { title: t("profile.notFoundTitle"), sub: "" },
+  }[section ?? "notFound"];
 
   const prepTechs = categories.flatMap((c) => c.items).map((item) => item.tech);
 
@@ -244,7 +266,10 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
 
       <div style={{ marginBottom: 16 }}>
         <h1
+          ref={headingRef}
+          tabIndex={-1}
           style={{
+            outline: "none",
             margin: 0,
             color: colors.textBright,
             fontSize: font.size.heading,
@@ -318,7 +343,12 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
             onCommit={commitField}
           />
         )}
-        {section === "cv" && (
+        {route === "notFound" && (
+          <button type="button" onClick={() => setSection("preparation")} style={miniBtn(colors.accentBright ?? "")}>
+            {t("profile.notFoundAction")}
+          </button>
+        )}
+        {section === "preparation" && (
           <>
             <WorkspacePanel style={{ padding: 20 }}>
               <CvUpload
@@ -343,10 +373,6 @@ export default function Profile({ githubLinked = false, onGitHubLinkedSeen, onSi
                 saveFavoriteTechsMutation.mutate(toggleFavoriteTech(currentProfile.favoriteTechs, tech));
               }}
             />
-          </>
-        )}
-        {section === "connections" && (
-          <>
             <ConnectionsSection
               form={form}
               profile={profile}

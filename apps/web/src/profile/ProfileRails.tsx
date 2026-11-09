@@ -6,6 +6,7 @@ import { GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";
 import { WorkspacePanel, WorkspaceTitle } from "../components/WorkspaceLayout";
 import { SECTIONS, type ProfileSection } from "./sections";
+import { profilePath } from "./routes.js";
 import type { ProfileRecord, Rank } from "./types";
 
 // Left rail = move around (rule 4): who you are, the sections, and signing out.
@@ -16,7 +17,7 @@ export function ProfileLeftRail({
   onSignOut,
 }: {
   profile: ProfileRecord | null;
-  section: ProfileSection;
+  section: ProfileSection | null;
   onSection: (section: ProfileSection) => void;
   onSignOut?: () => void;
 }) {
@@ -85,11 +86,16 @@ export function ProfileLeftRail({
           {SECTIONS.map((item) => {
             const active = item.key === section;
             return (
-              <button
+              <a
                 key={item.key}
-                type="button"
+                href={profilePath(item.key)}
                 aria-current={active ? "page" : undefined}
-                onClick={() => onSection(item.key)}
+                onClick={(event) => {
+                  // Modified clicks keep native open-in-new-tab behaviour.
+                  if (event.metaKey || event.ctrlKey || event.shiftKey || event.button !== 0) return;
+                  event.preventDefault();
+                  onSection(item.key);
+                }}
                 style={{
                   display: "flex",
                   alignItems: "center",
@@ -103,6 +109,7 @@ export function ProfileLeftRail({
                   fontWeight: 700,
                   cursor: "pointer",
                   textAlign: "left",
+                  textDecoration: "none",
                 }}
               >
                 <BrandIcon
@@ -111,7 +118,7 @@ export function ProfileLeftRail({
                   size={15}
                 />
                 {t(item.labelKey)}
-              </button>
+              </a>
             );
           })}
         </nav>

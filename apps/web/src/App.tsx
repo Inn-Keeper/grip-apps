@@ -43,7 +43,7 @@ if (savedLocale) setLocale(savedLocale);
 
 export default function App() {
   const queryClient = useQueryClient();
-  const { page, selectPage, resetToDefault } = usePageRoute();
+  const { page, pathname, selectPage, navigatePath, resetToDefault } = usePageRoute();
   const locale = useLocale();
   const [githubLinked, setGithubLinked] = useState(() => {
     if (typeof window === "undefined") return false;
@@ -224,7 +224,7 @@ export default function App() {
             {!showWizard && page === "board" && <ArchBoard />}
             {!showWizard && page === "quest" && <Quest />}
             {!showWizard && page === "about" && <About onNavigate={selectPage} />}
-            {!showWizard && page === "profile" && <Profile onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
+            {!showWizard && page === "profile" && <Profile pathname={pathname} onNavigatePath={navigatePath} onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
           </React.Fragment>
           {/* On Prep the mascot opens the chat, so the bubble steps aside. */}
           {!showWizard && <PoeChat showBubble={!onPrepWithMascot} />}

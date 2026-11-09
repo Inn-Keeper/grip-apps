@@ -145,7 +145,7 @@ export function useLinkGitHubMutation() {
       window.localStorage.setItem(GITHUB_LINK_PENDING_KEY, "1");
       const { data, error } = await supabase.auth.linkIdentity({
         provider: "github",
-        options: { redirectTo: `${window.location.origin}/?linked=github`, skipBrowserRedirect: true },
+        options: { redirectTo: `${window.location.origin}/profile/preparation?linked=github`, skipBrowserRedirect: true },
       });
       if (error) {
         window.localStorage.removeItem(GITHUB_LINK_PENDING_KEY);
