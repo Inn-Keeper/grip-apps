@@ -1,10 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { techLinks } from "@grip/core/techLinks";
-import { githubUsernameFromUrl } from "@grip/core/githubTechs";
 import { recentStruggledTechs } from "@grip/core/contacts";
 import { PERFECT_QUIZ_BONUS, rankForXp } from "@grip/core/gamification";
 import { selectCategoryDrillTechs, selectDrillTechs, shuffle, shuffleOptions } from "@grip/core/quiz";
-import { advanceDrill, allTechs, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState, selectedCategory } from "@grip/core/drillSession";
+import { advanceDrill, answerDrill, loadDrill, profileCategories, readinessFor, startDrillState, selectedCategory } from "@grip/core/drillSession";
 import { difficultyByKey } from "@grip/core/difficulty";
 import { t } from "@grip/core/i18n";
 import type { NextUpKind } from "@grip/core/nextUp";
@@ -26,9 +25,9 @@ import { needsSetup } from "@grip/core/firstRun";
 import { useStoriesQuery } from "../storyBank/queries";
 import { PrepLeftRail } from "./PrepLeftRail";
 import { PrepRightRail } from "./PrepRightRail";
+import { usePreparationQuery } from "../profile/queries";
 import {
   useAccuracyTimelineQuery,
-  useGithubTechsQuery,
   usePrepContactsQuery,
   usePrepProfileQuery,
   usePrepQuestionFetchers,
@@ -103,12 +102,10 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
   const reviewDueTechs = reviewQueue.filter((entry) => entry.due).map((entry) => entry.tech);
   const struggleBoost = recentStruggledTechs(prepContacts);
   const githubPrepEnabled = !!profile?.useGithubTechsForPrep;
-  const githubUsername = githubPrepEnabled ? githubUsernameFromUrl(profile?.githubUrl) : "";
-  const {
-    data: githubTechs = [],
-    error: githubError,
-    isFetching: githubLoading,
-  } = useGithubTechsQuery(githubUsername, allTechs, githubPrepEnabled && !!githubUsername);
+  // Only GitHub technologies the user accepted in Profile; Prep never scans GitHub itself.
+  const { data: preparation = null, isLoading: githubLoading, error: githubError } = usePreparationQuery();
+  const acceptedGithub = githubPrepEnabled ? (preparation?.githubTechs ?? []) : [];
+  const githubTechs = acceptedGithub.map((tech, i) => ({ tech, score: acceptedGithub.length - i }));
   const { fetchTierQuestions, fetchCardQuestions } = usePrepQuestionFetchers(level, quizSize, setPoolSize);
 
   useEffect(() => {
@@ -303,7 +300,7 @@ export default function InterviewPrep({ onOpenSetup }: { onOpenSetup?: () => voi
           activeCategoryName={activeCategoryName}
           categories={displayCategories}
           githubStatus={{
-            hasUrl: !!githubUsername,
+            synced: !!preparation?.githubSyncedAt,
             enabled: githubPrepEnabled,
             loading: githubLoading,
             error: githubError,

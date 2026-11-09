@@ -117,17 +117,6 @@ export function useGithubPrepMutation() {
   });
 }
 
-export function useSaveCvTechsMutation() {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (cvTechs: string[]) => api.updateProfile({ cvTechs }),
-    onSuccess: (saved) => {
-      queryClient.setQueryData(profileQueryKeys.profile, saved);
-      queryClient.invalidateQueries({ queryKey: profileQueryKeys.githubTechs });
-    },
-  });
-}
-
 export function useResetScoresMutation(profile: { xp?: number } | null) {
   const queryClient = useQueryClient();
   return useMutation({

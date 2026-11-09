@@ -10,9 +10,10 @@ import { miniBtn } from "../components/fieldStyles";
 import { CvUpload } from "./CvUpload";
 import { PreparationSection } from "./PreparationSection";
 import { PreparationEditor } from "./PreparationEditor";
+import { PreparationSources } from "./PreparationSources";
 import type { User } from "@grip/core/api";
 import { ProfileLeftRail, ProfileRightRail } from "./ProfileRails";
-import { AccountSection, ConnectionsSection, PreferencesSection } from "./ProfileSections";
+import { AccountSection, PreferencesSection } from "./ProfileSections";
 import type { ProfileSection } from "./sections";
 import { parseProfilePath, profilePath, profileRedirect } from "./routes.js";
 import {
@@ -26,7 +27,6 @@ import {
   useProfileQuery,
   useResetScoresMutation,
   useResetGoalsMutation,
-  useSaveCvTechsMutation,
   useSaveGithubUrlMutation,
   useSaveProfileMutation,
 } from "./queries";
@@ -112,7 +112,6 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
   const saveMutation = useSaveProfileMutation();
   const saveGithubUrlMutation = useSaveGithubUrlMutation();
   const githubPrepMutation = useGithubPrepMutation();
-  const cvTechsMutation = useSaveCvTechsMutation();
   const resetMutation = useResetScoresMutation(profile);
   const resetGoalsMutation = useResetGoalsMutation();
   const linkGitHubMutation = useLinkGitHubMutation();
@@ -192,7 +191,6 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
     githubViewerError ||
     githubPublicError ||
     saveGithubUrlMutation.error) as Error | null;
-  const connectionsError = (linkGitHubMutation.error || githubPrepMutation.error) as Error | null;
   const header = {
     // No subtitle: Next Up above already says what a complete profile does.
     account: { title: t("profile.account"), sub: "" },
@@ -286,33 +284,17 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
             catalogue={prepTechs}
             onEdit={() => onNavigatePath(profilePath("edit"))}
             sources={
-              <>
-                <WorkspacePanel style={{
-                    padding: 20,
-                    marginBottom: 16
-                  }}>
-                  <CvUpload
-                    cvTechs={profile?.cvTechs ?? []}
-                    disabled={!profile}
-                    pending={cvTechsMutation.isPending}
-                    onTechsExtracted={(techs) => cvTechsMutation.mutate(techs)}
-                    onClear={() => cvTechsMutation.mutate([])}
-                  />
-                  {cvTechsMutation.error && (
-                    <ErrorText margin="12px 0 0">{(cvTechsMutation.error as Error).message}</ErrorText>
-                  )}
-                </WorkspacePanel>
-                <ConnectionsSection
-                  form={form}
-                  profile={profile}
-                  githubConnected={githubConnected}
-                  linkPending={linkGitHubMutation.isPending}
-                  githubPrepPending={githubPrepMutation.isPending}
-                  onLinkGitHub={() => linkGitHubMutation.mutate()}
-                  onGithubPrepChange={(checked) => githubPrepMutation.mutate(checked)}
-                />
-                {connectionsError && <ErrorText margin="12px 0 0">{connectionsError.message}</ErrorText>}
-              </>
+              <PreparationSources
+                profile={profile}
+                preparation={preparation}
+                catalogue={prepTechs}
+                githubConnected={githubConnected}
+                linkPending={linkGitHubMutation.isPending}
+                usagePending={githubPrepMutation.isPending}
+                onLinkGitHub={() => linkGitHubMutation.mutate()}
+                onUsageChange={(checked) => githubPrepMutation.mutate(checked)}
+                onEdit={() => onNavigatePath(profilePath("edit"))}
+              />
             }
           />
         )}
@@ -322,6 +304,15 @@ export default function Profile({ pathname, onNavigatePath, githubLinked = false
             preparation={preparation}
             catalogue={prepTechs}
             onDone={leaveEditor}
+            importSlot={(cvTechs, onCv) => (
+              <WorkspacePanel style={{
+                  padding: 20,
+                  marginBottom: 16
+                }}>
+                {/* Parsed on this device; only detected technology names reach the draft. */}
+                <CvUpload cvTechs={cvTechs} disabled={false} pending={false} onTechsExtracted={onCv} onClear={() => onCv([])} />
+              </WorkspacePanel>
+            )}
           />
         )}
         {section === "preferences" && onOpenSetup && (

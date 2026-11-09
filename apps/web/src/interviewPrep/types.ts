@@ -14,7 +14,7 @@ export type PoeCue = { type: string; id?: number };
 export type ScoreEntry = { correct: number; wrong: number };
 export type Scores = { xp: number; answers: Record<string, ScoreEntry> };
 export type Summary = { attempts: number; accuracy: number | null; ranked: { tech: string; acc: number; n: number }[] };
-export type GithubStatus = { hasUrl: boolean; enabled: boolean; loading: boolean; error: Error | null | unknown; count: number };
+export type GithubStatus = { synced: boolean; enabled: boolean; loading: boolean; error: Error | null | unknown; count: number };
 // Headline readiness for a set of techs (a prep plan, the profile stack, or what's been practiced).
 export type Readiness = { pct: number; label: string; count: number };
 export type AccuracyPoint = { date: string; accuracy: number };

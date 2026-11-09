@@ -1,5 +1,4 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchGithubTechSignals } from "@grip/core/githubTechs";
 import { questionCapForPool } from "@grip/core/quizPrefs";
 import { shuffleOptions } from "@grip/core/quiz";
 import { drawUnseen } from "./questionDeck";
@@ -8,14 +7,12 @@ import type { QuizQuestion } from "./types";
 
 const CARD_POOL_LIMIT = 500;
 const DRILL_SIZE = 10;
-const GITHUB_TECHS_STALE_MS = 1000 * 60 * 15;
 
 export const prepQueryKeys = {
   accuracyTimeline: ["accuracy-timeline"] as const,
   reviewQueue: ["review-queue"] as const,
   contacts: ["contacts"] as const, // shared with Quest — read here for retro struggle boosts
   profile: ["profile"] as const,
-  githubTechs: (githubUsername: string) => ["github-techs", githubUsername] as const,
   cardQuestions: (level: string, tech: string, limit = CARD_POOL_LIMIT) =>
     ["questions", "v2", "card-pool", level, tech, limit] as const,
   tierQuestions: (difficulty: string, techs: string[]) => ["questions", "v2", difficulty, techs] as const,
@@ -35,15 +32,6 @@ export function useReviewQueueQuery() {
 
 export function usePrepContactsQuery() {
   return useQuery({ queryKey: prepQueryKeys.contacts, queryFn: api.listContacts });
-}
-
-export function useGithubTechsQuery(githubUsername: string, allTechs: string[], enabled: boolean) {
-  return useQuery({
-    queryKey: prepQueryKeys.githubTechs(githubUsername),
-    queryFn: () => fetchGithubTechSignals(githubUsername, allTechs),
-    enabled,
-    staleTime: GITHUB_TECHS_STALE_MS,
-  });
 }
 
 export function usePrepQuestionFetchers(level: string, quizSize: number | null, onCardPoolSize?: (size: number) => void) {

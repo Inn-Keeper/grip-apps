@@ -19,8 +19,8 @@ type Props = {
   catalogue: string[];
   // Called after a successful save or a confirmed cancel; the caller navigates to the overview.
   onDone: (saved: boolean) => void;
-  // Task 4 adds the import review here; it receives the draft's setter for accepted technologies.
-  importSlot?: (accept: (techs: string[], source: "cv") => void) => React.ReactNode;
+  // Optional import review; receives the draft CV detections and a setter.
+  importSlot?: (cvTechs: string[], onCv: (techs: string[]) => void) => React.ReactNode;
 };
 
 // Detached draft: nothing persists until Save, and a server refetch never overwrites it.
@@ -154,7 +154,10 @@ export function PreparationEditor({ profile, preparation, catalogue, onDone, imp
         </div>
       </WorkspacePanel>
 
-      {importSlot?.((techs) => setDraft((d) => ({ ...d, cvTechs: techs, techs: [...new Set([...d.techs, ...techs])] })))}
+      {/* Detected CV techs join the draft stack; clearing forgets the detections but keeps chosen techs. */}
+      {importSlot?.(draft.cvTechs, (techs) =>
+        setDraft((d) => ({ ...d, cvTechs: techs, techs: [...new Set([...d.techs, ...techs])] })),
+      )}
 
       <div className={styles.actions}>
         <button type="submit" disabled={save.isPending || !dirty} aria-busy={save.isPending} style={miniBtn(colors.accentBright ?? "")}>

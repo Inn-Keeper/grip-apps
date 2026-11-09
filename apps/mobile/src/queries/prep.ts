@@ -38,7 +38,7 @@ export function usePrepContactsQuery() {
 export function useGithubTechsQuery(githubUsername: string, allTechs: string[], enabled: boolean) {
   return useQuery({
     queryKey: prepQueryKeys.githubTechs(githubUsername),
-    queryFn: () => fetchGithubTechSignals(githubUsername, allTechs),
+    queryFn: () => fetchGithubTechSignals(githubUsername, allTechs).then((result) => result.techs),
     enabled,
     staleTime: GITHUB_TECHS_STALE_MS,
   });

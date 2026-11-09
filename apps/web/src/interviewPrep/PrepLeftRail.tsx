@@ -222,7 +222,7 @@ export function PrepLeftRail({
         </div>
       </WorkspacePanel>
 
-      {githubStatus?.enabled && githubStatus?.hasUrl && (
+      {githubStatus?.enabled && (
         <WorkspacePanel
           tone="sunken"
           style={{
@@ -233,6 +233,8 @@ export function PrepLeftRail({
         >
           {githubStatus.loading
             ? t("github.loading")
+            : !githubStatus.synced
+              ? t("github.reviewInvite")
             : githubStatus.error
               ? t("github.error")
               : githubStatus.count
