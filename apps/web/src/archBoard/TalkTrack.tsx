@@ -61,8 +61,7 @@ export function TalkTrack({
     onFocused();
   }, [focusSection, onFocused]);
   const { answered, completion } = scoreTalkTrack({ sections, rating });
-  const meterColor =
-    completion >= SHIP_SCORE ? colors.success : completion >= REVIEW_SCORE ? colors.warning : colors.danger;
+  const meterColor = colors.accent;
   const gradeColor = grade === null ? colors.textDim : grade >= SHIP_SCORE ? colors.successBright : grade >= REVIEW_SCORE ? colors.warningBright : colors.dangerBright;
 
   return (
@@ -95,7 +94,7 @@ export function TalkTrack({
             fontWeight: 600,
             color: colors.textFaint
           }}>
-          {t("talk.covered", { answered: answered.length, total: TALK_TRACK_SECTIONS.length })}
+          {t("talk.drafted", { answered: answered.length, total: TALK_TRACK_SECTIONS.length })}
         </span>
         <div
           aria-hidden
@@ -120,7 +119,7 @@ export function TalkTrack({
           fontSize: font.size.small,
           lineHeight: 1.55,
           color: colors.textFaint
-        }}>{t(free ? "talk.introFree" : "talk.intro")}</p>
+        }}>{t(free ? "talk.introFree" : "talk.intro")} {t("talk.draftHint")}</p>
 
       <div style={{
           display: "grid",

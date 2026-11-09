@@ -12,13 +12,14 @@ type Props = {
   edges: BoardEdge[];
   nodeById: Record<string, BoardNode>;
   selectedId: string | null;
+  highlightedIds?: string[];
   connectDrag: ConnectDrag | null;
   onToggle: (id: string) => void;
   size: { width: number; height: number };
 };
 
 // The arrows between nodes, plus the live line while dragging a new one.
-export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle, size }: Props) {
+export function BoardEdges({ edges, nodeById, selectedId, highlightedIds = [], connectDrag, onToggle, size }: Props) {
   return (
     <svg style={{
         position: "absolute",
@@ -40,11 +41,11 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
         const g = edgeGeometry(a, b, nodeSize(a, NODE_SIZE), nodeSize(b, NODE_SIZE));
         const { mx, sy, ty } = g;
         const d = bezierPath(g);
-        const selected = selectedId === e.id;
+        const selected = selectedId === e.id || highlightedIds.includes(e.id);
         const modeLabel = e.mode === "sync" ? t("edge.sync") : e.mode === "async" ? t("edge.async") : null;
-        const label = [e.protocol, modeLabel].filter(Boolean).join(" · ");
+        const label = [e.protocol === "Unspecified" ? t("edge.unspecified") : e.protocol, modeLabel].filter(Boolean).join(" · ");
         return (
-          <g key={e.id}>
+          <g key={e.id} data-edge-id={e.id} data-feedback={highlightedIds.includes(e.id) || undefined}>
             <path
               d={d}
               fill="none"
@@ -54,14 +55,20 @@ export function BoardEdges({ edges, nodeById, selectedId, connectDrag, onToggle,
               markerEnd="url(#arrow)" style={{ stroke: selected ? colors.accentBright : colors.textDim }}
             />
             {label && (
+              <g>
+              <rect x={mx - (label.length * 6.5 + 16) / 2} y={(sy + ty) / 2 - 21} width={label.length * 6.5 + 16} height={22} rx={6} style={{
+                  fill: colors.bgDeep,
+                  stroke: selected ? colors.accent : colors.borderSoft
+                }} />
               <text x={mx} y={(sy + ty) / 2 - 6} textAnchor="middle" style={{
-                  fontSize: font.size.caption,
+                  fontSize: font.size.small,
                   fontWeight: 600,
-                  fill: colors.textFaint,
+                  fill: selected ? colors.accentBright : colors.textDim,
                   pointerEvents: "none"
                 }}>
                 {label}
               </text>
+              </g>
             )}
             <path d={d} fill="none" stroke="transparent" strokeWidth="14" style={{
                 pointerEvents: "stroke",

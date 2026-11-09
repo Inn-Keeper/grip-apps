@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { EDGE_MODES, EDGE_PROTOCOLS, nodeLabel } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { alpha, colors, shadow, font } from "../lib/tokens";
@@ -18,8 +19,11 @@ export function EdgeInspector({
   onRemove: () => void;
   onClose: () => void;
 }) {
+  const panel = useRef<HTMLElement>(null);
+  useEffect(() => { panel.current?.focus(); }, [edge.id]);
   const chip = (active: boolean) => ({
     padding: "6px 12px",
+    minHeight: 44,
     background: active ? colors.accent : "transparent",
     border: `1px solid ${active ? colors.accent : colors.borderSoft}`,
     borderRadius: 8,
@@ -31,6 +35,9 @@ export function EdgeInspector({
 
   return (
     <section
+      ref={panel}
+      tabIndex={-1}
+      aria-label={t("edge.title")}
       style={{
         marginTop: 12,
         padding: "14px 16px",
@@ -108,19 +115,25 @@ export function EdgeInspector({
             gap: 6,
             flexWrap: "wrap"
           }}>
-          {EDGE_PROTOCOLS.map((protocol: string) => (
+          {[...EDGE_PROTOCOLS, "Redis (RESP)", "Unspecified"].map((protocol: string) => (
             <button
               key={protocol}
               onClick={() => onChange({ protocol: edge.protocol === protocol ? undefined : protocol })}
               aria-pressed={edge.protocol === protocol}
               style={chip(edge.protocol === protocol)}
             >
-              {protocol}
+              {protocol === "Unspecified" ? t("edge.unspecified") : protocol}
             </button>
           ))}
         </div>
       </div>
 
+      <p style={{
+          margin: 0,
+          color: colors.textFaint,
+          fontSize: font.size.small,
+          lineHeight: 1.5
+        }}>{t("edge.protocolHint")}</p>
       <div style={{
           display: "flex",
           gap: 8

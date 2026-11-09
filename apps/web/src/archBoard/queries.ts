@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "../lib/api";
+import { anchorGradingStatus, gradingRefreshInterval } from "./gradingAvailability.js";
 import type { BoardSummary, GradingStatus, SavedBoard, TalkGradeResult } from "./types";
 import type { CustomScenario } from "@grip/core/api";
 
@@ -62,7 +63,8 @@ export const talkGradeEnabled = Boolean(api.talkGrade);
 export function useGradingStatusQuery() {
   return useQuery({
     queryKey: archBoardQueryKeys.gradingStatus,
-    queryFn: () => api.talkGrade!.getGradingStatus() as Promise<GradingStatus>,
+    queryFn: async () => anchorGradingStatus(await api.talkGrade!.getGradingStatus() as GradingStatus) as GradingStatus,
+    refetchInterval: (query) => gradingRefreshInterval(query.state.data),
     enabled: talkGradeEnabled,
     // A limit lapses on its own, so a stale "unavailable" must not stick.
     staleTime: 30_000,

@@ -8,6 +8,9 @@ because they have to be applied by hand.
 
 ### Added
 
+- Web Arch Board checklist rows locate the relevant components/connections or open the component picker when a required component is missing; reevaluation reports newly passed/lost checks and the score change.
+- Web connection editor includes Redis (RESP) and an explicit localized Unspecified choice, with a note explaining that labels do not earn checklist points.
+
 - After the first-run wizard, Prep opens as a single focus card (the next-up plan and one Start button) with a "Show full dashboard" link; the full three-column view appears after the first drill.
 - The Prep focus card links to what setup also built: "Your sample stories" and "Your practice board", which opens the plan's own board instead of the default scenario.
 - When setup lands on the Arch Board (system design goal), a dismissable note says the board was drawn for the plan and where the drill and sample stories are. The Sample tag's hint no longer claims every sample was written by AI.
@@ -28,6 +31,8 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Web Arch Board separates design-check accuracy, assessed reasoning and talk-track draft progress. Review panels, document controls, selected components and backed arrow labels use calmer hierarchy; the canvas leaves more room for the surrounding journey, and saved boards have explicit confirmation.
+
 - Touch screens get 44px tap areas on story card actions (Delete set apart), Generate, next-up links, the demo banner link, footer links and nav tabs; desktop is unchanged. The top nav fades its right edge while tabs are hidden off-screen. SCREEN-GUIDELINES rule 45 now asks for this.
 - Web app shell (frame, header, nav, loading state) uses `App.module.css` with the existing theme tokens instead of inline styles.
 - Web Poe chat history is saved in localStorage per user, so it survives refreshes; sign-out clears it.
@@ -40,6 +45,9 @@ because they have to be applied by hand.
 - The first-run wizard saves preparation before generating and publishes the playbook in one transaction, so a failure never leaves a half-saved playbook.
 
 ### Fixed
+
+- Arch Board anchors AI retry times when status arrives and refreshes expired limits, so editing no longer moves the displayed reset time. Temporary limits and unknown availability have distinct copy.
+- Next up names the incomplete arrow and opens its inspector; completed descriptions invite evaluation. Locating a checklist item clears drawing tools and pending connections. Legacy score-only boards are not shown as assessed reasoning.
 
 - Web setup replaces its loading heading on generation/save failure, distinguishes temporary AI limits from exhausted daily quota or an unavailable service, and shows long retry waits as a local date and time. Quota recovery points to Profile → Your preparation; retry keeps the existing answers and generated result.
 

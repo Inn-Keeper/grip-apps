@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { SHAPE_SIZE, designOnly, findPlacement, nodeSize, isFreeScenario, meta, nodeLabel, SCENARIOS, evaluate, styleOf, type FreeStyle } from "@grip/core/arch";
 import * as boardEdits from "@grip/core/boardEdits";
-import { t } from "@grip/core/i18n";
+import { getLocale, t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
@@ -39,7 +39,8 @@ import { useCanvasPointer } from "./useCanvasPointer";
 import { BoardEdges } from "./BoardEdges";
 import { BoardNodeCard } from "./BoardNodeCard";
 import { useBoardDocument, type BoardDoc } from "./useBoardDocument";
-import { assessmentFor, gradeBlockedKey, gradeInputsKey, gradeStillApplies, gradeVerdict, resumeTime, topologyChanged } from "@grip/core/gradeState";
+import { assessmentFor, gradeBlockedKey, gradeInputsKey, gradeStillApplies, gradeVerdict, topologyChanged } from "@grip/core/gradeState";
+import { checkTargets, evaluationDelta, nextUndescribedEdge } from "./boardFeedback.js";
 import { primaryActionKind } from "./primaryAction.js";
 import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
@@ -79,6 +80,9 @@ export default function ArchBoard() {
   const [styleTargetId, setStyleTargetId] = useState<string | null>(null);
   const [inspectingEdgeId, setInspectingEdgeId] = useState<string | null>(null);
   const [result, setResult] = useState<ReturnType<typeof evaluate> | null>(null);
+  const previousEvaluation = useRef<ReturnType<typeof evaluate> | null>(null);
+  const [evaluationChange, setEvaluationChange] = useState<ReturnType<typeof evaluationDelta>>(null);
+  const [feedbackTarget, setFeedbackTarget] = useState<{ label: string; nodeIds: string[]; edgeIds: string[]; missing: boolean } | null>(null);
   const [savedOpen, setSavedOpen] = useState(false);
   const [talkOpen, setTalkOpen] = useState(false);
   // Bumped by the empty board's "Add component" to open the canvas's Components picker.
@@ -114,7 +118,7 @@ export default function ArchBoard() {
       brief: "",
       talkAssessment: null,
     }),
-    (prev, next) => { if (topologyChanged(prev, next)) setResult(null); cancelConnection(); },
+    (prev, next) => { if (topologyChanged(prev, next)) { setResult(null); setFeedbackTarget(null); } cancelConnection(); },
   );
   const { doc, commit, isDirty } = board;
   const { scenarioId, storyId, nodes, edges, talkSections, talkRating, talkGrade, brief } = doc;
@@ -147,7 +151,8 @@ export default function ArchBoard() {
   const nodeById = Object.fromEntries(nodes.map((n) => [n.id, n]));
   // Free boxes and text are notes, so they don't move the journey forward.
   const design = designOnly(nodes, edges);
-  const activeWorkflowStep = workflowStep(design.nodes.length, design.edges.length, result !== null, talkGrade !== null);
+  const talkDetail = assessmentFor(doc, activeBoardId);
+  const activeWorkflowStep = workflowStep(design.nodes.length, design.edges.length, result !== null, talkDetail !== null);
 
   const toggleTool = (name: Tool) => setTool((current) => (current === name ? null : name));
   useBoardShortcuts(
@@ -198,6 +203,12 @@ export default function ArchBoard() {
     board.reset(next);
     cancelConnection();
     setResult(null);
+    previousEvaluation.current = null;
+    setEvaluationChange(null);
+    setFeedbackTarget(null);
+    setInspectingEdgeId(null);
+    setInspectingId(null);
+    setStyleTargetId(null);
     setActiveBoardId(active.id);
     setActiveBoardTitle(active.title);
   };
@@ -331,7 +342,40 @@ export default function ArchBoard() {
       brief,
     });
   };
-  const evaluateDesign = () => setResult(evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges));
+  const evaluateDesign = () => {
+    const next = evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges);
+    setEvaluationChange(evaluationDelta(previousEvaluation.current, next));
+    previousEvaluation.current = next;
+    setFeedbackTarget(null);
+    setResult(next);
+  };
+  const inspectEdge = (id: string) => {
+    const edge = edges.find((item) => item.id === id);
+    if (!edge) return;
+    setFeedbackTarget(null);
+    cancelConnection();
+    setArrowDraft(null);
+    setInspectingId(null);
+    setInspectingEdgeId(id);
+    setTool(null);
+    fit(nodes.filter((node) => node.id === edge.from || node.id === edge.to));
+    canvasRef.current?.scrollIntoView({ behavior: "auto", block: "center" });
+  };
+  const inspectCheck = (check: ReturnType<typeof evaluate>["checks"][number]) => {
+    cancelConnection();
+    setTool(null);
+    setArrowDraft(null);
+    const target = checkTargets(check, nodes, edges);
+    setFeedbackTarget({ ...target, label: check.label });
+    setInspectingEdgeId(null);
+    setInspectingId(null);
+    if (target.nodeIds.length) fit(nodes.filter((node) => target.nodeIds.includes(node.id)));
+    if (check.kind === "prop" && target.nodeIds[0]) setInspectingId(target.nodeIds[0]);
+    else if (target.edgeIds[0]) setInspectingEdgeId(target.edgeIds[0]);
+    if (target.missing) setComponentsRequest((value) => value + 1);
+    editorRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
+    canvasRef.current?.focus({ preventScroll: true });
+  };
   // The grader checks the candidate's arithmetic against the design checks, so
   // run evaluate() here rather than making the user press Evaluate design first.
   const gradeTalkTrack = () => {
@@ -349,6 +393,8 @@ export default function ArchBoard() {
   // Counts written sections, not "covered" ones: the grader's floor is any text at all.
   const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
   const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
+  // Durations are rounded to seconds; never advertise an earlier minute than the reset.
+  const gradingResumeAt = limit?.retryAt ? Math.ceil(limit.retryAt / 60_000) * 60_000 : null;
   // The grader needs a brief; on a free board that is the user's own.
   const blockedKey = free && !brief.trim() ? "board.gradeNeedsBrief" : gradeBlockedKey(activeBoardId, talkWritten, Boolean(limit));
   const nodeName = (id: string | null) => { const node = nodeById[id ?? ""]; return node ? nodeLabel(node) : meta("client").label; };
@@ -356,8 +402,7 @@ export default function ArchBoard() {
   // On an empty, unsaved canvas, the one main action is picking up where you left off.
   const latestBoard = nodes.length === 0 && !activeBoardId && !isDirty ? savedBoards[0] : undefined;
   // Next Up coaches the current workflow step; evaluating is the one main action (rule 1).
-  // Saved with the board; null once what it graded changed, or on a legacy score-only board.
-  const talkDetail = assessmentFor(doc, activeBoardId);
+  // Only a validated assessment can describe the reasoning on this board.
   const verdict = gradeVerdict(talkDetail, TALK_TRACK_SECTIONS.map((section) => section.id));
   const weakestLabel = verdict?.weakest
     ? TALK_TRACK_SECTIONS.find((section) => section.id === verdict.weakest.section)?.label ?? ""
@@ -375,13 +420,19 @@ export default function ArchBoard() {
     const unwritten = TALK_TRACK_SECTIONS.find((section) => !(talkSections[section.id] ?? "").trim());
     if (unwritten) setFocusSection(unwritten.id);
   };
-  const stepCopy = boardStepCopy({
+  const pendingDescription = nextUndescribedEdge(design.edges) as BoardEdge | null;
+  const baseStepCopy = boardStepCopy({
     step: activeWorkflowStep,
     connectFromName: connectFrom ? nodeName(connectFrom) : null,
     scenarioName: scenario.name,
     verdict,
     weakestLabel,
   });
+  const stepCopy = activeWorkflowStep === 3
+    ? pendingDescription
+      ? { title: t("board.describeArrow", { from: nodeName(pendingDescription.from), to: nodeName(pendingDescription.to) }), sub: t(!pendingDescription.mode && !pendingDescription.protocol ? "board.arrowNeedsBoth" : !pendingDescription.mode ? "board.arrowNeedsMode" : "board.arrowNeedsProtocol") }
+      : { title: t("board.connectionsReady"), sub: t("board.connectionsReadyHint") }
+    : baseStepCopy;
   // Past step 3 the design is scored and the unscored half is the talk track,
   // so the one main action becomes writing it rather than evaluating again.
   const explaining = activeWorkflowStep >= 4;
@@ -390,12 +441,14 @@ export default function ArchBoard() {
   const actionInRightRail = activeWorkflowStep >= 4 && !talkOpen;
   // One definition of the step's main action. The Next Up card renders it, and
   // the sticky rail repeats it only once that card has scrolled away.
-  const kind = primaryActionKind({ hasLatestBoard: Boolean(latestBoard), hasWeakest: Boolean(verdict?.weakest), explaining, empty: design.nodes.length === 0, free });
+  const kind = primaryActionKind({ hasLatestBoard: Boolean(latestBoard), hasUndescribed: Boolean(pendingDescription), hasWeakest: Boolean(verdict?.weakest), explaining, empty: design.nodes.length === 0, free });
   const primaryAction: RailAction =
     kind === "continue" && latestBoard
       ? { label: t("board.continueAction"), icon: "story", onClick: () => requestBoard(latestBoard), disabled: false, highlight: true }
       : kind === "add"
       ? { label: t("board.addComponentAction"), icon: "layers", onClick: () => setComponentsRequest((n) => n + 1), disabled: false, highlight: true }
+      : kind === "describe" && pendingDescription
+      ? { label: t("board.describeAction"), icon: "board", onClick: () => inspectEdge(pendingDescription.id), disabled: false, highlight: true }
       : {
           label: t(kind === "answer" ? "board.answerAction" : kind === "explain" ? "board.explainAction" : "board.evaluateDesign"),
           icon: explaining ? "spark" : "evaluate",
@@ -461,7 +514,7 @@ export default function ArchBoard() {
       right={
         <>
           {/* Right rail: the score first, then the round; inspectors sit beside the canvas (rule 13). */}
-          {!free && <ScorePanel result={result} />}
+          {!free && <ScorePanel result={result} reasoning={talkDetail ? talkGrade : null} written={talkAnswered} />}
 
           {round.started ? (
             <div ref={timerRef}>
@@ -510,7 +563,9 @@ export default function ArchBoard() {
               gradeDetail={talkDetail}
               grading={gradeMutation.isPending}
               gradeError={gradeMutation.error}
-              gradeBlocked={blockedKey ? t(blockedKey, limit ? { time: resumeTime(limit.retry_after) } : undefined) : null}
+              gradeBlocked={blockedKey === "talk.gradeLimited"
+                ? t(limit?.retryAt ? (limit.code === "provider_quota_exhausted" ? "talk.gradeLimited" : "talk.gradeRateLimited") : "talk.gradeUnavailable", { time: limit?.retryAt ? new Date(gradingResumeAt!).toLocaleString(getLocale(), { dateStyle: "medium", timeStyle: "short" }) : "" })
+                : blockedKey ? t(blockedKey) : null}
               onGrade={talkGradeEnabled ? gradeTalkTrack : null}
               onChangeSection={(id, value) => {
                 commit({ talkSections: { ...talkSections, [id]: value } });
@@ -577,6 +632,7 @@ export default function ArchBoard() {
                 action={primaryAction}
                 actionInRightRail={actionInRightRail}
                 explaining={explaining}
+                offerEvaluation={activeWorkflowStep === 3 && Boolean(pendingDescription)}
                 saving={saveBoardMutation.isPending}
                 onSave={saveBoard}
                 onEvaluate={evaluateDesign}
@@ -586,7 +642,7 @@ export default function ArchBoard() {
             )}
 
             <BoardToolbar
-              status={{ text: statusText, dirty: isDirty }}
+              status={{ text: statusText, dirty: isDirty, saved: Boolean(activeBoardId) && !isDirty && !saveBoardMutation.isPending }}
               history={{
                 canUndo: board.canUndo,
                 canRedo: board.canRedo,
@@ -598,11 +654,11 @@ export default function ArchBoard() {
               onClear={() => commit({ nodes: [], edges: [], talkSections: emptyTalkTrack(), talkRating: null })}
               arrows={{
                 options: edges.map((edge) => ({
-                  label: `${nodeName(edge.from)} → ${nodeName(edge.to)}${edge.protocol ? ` · ${edge.protocol}` : ""}`,
+                  label: `${nodeName(edge.from)} → ${nodeName(edge.to)}${edge.protocol ? ` · ${edge.protocol === "Unspecified" ? t("edge.unspecified") : edge.protocol}` : ""}`,
                   value: edge.id,
                 })),
                 selectedId: inspectingEdgeId,
-                onSelect: setInspectingEdgeId,
+                onSelect: (id) => id ? inspectEdge(id) : setInspectingEdgeId(null),
               }}
             />
             {/* The one-board-per-story index gets words of its own; the story picker normally prevents it. */}
@@ -613,6 +669,10 @@ export default function ArchBoard() {
                   : `${t("board.saveFailedTitle")}: ${saveBoardMutation.error.message}`}</ErrorText>
             )}
 
+            {feedbackTarget && <div role="status" className={styles.feedbackFocus}>
+              <div><strong>{feedbackTarget.label}</strong><p>{t(feedbackTarget.missing ? "board.feedbackMissing" : "board.feedbackLocated", { nodes: feedbackTarget.nodeIds.length, edges: feedbackTarget.edgeIds.length })}</p></div>
+              <button type="button" onClick={() => setFeedbackTarget(null)} aria-label={t("common.close")}>×</button>
+            </div>}
             <div className={styles.editor} ref={editorRef} data-fullscreen={isFullscreen || undefined} onKeyDownCapture={onStyleShortcut}>
               <BoardSurface
                 canvasRef={canvasRef}
@@ -657,6 +717,7 @@ export default function ArchBoard() {
                   edges={edges}
                   nodeById={nodeById}
                   selectedId={inspectingEdgeId}
+                  highlightedIds={feedbackTarget?.edgeIds ?? []}
                   connectDrag={connectDrag}
                   onToggle={(id) => setInspectingEdgeId((current) => (current === id ? null : id))}
                   size={WORLD}
@@ -703,6 +764,7 @@ export default function ArchBoard() {
                     node={n}
                     isSource={connectFrom === n.id}
                     inspecting={inspectingId === n.id}
+                    highlighted={feedbackTarget?.nodeIds.includes(n.id) ?? false}
                     drag={{ down: (e) => pointer.onNodePointerDown(e, n), move: pointer.onNodePointerMove, up: pointer.onNodePointerUp }}
                     connect={{ start: (e) => pointer.startConnection(e, n), move: pointer.moveConnectionIfActive, finish: pointer.finishConnectionIfActive }}
                     onActivate={() => pointer.onNodeClick(n)}
@@ -718,7 +780,7 @@ export default function ArchBoard() {
               </BoardSurface>
             </div>
 
-            {result && !free && <EvalResults result={result} pushback={buildPushback(scenario, nodes)} showScore={false} />}
+            {result && !free && <EvalResults result={result} pushback={buildPushback(scenario, nodes)} showScore={false} change={evaluationChange} onInspect={inspectCheck} />}
           </>
         )}
       </div>

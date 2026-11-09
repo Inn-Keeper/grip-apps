@@ -12,13 +12,14 @@ type Props = {
   // True when the action sits in the right rail, so the card offers only the links.
   actionInRightRail: boolean;
   explaining: boolean;
+  offerEvaluation: boolean;
   saving: boolean;
   onSave: () => void;
   onEvaluate: () => void;
 };
 
 // Next Up for the board: resume the latest saved board, else coach the current step.
-export function BoardNextUp({ latestBoard, allScenarios, stepCopy, action, actionInRightRail, explaining, saving, onSave, onEvaluate }: Props) {
+export function BoardNextUp({ latestBoard, allScenarios, stepCopy, action, actionInRightRail, explaining, offerEvaluation, saving, onSave, onEvaluate }: Props) {
   if (latestBoard)
     return (
       <NextUpShell
@@ -47,7 +48,7 @@ export function BoardNextUp({ latestBoard, allScenarios, stepCopy, action, actio
           {/* The leading "or" answers a button beside it. With the action in the
               right rail there is nothing for it to answer. */}
           <NextUpLink label={t("board.orSave")} onClick={onSave} disabled={saving} withOr={!actionInRightRail} />
-          {explaining && <NextUpLink label={t("board.evaluateDesign")} onClick={onEvaluate} />}
+          {(explaining || offerEvaluation) && <NextUpLink label={t("board.evaluateDesign")} onClick={onEvaluate} />}
         </>
       }
     />

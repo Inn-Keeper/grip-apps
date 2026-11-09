@@ -249,3 +249,20 @@
   font-size: var(--fs-body);
   cursor: pointer;
 }
+
+/* Document controls stay quiet; the Next up action carries the accent. */
+.documentToolbar { display: flex; align-items: center; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; padding-block: .75rem; border-bottom: 1px solid var(--c-border-soft); }
+.documentStatus { display: inline-flex; align-items: center; gap: .5rem; flex: 1 1 10rem; }
+.documentToolbar .toolbarButton { min-height: 36px; }
+.documentToolbar .connectionRow { margin-block: .25rem; }
+.progressHint { margin-top: .75rem; font-size: var(--fs-small); line-height: 1.5; color: var(--c-text-faint); }
+.progressSignals { margin-top: 1rem; border-top: 1px solid var(--c-border-soft); font-size: var(--fs-small); }
+.progressSignals > div { display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; gap: .5rem; padding-top: .75rem; }
+.progressSignals dt { color: var(--c-text-dim); }
+.progressSignals dd { margin: 0; color: var(--c-text-bright); font-weight: 600; }
+.feedbackFocus { display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem; padding: 1rem; margin-bottom: .75rem; border: 1px solid var(--c-accent); border-radius: 8px; background: var(--tint-accent-soft); color: var(--c-text); font-size: var(--fs-body); line-height: 1.5; }
+.feedbackFocus p { margin-top: .25rem; color: var(--c-text-dim); font-size: var(--fs-small); }
+.feedbackFocus button { flex: none; min-height: 44px; min-width: 44px; border: 0; background: transparent; color: var(--c-text-dim); cursor: pointer; font-size: var(--fs-heading); }
+.feedbackFocus button:focus-visible { outline: 2px solid var(--c-accent-bright); border-radius: 8px; }
+@media (hover: none), (pointer: coarse) { .documentToolbar .toolbarButton { min-height: 44px; } }
+@media (prefers-reduced-motion: no-preference) { .node { transition: border-color 150ms ease, box-shadow 150ms ease; } }

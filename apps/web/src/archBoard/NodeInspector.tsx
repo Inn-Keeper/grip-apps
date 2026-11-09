@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { meta, TYPE_COLORS } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
 import { alpha, colors, font } from "../lib/tokens";
@@ -17,11 +18,16 @@ export function NodeInspector({
   onChange: (patch: Partial<BoardNode>) => void;
   onClose: () => void;
 }) {
+  const panel = useRef<HTMLElement>(null);
+  useEffect(() => { panel.current?.focus(); }, [node.id]);
   const spec = meta(node.type);
   const color = TYPE_COLORS[node.type] ?? colors.textDim;
 
   return (
     <section
+      ref={panel}
+      tabIndex={-1}
+      aria-label={spec.label}
       style={{
         marginTop: 12,
         padding: "14px 16px",

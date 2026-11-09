@@ -57,6 +57,8 @@ export type GradingStatus = {
   message?: string;
   /** Seconds until the provider limit lapses. */
   retry_after?: number;
+  /** Client deadline, anchored when the status is fetched. */
+  retryAt?: number | null;
 };
 
 /** What grip-ai-api returns from /api/v1/ai/grade-talk-track. */

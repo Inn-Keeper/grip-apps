@@ -43,9 +43,9 @@ export function BoardSurface({ canvasRef, view, fullscreen, empty, onPointerMove
       style={{
         position: "relative",
         minWidth: 0,
-        // Fills the screen minus a strip of page: the canvas eats swipes
-        // (touch-action: none), so there must always be room outside it to scroll.
-        height: fullscreen ? "100%" : "calc(100svh - 160px)",
+        // Leave room for the journey and document controls; the canvas eats swipes,
+        // so the surrounding page must remain reachable on short screens.
+        height: fullscreen ? "100%" : "clamp(220px, 58svh, 680px)",
         minHeight: fullscreen ? 0 : 220,
         background: colors.bgDeep,
         border: `1px solid ${colors.borderSoft}`,

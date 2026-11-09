@@ -6,7 +6,7 @@ import { Combobox } from "../components/Combobox";
 import styles from "./ArchBoard.module.css";
 
 type Props = {
-  status: { text: string; dirty: boolean };
+  status: { text: string; dirty: boolean; saved: boolean };
   history: { canUndo: boolean; canRedo: boolean; onUndo: () => void; onRedo: () => void };
   talk: { open: boolean; answered: number; onToggle: () => void };
   save: { pending: boolean; onSave: () => void };
@@ -18,20 +18,15 @@ type Props = {
 export function BoardToolbar({ status, history, talk, save, onClear, arrows }: Props) {
   const empty = arrows.options.length === 0;
   return (
-    <div style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 8,
-        marginBottom: 10,
-        flexWrap: "wrap"
-      }}>
-      <span aria-live="polite" style={{
+    <div className={styles.documentToolbar}>
+      <span className={styles.documentStatus} aria-live="polite" style={{
           fontSize: font.size.small,
           fontWeight: 600,
-          color: status.dirty ? colors.warningBright : colors.successBright,
+          color: status.dirty ? colors.warningBright : colors.textDim,
           marginRight: 4
         }}>
-        {status.text}
+        {status.saved && <BrandIcon name="check" size={14} color={colors.successBright} />}
+        {status.saved ? t("board.savedHere") : status.text}
       </span>
       <button type="button" className={styles.toolbarButton} onClick={history.onUndo} disabled={!history.canUndo}>{t("board.undo")}</button>
       <button type="button" className={styles.toolbarButton} onClick={history.onRedo} disabled={!history.canRedo}>{t("board.redo")}</button>
@@ -49,9 +44,9 @@ export function BoardToolbar({ status, history, talk, save, onClear, arrows }: P
         }}
       >
         <BrandIcon name="spark" color={talk.open ? colors.accentBright : colors.textDim} size={13} />
-        {t("talk.title")} ({talk.answered}/{TALK_TRACK_SECTIONS.length})
+        {t("talk.title")} · {t("talk.drafted", { answered: talk.answered, total: TALK_TRACK_SECTIONS.length })}
       </button>
-      <button type="button" className={styles.toolbarButton} onClick={save.onSave} disabled={save.pending} aria-busy={save.pending} style={{ color: colors.successBright }}>
+      <button type="button" className={styles.toolbarButton} onClick={save.onSave} disabled={save.pending} aria-busy={save.pending} >
         {save.pending ? t("common.saving") : t("common.save")}
       </button>
       <button type="button" className={styles.toolbarButton} onClick={onClear}>{t("board.clear")}</button>

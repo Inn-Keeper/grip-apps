@@ -18,6 +18,7 @@ type Props = {
   selected: boolean;
   isSource: boolean;
   inspecting: boolean;
+  highlighted?: boolean;
   drag: { down: PointerHandler; move: PointerHandler; up: PointerHandler };
   // Dragging from a side handle draws an arrow.
   connect: ConnectHandlers;
@@ -35,7 +36,7 @@ type Props = {
 // and drag a corner handle or Alt+arrows to resize. The border keeps the type colour (node identity);
 // fill and label follow the style panel. Neither size nor style changes the grade.
 // Free shapes are BoardShape, free text is BoardTextNote.
-export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, connect, onActivate, onNudge, onRemove, onToggleInspect, toBoard, onResize, onSelect }: Props) {
+export function BoardNodeCard({ node: n, selected, isSource, inspecting, highlighted = false, drag, connect, onActivate, onNudge, onRemove, onToggleInspect, toBoard, onResize, onSelect }: Props) {
   const name = nodeLabel(n);
   const color = TYPE_COLORS[n.type] ?? colors.textDim;
   const size = nodeSize(n, { width: NODE_W, height: NODE_H });
@@ -47,6 +48,8 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, c
   return (
     <div
       className={styles.node}
+      data-node-id={n.id}
+      data-feedback={highlighted || undefined}
       onPointerDown={drag.down}
       onPointerMove={drag.move}
       onPointerUp={drag.up}
@@ -71,7 +74,7 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, c
         height: rect.h,
         boxSizing: "border-box",
         background: style.fill === "none" ? colors.surface : `${colors[style.fill]}${FILL_ALPHA}`,
-        border: `2px solid ${isSource ? colors.textBright : alpha(color, 0.38)}`,
+        border: `2px solid ${isSource ? colors.textBright : (selected || highlighted ? colors.accentBright : alpha(color, 0.38))}`,
         borderRadius: 10,
         cursor: "grab",
         touchAction: "none",
@@ -80,7 +83,7 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, c
         alignItems: "center",
         gap: 8,
         padding: "0 10px",
-        boxShadow: isSource ? `0 0 0 3px ${alpha(color, 0.19)}` : "none",
+        boxShadow: selected || highlighted ? `0 0 0 3px ${alpha(colors.accent, 0.16)}` : isSource ? `0 0 0 3px ${alpha(color, 0.19)}` : "none",
       }}
     >
       <span style={{
@@ -100,7 +103,7 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, drag, c
           }}>{name}</span>
         {(n.partitionKey?.trim() || n.replicas) && (
           <span style={{
-              fontSize: font.size.caption,
+              fontSize: font.size.label,
               color: colors.textFaint,
               whiteSpace: "nowrap",
               overflow: "hidden",

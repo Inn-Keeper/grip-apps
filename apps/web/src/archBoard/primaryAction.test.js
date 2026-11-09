@@ -30,3 +30,10 @@ test("a free board keeps its unscored behavior when empty", () => {
 test("a diagram with nodes keeps the evaluation path", () => {
   assert.equal(primaryActionKind({ hasLatestBoard: false, hasWeakest: false, explaining: false, empty: false }), "evaluate");
 });
+
+
+test("an incomplete connection offers description before evaluation, but never interrupts explanation", () => {
+  assert.equal(primaryActionKind({ hasUndescribed: true }), "describe");
+  assert.equal(primaryActionKind({ hasUndescribed: true, explaining: true }), "explain");
+  assert.equal(primaryActionKind({ hasLatestBoard: true, hasUndescribed: true }), "continue");
+});
