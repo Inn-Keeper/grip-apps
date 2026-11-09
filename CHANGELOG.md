@@ -8,6 +8,7 @@ because they have to be applied by hand.
 
 ### Changed
 
+- Web Poe chat typing indicator animates its three dots while Poe replies (static when reduced motion is on).
 - Web StoryBank page layout, feedback and actions use a colocated CSS Module with the existing theme tokens.
 - Web sign-in layout, fields and busy/disabled feedback use a colocated CSS Module with the existing theme tokens.
 - Web global styles live in `src/global.css`, imported by the entry point; the first-paint theme script stays in `index.html`.

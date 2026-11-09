@@ -76,11 +76,7 @@ export function PoeChat({ showBubble }: { showBubble: boolean }) {
 
   return (
     <>
-      {chat.open && (
-        <PoeChatPanel
-          style={position}
-        />
-      )}
+      {chat.open && <PoeChatPanel style={position} />}
       <button
         type="button"
         className={`${styles.bubble}${showBubble ? "" : ` ${mascotStyles.chatAlternative}`}`}
@@ -159,7 +155,15 @@ function PoeChatPanel({ style }: { style: React.CSSProperties }) {
             className={`${styles.poe} ${styles.typing}`}
             aria-label="…"
           >
-            …
+            {Array.from({ length: 3 }).map((_, i) => (
+              <span
+                key={i}
+                className={styles.dot}
+                aria-hidden="true"
+              >
+                .
+              </span>
+            ))}
           </p>
         )}
         {chat.errorLine && <p className={`${styles.poe} ${styles.error}`}>{chat.errorLine}</p>}
