@@ -66,5 +66,9 @@ export const {
   resetScores,
   getUser,
   updateProfile,
-  resetGoals
+  resetGoals,
+  getPreparation,
+  savePreparation,
+  saveGithubSignals,
+  publishPreparationPlaybook
 } = api;

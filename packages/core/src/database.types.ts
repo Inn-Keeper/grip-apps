@@ -416,6 +416,36 @@ export type Database = {
         }
         Relationships: []
       }
+      user_preparation: {
+        Row: {
+          active_playbook: Json | null
+          brief: string
+          github_synced_at: string | null
+          github_techs: string[]
+          goal: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          active_playbook?: Json | null
+          brief?: string
+          github_synced_at?: string | null
+          github_techs?: string[]
+          goal?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          active_playbook?: Json | null
+          brief?: string
+          github_synced_at?: string | null
+          github_techs?: string[]
+          goal?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -423,6 +453,15 @@ export type Database = {
     Functions: {
       add_xp: { Args: { points: number }; Returns: number }
       reset_goals: { Args: Record<PropertyKey, never>; Returns: undefined }
+      save_preparation: {
+        Args: { p_target_role: string; p_goal_techs: string[]; p_favorite_techs: string[]; p_cv_techs: string[]; p_goal: string; p_brief: string }
+        Returns: undefined
+      }
+      save_github_signals: { Args: { p_accepted: string[]; p_synced_at: string | null }; Returns: undefined }
+      publish_preparation_playbook: {
+        Args: { p_generation_id: string; p_expected_generation_id: string | null; p_snapshot: Json; p_label: string; p_playbook: Json }
+        Returns: Json
+      }
       answer_daily_totals: {
         Args: { p_tz: string }
         Returns: {

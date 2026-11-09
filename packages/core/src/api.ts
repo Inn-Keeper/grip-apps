@@ -4,6 +4,7 @@
 import type { BoardEdge, BoardNode, Check } from "./arch.js";
 import { boardsApi } from "./api/boards";
 import { contactsApi } from "./api/contacts";
+import { preparationApi } from "./api/preparation";
 import { profileApi } from "./api/profile";
 import { scenariosApi } from "./api/scenarios";
 import { scoresApi } from "./api/scores";
@@ -13,6 +14,7 @@ import { storiesApi } from "./api/stories";
 export { dateToDb, dateToUi } from "./api/shared";
 export type { Db } from "./api/shared";
 export type { Database } from "./database.types";
+export type * from "./api/preparation";
 
 export type Retro = {
   id: string;
@@ -187,6 +189,7 @@ export function createApi(supabase: Db) {
     ...scenariosApi(supabase),
     ...scoresApi(supabase),
     ...profileApi(supabase),
+    ...preparationApi(supabase),
   };
 }
 
