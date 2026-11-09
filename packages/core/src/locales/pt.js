@@ -71,6 +71,7 @@ export const pt = {
   "demo.trySub": "Sem conta · com dados de exemplo",
   "demo.banner": "Você está explorando uma demo. O progresso fica salvo por 7 dias.",
   "demo.bar": "O Grip é uma demo gratuita.",
+  "demo.sampleProgress": "Progresso de exemplo: estes números vêm com a demo. Suas respostas somam a eles.",
   "demo.keepProgress": "Entre com o GitHub para mantê-lo",
   "demo.signInToShare": "Entre para compartilhar",
   "nextUp.label": "Próximo passo",

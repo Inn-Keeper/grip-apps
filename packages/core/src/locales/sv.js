@@ -71,6 +71,7 @@ export const sv = {
   "demo.trySub": "Inget konto behövs · med exempeldata",
   "demo.banner": "Du utforskar en demo. Framstegen sparas i 7 dagar.",
   "demo.bar": "Grip är en gratis demo.",
+  "demo.sampleProgress": "Exempeldata: statistiken följer med demon. Dina svar läggs till.",
   "demo.keepProgress": "Logga in med GitHub för att behålla dem",
   "demo.signInToShare": "Logga in för att dela",
   "nextUp.label": "Nästa steg",

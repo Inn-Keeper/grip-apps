@@ -71,6 +71,7 @@ export const en = {
   "demo.trySub": "No account needed · sample data included",
   "demo.banner": "You're exploring a demo. Progress is kept for 7 days.",
   "demo.bar": "Grip is a free demo.",
+  "demo.sampleProgress": "Sample progress: these stats come with the demo. Your answers add to them.",
   "demo.keepProgress": "Sign in with GitHub to keep it",
   "demo.signInToShare": "Sign in to share",
   "nextUp.label": "Next up",

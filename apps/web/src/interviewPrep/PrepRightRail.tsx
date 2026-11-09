@@ -12,6 +12,7 @@ import { signalGroups } from "./signalGroups.js";
 import { LevelSelector } from "./LevelSelector";
 import { QuizSizeSelector } from "./QuizSizeSelector";
 import { AutoNextToggle } from "./AutoNextToggle";
+import { useAuthUserQuery } from "../profile/queries";
 import { CountUp, GlowBar } from "../components/GlowBar";
 import { HeadlineMetric } from "../components/HeadlineMetric";
 import styles from "./InterviewPrep.module.css";
@@ -48,10 +49,13 @@ export function PrepRightRail({ accuracy, level, onLevel, readiness, scores, sum
   const next = RANKS[RANKS.indexOf(rank) + 1];
   const progress = next ? Math.round(((scores.xp - rank.min) / (next.min - rank.min)) * 100) : 100;
   const { strongest, weakest } = signalGroups(summary.ranked, ACCURACY_GOOD_PCT);
+  // Demo users start with seeded stats (migration 0016); say so, or a newcomer reads them as their own.
+  const isDemo = !!useAuthUserQuery().data?.is_anonymous;
 
   return (
     <>
       <WorkspacePanel>
+        {isDemo && <p className={styles.sampleNote}>{t("demo.sampleProgress")}</p>}
         {readiness && (
           // The screen's headline: how ready the chosen set of techs is. Untested techs count as 0.
           <HeadlineMetric label={readiness.label} value={readiness.pct} unit="%" pct={readiness.pct} hint={t("prep.readinessHint", { count: readiness.count })} info={t("prep.readinessInfo")} />

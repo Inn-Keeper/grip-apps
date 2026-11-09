@@ -200,3 +200,10 @@
 @media (max-width: 820px) {
   .tierBlurb { display: none !important; }
 }
+
+/* Demo-only note above the seeded stats. */
+.sampleNote {
+  margin: 0 0 8px;
+  font-size: var(--fs-small);
+  color: var(--c-text-dim);
+}
