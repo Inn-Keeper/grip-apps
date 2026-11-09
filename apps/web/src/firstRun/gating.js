@@ -12,3 +12,8 @@ export function shouldShowWizard({ session, profile, openedManually }) {
   // undefined = still loading; null = no profile row, which counts as not done.
   return profile !== undefined && !profile?.onboardingCompleted;
 }
+
+/** Signed in, profile still loading: the wizard may still appear, so hold the pages back. */
+export function wizardUndecided({ session, profile, openedManually }) {
+  return !!session && !openedManually && profile === undefined;
+}

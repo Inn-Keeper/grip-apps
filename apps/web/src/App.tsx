@@ -19,7 +19,7 @@ import Profile from "./profile/Profile";
 import { useProfileQuery, useSaveProfileMutation } from "./profile/queries";
 import { FirstRunWizard } from "./firstRun/FirstRunWizard";
 import type { Landing } from "./firstRun/GenerateStep";
-import { shouldShowWizard } from "./firstRun/gating.js";
+import { shouldShowWizard, wizardUndecided } from "./firstRun/gating.js";
 import { openInBoard } from "./lib/boardHandoff";
 import About from "./about/About";
 import { PoeChat, PoeChatProvider } from "./components/poe/PoeChat";
@@ -129,9 +129,13 @@ export default function App() {
   const mascotVisible = usePoeMascotVisible();
   const onPrepWithMascot = page === "prep" && mascotVisible;
   const saveProfile = useSaveProfileMutation();
+  const gateArgs = { session, profile: profileQuery.isSuccess ? profileQuery.data : undefined, openedManually: setup === "open" };
   const showWizard =
     setup !== "closed" &&
-    shouldShowWizard({ session, profile: profileQuery.isSuccess ? profileQuery.data : undefined, openedManually: setup === "open" });
+    shouldShowWizard(gateArgs);
+  // Until the profile says whether onboarding is done, show neither pages nor tabs (no Prep flash).
+  const undecided = setup === "auto" && !profileQuery.isError && wizardUndecided(gateArgs);
+  const showPages = !showWizard && !undecided;
   const openSetup = () => setSetup("open");
   const landFromSetup = ({ page: target, scenarioId, boardId }: Landing) => {
     saveProfile.mutate({ onboardingCompleted: true });
@@ -174,7 +178,7 @@ export default function App() {
             </span>
           </a>
           {/* The wizard owns the screen until it lands or the user explores; tabs would do nothing. */}
-          {session && !showWizard && (
+          {session && showPages && (
             <>
               <nav
                 ref={navRef}
@@ -219,15 +223,15 @@ export default function App() {
           <PoeChatProvider key={session.user.id} userId={session.user.id}>
           <React.Fragment key={locale}>
             {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}
-            {!showWizard && page === "prep" && <InterviewPrep onOpenSetup={openSetup} />}
-            {!showWizard && page === "stories" && <StoryBank onOpenSetup={openSetup} />}
-            {!showWizard && page === "board" && <ArchBoard />}
-            {!showWizard && page === "quest" && <Quest />}
-            {!showWizard && page === "about" && <About onNavigate={selectPage} />}
-            {!showWizard && page === "profile" && <Profile pathname={pathname} onNavigatePath={navigatePath} onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
+            {showPages && page === "prep" && <InterviewPrep onOpenSetup={openSetup} />}
+            {showPages && page === "stories" && <StoryBank onOpenSetup={openSetup} />}
+            {showPages && page === "board" && <ArchBoard />}
+            {showPages && page === "quest" && <Quest />}
+            {showPages && page === "about" && <About onNavigate={selectPage} />}
+            {showPages && page === "profile" && <Profile pathname={pathname} onNavigatePath={navigatePath} onOpenSetup={openSetup} githubLinked={githubLinked} onGitHubLinkedSeen={() => setGithubLinked(false)} onSignOut={signOut} onLocaleChange={handleLocaleChange} />}
           </React.Fragment>
           {/* On Prep the mascot opens the chat, so the bubble steps aside. */}
-          {!showWizard && <PoeChat showBubble={!onPrepWithMascot} />}
+          {showPages && <PoeChat showBubble={!onPrepWithMascot} />}
           </PoeChatProvider>
         )}
       </div>
