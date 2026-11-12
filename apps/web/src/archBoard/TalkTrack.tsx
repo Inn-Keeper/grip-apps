@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { SELF_RATING_MAX, TALK_TRACK_SECTIONS, scoreTalkTrack } from "@grip/core/talkTrack";
 import { t } from "@grip/core/i18n";
 import { alpha, colors, shadow, font } from "../lib/tokens";
@@ -6,6 +6,7 @@ import { AbbrText } from "../components/AbbrText";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
 import spinner from "../components/Spinner.module.css";
+import styles from "./ArchBoard.module.css";
 import type { TalkGradeResult } from "./types";
 import { ErrorText } from "../components/ErrorText";
 
@@ -273,34 +274,43 @@ export function TalkTrack({
             paddingTop: 14,
             borderTop: `1px solid ${colors.borderSoft}`
           }}>
+          {/* The step this panel exists for: full width, and it shines until the
+              reasoning has a grade. The rail's own action is quiet while this is open. */}
+          <button
+            type="button"
+            onClick={onGrade}
+            disabled={grading || gradeBlocked !== null}
+            aria-busy={grading}
+            className={`${styles.railAction}${!grading && !gradeBlocked && grade === null ? ` ${styles.railActionShine}` : ""}`}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8,
+              width: "100%",
+              padding: "12px 16px",
+              background: gradeBlocked ? "transparent" : colors.accent,
+              border: `1px solid ${gradeBlocked ? colors.borderSoft : colors.accent}`,
+              borderRadius: 10,
+              color: gradeBlocked ? colors.textDim : colors.onAccent,
+              fontSize: font.size.body,
+              fontWeight: 700,
+              cursor: grading || gradeBlocked ? "default" : "pointer",
+              ["--twinkle-color" as string]: colors.accentBright,
+            } as React.CSSProperties}
+          >
+            {grading
+              ? <span aria-hidden="true" className={spinner.spinner} />
+              : <BrandIcon name="spark" color={gradeBlocked ? colors.textDim : colors.onAccent} size={16} />}
+            {grading ? t("talk.grading") : t("talk.gradeAction")}
+          </button>
           <div style={{
               display: "flex",
               alignItems: "center",
               gap: 10,
-              flexWrap: "wrap"
+              flexWrap: "wrap",
+              marginTop: 8
             }}>
-            <button
-              type="button"
-              onClick={onGrade}
-              disabled={grading || gradeBlocked !== null}
-              aria-busy={grading}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 7,
-                padding: "8px 14px",
-                background: gradeBlocked ? "transparent" : colors.accent,
-                border: `1px solid ${gradeBlocked ? colors.borderSoft : colors.accent}`,
-                borderRadius: 8,
-                color: gradeBlocked ? colors.textDim : colors.onAccent,
-                fontSize: font.size.small,
-                fontWeight: 700,
-                cursor: grading || gradeBlocked ? "default" : "pointer",
-              }}
-            >
-              {grading && <span aria-hidden="true" className={spinner.spinner} />}
-              {grading ? t("talk.grading") : t("talk.gradeAction")}
-            </button>
             {/* Rule 13: the reason and the result sit next to the button that was clicked. */}
             <span aria-live="polite" style={{
                 fontSize: font.size.label,
