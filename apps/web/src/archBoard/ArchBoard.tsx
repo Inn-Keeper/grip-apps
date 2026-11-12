@@ -5,6 +5,7 @@ import { getLocale, t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { FollowupRound } from "./FollowupRound";
 import { SprintLog } from "./SprintLog";
+import { FullscreenBar } from "./FullscreenBar";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { colors, font } from "../lib/tokens";
@@ -515,6 +516,33 @@ export default function ArchBoard() {
     ["--arch-danger" as string]: colors.dangerBright,
   } as React.CSSProperties;
 
+  // The arrow and component editors: in the right rail normally, inside the canvas in fullscreen.
+  const inspectors = (
+    <>
+      {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
+        const edge = edges.find((e) => e.id === inspectingEdgeId)!;
+        return (
+          <EdgeInspector
+            edge={edge}
+            from={nodeById[edge.from]}
+            to={nodeById[edge.to]}
+            onChange={(patch) => patchEdge(edge.id, patch)}
+            onRemove={() => removeEdge(edge.id)}
+            onClose={() => setInspectingEdgeId(null)}
+          />
+        );
+      })()}
+
+      {inspectingId && nodeById[inspectingId] && (
+        <NodeInspector node={nodeById[inspectingId]} onChange={(patch) => patchNode(inspectingId, patch)} onClose={() => setInspectingId(null)} />
+      )}
+    </>
+  );
+  // Results, the talk track and the sprint summary live outside fullscreen, so
+  // any action that leads to them leaves it first. Adding and describing stay.
+  const leaveThen = (run: () => void) => () => { if (document.fullscreenElement) void document.exitFullscreen(); run(); };
+  const fullscreenAction = kind === "add" || kind === "describe" ? primaryAction : { ...primaryAction, onClick: leaveThen(primaryAction.onClick) };
+
   return (
     <WorkspaceLayout
       mainLabel={t("board.title")}
@@ -580,23 +608,8 @@ export default function ArchBoard() {
             <SprintLog sprints={sprints} saveError={addSprintMutation.error} />
           )}
 
-          {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
-            const edge = edges.find((e) => e.id === inspectingEdgeId)!;
-            return (
-              <EdgeInspector
-                edge={edge}
-                from={nodeById[edge.from]}
-                to={nodeById[edge.to]}
-                onChange={(patch) => patchEdge(edge.id, patch)}
-                onRemove={() => removeEdge(edge.id)}
-                onClose={() => setInspectingEdgeId(null)}
-              />
-            );
-          })()}
-
-          {inspectingId && nodeById[inspectingId] && (
-            <NodeInspector node={nodeById[inspectingId]} onChange={(patch) => patchNode(inspectingId, patch)} onClose={() => setInspectingId(null)} />
-          )}
+          {/* In fullscreen the rail is off screen, so the editors float inside the canvas instead. */}
+          {!isFullscreen && inspectors}
 
           {talkOpen && (
             <div>
@@ -752,6 +765,19 @@ export default function ArchBoard() {
                     <CanvasTools onAddNode={addNode} onAddShape={addShape} tool={tool} onTool={toggleTool} openRequest={componentsRequest} />
                     {styleTarget && <StylePanel node={styleTarget} onChange={setStyle} onDelete={() => removeNode(styleTarget.id)} />}
                   </div>
+                  {isFullscreen && (
+                    <>
+                      <FullscreenBar
+                        status={{ text: statusText, dirty: isDirty }}
+                        save={{ pending: saveBoardMutation.isPending, onSave: saveBoard }}
+                        history={{ canUndo: board.canUndo, canRedo: board.canRedo, onUndo: board.undo, onRedo: board.redo }}
+                        round={round.started ? round : null}
+                        onFinishSprint={sprinting ? leaveThen(() => finishSprint(false)) : null}
+                        action={fullscreenAction}
+                      />
+                      <div className={styles.fullscreenInspector}>{inspectors}</div>
+                    </>
+                  )}
                   <ViewportControls
                     scale={view.scale}
                     onZoomIn={() => zoomStep(1)}
