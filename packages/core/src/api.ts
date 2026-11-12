@@ -8,6 +8,7 @@ import { preparationApi } from "./api/preparation";
 import { profileApi } from "./api/profile";
 import { scenariosApi } from "./api/scenarios";
 import { scoresApi } from "./api/scores";
+import { sprintsApi } from "./api/sprints";
 import type { Db } from "./api/shared";
 import { storiesApi } from "./api/stories";
 
@@ -15,6 +16,20 @@ export { dateToDb, dateToUi } from "./api/shared";
 export type { Db } from "./api/shared";
 export type { Database } from "./database.types";
 export type * from "./api/preparation";
+
+/** One finished 10-minute skeleton sprint on the Arch Board. */
+export type DesignSprint = {
+  id?: string;
+  scenarioId: string;
+  seconds: number;
+  /** the clock reached zero before the diagram was declared complete */
+  ranOut: boolean;
+  hit: number;
+  total: number;
+  /** labels of the design checks the diagram did not cover */
+  missed: string[];
+  createdAt?: string;
+};
 
 export type Retro = {
   id: string;
@@ -207,6 +222,7 @@ export function createApi(supabase: Db) {
     ...boardsApi(supabase),
     ...scenariosApi(supabase),
     ...scoresApi(supabase),
+    ...sprintsApi(supabase),
     ...profileApi(supabase),
     ...preparationApi(supabase),
   };

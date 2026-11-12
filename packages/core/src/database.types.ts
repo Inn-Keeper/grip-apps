@@ -292,6 +292,42 @@ export type Database = {
         }
         Relationships: []
       }
+      design_sprints: {
+        Row: {
+          created_at: string
+          hit: number
+          id: string
+          missed: string[]
+          ran_out: boolean
+          scenario_id: string
+          seconds: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          hit: number
+          id?: string
+          missed?: string[]
+          ran_out?: boolean
+          scenario_id: string
+          seconds: number
+          total: number
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          hit?: number
+          id?: string
+          missed?: string[]
+          ran_out?: boolean
+          scenario_id?: string
+          seconds?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: []
+      }
       retros: {
         Row: {
           contact_id: string

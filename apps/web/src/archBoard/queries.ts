@@ -12,6 +12,7 @@ export const archBoardQueryKeys = {
   boardOverviews: ["arch-board-overviews"] as const,
   board: (id: string) => ["arch-board", id] as const,
   customScenarios: ["custom-scenarios"] as const,
+  sprints: ["design-sprints"] as const,
 };
 
 export function useCustomScenariosQuery() {
@@ -151,5 +152,18 @@ export function useGradeFollowupsMutation(onGraded: (round: FollowupRound) => vo
       };
     },
     onSuccess: onGraded,
+  });
+}
+
+export function useSprintsQuery() {
+  // No retry: before migration 0035 the table is missing and retrying cannot help.
+  return useQuery({ queryKey: archBoardQueryKeys.sprints, queryFn: api.listSprints, retry: false });
+}
+
+export function useAddSprintMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: api.addSprint,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.sprints }),
   });
 }

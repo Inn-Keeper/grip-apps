@@ -62,6 +62,8 @@ export const {
   upsertStory,
   deleteStory,
   saveStoryAssessment,
+  listSprints,
+  addSprint,
   getScores,
   getQuestions,
   recordAnswer,

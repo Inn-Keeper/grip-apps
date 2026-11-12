@@ -4,6 +4,7 @@ import * as boardEdits from "@grip/core/boardEdits";
 import { getLocale, t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
 import { FollowupRound } from "./FollowupRound";
+import { SprintLog } from "./SprintLog";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { colors, font } from "../lib/tokens";
@@ -54,6 +55,8 @@ import {
   useDeleteScenarioMutation,
   useGradeTalkTrackMutation,
   useGradeFollowupsMutation,
+  useSprintsQuery,
+  useAddSprintMutation,
   useGradingStatusQuery,
   useSaveBoardMutation,
   useSavedBoardsQuery,
@@ -200,6 +203,8 @@ export default function ArchBoard() {
   const gradeMutation = useGradeTalkTrackMutation((graded) => {
     if (gradeStillApplies(submittedGradeRef.current, liveRef.current.boardId, liveRef.current.doc)) board.setAssessment(graded);
   });
+  const { data: sprints = [] } = useSprintsQuery();
+  const addSprintMutation = useAddSprintMutation();
   const submittedFollowupsRef = useRef<{ boardId: string; inputs: string } | null>(null);
   const followupMutation = useGradeFollowupsMutation((round) => {
     if (gradeStillApplies(submittedFollowupsRef.current, liveRef.current.boardId, liveRef.current.doc)) board.setFollowups(round);
@@ -363,7 +368,9 @@ export default function ArchBoard() {
     round.pause();
     const next = evaluateDesign();
     const missed = next.checks.filter((check) => !check.passed).map((check) => check.label);
-    setSprintResult({ seconds: Math.min(Math.round(round.elapsedMs / 1000), round.minutes * 60), ranOut, hit: next.checks.length - missed.length, total: next.checks.length, missed });
+    const sprint = { seconds: Math.min(Math.round(round.elapsedMs / 1000), round.minutes * 60), ranOut, hit: next.checks.length - missed.length, total: next.checks.length, missed };
+    setSprintResult(sprint);
+    addSprintMutation.mutate({ ...sprint, scenarioId });
   };
   const evaluateOrFinish = () => { if (sprinting) finishSprint(false); else evaluateDesign(); };
   // Ten minutes is the whole point: at zero the sprint ends as it stands.
@@ -565,6 +572,10 @@ export default function ArchBoard() {
                 <TimerOffer title={t("sprint.offer")} hint={t("sprint.offerHint")} onStart={round.startSprint} />
               </>
             )
+          )}
+          {/* The trend belongs where a sprint starts and where one just ended. */}
+          {!free && (round.sprint || activeWorkflowStep === 1) && (
+            <SprintLog sprints={sprints} saveError={addSprintMutation.error} />
           )}
 
           {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {

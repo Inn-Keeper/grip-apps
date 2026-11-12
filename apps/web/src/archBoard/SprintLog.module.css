@@ -1,0 +1,50 @@
+.log {
+  padding: 12px 14px;
+  border: 1px solid var(--c-border-soft);
+  border-radius: 8px;
+  background: var(--c-surface);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: var(--fs-small);
+  color: var(--c-text);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--c-text-bright);
+}
+
+.stats,
+.missedTitle {
+  margin: 0;
+  color: var(--c-text-faint);
+}
+
+/* One bar per sprint, oldest first: shorter is faster. */
+.bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 44px;
+}
+
+.bar {
+  flex: 1 1 0;
+  max-width: 14px;
+  min-height: 2px;
+  border-radius: 2px;
+  background: var(--c-accent);
+}
+
+.barOut {
+  background: var(--c-warning);
+}
+
+.missed {
+  margin: 0;
+  padding-left: 18px;
+  line-height: 1.5;
+}
