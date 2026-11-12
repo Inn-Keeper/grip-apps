@@ -61,7 +61,8 @@ import {
   useSaveScenarioMutation,
   talkGradeEnabled,
 } from "./queries";
-import type { AugmentedScenario, BoardEdge, BoardNode, BoardSummary, SavedBoard } from "./types";
+import type { AugmentedScenario, BoardEdge, BoardNode, BoardSummary, SavedBoard, SprintResult } from "./types";
+import { ROUND_MINUTES, formatClock } from "@grip/core/designTimer";
 import { ErrorText } from "../components/ErrorText";
 
 
@@ -81,6 +82,8 @@ export default function ArchBoard() {
   const [styleTargetId, setStyleTargetId] = useState<string | null>(null);
   const [inspectingEdgeId, setInspectingEdgeId] = useState<string | null>(null);
   const [result, setResult] = useState<ReturnType<typeof evaluate> | null>(null);
+  // The finished skeleton sprint, until the clock is reset.
+  const [sprintResult, setSprintResult] = useState<SprintResult | null>(null);
   const previousEvaluation = useRef<ReturnType<typeof evaluate> | null>(null);
   const [evaluationChange, setEvaluationChange] = useState<ReturnType<typeof evaluationDelta>>(null);
   const [feedbackTarget, setFeedbackTarget] = useState<{ label: string; nodeIds: string[]; edgeIds: string[]; missing: boolean } | null>(null);
@@ -98,6 +101,8 @@ export default function ArchBoard() {
   // The step's action lives in the sticky rail only. The clock joins the rail
   // only while its own panel is off screen (rule 6).
   const [timerVisible, timerRef] = useInView(true);
+  // While a sprint runs the score and checklist stay hidden: recall, not lookup.
+  const sprinting = round.sprint && round.started && !sprintResult;
   const [activeBoardId, setActiveBoardId] = useState<string | null>(null);
   const [activeBoardTitle, setActiveBoardTitle] = useState<string | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
@@ -351,7 +356,26 @@ export default function ArchBoard() {
     previousEvaluation.current = next;
     setFeedbackTarget(null);
     setResult(next);
+    return next;
   };
+  // A sprint ends by evaluating: the clock stops and the checks are revealed.
+  const finishSprint = (ranOut: boolean) => {
+    round.pause();
+    const next = evaluateDesign();
+    const missed = next.checks.filter((check) => !check.passed).map((check) => check.label);
+    setSprintResult({ seconds: Math.min(Math.round(round.elapsedMs / 1000), round.minutes * 60), ranOut, hit: next.checks.length - missed.length, total: next.checks.length, missed });
+  };
+  const evaluateOrFinish = () => { if (sprinting) finishSprint(false); else evaluateDesign(); };
+  // Ten minutes is the whole point: at zero the sprint ends as it stands.
+  const sprintTimedOut = sprinting && round.running && round.overrun;
+  useEffect(() => {
+    if (sprintTimedOut) finishSprint(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sprintTimedOut]);
+  // Resetting the clock clears the finished sprint with it.
+  useEffect(() => {
+    if (!round.started) setSprintResult(null);
+  }, [round.started]);
   const inspectEdge = (id: string) => {
     const edge = edges.find((item) => item.id === id);
     if (!edge) return;
@@ -462,7 +486,7 @@ export default function ArchBoard() {
       : {
           label: t(kind === "answer" ? "board.answerAction" : kind === "explain" ? "board.explainAction" : "board.evaluateDesign"),
           icon: explaining ? "spark" : "evaluate",
-          onClick: kind === "answer" ? answerWeakest : kind === "explain" ? writeTalkTrack : evaluateDesign,
+          onClick: kind === "answer" ? answerWeakest : kind === "explain" ? writeTalkTrack : evaluateOrFinish,
           disabled: nodes.length === 0,
           // The shine asks you to act. Once the panel is open the asking is done,
           // and continuing would be nagging while you type.
@@ -524,14 +548,23 @@ export default function ArchBoard() {
       right={
         <>
           {/* Right rail: the score first, then the round; inspectors sit beside the canvas (rule 13). */}
-          {!free && <ScorePanel result={result} reasoning={talkDetail ? talkGrade : null} written={talkAnswered} />}
+          {!free && !sprinting && <ScorePanel result={result} reasoning={talkDetail ? talkGrade : null} written={talkAnswered} />}
 
           {round.started ? (
             <div ref={timerRef}>
-              <DesignTimer round={round} />
+              <DesignTimer
+                round={round}
+                onFinishSprint={() => finishSprint(false)}
+                summary={sprintResult && t(sprintResult.ranOut ? "sprint.ranOut" : "sprint.done", { time: formatClock(sprintResult.seconds * 1000), hit: sprintResult.hit, total: sprintResult.total })}
+              />
             </div>
           ) : (
-            activeWorkflowStep === 1 && <TimerOffer onStart={round.start} />
+            activeWorkflowStep === 1 && (
+              <>
+                <TimerOffer title={t("timer.offer")} hint={t("timer.offerHint", { minutes: ROUND_MINUTES })} onStart={round.start} />
+                <TimerOffer title={t("sprint.offer")} hint={t("sprint.offerHint")} onStart={round.startSprint} />
+              </>
+            )
           )}
 
           {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
@@ -640,7 +673,7 @@ export default function ArchBoard() {
                 stepCopy={stepCopy}
                 explaining={explaining}
                 offerEvaluation={activeWorkflowStep === 3 && Boolean(pendingDescription)}
-                onEvaluate={evaluateDesign}
+                onEvaluate={evaluateOrFinish}
               />
             </div>
             </>
@@ -786,7 +819,7 @@ export default function ArchBoard() {
             </div>
 
             {/* Once the written round is on offer, the out-loud list would only repeat it. */}
-            {result && !free && <EvalResults result={result} pushback={talkDetail && talkGradeEnabled ? [] : buildPushback(scenario, nodes)} showScore={false} change={evaluationChange} onInspect={inspectCheck} />}
+            {result && !free && !sprinting && <EvalResults result={result} pushback={talkDetail && talkGradeEnabled ? [] : buildPushback(scenario, nodes)} showScore={false} change={evaluationChange} onInspect={inspectCheck} />}
           </>
         )}
       </div>

@@ -10,6 +10,7 @@ because they have to be applied by hand.
 
 - Web Prep quizzes and drills show each question's stored explanation under the options once it is answered. Static fallback questions have none and show nothing.
 - Web Story Bank: "Grade this story" on a story's detail view sends the STAR to grip-ai-api (`/api/v1/ai/grade-story`) and shows a score, a verdict per section, the interviewer's next question for each and the hardest follow-up. The grade is saved with the story and marked stale once the story is edited. Hidden when `VITE_AI_URL` is unset.
+- Web Arch Board skeleton sprint: a 10-minute format on the existing round clock (2 minutes to scope, 8 to draw every box), offered beside the 40-minute round on an empty board. The score and checklist stay hidden while it runs; "Diagram is on the board", the Evaluate action or the clock reaching zero ends it, evaluates the board and shows the time and checks covered.
 - Web Arch Board: once the talk track is graded, a written defence round appears under it with the grader's hardest follow-up and the board's own pushback questions (up to six). Answers are graded in one call to grip-ai-api (`/api/v1/ai/grade-followups`); unanswered questions count as missing. The result is saved inside the board's assessment on Save, is dropped when the reasoning changes, and does not affect readiness.
 
 ### Changed

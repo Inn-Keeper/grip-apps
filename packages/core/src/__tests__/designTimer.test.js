@@ -2,6 +2,7 @@ import {
   DESIGN_PHASES,
   ROUND_MINUTES,
   ROUND_MS,
+  SPRINT_PHASES,
   formatClock,
   phaseAt,
   roundProgress,
@@ -105,5 +106,16 @@ describe("formatClock", () => {
 
   it("renders overtime with a leading minus", () => {
     expect(formatClock(-90_000)).toBe("-01:30");
+  });
+});
+
+describe("skeleton sprint", () => {
+  it("runs two minutes of scope, then eight of skeleton, on the same clock", () => {
+    expect(phaseAt(1 * MIN, SPRINT_PHASES).phase.id).toBe("sprintScope");
+    expect(phaseAt(2 * MIN, SPRINT_PHASES).phase.id).toBe("sprintSkeleton");
+    expect(roundProgress(4 * MIN, SPRINT_PHASES).remainingMs).toBe(6 * MIN);
+    expect(roundProgress(10 * MIN + 1, SPRINT_PHASES).overrun).toBe(true);
+    // The full round is untouched.
+    expect(roundProgress(10 * MIN + 1).overrun).toBe(false);
   });
 });

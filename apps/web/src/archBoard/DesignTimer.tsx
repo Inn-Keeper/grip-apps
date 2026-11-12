@@ -1,4 +1,4 @@
-import { DESIGN_PHASES, ROUND_MINUTES, formatClock } from "@grip/core/designTimer";
+import { formatClock } from "@grip/core/designTimer";
 import { t } from "@grip/core/i18n";
 import { TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { alpha, colors, font, shadow } from "../lib/tokens";
@@ -10,8 +10,14 @@ const sectionLabels = (ids: string[]) =>
   ids.map((id) => TALK_TRACK_SECTIONS.find((s) => s.id === id)?.label ?? id).join(" · ");
 
 /** The round's own panel. State lives in useDesignRound, shared with the rail. */
-export function DesignTimer({ round }: { round: DesignRound }) {
-  const { running, elapsedMs, started, phase, index, phaseRemainingMs, overrun, remainingMs, start, pause, reset } = round;
+export function DesignTimer({ round, onFinishSprint, summary }: {
+  round: DesignRound;
+  /** Ends a running sprint: stops the clock and evaluates the board. */
+  onFinishSprint?: () => void;
+  /** The finished sprint's result line, once there is one. */
+  summary?: string | null;
+}) {
+  const { running, started, phase, index, phaseRemainingMs, overrun, remainingMs, overrunMs, phases, minutes, sprint, start, pause, reset } = round;
 
   const clockColor = overrun ? colors.danger : phaseRemainingMs <= 60_000 && started ? colors.warning : colors.textBright;
 
@@ -46,7 +52,7 @@ export function DesignTimer({ round }: { round: DesignRound }) {
             fontVariantNumeric: "tabular-nums",
             lineHeight: 1
           }}>
-          {overrun ? formatClock(-(elapsedMs - ROUND_MINUTES * 60_000)) : formatClock(remainingMs)}
+          {overrun ? formatClock(-overrunMs) : formatClock(remainingMs)}
         </span>
         <div style={{
             display: "flex",
@@ -59,13 +65,13 @@ export function DesignTimer({ round }: { round: DesignRound }) {
               fontWeight: 700,
               color: overrun ? colors.dangerBright : colors.accentBright
             }}>
-            {overrun ? t("timer.overtime") : started ? phase.label : t("timer.round", { minutes: ROUND_MINUTES })}
+            {overrun ? t("timer.overtime") : started ? phase.label : t("timer.round", { minutes })}
           </span>
           <span style={{
               fontSize: font.size.label,
               color: colors.textFaint
             }}>
-            {started ? sectionLabels(phase.sectionIds) : t("timer.idleHint")}
+            {!started ? t("timer.idleHint") : phase.sectionIds.length ? sectionLabels(phase.sectionIds) : t("sprint.hint")}
           </span>
         </div>
       </div>
@@ -77,7 +83,7 @@ export function DesignTimer({ round }: { round: DesignRound }) {
           height: 8,
           marginTop: 12
         }}>
-        {DESIGN_PHASES.map((p, i) => (
+        {phases.map((p, i) => (
           <div
             key={p.id}
             title={`${p.label} · ${p.minutes} min`}
@@ -138,6 +144,14 @@ export function DesignTimer({ round }: { round: DesignRound }) {
           </button>
         )}
       </div>
+
+      {/* A sprint ends when the whole diagram is up, not when the clock says so. */}
+      {sprint && started && !summary && onFinishSprint && (
+        <button type="button" onClick={onFinishSprint} className={styles.finish}>
+          {t("sprint.finish")}
+        </button>
+      )}
+      <p role="status" className={styles.summary}>{summary ?? ""}</p>
     </div>
   );
 }

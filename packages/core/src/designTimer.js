@@ -24,6 +24,16 @@ export const DESIGN_PHASES = [
   { id: "wrap", label: "Defend it", minutes: 5, sectionIds: ["tradeoff"] },
 ];
 
+// The skeleton sprint: scope fast, then every box and arrow. Depth comes after.
+/** @type {DesignPhase[]} */
+export const SPRINT_PHASES = [
+  { id: "sprintScope", label: "Scope it", minutes: 2, sectionIds: ["requirements"] },
+  { id: "sprintSkeleton", label: "Draw every box", minutes: 8, sectionIds: [] },
+];
+
+/** Total length of a phase list, in ms. */
+export const phasesMs = (phases) => phases.reduce((sum, phase) => sum + phase.minutes, 0) * MS_PER_MINUTE;
+
 export const ROUND_MINUTES = DESIGN_PHASES.reduce((sum, phase) => sum + phase.minutes, 0);
 export const ROUND_MS = ROUND_MINUTES * MS_PER_MINUTE;
 
@@ -36,6 +46,7 @@ const safeElapsed = (elapsedMs) => (Number.isFinite(elapsedMs) && elapsedMs > 0 
  * is information, not a reason to show a phase that doesn't exist.
  *
  * @param {number} elapsedMs
+ * @param {DesignPhase[]} [phases] the full round unless a sprint is running
  * @returns {{
  *   phase: DesignPhase,
  *   index: number,
@@ -44,12 +55,12 @@ const safeElapsed = (elapsedMs) => (Number.isFinite(elapsedMs) && elapsedMs > 0 
  *   overrun: boolean,
  * }}
  */
-export function phaseAt(elapsedMs) {
+export function phaseAt(elapsedMs, phases = DESIGN_PHASES) {
   const elapsed = safeElapsed(elapsedMs);
 
   let phaseStart = 0;
-  for (let index = 0; index < DESIGN_PHASES.length; index += 1) {
-    const phase = DESIGN_PHASES[index];
+  for (let index = 0; index < phases.length; index += 1) {
+    const phase = phases[index];
     const phaseMs = phase.minutes * MS_PER_MINUTE;
     if (elapsed < phaseStart + phaseMs) {
       const phaseElapsedMs = elapsed - phaseStart;
@@ -58,11 +69,11 @@ export function phaseAt(elapsedMs) {
     phaseStart += phaseMs;
   }
 
-  const index = DESIGN_PHASES.length - 1;
+  const index = phases.length - 1;
   return {
-    phase: DESIGN_PHASES[index],
+    phase: phases[index],
     index,
-    phaseElapsedMs: DESIGN_PHASES[index].minutes * MS_PER_MINUTE,
+    phaseElapsedMs: phases[index].minutes * MS_PER_MINUTE,
     phaseRemainingMs: 0,
     overrun: true,
   };
@@ -71,14 +82,16 @@ export function phaseAt(elapsedMs) {
 /**
  * Whole-round countdown state.
  * @param {number} elapsedMs
+ * @param {DesignPhase[]} [phases]
  * @returns {{ remainingMs: number, percent: number, overrun: boolean }}
  */
-export function roundProgress(elapsedMs) {
+export function roundProgress(elapsedMs, phases = DESIGN_PHASES) {
   const elapsed = safeElapsed(elapsedMs);
+  const totalMs = phasesMs(phases);
   return {
-    remainingMs: Math.max(0, ROUND_MS - elapsed),
-    percent: Math.min(100, Math.round((elapsed / ROUND_MS) * 100)),
-    overrun: elapsed > ROUND_MS,
+    remainingMs: Math.max(0, totalMs - elapsed),
+    percent: Math.min(100, Math.round((elapsed / totalMs) * 100)),
+    overrun: elapsed > totalMs,
   };
 }
 

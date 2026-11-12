@@ -47,3 +47,27 @@
     opacity: 0.55;
   }
 }
+
+.finish {
+  width: 100%;
+  margin-top: 10px;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid var(--c-accent);
+  border-radius: 8px;
+  color: var(--c-accent-bright);
+  font-size: var(--fs-small);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.summary {
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: 700;
+  color: var(--c-text-bright);
+}
+
+.summary:not(:empty) {
+  margin-top: 10px;
+}

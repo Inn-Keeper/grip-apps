@@ -86,3 +86,6 @@ export type BoardSummary = Pick<SavedBoard, "id" | "title" | "scenarioId" | "sto
   createdAt: string;
   updatedAt: string;
 };
+
+/** One finished skeleton sprint: time to a full diagram and the checks it covered. */
+export type SprintResult = { seconds: number; ranOut: boolean; hit: number; total: number; missed: string[] };
