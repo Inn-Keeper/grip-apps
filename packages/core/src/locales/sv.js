@@ -674,6 +674,8 @@ export const sv = {
   "followups.hint": "Svara på följdfrågorna en intervjuare skulle ställa härnäst. Varje svar får ett omdöme. Det här betyget är skilt från tavlans beredskap.",
   "followups.gradeAction": "Bedöm mina svar",
   "followups.score": "Betyg för följdfrågor: {score} %",
+  "followups.progress": "Fråga {n} av {total}",
+  "followups.previous": "← Föregående",
   "timer.offer": "Öva på tid",
   "timer.offerHint": "En runda på {minutes} minuter, upplagd som på riktigt.",
   "timer.round": "{minutes}-min runda",

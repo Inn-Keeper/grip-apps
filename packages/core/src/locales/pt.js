@@ -674,6 +674,8 @@ export const pt = {
   "followups.hint": "Responda às perguntas que um entrevistador faria em seguida. Cada resposta recebe um veredito. Esta nota é separada da prontidão do quadro.",
   "followups.gradeAction": "Avaliar minhas respostas",
   "followups.score": "Nota das respostas: {score}%",
+  "followups.progress": "Pergunta {n} de {total}",
+  "followups.previous": "← Anterior",
   "timer.offer": "Praticar com tempo",
   "timer.offerHint": "Uma rodada de {minutes} minutos, no formato real.",
   "timer.round": "Rodada de {minutes} min",

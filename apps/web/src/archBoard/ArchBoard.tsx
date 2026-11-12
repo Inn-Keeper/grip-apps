@@ -808,7 +808,8 @@ export default function ArchBoard() {
               </BoardSurface>
             </div>
 
-            {result && !free && <EvalResults result={result} pushback={buildPushback(scenario, nodes)} showScore={false} change={evaluationChange} onInspect={inspectCheck} />}
+            {/* Once the written round is on offer, the out-loud list would only repeat it. */}
+            {result && !free && <EvalResults result={result} pushback={talkDetail && talkGradeEnabled ? [] : buildPushback(scenario, nodes)} showScore={false} change={evaluationChange} onInspect={inspectCheck} />}
           </>
         )}
       </div>

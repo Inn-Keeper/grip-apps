@@ -674,6 +674,8 @@ export const en = {
   "followups.hint": "Answer the follow-ups an interviewer would ask next. Each answer gets a verdict. This grade is separate from board readiness.",
   "followups.gradeAction": "Grade my answers",
   "followups.score": "Follow-up grade: {score}%",
+  "followups.progress": "Question {n} of {total}",
+  "followups.previous": "← Previous",
   "timer.offer": "Practise under time",
   "timer.offerHint": "A {minutes}-minute round, scoped like the real thing.",
   "timer.round": "{minutes}-min round",

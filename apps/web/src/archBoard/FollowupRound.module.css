@@ -58,6 +58,9 @@
   outline-offset: 1px;
 }
 
-.grade {
-  align-self: flex-start;
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
 }
