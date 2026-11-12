@@ -179,7 +179,7 @@ export function createTalkGradeApi(getToken, baseUrl) {
     const payload = await response.json().catch(() => null);
     if (!response.ok) {
       const error = payload?.error ?? {};
-      throw new TalkGradeError(error.message ?? "talkGrade: the request failed", {
+      throw new TalkGradeError(error.message ?? `talkGrade: the request failed (HTTP ${response.status})`, {
         code: error.code,
         status: response.status,
         requestId: error.request_id,
