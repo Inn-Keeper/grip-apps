@@ -23,7 +23,7 @@ export function WorkflowSteps({
   round,
 }: {
   activeStep: number;
-  /** The step's action, only while the Next Up card is off screen (rules 1, 6). */
+  /** The step's one main action; this rail is its only home (rule 1). */
   action: RailAction | null;
   /** The running round, only while its panel is off screen. One progress surface. */
   round: DesignRound | null;

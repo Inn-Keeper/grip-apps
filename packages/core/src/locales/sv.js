@@ -394,7 +394,6 @@ export const sv = {
   "board.stepAddSubTouch": "Tryck på en byggsten i paletten längst ned på tavlan.",
   "board.stepConnectSubTouch": "Dra från en nods handtag till noden den pratar med.",
   "board.stepDescribeSubTouch": "Tryck på en pil för läge och protokoll, och utvärdera sedan.",
-  "board.orSave": "spara tavlan",
   "board.orTalk": "öppna talk track",
   "board.scoreLabel": "Designpoäng",
   "board.scoreHint": "{earned} av {total} poäng",

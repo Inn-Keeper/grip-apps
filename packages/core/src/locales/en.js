@@ -394,7 +394,6 @@ export const en = {
   "board.stepAddSubTouch": "Tap a block in the palette at the bottom of the board.",
   "board.stepConnectSubTouch": "Drag from a node's handle to the node it talks to.",
   "board.stepDescribeSubTouch": "Tap an arrow to set its mode and protocol, then evaluate.",
-  "board.orSave": "save the board",
   "board.orTalk": "open the talk track",
   "board.scoreLabel": "Design score",
   "board.scoreHint": "{earned} of {total} points",

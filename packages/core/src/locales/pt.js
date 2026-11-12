@@ -394,7 +394,6 @@ export const pt = {
   "board.stepAddSubTouch": "Toque num bloco da paleta na parte de baixo do quadro.",
   "board.stepConnectSubTouch": "Arraste da alça de um nó até o nó com que ele fala.",
   "board.stepDescribeSubTouch": "Toque numa seta para definir modo e protocolo, depois avalie.",
-  "board.orSave": "salvar o board",
   "board.orTalk": "abrir o talk track",
   "board.scoreLabel": "Nota do design",
   "board.scoreHint": "{earned} de {total} pontos",

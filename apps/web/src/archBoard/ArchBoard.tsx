@@ -35,7 +35,6 @@ import { ViewportControls } from "./ViewportControls";
 import { BoardSurface } from "./BoardSurface";
 import { BoardNextUp } from "./BoardNextUp";
 import { BoardToolbar } from "./BoardToolbar";
-import { RailActionButton } from "./RailActionButton";
 import { useCanvasPointer } from "./useCanvasPointer";
 import { BoardEdges } from "./BoardEdges";
 import { BoardNodeCard } from "./BoardNodeCard";
@@ -96,10 +95,8 @@ export default function ArchBoard() {
   // The section the verdict card sends you to; cleared once the cursor lands.
   const [focusSection, setFocusSection] = useState<string | null>(null);
   const round = useDesignRound();
-  // Next Up and the step's action repeat in the sticky rail only while scrolled away;
-  // the clock joins it only while its own panel is off screen (rule 6).
-  const [nextUpVisible, nextUpRef] = useInView(true);
-  const [ctaVisible, ctaRef] = useInView(false);
+  // The step's action lives in the sticky rail only. The clock joins the rail
+  // only while its own panel is off screen (rule 6).
   const [timerVisible, timerRef] = useInView(true);
   const [activeBoardId, setActiveBoardId] = useState<string | null>(null);
   const [activeBoardTitle, setActiveBoardTitle] = useState<string | null>(null);
@@ -452,11 +449,7 @@ export default function ArchBoard() {
   // Past step 3 the design is scored and the unscored half is the talk track,
   // so the one main action becomes writing it rather than evaluating again.
   const explaining = activeWorkflowStep >= 4;
-  // From Explain on, the action belongs beside the sections it opens, so the
-  // card and the sticky rail both stand down and it appears exactly once.
-  const actionInRightRail = activeWorkflowStep >= 4 && !talkOpen;
-  // One definition of the step's main action. The Next Up card renders it, and
-  // the sticky rail repeats it only once that card has scrolled away.
+  // One definition of the step's main action, rendered once, in the sticky rail.
   const kind = primaryActionKind({ hasLatestBoard: Boolean(latestBoard), hasUndescribed: Boolean(pendingDescription), hasWeakest: Boolean(verdict?.weakest), explaining, empty: design.nodes.length === 0, free });
   const primaryAction: RailAction =
     kind === "continue" && latestBoard
@@ -541,18 +534,6 @@ export default function ArchBoard() {
             activeWorkflowStep === 1 && <TimerOffer onStart={round.start} />
           )}
 
-          {/* Above the sections it opens, where the round used to sit: the button
-              and the thing it produces share a place, so pressing it reads as
-              the panel arriving rather than something happening elsewhere.
-              Inset on every side by the halo's own width. The rail scrolls its
-              overflow and this is usually its last child, so without the room
-              the ring is cut off at the sides and along the bottom edge. */}
-          {actionInRightRail && !free && (
-            <div ref={ctaRef} style={{ padding: 8 }}>
-              <RailActionButton action={primaryAction} />
-            </div>
-          )}
-
           {inspectingEdgeId && edges.find((e) => e.id === inspectingEdgeId) && (() => {
             const edge = edges.find((e) => e.id === inspectingEdgeId)!;
             return (
@@ -572,7 +553,7 @@ export default function ArchBoard() {
           )}
 
           {talkOpen && (
-            <div ref={ctaRef}>
+            <div>
             <TalkTrack
               sections={talkSections}
               rating={talkRating}
@@ -649,20 +630,16 @@ export default function ArchBoard() {
             <>
             <WorkflowSteps
               activeStep={activeWorkflowStep}
-              action={nextUpVisible || ctaVisible ? null : primaryAction}
+              action={primaryAction}
               round={round.started && !timerVisible ? round : null}
             />
-            <div ref={nextUpRef}>
+            <div>
               <BoardNextUp
                 latestBoard={latestBoard}
                 allScenarios={allScenarios}
                 stepCopy={stepCopy}
-                action={primaryAction}
-                actionInRightRail={actionInRightRail}
                 explaining={explaining}
                 offerEvaluation={activeWorkflowStep === 3 && Boolean(pendingDescription)}
-                saving={saveBoardMutation.isPending}
-                onSave={saveBoard}
                 onEvaluate={evaluateDesign}
               />
             </div>

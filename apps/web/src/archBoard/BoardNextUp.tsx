@@ -1,25 +1,20 @@
 import { t } from "@grip/core/i18n";
 import { colors } from "../lib/tokens";
 import { NextUpLink, NextUpShell } from "../components/NextUpShell";
-import type { RailAction } from "./WorkflowSteps";
 import type { AugmentedScenario, BoardSummary } from "./types";
 
 type Props = {
   latestBoard: BoardSummary | undefined;
   allScenarios: AugmentedScenario[];
   stepCopy: { title: string; sub: string };
-  action: RailAction;
-  // True when the action sits in the right rail, so the card offers only the links.
-  actionInRightRail: boolean;
   explaining: boolean;
   offerEvaluation: boolean;
-  saving: boolean;
-  onSave: () => void;
   onEvaluate: () => void;
 };
 
-// Next Up for the board: resume the latest saved board, else coach the current step.
-export function BoardNextUp({ latestBoard, allScenarios, stepCopy, action, actionInRightRail, explaining, offerEvaluation, saving, onSave, onEvaluate }: Props) {
+// Next Up for the board: says what to do now. The button itself lives in the
+// sticky step rail, so the action has one home at every step.
+export function BoardNextUp({ latestBoard, allScenarios, stepCopy, explaining, offerEvaluation, onEvaluate }: Props) {
   if (latestBoard)
     return (
       <NextUpShell
@@ -29,9 +24,8 @@ export function BoardNextUp({ latestBoard, allScenarios, stepCopy, action, actio
           date: new Date(latestBoard.updatedAt).toLocaleDateString(),
         })}
         tone={colors.accent ?? ""}
-        actionLabel={action.label}
-        actionIcon={action.icon}
-        onAction={action.onClick}
+        actionLabel=""
+        onAction={null}
       />
     );
   return (
@@ -39,18 +33,10 @@ export function BoardNextUp({ latestBoard, allScenarios, stepCopy, action, actio
       title={stepCopy.title}
       sub={stepCopy.sub}
       tone={colors.accent ?? ""}
-      actionLabel={action.label}
-      actionIcon={action.icon}
-      onAction={actionInRightRail ? null : action.onClick}
-      disabled={action.disabled}
-      links={
-        <>
-          {/* The leading "or" answers a button beside it. With the action in the
-              right rail there is nothing for it to answer. */}
-          <NextUpLink label={t("board.orSave")} onClick={onSave} disabled={saving} withOr={!actionInRightRail} />
-          {(explaining || offerEvaluation) && <NextUpLink label={t("board.evaluateDesign")} onClick={onEvaluate} />}
-        </>
-      }
+      actionLabel=""
+      onAction={null}
+      // Evaluating again is offered only when the main action is something else.
+      links={(explaining || offerEvaluation) && <NextUpLink label={t("board.evaluateDesign")} onClick={onEvaluate} withOr={false} />}
     />
   );
 }
