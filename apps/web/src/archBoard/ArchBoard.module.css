@@ -244,3 +244,21 @@
 .feedbackFocus button:focus-visible { outline: 2px solid var(--c-accent-bright); border-radius: 8px; }
 @media (hover: none), (pointer: coarse) { .documentToolbar .toolbarButton { min-height: 44px; } }
 @media (prefers-reduced-motion: no-preference) { .node { transition: border-color 150ms ease, box-shadow 150ms ease; } }
+
+/* Locate: the found parts pulse for a couple of seconds so the eye lands on them.
+   Two identical keyframes (a/b) let a repeat press restart the animation. */
+.canvas[data-locate="a"] .node[data-feedback] { animation: locateNodeA 0.6s ease-in-out 4; }
+.canvas[data-locate="b"] .node[data-feedback] { animation: locateNodeB 0.6s ease-in-out 4; }
+.canvas[data-locate="a"] g[data-feedback] > path { animation: locateEdgeA 0.6s ease-in-out 4; }
+.canvas[data-locate="b"] g[data-feedback] > path { animation: locateEdgeB 0.6s ease-in-out 4; }
+
+@keyframes locateNodeA { 50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--arch-accent) 45%, transparent); } }
+@keyframes locateNodeB { 50% { box-shadow: 0 0 0 9px color-mix(in srgb, var(--arch-accent) 45%, transparent); } }
+@keyframes locateEdgeA { 50% { stroke-width: 7; } }
+@keyframes locateEdgeB { 50% { stroke-width: 7; } }
+
+/* Rule 35: the steady highlight stays, the pulse goes. */
+@media (prefers-reduced-motion: reduce) {
+  .canvas[data-locate] .node[data-feedback],
+  .canvas[data-locate] g[data-feedback] > path { animation: none; }
+}

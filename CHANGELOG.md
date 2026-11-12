@@ -19,6 +19,7 @@ because they have to be applied by hand.
 - Story grading and the follow-up round show the same spinner as the talk track while the model is working. The spinner moved to `components/Spinner.module.css`.
 - The Arch Board's "Describe this arrow" action stops shining and is disabled while that arrow's editor is already open.
 - Arch Board follow-up round shows one question at a time with Previous and Next; one press still grades every answer. The out-loud "Interviewer follow-ups" list under the evaluation is hidden once the written round is on offer.
+- Locate on an Arch Board check pulses the matching components and arrows for a couple of seconds, and pulses again on a repeat press. Reduced motion keeps the steady highlight only.
 - The describe action reads "Describe arrow 2 of 5" so finishing one arrow visibly moves on to the next.
 - The Arch Board's main action has one home, the sticky step rail. The Next Up card is text only (it keeps the "evaluate design" link when the main action is something else), the right rail no longer repeats the button, and the duplicate "save the board" link is gone since Save is in the toolbar.
 

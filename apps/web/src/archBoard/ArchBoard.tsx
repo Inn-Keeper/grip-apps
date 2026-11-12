@@ -409,6 +409,8 @@ export default function ArchBoard() {
     if (target.missing) setComponentsRequest((value) => value + 1);
     editorRef.current?.scrollIntoView({ behavior: "auto", block: "start" });
     canvasRef.current?.focus({ preventScroll: true });
+    // Flips between two identical animations so locating the same check again replays the pulse.
+    if (canvasRef.current) canvasRef.current.dataset.locate = canvasRef.current.dataset.locate === "a" ? "b" : "a";
   };
   // The grader checks the candidate's arithmetic against the design checks, so
   // run evaluate() here rather than making the user press Evaluate design first.
