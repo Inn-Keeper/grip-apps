@@ -4,6 +4,7 @@ import type { StoryGradeResult } from "@grip/core/api";
 import { colors, font } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import { ErrorText } from "../components/ErrorText";
+import spinner from "../components/Spinner.module.css";
 import { storyGradeEnabled, useGradeStoryMutation } from "./queries";
 import type { Story } from "./types";
 
@@ -38,7 +39,8 @@ export function StoryGrade({ story }: { story: Story }) {
           gap: 10,
           flexWrap: "wrap"
         }}>
-        <button type="button" className="tap" disabled={mutation.isPending} onClick={() => mutation.mutate(story)} style={miniBtn(colors.accentBright ?? "")}>
+        <button type="button" className={`tap ${spinner.withSpinner}`} disabled={mutation.isPending} aria-busy={mutation.isPending} onClick={() => mutation.mutate(story)} style={miniBtn(colors.accentBright ?? "")}>
+          {mutation.isPending && <span aria-hidden="true" className={spinner.spinner} />}
           {mutation.isPending ? t("talk.grading") : t(grade || stale ? "stories.gradeAgain" : "stories.gradeAction")}
         </button>
         <span style={{

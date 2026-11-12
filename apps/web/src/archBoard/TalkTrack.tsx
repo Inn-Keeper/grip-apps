@@ -5,7 +5,7 @@ import { alpha, colors, shadow, font } from "../lib/tokens";
 import { AbbrText } from "../components/AbbrText";
 import { BrandIcon } from "../components/BrandIcon";
 import { REVIEW_SCORE, SHIP_SCORE } from "./constants";
-import styles from "./ArchBoard.module.css";
+import spinner from "../components/Spinner.module.css";
 import type { TalkGradeResult } from "./types";
 import { ErrorText } from "../components/ErrorText";
 
@@ -298,7 +298,7 @@ export function TalkTrack({
                 cursor: grading || gradeBlocked ? "default" : "pointer",
               }}
             >
-              {grading && <span aria-hidden="true" className={styles.gradeSpinner} />}
+              {grading && <span aria-hidden="true" className={spinner.spinner} />}
               {grading ? t("talk.grading") : t("talk.gradeAction")}
             </button>
             {/* Rule 13: the reason and the result sit next to the button that was clicked. */}

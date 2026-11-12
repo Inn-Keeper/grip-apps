@@ -12,6 +12,15 @@ because they have to be applied by hand.
 - Web Story Bank: "Grade this story" on a story's detail view sends the STAR to grip-ai-api (`/api/v1/ai/grade-story`) and shows a score, a verdict per section, the interviewer's next question for each and the hardest follow-up. The grade is saved with the story and marked stale once the story is edited. Hidden when `VITE_AI_URL` is unset.
 - Web Arch Board: once the talk track is graded, a written defence round appears under it with the grader's hardest follow-up and the board's own pushback questions (up to six). Answers are graded in one call to grip-ai-api (`/api/v1/ai/grade-followups`); unanswered questions count as missing. The result is saved inside the board's assessment on Save, is dropped when the reasoning changes, and does not affect readiness.
 
+### Changed
+
+- Story grading and the follow-up round show the same spinner as the talk track while the model is working. The spinner moved to `components/Spinner.module.css`.
+- The Arch Board's "Describe this arrow" action stops shining and is disabled while that arrow's editor is already open.
+
+### Fixed
+
+- A grading request refused without an error body (for example a 404 from an AI service started before the endpoint existed) now names the HTTP status instead of only "the request failed".
+
 ### Database
 
 - `0034_stories_assessment.sql`: nullable `stories.assessment jsonb` for the saved story grade. Not applied yet; apply it before deploying web or mobile, because the shared story list query now selects this column.

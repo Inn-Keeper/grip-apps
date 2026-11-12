@@ -5,6 +5,7 @@ import { colors } from "../lib/tokens";
 import { miniBtn } from "../components/fieldStyles";
 import { ErrorText } from "../components/ErrorText";
 import styles from "./FollowupRound.module.css";
+import spinner from "../components/Spinner.module.css";
 
 // Same wording and colours as the talk-track verdicts.
 const VERDICTS = {
@@ -56,11 +57,13 @@ export function FollowupRound({ questions, saved, grading, error, onGrade }: {
       })}
       <button
         type="button"
-        className={`tap ${styles.grade}`}
+        className={`tap ${styles.grade} ${spinner.withSpinner}`}
+        aria-busy={grading}
         disabled={grading || !followups.some(({ answer }) => answer.trim())}
         onClick={() => onGrade(followups)}
         style={miniBtn(colors.accentBright ?? "")}
       >
+        {grading && <span aria-hidden="true" className={spinner.spinner} />}
         {grading ? t("talk.grading") : t("followups.gradeAction")}
       </button>
       {error && <ErrorText>{`${t("talk.gradeFailed")}: ${error.message}`}</ErrorText>}
