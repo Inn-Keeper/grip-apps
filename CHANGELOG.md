@@ -9,6 +9,11 @@ because they have to be applied by hand.
 ### Added
 
 - Web Prep quizzes and drills show each question's stored explanation under the options once it is answered. Static fallback questions have none and show nothing.
+- Web Story Bank: "Grade this story" on a story's detail view sends the STAR to grip-ai-api (`/api/v1/ai/grade-story`) and shows a score, a verdict per section, the interviewer's next question for each and the hardest follow-up. The grade is saved with the story and marked stale once the story is edited. Hidden when `VITE_AI_URL` is unset.
+
+### Database
+
+- `0034_stories_assessment.sql`: nullable `stories.assessment jsonb` for the saved story grade. Not applied yet; apply it before deploying web or mobile, because the shared story list query now selects this column.
 
 ## 2026-11-09
 

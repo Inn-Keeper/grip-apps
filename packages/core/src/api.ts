@@ -40,6 +40,17 @@ export type Contact = {
   retros?: Retro[];
 };
 
+export type StoryGradeResult = {
+  score: number;
+  suggestion: {
+    sections: { section: string; verdict: "covered" | "thin" | "missing"; evidence: string; gap: string }[];
+    hardest_followup: string;
+  };
+};
+
+/** Saved AI grade; `inputs` are the story fields it graded (see storyGrade.js). */
+export type StoryAssessment = { version: number; inputs: Record<string, string>; result: StoryGradeResult };
+
 export type Story = {
   id?: string;
   title: string;
@@ -54,6 +65,8 @@ export type Story = {
   isSample?: boolean;
   /** Name of the generated playbook this story came from; null for manual stories */
   playbook?: string | null;
+  /** Read-only here: written by saveStoryAssessment, never by upsertStory */
+  assessment?: StoryAssessment | null;
 };
 
 export type Scores = {

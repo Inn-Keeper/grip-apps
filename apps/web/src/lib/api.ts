@@ -4,6 +4,7 @@ import { createPipelineApi } from "@grip/core/pipeline";
 import { createLedgerImportApi } from "@grip/core/ledgerImport";
 import { createPostingReaderApi } from "@grip/core/postingReader";
 import { createTalkGradeApi } from "@grip/core/talkGrade";
+import { createStoryGradeApi } from "@grip/core/storyGrade";
 import { createPlaybookApi } from "@grip/core/firstRun";
 import { createPoeChatApi } from "@grip/core/poeChat";
 import { supabase } from "./supabase";
@@ -27,6 +28,7 @@ const pipeline = pipelineUrl ? createPipelineApi(getToken, pipelineUrl) : null;
 // action rather than offering a button that can only fail.
 const talkGrade = aiUrl ? createTalkGradeApi(getToken, aiUrl) : null;
 // Same service and same rule: no AI URL, no import button.
+const storyGrade = aiUrl ? createStoryGradeApi(getToken, aiUrl) : null;
 const ledgerImport = aiUrl ? createLedgerImportApi(getToken, aiUrl) : null;
 const postingReader = aiUrl ? createPostingReaderApi(getToken, aiUrl) : null;
 const playbookApi = aiUrl ? createPlaybookApi(getToken, aiUrl) : null;
@@ -34,7 +36,7 @@ const poeChat = aiUrl ? createPoeChatApi(getToken, aiUrl) : null;
 
 const api = createApi(supabase);
 
-export { dateToUi, dateToDb, pipeline, talkGrade, ledgerImport, postingReader, playbookApi, poeChat };
+export { dateToUi, dateToDb, pipeline, talkGrade, storyGrade, ledgerImport, postingReader, playbookApi, poeChat };
 export const {
   listBoards,
   listBoardSummaries,
@@ -59,6 +61,7 @@ export const {
   listStories,
   upsertStory,
   deleteStory,
+  saveStoryAssessment,
   getScores,
   getQuestions,
   recordAnswer,

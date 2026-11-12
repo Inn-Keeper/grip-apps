@@ -1,3 +1,5 @@
+import type { StoryAssessment } from "@grip/core/api";
+
 export type Story = {
   id?: string;
   title: string;
@@ -9,6 +11,7 @@ export type Story = {
   scenarioId?: string | null;
   isSample?: boolean;
   playbook?: string | null;
+  assessment?: StoryAssessment | null;
 };
 
 export type StoryForm = Omit<Story, "id"> & { id?: string };

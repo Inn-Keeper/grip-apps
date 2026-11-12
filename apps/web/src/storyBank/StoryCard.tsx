@@ -5,6 +5,7 @@ import hover from "../components/HoverCard.module.css";
 import { CompetencyBadge } from "./CompetencyBadge";
 import { FirstRunTags } from "./FirstRunTags";
 import { StoryLinks } from "./StoryLinks";
+import { StoryGrade } from "./StoryGrade";
 import type { Story } from "./types";
 import { ErrorText } from "../components/ErrorText";
 
@@ -145,6 +146,7 @@ export function StoryDetail({ story, onEdit, onDelete, error }: { story: Story; 
           color: colors.textBright
         }}>{story.title}</h2>
       <StarSections story={story} />
+      <StoryGrade story={story} />
       <StoryLinks story={story} />
       {error && <ErrorText margin="12px 0 0">{error}</ErrorText>}
     </div>

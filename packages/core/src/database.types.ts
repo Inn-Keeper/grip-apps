@@ -374,6 +374,7 @@ export type Database = {
       stories: {
         Row: {
           action: string | null
+          assessment: Json | null
           competency: string
           created_at: string
           id: string
@@ -388,6 +389,7 @@ export type Database = {
         }
         Insert: {
           action?: string | null
+          assessment?: Json | null
           competency: string
           created_at?: string
           id?: string
@@ -402,6 +404,7 @@ export type Database = {
         }
         Update: {
           action?: string | null
+          assessment?: Json | null
           competency?: string
           created_at?: string
           id?: string

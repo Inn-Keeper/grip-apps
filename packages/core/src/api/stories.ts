@@ -1,6 +1,6 @@
 // STAR stories.
-import type { Story } from "../api";
-import { fail, type Db, type Tables, type TablesInsert } from "./shared";
+import type { Story, StoryAssessment } from "../api";
+import { fail, type Db, type Json, type Tables, type TablesInsert } from "./shared";
 
 type StoryRow = Omit<Tables<"stories">, "user_id" | "created_at" | "updated_at">;
 
@@ -16,6 +16,7 @@ export function storiesApi(supabase: Db) {
     scenarioId: r.scenario_id ?? null,
     isSample: r.is_sample ?? false,
     playbook: r.playbook ?? null,
+    assessment: (r.assessment as unknown as StoryAssessment | null) ?? null,
   });
 
   const storyToDb = (s: Story) => ({
@@ -33,7 +34,7 @@ export function storiesApi(supabase: Db) {
   }) satisfies TablesInsert<"stories">;
 
   async function listStories(): Promise<Story[]> {
-    const { data, error } = await supabase.from("stories").select("id,title,competency,situation,task,action,result,scenario_id,is_sample,playbook").order("created_at");
+    const { data, error } = await supabase.from("stories").select("id,title,competency,situation,task,action,result,scenario_id,is_sample,playbook,assessment").order("created_at");
     if (error) fail(error);
     return data.map(storyToUi);
   }
@@ -52,5 +53,10 @@ export function storiesApi(supabase: Db) {
     if (error) fail(error);
   }
 
-  return { listStories, upsertStory, deleteStory };
+  async function saveStoryAssessment(id: string, assessment: StoryAssessment): Promise<void> {
+    const { error } = await supabase.from("stories").update({ assessment: assessment as unknown as Json }).eq("id", id);
+    if (error) fail(error);
+  }
+
+  return { listStories, upsertStory, deleteStory, saveStoryAssessment };
 }

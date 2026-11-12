@@ -35,6 +35,7 @@
     "./pushback": "./src/pushback.js",
     "./talkTrack": "./src/talkTrack.js",
     "./talkGrade": "./src/talkGrade.js",
+    "./storyGrade": "./src/storyGrade.js",
     "./designTimer": "./src/designTimer.js",
     "./workflowState": "./src/workflowState.js",
     "./gradeState": "./src/gradeState.js",
