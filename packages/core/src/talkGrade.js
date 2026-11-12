@@ -134,6 +134,24 @@ export function createTalkGradeApi(getToken, baseUrl) {
    * @param {AbortSignal} [args.signal]
    */
   async function gradeTalkTrack({ boardId, facts, sections, selfRating = null, signal }) {
+    return post(url, { board_id: boardId, facts, sections: gradeSections(sections), self_rating: selfRating }, signal);
+  }
+
+  /**
+   * Grades written answers to interviewer follow-ups, in one call.
+   *
+   * @param {object} args
+   * @param {string} args.boardId
+   * @param {object} args.facts from buildGradeFacts
+   * @param {{ question: string, answer: string }[]} args.followups
+   * @param {AbortSignal} [args.signal]
+   */
+  async function gradeFollowups({ boardId, facts, followups, signal }) {
+    return post(`${base}/api/v1/ai/grade-followups`, { board_id: boardId, facts, followups }, signal);
+  }
+
+  /** Authenticated POST that turns a service error body into a TalkGradeError. */
+  async function post(endpoint, body, signal) {
     const token = await getToken();
     if (!token) {
       throw new TalkGradeError("talkGrade: no auth token, user must be signed in", {
@@ -143,16 +161,11 @@ export function createTalkGradeApi(getToken, baseUrl) {
 
     let response;
     try {
-      response = await fetch(url, {
+      response = await fetch(endpoint, {
         method: "POST",
         signal,
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
-        body: JSON.stringify({
-          board_id: boardId,
-          facts,
-          sections: gradeSections(sections),
-          self_rating: selfRating,
-        }),
+        body: JSON.stringify(body),
       });
     } catch (cause) {
       // An aborted request is the caller changing its mind, not a failure.
@@ -175,5 +188,5 @@ export function createTalkGradeApi(getToken, baseUrl) {
     return payload;
   }
 
-  return { gradeTalkTrack, getGradingStatus };
+  return { gradeTalkTrack, gradeFollowups, getGradingStatus };
 }

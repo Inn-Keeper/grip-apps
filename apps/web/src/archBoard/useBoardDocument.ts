@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { commitSnapshot, createHistory, redo, sameSnapshot, undo } from "@grip/core/boardHistory";
 import { applyBoardPatch, makeAssessment } from "@grip/core/gradeState";
+import type { FollowupRound } from "@grip/core/api";
 import type { BoardEdge, BoardNode, TalkAssessment, TalkGradeResult } from "./types";
 
 // Everything a saved board persists. Key order matters: snapshots compare as JSON.
@@ -60,6 +61,13 @@ export function useBoardDocument(initial: () => BoardDoc, onApply: (prev: BoardD
     // It replaces the present snapshot (no undo step), so undo then redo keeps the grade.
     setAssessment: (result: TalkGradeResult) => {
       const next = { ...doc, talkGrade: result.score, talkAssessment: makeAssessment(doc, result) };
+      history.current = { ...history.current!, present: next };
+      setDoc(next);
+    },
+    // Follow-up grades ride on the assessment they defend; ignored once that is gone.
+    setFollowups: (followups: FollowupRound) => {
+      if (!doc.talkAssessment) return;
+      const next = { ...doc, talkAssessment: { ...doc.talkAssessment, followups } };
       history.current = { ...history.current!, present: next };
       setDoc(next);
     },

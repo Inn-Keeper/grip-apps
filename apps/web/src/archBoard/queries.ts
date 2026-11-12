@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "../lib/api";
 import { anchorGradingStatus, gradingRefreshInterval } from "./gradingAvailability.js";
 import type { BoardSummary, GradingStatus, SavedBoard, TalkGradeResult } from "./types";
-import type { CustomScenario } from "@grip/core/api";
+import type { CustomScenario, FollowupRound } from "@grip/core/api";
 
 export const archBoardQueryKeys = {
   gradingStatus: ["talk-grade-status"] as const,
@@ -132,5 +132,24 @@ export function useDeleteScenarioMutation(onDeleted: (id: string) => void) {
       queryClient.invalidateQueries({ queryKey: archBoardQueryKeys.customScenarios });
       onDeleted(id);
     },
+  });
+}
+
+type FollowupInput = { boardId: string; facts: object; followups: { question: string; answer: string }[] };
+type FollowupGrades = { score: number; answers: { verdict: "covered" | "thin" | "missing"; gap: string }[] };
+
+/** Grades the follow-up answers and pairs each verdict with the answer it was given for. */
+export function useGradeFollowupsMutation(onGraded: (round: FollowupRound) => void) {
+  return useMutation({
+    mutationFn: async (input: FollowupInput): Promise<FollowupRound> => {
+      const client = api.talkGrade;
+      if (!client) throw new Error("talkGrade: VITE_AI_URL is not configured");
+      const graded = (await client.gradeFollowups(input)) as FollowupGrades;
+      return {
+        score: graded.score,
+        items: input.followups.map((item, i) => ({ ...item, verdict: graded.answers[i]?.verdict ?? "missing", gap: graded.answers[i]?.gap ?? "" })),
+      };
+    },
+    onSuccess: onGraded,
   });
 }

@@ -3,6 +3,7 @@ import { SHAPE_SIZE, designOnly, findPlacement, nodeSize, isFreeScenario, meta, 
 import * as boardEdits from "@grip/core/boardEdits";
 import { getLocale, t } from "@grip/core/i18n";
 import { buildPushback } from "@grip/core/pushback";
+import { FollowupRound } from "./FollowupRound";
 import { buildGradeFacts } from "@grip/core/talkGrade";
 import { emptyTalkTrack, scoreTalkTrack, TALK_TRACK_SECTIONS } from "@grip/core/talkTrack";
 import { colors, font } from "../lib/tokens";
@@ -53,6 +54,7 @@ import {
   useDeleteBoardMutation,
   useDeleteScenarioMutation,
   useGradeTalkTrackMutation,
+  useGradeFollowupsMutation,
   useGradingStatusQuery,
   useSaveBoardMutation,
   useSavedBoardsQuery,
@@ -195,6 +197,10 @@ export default function ArchBoard() {
   liveRef.current = { doc, boardId: activeBoardId };
   const gradeMutation = useGradeTalkTrackMutation((graded) => {
     if (gradeStillApplies(submittedGradeRef.current, liveRef.current.boardId, liveRef.current.doc)) board.setAssessment(graded);
+  });
+  const submittedFollowupsRef = useRef<{ boardId: string; inputs: string } | null>(null);
+  const followupMutation = useGradeFollowupsMutation((round) => {
+    if (gradeStillApplies(submittedFollowupsRef.current, liveRef.current.boardId, liveRef.current.doc)) board.setFollowups(round);
   });
 
   const mayDiscard = () => !isDirty || window.confirm(t("board.discardConfirm"));
@@ -390,6 +396,16 @@ export default function ArchBoard() {
       selfRating: talkRating,
     });
   };
+  const gradeFollowups = (followups: { question: string; answer: string }[]) => {
+    if (!activeBoardId) return;
+    const checks = result ?? evaluate(scenario as Parameters<typeof evaluate>[0], nodes, edges);
+    submittedFollowupsRef.current = { boardId: activeBoardId, inputs: gradeInputsKey(doc) };
+    followupMutation.mutate({
+      boardId: activeBoardId,
+      facts: buildGradeFacts(free ? { ...scenario, brief: brief.trim() } : scenario, nodes, checks),
+      followups,
+    });
+  };
   // Counts written sections, not "covered" ones: the grader's floor is any text at all.
   const talkWritten = TALK_TRACK_SECTIONS.filter(({ id }) => (talkSections[id] ?? "").trim()).length;
   const limit = gradingStatus?.grading === "unavailable" ? gradingStatus : null;
@@ -577,6 +593,17 @@ export default function ArchBoard() {
               onFocused={clearFocusSection}
               free={free}
             />
+            {/* Offered once the reasoning is graded: its hardest follow-up, then the board's own. */}
+            {talkDetail && talkGradeEnabled && (
+              <FollowupRound
+                key={`${activeBoardId}:${gradeInputsKey(doc)}`}
+                questions={[...new Set([talkDetail.suggestion.hardest_followup, ...buildPushback(scenario, nodes)])].slice(0, 6)}
+                saved={doc.talkAssessment?.followups}
+                grading={followupMutation.isPending}
+                error={followupMutation.error}
+                onGrade={gradeFollowups}
+              />
+            )}
             </div>
           )}
         </>

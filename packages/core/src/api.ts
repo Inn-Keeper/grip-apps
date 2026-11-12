@@ -95,7 +95,13 @@ export type TalkGradeResult = {
 };
 
 /** A saved grading result and the fingerprint of the inputs it graded (see gradeState.js). */
-export type TalkAssessment = { version: number; inputs: string; result: TalkGradeResult };
+export type TalkAssessment = { version: number; inputs: string; result: TalkGradeResult; followups?: FollowupRound };
+
+/** Graded answers to the interviewer's follow-ups; dropped with the assessment when the reasoning changes. */
+export type FollowupRound = {
+  score: number;
+  items: { question: string; answer: string; verdict: "covered" | "thin" | "missing"; gap: string }[];
+};
 
 export type SavedBoard = {
   id?: string;

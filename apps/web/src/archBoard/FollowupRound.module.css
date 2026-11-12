@@ -1,0 +1,63 @@
+.round {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--c-border-soft);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.title {
+  margin: 0;
+  font-size: var(--fs-body);
+  font-weight: 700;
+  color: var(--c-text-bright);
+}
+
+.hint,
+.feedback,
+.score {
+  margin: 0;
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--c-text-faint);
+}
+
+.feedback {
+  color: var(--c-text);
+}
+
+.score {
+  font-weight: 700;
+  color: var(--c-text-bright);
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--fs-small);
+  line-height: 1.5;
+  color: var(--c-text);
+}
+
+.answer {
+  resize: vertical;
+  min-height: 72px;
+  padding: 10px 12px;
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border-soft);
+  border-radius: 8px;
+  color: var(--c-text);
+  font: inherit;
+  font-size: var(--fs-body);
+}
+
+.answer:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 1px;
+}
+
+.grade {
+  align-self: flex-start;
+}
