@@ -1,6 +1,8 @@
 // Web coaching only: descriptions guide the next action; checklist scoring stays in core.
-export const nextUndescribedEdge = (edges) =>
-  edges.find((edge) => !edge.mode || !edge.protocol?.trim()) ?? null;
+const undescribed = (edge) => !edge.mode || !edge.protocol?.trim();
+export const nextUndescribedEdge = (edges) => edges.find(undescribed) ?? null;
+// 1-based position of the arrow being described, for "arrow 2 of 5".
+export const describeProgress = (edges) => ({ n: edges.filter((edge) => !undescribed(edge)).length + 1, total: edges.length });
 
 export function checkTargets(check, nodes, edges) {
   const from = check.from ?? [];

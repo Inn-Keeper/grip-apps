@@ -324,7 +324,7 @@ export const sv = {
   "board.arrowNeedsProtocol": "Välj ett protokoll, eller Ospecificerat om du inte har bestämt dig än.",
   "board.connectionsReady": "Dina anslutningar är beskrivna",
   "board.connectionsReadyHint": "Utvärdera designen för att hitta den viktigaste förbättringen. Protokolletiketter ger inga checklistepoäng.",
-  "board.describeAction": "Beskriv den här pilen",
+  "board.describeAction": "Beskriv pil {n} av {total}",
   "edge.unspecified": "Ospecificerat",
   "edge.protocolHint": "Protokolletiketter dokumenterar din design. Poäng ges för komponenter, anslutningar och nödvändiga inställningar.",
   "board.feedbackMissing": "En nödvändig komponent saknas. Lägg till den från den öppna komponentväljaren och anslut den.",

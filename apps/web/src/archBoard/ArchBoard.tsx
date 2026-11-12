@@ -41,7 +41,7 @@ import { BoardEdges } from "./BoardEdges";
 import { BoardNodeCard } from "./BoardNodeCard";
 import { useBoardDocument, type BoardDoc } from "./useBoardDocument";
 import { assessmentFor, gradeBlockedKey, gradeInputsKey, gradeStillApplies, gradeVerdict, topologyChanged } from "@grip/core/gradeState";
-import { checkTargets, evaluationDelta, nextUndescribedEdge } from "./boardFeedback.js";
+import { checkTargets, describeProgress, evaluationDelta, nextUndescribedEdge } from "./boardFeedback.js";
 import { primaryActionKind } from "./primaryAction.js";
 import { boardStepCopy, workflowStep } from "@grip/core/workflowState";
 import { WorkflowSteps, type RailAction } from "./WorkflowSteps";
@@ -465,7 +465,7 @@ export default function ArchBoard() {
       ? { label: t("board.addComponentAction"), icon: "layers", onClick: () => setComponentsRequest((n) => n + 1), disabled: false, highlight: true }
       : kind === "describe" && pendingDescription
       // Its editor is already open: the asking is done, so the button stands down.
-      ? { label: t("board.describeAction"), icon: "board", onClick: () => inspectEdge(pendingDescription.id), disabled: inspectingEdgeId === pendingDescription.id, highlight: inspectingEdgeId !== pendingDescription.id }
+      ? { label: t("board.describeAction", describeProgress(design.edges)), icon: "board", onClick: () => inspectEdge(pendingDescription.id), disabled: inspectingEdgeId === pendingDescription.id, highlight: inspectingEdgeId !== pendingDescription.id }
       : {
           label: t(kind === "answer" ? "board.answerAction" : kind === "explain" ? "board.explainAction" : "board.evaluateDesign"),
           icon: explaining ? "spark" : "evaluate",

@@ -324,7 +324,7 @@ export const pt = {
   "board.arrowNeedsProtocol": "Escolha um protocolo ou Não especificado se ainda não decidiu.",
   "board.connectionsReady": "Suas conexões estão descritas",
   "board.connectionsReadyHint": "Avalie o projeto para encontrar a melhoria mais útil. Rótulos de protocolo não somam pontos.",
-  "board.describeAction": "Descrever esta seta",
+  "board.describeAction": "Descrever seta {n} de {total}",
   "edge.unspecified": "Não especificado",
   "edge.protocolHint": "Os rótulos de protocolo documentam o projeto. Os pontos vêm dos componentes, conexões e configurações exigidas.",
   "board.feedbackMissing": "Falta um componente necessário. Adicione-o pelo seletor aberto e conecte-o.",

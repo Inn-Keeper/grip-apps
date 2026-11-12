@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { checkTargets, evaluationDelta, nextUndescribedEdge } from "./boardFeedback.js";
+import { checkTargets, describeProgress, evaluationDelta, nextUndescribedEdge } from "./boardFeedback.js";
 
 const nodes = [{ id: "api", type: "service" }, { id: "cache", type: "cache" }, { id: "db", type: "nosql" }];
 const edges = [{ id: "read", from: "api", to: "cache", mode: "sync", protocol: "Redis (RESP)" }, { id: "store", from: "api", to: "db", mode: "sync" }];
@@ -10,6 +10,7 @@ test("guidance finds the arrow missing mode or protocol, accepting explicit unsp
   assert.equal(nextUndescribedEdge([{ ...edges[1], protocol: "Unspecified" }]), null);
   assert.equal(nextUndescribedEdge([{ ...edges[0], mode: undefined }])?.id, "read");
   assert.equal(nextUndescribedEdge([]), null);
+  assert.deepEqual(describeProgress(edges), { n: 2, total: 2 });
 });
 
 test("node and property checks target only relevant components", () => {

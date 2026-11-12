@@ -324,7 +324,7 @@ export const en = {
   "board.arrowNeedsProtocol": "Choose a protocol, or Unspecified if you have not decided yet.",
   "board.connectionsReady": "Your connections are described",
   "board.connectionsReadyHint": "Evaluate the design to find the most useful improvement. Protocol labels do not add checklist points.",
-  "board.describeAction": "Describe this arrow",
+  "board.describeAction": "Describe arrow {n} of {total}",
   "edge.unspecified": "Unspecified",
   "edge.protocolHint": "Protocol labels document your design. Checklist points come from components, connections and required settings.",
   "board.feedbackMissing": "A required component is missing. Add it from the open component picker, then connect it.",
