@@ -119,6 +119,7 @@ describe("buildDrillFromQuestions", () => {
     prompt: `q${n}`,
     options: ["right", "a", "b", "c"],
     correct: 0,
+    explanation: `why${n}`,
   }));
 
   it("maps DB rows to shuffled drill entries with resolved colors", () => {
@@ -128,6 +129,7 @@ describe("buildDrillFromQuestions", () => {
       expect(entry.tech).toBe("TypeScript");
       expect(entry.color).toBe("#abcdef");
       expect(entry.q.options[entry.q.correct]).toBe("right");
+      expect(entry.q.explanation).toBe(entry.q.question.replace("q", "why"));
     }
   });
 

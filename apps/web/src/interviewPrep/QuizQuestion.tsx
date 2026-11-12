@@ -161,6 +161,10 @@ export function QuizQuestion({ question, questionNumber, total, answered, xp, xp
             );
           })}
         </div>
+        {/* Why the right answer is right, shown once answered. */}
+        {answered !== null && question.explanation && (
+          <p className={styles.explanation}>{question.explanation}</p>
+        )}
       </div>
 
       {/* Always mounted so screen readers announce the result when it appears. */}

@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-12
+
+### Added
+
+- Web Prep quizzes and drills show each question's stored explanation under the options once it is answered. Static fallback questions have none and show nothing.
+
 ## 2026-11-09
 
 ### Added

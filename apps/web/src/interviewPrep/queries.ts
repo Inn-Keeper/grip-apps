@@ -56,7 +56,7 @@ export function usePrepQuestionFetchers(level: string, quizSize: number | null, 
       if (rows.length) {
         onCardPoolSize?.(rows.length);
         const cap = questionCapForPool(quizSize, rows.length);
-        return drawUnseen(level, rows, cap).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct }));
+        return drawUnseen(level, rows, cap).map((r) => shuffleOptions({ question: r.prompt, options: r.options, correct: r.correct, explanation: r.explanation }));
       }
       console.warn(`No ${level} questions in the DB for "${tech}". Falling back to static prep questions (these don't vary by level). Run the questions seed.`);
     } catch (err) {

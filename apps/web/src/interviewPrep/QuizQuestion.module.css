@@ -88,6 +88,15 @@
   font-weight: 700;
 }
 
+.explanation {
+  margin: 0;
+  padding: 9px 12px;
+  border-left: 2px solid var(--quiz-color-soft);
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--c-text);
+}
+
 .footer {
   min-height: 32px;
   display: flex;

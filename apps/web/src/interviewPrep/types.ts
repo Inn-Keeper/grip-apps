@@ -1,5 +1,6 @@
 export type Difficulty = { key: string; label: string; emoji: string; color: string; blurbKey: string; xp: number };
-export type QuizQuestion = { question: string; options: string[]; correct: number };
+// explanation: why the correct option is right; only DB questions carry one.
+export type QuizQuestion = { question: string; options: string[]; correct: number; explanation?: string | null };
 export type PrepItem = { tech: string; oneliner: string; prep: string[]; quiz: QuizQuestion[]; color?: string; emoji?: string; category?: string };
 export type Category = { name: string; emoji: string; color: string; items: PrepItem[] };
 export type DrillEntry = { tech: string; color: string; link?: string; q: QuizQuestion };

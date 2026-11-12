@@ -115,14 +115,14 @@ export function selectCategoryDrillTechs(categoryItems, answers, { techCount = 5
 // row to the drill-entry shape (tech, color, shuffled question) the UI expects.
 // `colorByTech` resolves a tech's category color; falls back to `fallbackColor`.
 /**
- * @param {{ tech: string, prompt: string, options: string[], correct: number }[]} questions
+ * @param {{ tech: string, prompt: string, options: string[], correct: number, explanation?: string | null }[]} questions
  * @param {{ colorByTech?: Record<string, string>, fallbackColor?: string, size?: number }} [opts]
  */
 export function buildDrillFromQuestions(questions, { colorByTech = {}, fallbackColor, size = 10 } = {}) {
   const pool = questions.map((row) => ({
     tech: row.tech,
     color: colorByTech[row.tech] ?? fallbackColor,
-    q: shuffleOptions({ question: row.prompt, options: row.options, correct: row.correct }),
+    q: shuffleOptions({ question: row.prompt, options: row.options, correct: row.correct, explanation: row.explanation }),
   }));
   return shuffle(pool).slice(0, size);
 }
