@@ -464,7 +464,8 @@ export default function ArchBoard() {
       : kind === "add"
       ? { label: t("board.addComponentAction"), icon: "layers", onClick: () => setComponentsRequest((n) => n + 1), disabled: false, highlight: true }
       : kind === "describe" && pendingDescription
-      ? { label: t("board.describeAction"), icon: "board", onClick: () => inspectEdge(pendingDescription.id), disabled: false, highlight: true }
+      // Its editor is already open: the asking is done, so the button stands down.
+      ? { label: t("board.describeAction"), icon: "board", onClick: () => inspectEdge(pendingDescription.id), disabled: inspectingEdgeId === pendingDescription.id, highlight: inspectingEdgeId !== pendingDescription.id }
       : {
           label: t(kind === "answer" ? "board.answerAction" : kind === "explain" ? "board.explainAction" : "board.evaluateDesign"),
           icon: explaining ? "spark" : "evaluate",
