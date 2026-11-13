@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-13
+
+### Changed
+
+- Web Arch Board: the Components box on the canvas is narrower and denser (three columns at most, tighter chips), so it covers less of the board.
+
 ## 2026-11-12
 
 ### Added

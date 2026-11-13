@@ -18,8 +18,8 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
   return (
     <div role="toolbar" aria-label={t("board.components")} style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
-        gap: 6,
+        gridTemplateColumns: "repeat(auto-fill, minmax(124px, 1fr))",
+        gap: 4,
         ...tipVars
       }}>
       {NODE_TYPES.map((item) => (
@@ -31,8 +31,8 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 7,
-              padding: "7px 9px",
+              gap: 6,
+              padding: "5px 7px",
               width: "100%",
               background: colors.surface,
               border: `1px solid ${alpha(TYPE_COLORS[item.type] ?? colors.textDim, 0.25)}`,
@@ -45,7 +45,7 @@ export function NodePalette({ onAddNode }: { onAddNode: (type: string) => void }
               minWidth: 0,
             }}
           >
-            <BrandIcon name={nodeIconName(item.type)} color={TYPE_COLORS[item.type] ?? colors.textDim} size={15} />
+            <BrandIcon name={nodeIconName(item.type)} color={TYPE_COLORS[item.type] ?? colors.textDim} size={14} />
             <span style={{
                 flex: 1,
                 minWidth: 0,
