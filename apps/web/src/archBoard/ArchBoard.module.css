@@ -126,6 +126,11 @@
 .zoomButton:disabled { opacity: .4; cursor: default; }
 .zoomButton:focus-visible { outline: 2px solid var(--arch-accent); outline-offset: 1px; }
 .zoomPercent { min-width: 52px; font-variant-numeric: tabular-nums; font-size: var(--fs-small); }
+/* Corner buttons wait for hover or focus; touch has no hover, so they stay visible there. */
+@media (hover: hover) {
+  .corner { opacity: 0; }
+  .node:hover .corner, .node:focus-within .corner, .shape:hover .corner, .shape:focus-within .corner, .corner[data-on] { opacity: 1; }
+}
 .toolbarButton:focus-visible, .connectionSelect:focus-visible,
 .node:focus-visible, .handle:focus-visible { outline: 3px solid var(--arch-accent); outline-offset: 3px; }
 

@@ -2,7 +2,8 @@ import type React from "react";
 import { useState } from "react";
 import { FILL_ALPHA, MIN_CARD, STATEFUL_TYPES, TEXT_FONT_TOKEN, TYPE_COLORS, nodeLabel, nodeSize, resizeRect, styleOf } from "@grip/core/arch";
 import { t } from "@grip/core/i18n";
-import { alpha, colors, font } from "../lib/tokens";
+import { alpha, colors, font, shadow } from "../lib/tokens";
+import { nodeIconName } from "../components/brandIconNames";
 import { BrandIcon } from "../components/BrandIcon";
 import { NODE_H, NODE_W } from "./constants";
 import styles from "./ArchBoard.module.css";
@@ -33,7 +34,7 @@ type Props = {
 };
 
 // One built-in component on the canvas: drag to move, drag a handle or press Enter to connect, arrows to nudge,
-// and drag a corner handle or Alt+arrows to resize. The border keeps the type colour (node identity);
+// and drag a corner handle or Alt+arrows to resize. The border, icon and faint tint keep the type colour (node identity);
 // fill and label follow the style panel. Neither size nor style changes the grade.
 // Free shapes are BoardShape, free text is BoardTextNote.
 export function BoardNodeCard({ node: n, selected, isSource, inspecting, highlighted = false, drag, connect, onActivate, onNudge, onRemove, onToggleInspect, toBoard, onResize, onSelect }: Props) {
@@ -73,19 +74,20 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, highlig
         width: rect.w,
         height: rect.h,
         boxSizing: "border-box",
-        background: style.fill === "none" ? colors.surface : `${colors[style.fill]}${FILL_ALPHA}`,
-        border: `2px solid ${isSource ? colors.textBright : (selected || highlighted ? colors.accentBright : alpha(color, 0.38))}`,
+        background: style.fill === "none" ? `color-mix(in srgb, ${color} 7%, ${colors.surface})` : `${colors[style.fill]}${FILL_ALPHA}`,
+        border: `1px solid ${isSource ? colors.textBright : (selected || highlighted ? colors.accentBright : alpha(color, 0.45))}`,
         borderRadius: 10,
         cursor: "grab",
         touchAction: "none",
         userSelect: "none",
         display: "flex",
         alignItems: "center",
-        gap: 8,
-        padding: "0 10px",
-        boxShadow: selected || highlighted ? `0 0 0 3px ${alpha(colors.accent, 0.16)}` : isSource ? `0 0 0 3px ${alpha(color, 0.19)}` : "none",
+        gap: 7,
+        padding: "0 9px",
+        boxShadow: selected || highlighted ? `0 0 0 3px ${alpha(colors.accent, 0.16)}, ${shadow.card}` : isSource ? `0 0 0 3px ${alpha(color, 0.19)}, ${shadow.card}` : shadow.card,
       }}
     >
+      <BrandIcon name={nodeIconName(n.type)} color={color} size={15} />
       <span style={{
           display: "flex",
           flexDirection: "column",
@@ -118,6 +120,8 @@ export function BoardNodeCard({ node: n, selected, isSource, inspecting, highlig
           onPointerDown={(ev) => ev.stopPropagation()}
           onClick={(ev) => { ev.stopPropagation(); onToggleInspect(); }}
           title={t("node.inspect")}
+          className={styles.corner}
+          data-on={inspecting || undefined}
           style={{
             ...cornerButton,
             bottom: -12,

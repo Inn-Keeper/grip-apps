@@ -9,6 +9,7 @@ because they have to be applied by hand.
 ### Changed
 
 - Web Arch Board: the Components box on the canvas is narrower and denser (three columns at most, tighter chips), so it covers less of the board.
+- Web Arch Board nodes: each card shows its type icon, has a thin border with a faint type tint and a soft lift instead of the heavy outline, and is a little larger by default (132 by 52, was 112 by 46; resized nodes keep their size). The remove and inspect corner buttons appear on hover or focus only (always on touch).
 
 ## 2026-11-12
 

@@ -1,7 +1,8 @@
 import { CUSTOM_CATEGORY } from "@grip/core/scenarioCatalog";
 
-export const NODE_W = 112;
-export const NODE_H = 46;
+// 132 at most: boards auto-placed at the old 112 sit on a 135px grid.
+export const NODE_W = 132;
+export const NODE_H = 52;
 // Board area nodes can live in; the viewport pans and zooms over it.
 export const WORLD = { width: 4000, height: 3000 };
 // Magnetic drop for a dragged arrow, same idea as mobile: the nearest node centre within this wins.

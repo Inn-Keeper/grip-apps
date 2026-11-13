@@ -59,6 +59,7 @@ export function RemoveButton({ onRemove }: { onRemove: () => void }) {
       onClick={(ev) => { ev.stopPropagation(); onRemove(); }}
       title={t("board.remove")}
       aria-label={t("board.remove")}
+      className={styles.corner}
       style={{
         ...cornerButton,
         top: -12,
