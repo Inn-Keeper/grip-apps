@@ -3,6 +3,7 @@ name: Supabase keep-alive
 on:
   schedule: [{ cron: "0 9 */3 * *" }]
   workflow_dispatch:
+permissions: {}
 jobs:
   ping:
     runs-on: ubuntu-latest
