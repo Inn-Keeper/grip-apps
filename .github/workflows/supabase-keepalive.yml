@@ -1,0 +1,17 @@
+# Free-tier Supabase pauses after ~7 idle days; one REST read every 3 days keeps it awake.
+name: Supabase keep-alive
+on:
+  schedule: [{ cron: "0 9 */3 * *" }]
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      # anon has no grant on profiles; a Postgres 42501 still proves the query hit the DB.
+      - run: |
+          curl -sS "$SUPABASE_URL/rest/v1/profiles?select=user_id&limit=1" \
+            -H "apikey: $SUPABASE_ANON_KEY" -H "Authorization: Bearer $SUPABASE_ANON_KEY" \
+            | tee /dev/stderr | grep -qE '^\[|42501'
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}

@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-22
+
+### Added
+
+- Scheduled GitHub Actions ping to the Supabase REST API every 3 days, so the free-tier project isn't paused for inactivity.
+
 ## 2026-11-13
 
 ### Changed
