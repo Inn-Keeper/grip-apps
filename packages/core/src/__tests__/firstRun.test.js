@@ -1,6 +1,12 @@
 import { cleanJobText, createPlaybookApi, needsSetup, FIRST_RUN_LIMITS, formatCvText, landingFor, playbookLabel, redactCv } from "../firstRun.js";
 
 describe("redactCv", () => {
+  test("stays linear on long runs of email characters", () => {
+    const start = Date.now();
+    redactCv("+".repeat(50000), "");
+    expect(Date.now() - start).toBeLessThan(500);
+  });
+
   test("removes redacted fields and empty separators from a contact header", () => {
     const text = "Stockholm, Sweden | +46 (70) 123-45 67 | ada@example.com https://ada.dev | linkedin.com/in/ada github.com/ada";
     expect(redactCv(text, "Ada Lovelace")).toBe("Stockholm, Sweden");

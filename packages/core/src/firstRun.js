@@ -7,7 +7,8 @@ import { COMPETENCIES } from "./stories.js";
 /** Must match the caps in grip-ai-api app/playbook_schemas.py. */
 export const FIRST_RUN_LIMITS = { brief: 500, role: 120, jobText: 4000, cvText: 3000, notes: 3, note: 500 };
 
-const EMAIL = /[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
+// Lookbehind starts a match only at the head of a run, keeping the scan linear.
+const EMAIL = /(?<![\w.+-])[\w.+-]+@[\w-]+(\.[\w-]+)+/g;
 const URL = /\b(?:https?:\/\/|www\.)\S+|\b(?:linkedin|github)\.com\/\S*/gi;
 // Bare personal domains (name.vercel.app, me.dev). The TLD list skips ".js", so Node.js stays.
 const DOMAIN = /\b[\w-]+(?:\.[\w-]+)*\.(?:app|dev|io|com|net|org|me|se|br|co|page|site|tech)\b(?:\/\S*)?/gi;
