@@ -6,6 +6,10 @@ because they have to be applied by hand.
 
 ## 2026-11-22
 
+### Fixed
+
+- CV redaction and duplicate-contact checks no longer slow to seconds on long runs of `+` or `(`; their regexes now scan linearly.
+
 ### Added
 
 - Scheduled GitHub Actions ping to the Supabase REST API every 3 days, so the free-tier project isn't paused for inactivity.

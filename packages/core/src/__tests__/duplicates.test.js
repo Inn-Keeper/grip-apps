@@ -7,6 +7,12 @@ const quest = [
 ];
 
 describe("findDuplicate", () => {
+  test("stays linear on a name of unclosed parentheses", () => {
+    const start = Date.now();
+    findDuplicate({ name: "(".repeat(50000), role: "", link: "" }, quest);
+    expect(Date.now() - start).toBeLessThan(500);
+  });
+
   test("same link is a duplicate whatever the name", () => {
     expect(findDuplicate({ name: "Other", role: "", link: "https://www.jobs.lever.co/spotify/abc?utm_source=x" }, quest)).toEqual({ kind: "duplicate", contact: quest[1] });
     expect(findDuplicate({ name: "X", role: "", link: "https://se.indeed.com/viewjob?jk=b58" }, quest)?.contact).toBe(quest[2]);

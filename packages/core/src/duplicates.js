@@ -8,7 +8,7 @@ const companyKey = (name) =>
   (name ?? "")
     .toLowerCase()
     .replace(/[*_`]/g, "")
-    .replace(/\([^)]*\)/g, " ")
+    .replace(/\([^()]*\)/g, " ") // [^()] keeps the scan linear on runs of "("
     .replace(/\s+/g, " ")
     .trim()
     .replace(SUFFIX, "");
