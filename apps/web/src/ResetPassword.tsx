@@ -7,7 +7,8 @@ import { Field } from "./components/shared";
 import styles from "./SignIn.module.css";
 
 // Shown after a reset link signs the person in, until the new password is saved.
-export function ResetPassword({ onSaved }: { onSaved: () => void }) {
+// onSignOut is the way out for someone who opened the link by mistake.
+export function ResetPassword({ onSaved, onSignOut }: { onSaved: () => void; onSignOut: () => void }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -46,6 +47,9 @@ export function ResetPassword({ onSaved }: { onSaved: () => void }) {
           </button>
           {error && <p className={styles.error} role="alert">{error}</p>}
         </form>
+        <button type="button" onClick={onSignOut} className={styles.modeSwitch}>
+          {t("auth.signOut")}
+        </button>
       </div>
     </main>
   );

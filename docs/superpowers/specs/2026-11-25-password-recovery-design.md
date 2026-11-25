@@ -44,21 +44,23 @@ On success: a neutral notice ("If that email has an account, a reset link is on 
 
 **Set the password (`/reset-password`).** The link arrives with an auth token in the URL. The router
 already treats that as a fresh sign-in and rewrites the path to `/prep`, and Supabase clears the token
-once it has a session. So whether the page was opened at `/reset-password` is read **once at module
-load**, like `returningFromSignIn`. A valid link also stores a "reset pending" flag in localStorage,
+once it has a session. So the link is recognised **once at module load**, like `returningFromSignIn`,
+by `type=recovery` in the URL on any path: Supabase sends it to the Site URL when the redirect is not
+allow-listed. A plain visit to `/reset-password` is not a reset. A valid link also stores a "reset pending" flag in localStorage,
 cleared only when the password is saved or on sign out, so a reload or a new tab still shows the
 form. App renders the page before the signed-in shell and the SignIn screen:
 
 - loading (session undefined): nothing new, as today.
 - session present: "New password" field (8+ characters, `autoComplete="new-password"`) and
   "Save password". `supabase.auth.updateUser({ password })`; on success go to Prep, signed in.
+  A small "Sign out" link under it is the way out for someone who opened the link by mistake.
 - no session, or the URL carries `error_code` (for example `otp_expired`): "This link has expired or
   was already used", with the email field and "Send a new link" in place.
 
 **Copy.** New `auth.*` keys in en, pt and sv. Error messages go through `friendlyAuthError`.
 
 **Dashboard setup (not code).** Resend connected as SMTP; Site URL set to the production origin;
-`/reset-password` on production and `http://localhost:5173` added to Redirect URLs.
+`/reset-password` on production and `http://localhost:5173/**` added to Redirect URLs.
 
 ## Checks
 

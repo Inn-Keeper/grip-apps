@@ -272,6 +272,7 @@ export default function App() {
               finishRecovery();
               navigatePath(`/${DEFAULT_PAGE}`, { replace: true });
             }}
+            onSignOut={signOut}
           />
         )}
         {session && recovery !== "set" && (

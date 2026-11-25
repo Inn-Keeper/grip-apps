@@ -24,8 +24,10 @@ export const isFreshSignIn = (previousUserId, nextUserId) => previousUserId === 
 // the hash (implicit flow) or a one-time code in the query (PKCE flow).
 export const isAuthReturn = (search, hash) => /(^|[?&#])(access_token|code)=/.test(`${search}${hash}`);
 
-// A password reset link lands on /reset-password; Supabase reports a dead link with error_code.
+// A reset link carries type=recovery on any path (Supabase falls back to the Site URL);
+// a dead one comes back to /reset-password with error_code.
 export const recoveryFromUrl = (pathname, search, hash) => {
-  if (pathname !== "/reset-password") return null;
-  return /(^|[?&#])error_code=/.test(`${search}${hash}`) ? "expired" : "set";
+  const params = `${search}${hash}`;
+  if (/(^|[?&#])type=recovery(&|$)/.test(params)) return "set";
+  return pathname === "/reset-password" && /(^|[?&#])error_code=/.test(params) ? "expired" : null;
 };

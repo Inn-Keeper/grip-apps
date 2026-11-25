@@ -51,9 +51,12 @@ test("OAuth returns are recognised in the hash or the query", () => {
   assert.equal(isAuthReturn("?encode=1", "#barcode=2"), false);
 });
 
-test("a reset link is recognised by its path, and its error by error_code", () => {
+test("a reset link is recognised by type=recovery, and a dead one by error_code on its path", () => {
   assert.equal(recoveryFromUrl("/reset-password", "", "#access_token=abc&type=recovery"), "set");
-  assert.equal(recoveryFromUrl("/reset-password", "", ""), "set");
+  // Supabase falls back to the Site URL when the redirect is not allow-listed.
+  assert.equal(recoveryFromUrl("/", "", "#access_token=abc&refresh_token=x&type=recovery"), "set");
+  // A plain visit (bookmark, autocomplete) is not a reset.
+  assert.equal(recoveryFromUrl("/reset-password", "", ""), null);
   assert.equal(recoveryFromUrl("/reset-password", "", "#error=access_denied&error_code=otp_expired"), "expired");
   assert.equal(recoveryFromUrl("/reset-password", "?error_code=otp_expired", ""), "expired");
   assert.equal(recoveryFromUrl("/prep", "", "#access_token=abc"), null);
