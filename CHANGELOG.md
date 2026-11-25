@@ -10,6 +10,7 @@ because they have to be applied by hand.
 
 - grip-ai-api: users listed in `ANTHROPIC_USER_IDS` are served by Claude instead of the free Gemini tier. Grading uses Claude Opus 5.5, import and playbooks Claude Sonnet 5.5, Poe Claude Haiku 5.5. Everyone else is unchanged. A spent Anthropic balance returns `provider_credits_exhausted`.
 - grip-ai-api: a scheduled GitHub Actions ping to `/health` every 10 minutes keeps the free Render service from sleeping.
+- Web sign-in: "Forgot password?" emails a reset link, and `/reset-password` sets a new password and signs you in. An expired or used link offers a new one on the spot. Needs a custom SMTP sender (Resend) in Supabase and `/reset-password` in its Redirect URLs.
 
 ## 2026-11-22
 
