@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-25
+
+### Added
+
+- grip-ai-api: users listed in `ANTHROPIC_USER_IDS` are served by Claude instead of the free Gemini tier. Grading uses Claude Opus 5.5, import and playbooks Claude Sonnet 5.5, Poe Claude Haiku 5.5. Everyone else is unchanged. A spent Anthropic balance returns `provider_credits_exhausted`.
+
 ## 2026-11-22
 
 ### Fixed
