@@ -11,6 +11,8 @@ import { Field } from "./components/shared";
 import styles from "./SignIn.module.css";
 
 const CAPTCHA_WAIT_MS = 10_000;
+// Off until Supabase has a custom SMTP sender; the built-in one only mails the project team.
+const PASSWORD_RESET_ENABLED = import.meta.env.VITE_PASSWORD_RESET === "1";
 // The AI features, one line each: setup plan, talk track grading, application import, Poe.
 const AI_PROOF = ["auth.aiPlan", "auth.aiProof", "auth.aiImport", "auth.aiPoe"] as const;
 
@@ -195,7 +197,7 @@ export function SignIn({ initialMode = "signin", message }: { initialMode?: Mode
           </button>
           {error && <p className={styles.error} role="alert">{error}</p>}
           {notice && <p className={styles.notice} role="status">{notice}</p>}
-          {mode === "signin" && (
+          {mode === "signin" && PASSWORD_RESET_ENABLED && (
             <button type="button" onClick={() => switchMode("reset")} className={styles.modeSwitch}>
               {t("auth.forgotPassword")}
             </button>
