@@ -125,7 +125,7 @@ export function SignIn({ initialMode = "signin", message }: { initialMode?: Mode
         <p className={styles.subtitle}>{t("auth.subtitle")}</p>
 
         <form onSubmit={submit} className={styles.form} data-busy={busy || undefined}>
-          {message && (
+          {message && mode === initialMode && (
             <p className={styles.error} role="alert">
               {message}
             </p>

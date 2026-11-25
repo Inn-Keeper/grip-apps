@@ -32,6 +32,8 @@ import { BrandMark } from "./components/BrandMark";
 import { DemoBanner } from "./components/DemoBanner";
 import { Footer } from "./Footer";
 import { SignIn } from "./SignIn";
+import { ResetPassword } from "./ResetPassword";
+import { usePasswordRecovery } from "./lib/usePasswordRecovery";
 import styles from "./App.module.css";
 
 const GITHUB_LINKED_KEY = "grip.githubLinked";
@@ -52,6 +54,7 @@ export default function App() {
   });
   // undefined = loading, null = signed out, Session = signed in
   const [session, setSession] = useState<Session | null | undefined>(undefined);
+  const { recovery, finish: finishRecovery } = usePasswordRecovery(session);
   const previousUserId = useRef<string | null | undefined>(undefined);
   const navRef = useRef<HTMLElement | null>(null);
   // "auto" follows the profile flag; "open" is a manual rerun; "closed" hides it for this visit.
@@ -115,6 +118,7 @@ export default function App() {
     // "closed" only hides setup for this account's visit; the next account decides afresh.
     setSetup("auto");
     if (session) window.localStorage.removeItem(poeHistoryKey(session.user.id));
+    finishRecovery();
     supabase.auth.signOut();
   };
 
@@ -255,8 +259,22 @@ export default function App() {
           screen on short pages. Pages must not add their own full-screen min-height. */}
       <div className={styles.content}>
         {session === undefined && <main className={styles.loading}>Loading…</main>}
-        {session === null && <SignIn />}
-        {session && (
+        {session === null &&
+          (recovery === "expired" ? (
+            // Keyed so the card mounts in reset mode instead of reusing the sign-in instance.
+            <SignIn key="reset-expired" initialMode="reset" message={t("auth.resetExpired")} />
+          ) : (
+            <SignIn />
+          ))}
+        {session && recovery === "set" && (
+          <ResetPassword
+            onSaved={() => {
+              finishRecovery();
+              navigatePath(`/${DEFAULT_PAGE}`, { replace: true });
+            }}
+          />
+        )}
+        {session && recovery !== "set" && (
           <PoeChatProvider key={session.user.id} userId={session.user.id}>
           <React.Fragment key={locale}>
             {showWizard && <FirstRunWizard profile={profileQuery.data ?? null} onLand={landFromSetup} onExplore={exploreFirst} />}

@@ -46,6 +46,9 @@ export const sv = {
   "auth.resetLinkSent": "Om e-postadressen har ett konto är en återställningslänk på väg.",
   "auth.backToSignIn": "Tillbaka till inloggning",
   "auth.resetExpired": "Länken har gått ut eller redan använts. Skicka en ny.",
+  "auth.newPasswordTitle": "Välj ett nytt lösenord",
+  "auth.newPasswordLabel": "Nytt lösenord",
+  "auth.savePassword": "Spara lösenord",
   "auth.signOut": "Logga ut",
   "auth.confirmEmailNotice":
     "Ditt konto är klart. Öppna bekräftelselänken i din inkorg och kom sedan tillbaka och logga in.",

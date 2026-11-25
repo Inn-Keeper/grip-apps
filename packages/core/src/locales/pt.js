@@ -46,6 +46,9 @@ export const pt = {
   "auth.resetLinkSent": "Se esse email tiver uma conta, um link de redefinição está a caminho.",
   "auth.backToSignIn": "Voltar para entrar",
   "auth.resetExpired": "Este link expirou ou já foi usado. Envie um novo.",
+  "auth.newPasswordTitle": "Defina uma nova senha",
+  "auth.newPasswordLabel": "Nova senha",
+  "auth.savePassword": "Salvar senha",
   "auth.signOut": "Sair",
   "auth.confirmEmailNotice":
     "Sua conta está pronta. Confira seu e-mail e abra o link de confirmação, depois volte e entre.",

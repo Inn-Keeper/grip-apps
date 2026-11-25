@@ -46,6 +46,9 @@ export const en = {
   "auth.resetLinkSent": "If that email has an account, a reset link is on its way.",
   "auth.backToSignIn": "Back to sign in",
   "auth.resetExpired": "This reset link has expired or was already used. Send a new one.",
+  "auth.newPasswordTitle": "Set a new password",
+  "auth.newPasswordLabel": "New password",
+  "auth.savePassword": "Save password",
   "auth.signOut": "Sign out",
   "auth.confirmEmailNotice":
     "Your account is ready. Check your inbox for a confirmation link, then come back and sign in.",
