@@ -12,6 +12,10 @@ because they have to be applied by hand.
 - grip-ai-api: a scheduled GitHub Actions ping to `/health` every 10 minutes keeps the free Render service from sleeping.
 - Web sign-in: "Forgot password?" emails a reset link, and `/reset-password` sets a new password and signs you in. An expired or used link offers a new one on the spot. The link shows only with `VITE_PASSWORD_RESET=1`, off in production until Supabase has a custom SMTP sender (Resend); `/reset-password` must be in its Redirect URLs.
 
+### Fixed
+
+- Web: a tab opened before a deploy reloads once instead of failing with "Failed to fetch dynamically imported module" when it opens a lazily loaded part, such as the CV upload.
+
 ## 2026-11-22
 
 ### Fixed
