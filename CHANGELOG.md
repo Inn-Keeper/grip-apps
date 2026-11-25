@@ -9,6 +9,7 @@ because they have to be applied by hand.
 ### Added
 
 - grip-ai-api: users listed in `ANTHROPIC_USER_IDS` are served by Claude instead of the free Gemini tier. Grading uses Claude Opus 5.5, import and playbooks Claude Sonnet 5.5, Poe Claude Haiku 5.5. Everyone else is unchanged. A spent Anthropic balance returns `provider_credits_exhausted`.
+- grip-ai-api: a scheduled GitHub Actions ping to `/health` every 10 minutes keeps the free Render service from sleeping.
 
 ## 2026-11-22
 
