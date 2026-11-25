@@ -14,8 +14,11 @@ const CAPTCHA_WAIT_MS = 10_000;
 // The AI features, one line each: setup plan, talk track grading, application import, Poe.
 const AI_PROOF = ["auth.aiPlan", "auth.aiProof", "auth.aiImport", "auth.aiPoe"] as const;
 
-export function SignIn() {
-  const [mode, setMode] = useState<"signin" | "signup">("signin");
+type Mode = "signin" | "signup" | "reset";
+
+// message: shown above the form, e.g. when a reset link has expired.
+export function SignIn({ initialMode = "signin", message }: { initialMode?: Mode; message?: string } = {}) {
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -30,6 +33,12 @@ export function SignIn() {
   // A demo click before the invisible captcha resolves waits for the token instead of a disabled button.
   const [demoQueued, setDemoQueued] = useState(false);
 
+  const switchMode = (next: Mode) => {
+    setMode(next);
+    setError(null);
+    setNotice(null);
+  };
+
   const resetCaptcha = () => {
     setCaptchaToken(null);
     setCaptchaKey((k) => k + 1);
@@ -40,7 +49,15 @@ export function SignIn() {
     setBusy(true);
     setError(null);
     setNotice(null);
-    if (mode === "signin") {
+    if (mode === "reset") {
+      const { error: err } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+        captchaToken: captchaToken ?? undefined,
+      });
+      // Same notice whether or not the email has an account.
+      if (err) setError(friendlyAuthError(err.message));
+      else setNotice(t("auth.resetLinkSent"));
+    } else if (mode === "signin") {
       const { error: err } = await supabase.auth.signInWithPassword({ email, password, options: captchaOptions });
       if (err) setError(err.message);
     } else {
@@ -108,30 +125,39 @@ export function SignIn() {
         <p className={styles.subtitle}>{t("auth.subtitle")}</p>
 
         <form onSubmit={submit} className={styles.form} data-busy={busy || undefined}>
-          <button
-            type="button"
-            onClick={signInWithGitHub}
-            disabled={busy}
-            className={`${styles.action} ${styles.github}`}
-          >
-            <BrandIcon name="code" color={colors.accentBright} size={15} />
-            {t("auth.github")}
-          </button>
-          <button
-            type="button"
-            onClick={() => (waitingForCaptcha ? setDemoQueued(true) : tryDemo())}
-            disabled={busy || demoQueued}
-            aria-busy={demoQueued || undefined}
-            className={`${styles.action} ${styles.demo}`}
-          >
-            {demoQueued ? "…" : t("demo.try")}
-            <span className={styles.demoHint}>{t("demo.trySub")}</span>
-          </button>
-          <div className={styles.divider}>
-            <span className={styles.dividerLine} />
-            {t("auth.or")}
-            <span className={styles.dividerLine} />
-          </div>
+          {message && (
+            <p className={styles.error} role="alert">
+              {message}
+            </p>
+          )}
+          {mode !== "reset" && (
+            <>
+              <button
+                type="button"
+                onClick={signInWithGitHub}
+                disabled={busy}
+                className={`${styles.action} ${styles.github}`}
+              >
+                <BrandIcon name="code" color={colors.accentBright} size={15} />
+                {t("auth.github")}
+              </button>
+              <button
+                type="button"
+                onClick={() => (waitingForCaptcha ? setDemoQueued(true) : tryDemo())}
+                disabled={busy || demoQueued}
+                aria-busy={demoQueued || undefined}
+                className={`${styles.action} ${styles.demo}`}
+              >
+                {demoQueued ? "…" : t("demo.try")}
+                <span className={styles.demoHint}>{t("demo.trySub")}</span>
+              </button>
+              <div className={styles.divider}>
+                <span className={styles.dividerLine} />
+                {t("auth.or")}
+                <span className={styles.dividerLine} />
+              </div>
+            </>
+          )}
           <Field label={t("auth.emailLabel")}>
             <input
               type="email"
@@ -144,40 +170,40 @@ export function SignIn() {
               className={styles.field}
             />
           </Field>
-          <Field label={t("auth.passwordLabel")}>
-            <input
-              type="password"
-              required
-              minLength={8}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder={mode === "signup" ? t("auth.newPasswordPlaceholder") : t("auth.passwordPlaceholder")}
-              aria-label={t("auth.passwordLabel")}
-              autoComplete={mode === "signup" ? "new-password" : "current-password"}
-              className={styles.field}
-            />
-          </Field>
+          {mode !== "reset" && (
+            <Field label={t("auth.passwordLabel")}>
+              <input
+                type="password"
+                required
+                minLength={8}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder={mode === "signup" ? t("auth.newPasswordPlaceholder") : t("auth.passwordPlaceholder")}
+                aria-label={t("auth.passwordLabel")}
+                autoComplete={mode === "signup" ? "new-password" : "current-password"}
+                className={styles.field}
+              />
+            </Field>
+          )}
           <Turnstile key={captchaKey} onToken={onToken} />
           <button
             type="submit"
             disabled={busy || waitingForCaptcha}
             className={`${styles.action} ${styles.submit}`}
           >
-            {busy ? "…" : mode === "signin" ? t("auth.signIn") : t("auth.createAccount")}
+            {busy ? "…" : mode === "reset" ? t("auth.sendResetLink") : mode === "signin" ? t("auth.signIn") : t("auth.createAccount")}
           </button>
-          {error && <p className={styles.error}>{error}</p>}
-          {notice && <p className={styles.notice}>{notice}</p>}
+          {error && <p className={styles.error} role="alert">{error}</p>}
+          {notice && <p className={styles.notice} role="status">{notice}</p>}
+          {mode === "signin" && (
+            <button type="button" onClick={() => switchMode("reset")} className={styles.modeSwitch}>
+              {t("auth.forgotPassword")}
+            </button>
+          )}
         </form>
 
-        <button
-          onClick={() => {
-            setMode(mode === "signin" ? "signup" : "signin");
-            setError(null);
-            setNotice(null);
-          }}
-          className={styles.modeSwitch}
-        >
-          {mode === "signin" ? t("auth.switchToSignUp") : t("auth.switchToSignIn")}
+        <button onClick={() => switchMode(mode === "signin" ? "signup" : "signin")} className={styles.modeSwitch}>
+          {mode === "reset" ? t("auth.backToSignIn") : mode === "signin" ? t("auth.switchToSignUp") : t("auth.switchToSignIn")}
         </button>
 
         {/* Under the form so the main action stays at the top (rule 1). */}

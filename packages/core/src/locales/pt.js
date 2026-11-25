@@ -41,6 +41,11 @@ export const pt = {
   "auth.newPasswordPlaceholder": "senha (8+ caracteres)",
   "auth.switchToSignUp": "Novo por aqui? Crie uma conta",
   "auth.switchToSignIn": "Já tem uma conta? Entre",
+  "auth.forgotPassword": "Esqueceu a senha?",
+  "auth.sendResetLink": "Enviar link de redefinição",
+  "auth.resetLinkSent": "Se esse email tiver uma conta, um link de redefinição está a caminho.",
+  "auth.backToSignIn": "Voltar para entrar",
+  "auth.resetExpired": "Este link expirou ou já foi usado. Envie um novo.",
   "auth.signOut": "Sair",
   "auth.confirmEmailNotice":
     "Sua conta está pronta. Confira seu e-mail e abra o link de confirmação, depois volte e entre.",

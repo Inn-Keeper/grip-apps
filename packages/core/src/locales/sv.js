@@ -41,6 +41,11 @@ export const sv = {
   "auth.newPasswordPlaceholder": "lösenord (8+ tecken)",
   "auth.switchToSignUp": "Ny här? Skapa ett konto",
   "auth.switchToSignIn": "Har du redan ett konto? Logga in",
+  "auth.forgotPassword": "Glömt lösenordet?",
+  "auth.sendResetLink": "Skicka återställningslänk",
+  "auth.resetLinkSent": "Om e-postadressen har ett konto är en återställningslänk på väg.",
+  "auth.backToSignIn": "Tillbaka till inloggning",
+  "auth.resetExpired": "Länken har gått ut eller redan använts. Skicka en ny.",
   "auth.signOut": "Logga ut",
   "auth.confirmEmailNotice":
     "Ditt konto är klart. Öppna bekräftelselänken i din inkorg och kom sedan tillbaka och logga in.",

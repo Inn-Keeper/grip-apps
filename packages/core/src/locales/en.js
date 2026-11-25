@@ -41,6 +41,11 @@ export const en = {
   "auth.newPasswordPlaceholder": "password (8+ characters)",
   "auth.switchToSignUp": "New here? Create an account",
   "auth.switchToSignIn": "Already have an account? Sign in",
+  "auth.forgotPassword": "Forgot password?",
+  "auth.sendResetLink": "Send reset link",
+  "auth.resetLinkSent": "If that email has an account, a reset link is on its way.",
+  "auth.backToSignIn": "Back to sign in",
+  "auth.resetExpired": "This reset link has expired or was already used. Send a new one.",
   "auth.signOut": "Sign out",
   "auth.confirmEmailNotice":
     "Your account is ready. Check your inbox for a confirmation link, then come back and sign in.",
