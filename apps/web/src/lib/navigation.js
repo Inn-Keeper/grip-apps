@@ -23,3 +23,9 @@ export const isFreshSignIn = (previousUserId, nextUserId) => previousUserId === 
 // The page is loading on the way back from an OAuth sign-in: Supabase puts the session in
 // the hash (implicit flow) or a one-time code in the query (PKCE flow).
 export const isAuthReturn = (search, hash) => /(^|[?&#])(access_token|code)=/.test(`${search}${hash}`);
+
+// A password reset link lands on /reset-password; Supabase reports a dead link with error_code.
+export const recoveryFromUrl = (pathname, search, hash) => {
+  if (pathname !== "/reset-password") return null;
+  return /(^|[?&#])error_code=/.test(`${search}${hash}`) ? "expired" : "set";
+};

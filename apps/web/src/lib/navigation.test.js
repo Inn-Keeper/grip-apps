@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { guardHistoryNavigation, isAuthReturn, isFreshSignIn, pageFromPath } from "./navigation.js";
+import { guardHistoryNavigation, isAuthReturn, isFreshSignIn, pageFromPath, recoveryFromUrl } from "./navigation.js";
 
 function fakeWindow() {
   const win = new EventTarget();
@@ -49,4 +49,12 @@ test("OAuth returns are recognised in the hash or the query", () => {
   assert.equal(isAuthReturn("?linked=github&code=xyz", ""), true);
   assert.equal(isAuthReturn("", ""), false);
   assert.equal(isAuthReturn("?encode=1", "#barcode=2"), false);
+});
+
+test("a reset link is recognised by its path, and its error by error_code", () => {
+  assert.equal(recoveryFromUrl("/reset-password", "", "#access_token=abc&type=recovery"), "set");
+  assert.equal(recoveryFromUrl("/reset-password", "", ""), "set");
+  assert.equal(recoveryFromUrl("/reset-password", "", "#error=access_denied&error_code=otp_expired"), "expired");
+  assert.equal(recoveryFromUrl("/reset-password", "?error_code=otp_expired", ""), "expired");
+  assert.equal(recoveryFromUrl("/prep", "", "#access_token=abc"), null);
 });
