@@ -17,6 +17,20 @@ window.addEventListener("vite:preloadError", (event) => {
   window.location.reload();
 });
 
+// Dev only: name the model behind each AI call in the browser console. Builds drop this block.
+if (import.meta.env.DEV) {
+  const nativeFetch = window.fetch.bind(window);
+  window.fetch = async (input, init) => {
+    const response = await nativeFetch(input, init);
+    const model = response.headers.get("x-grip-model");
+    if (model) {
+      const url = new URL(input instanceof Request ? input.url : String(input), window.location.href);
+      console.info(`[grip ai] ${url.pathname.replace("/api/v1/ai/", "")} → ${model}`);
+    }
+    return response;
+  };
+}
+
 applyTokenVars();
 themeDataColors();
 initTheme();
