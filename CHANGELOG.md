@@ -4,6 +4,12 @@ Notable changes to Grip (web, mobile and the Supabase schema), newest first.
 Dates are the day the work landed on `main`. Database migrations are listed
 because they have to be applied by hand.
 
+## 2026-11-26
+
+### Database
+
+- `0036_demo_talk_track.sql`: the demo sample board "Catalog read path (sample)" now comes with a filled talk track (ungraded), so visitors can try grading right away. Existing demo visitors with an empty talk track on that board get it too.
+
 ## 2026-11-25
 
 ### Added
